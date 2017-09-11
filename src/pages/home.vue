@@ -1,0 +1,1126 @@
+<template>
+  <div id="home">
+    <!-- <el-carousel height="347px" arrow="never">
+			<el-carousel-item v-for="o in 4">
+				<img src="../assets/images/Intersection16.png">
+			</el-carousel-item>
+		</el-carousel> -->
+    <el-row :gutter="20" class="wrapRow">
+      <el-col :span="16">
+        <ul class="list-group" v-sortable="optionsDragLeft">
+          <li class="list-group-item" :class="{'dragActive':showDrag[0]}">
+            <p class="dragHead" v-on:mouseover="dragShow(0)" v-on:mouseleave="dragHide(0)">
+              <span v-show="showInfo[0]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[0]=true" v-on:mouseleave="showInfo[0]=false" v-show="showDrag[0]"></i>
+            </p>
+            <el-card class="messageCenter">
+              <p slot="header">消息中心</p>
+              <el-row :gutter="10">
+                <el-col :span="8" :xs='12' v-for="msg in msgs">
+                  <message-center :data="msg">
+                  </message-center>
+                </el-col>
+              </el-row>
+            </el-card>
+          </li>
+          <li class="list-group-item" :class="{'dragActive':showDrag[1]}">
+            <p class="dragHead" v-on:mouseover="dragShow(1)" v-on:mouseleave="dragHide(1)">
+              <span v-show="showInfo[1]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[1]=true" v-on:mouseleave="showInfo[1]=false" v-show="showDrag[1]"></i>
+            </p>
+            <el-card class="news">
+              <span slot="header">新闻</span>
+              <el-tabs v-model="activeName" class="myTab">
+                <el-tab-pane label="公司新闻" name="first">
+                  <div>
+                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
+                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>124</span>2017/09/01</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空参加深圳“公益金百万行”活动</p>
+                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>214</span>2017/08/16</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
+                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>541</span>2017/07/26</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空开通贵阳=珠海航线</p>
+                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
+                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>213</span>2017/06/14</span>
+                    </p>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="部门新闻" name="second">
+                  <div>
+                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
+                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>541</span>2017/09/06</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
+                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>124</span>2017/09/01</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空参加深圳“公益金百万行”活动</p>
+                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>214</span>2017/08/16</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空开通贵阳=珠海航线</p>
+                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
+                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>213</span>2017/06/14</span>
+                    </p>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="人事变动" name="third">
+                  <div>
+                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
+                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>213</span>2017/08/14</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
+                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>541</span>2017/07/26</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空开通贵阳=珠海航线</p>
+                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
+                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>124</span>2017/06/01</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空参加深圳“公益金百万行”活动</p>
+                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>214</span>2017/05/16</span>
+                    </p>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="公司文件" name="fourth">
+                  <div>
+                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
+                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>213</span>2017/08/14</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
+                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>541</span>2017/07/26</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空开通贵阳=珠海航线</p>
+                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
+                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>124</span>2017/06/01</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空参加深圳“公益金百万行”活动</p>
+                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>214</span>2017/05/16</span>
+                    </p>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="部门文件" name="fifth">
+                  <div>
+                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
+                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>213</span>2017/08/14</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
+                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>541</span>2017/07/26</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空开通贵阳=珠海航线</p>
+                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
+                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>124</span>2017/06/01</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>东海航空参加深圳“公益金百万行”活动</p>
+                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>214</span>2017/05/16</span>
+                    </p>
+                  </div>
+                </el-tab-pane>
+              </el-tabs>
+            </el-card>
+          </li>
+          <li class="list-group-item" :class="{'dragActive':showDrag[2]}">
+            <p class="dragHead" v-on:mouseover="dragShow(2)" v-on:mouseleave="dragHide(2)">
+              <span v-show="showInfo[2]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[2]=true" v-on:mouseleave="showInfo[2]=false" v-show="showDrag[2]"></i>
+            </p>
+            <el-card class="personnel">
+              <el-row>
+                <el-col :sm="10" :xs="24">
+                  <img src="../assets/images/bg1.png" alt="">
+                  <!-- <p class="head">Personnel Statistics</p>
+									<el-row>
+										<el-col :span="12" :xs="12">
+											<ul>
+												<li v-for="(dep,index) in piedata.labels">
+													<span :style="{background:piedata.datasets[0].backgroundColor[index]}"></span>
+													{{dep}}:&nbsp;{{piedata.datasets[0].data[index]}}
+												</li>
+											</ul>
+										</el-col>
+										<el-col :span="12" :xs="12">
+											<my-pie :data="piedata" :options="pieoption"></my-pie>
+											<p>Total: 4516 Person</p>
+											<p>Last Update: 2016-12-25</p>
+										</el-col>
+									</el-row> -->
+                </el-col>
+                <el-col :sm="7" :xs="12">
+                  <P class="myLink">今日请假</P>
+                  <ul>
+                    <li>刘志文</li>
+                    <li>王天宇</li>
+                    <li>刘菲菲</li>
+                  </ul>
+                </el-col>
+                <el-col :sm="7" :xs="12">
+                  <P class="myLink">今日出差</P>
+                  <ul>
+                    <li>张兆艺</li>
+                    <li>刘晓霞</li>
+                    <li>冯云</li>
+                    <li>王志伟</li>
+                  </ul>
+                </el-col>
+              </el-row>
+            </el-card>
+          </li>
+          <li class="list-group-item" :class="{'dragActive':showDrag[3]}">
+            <p class="dragHead" v-on:mouseover="dragShow(3)" v-on:mouseleave="dragHide(3)">
+              <span v-show="showInfo[3]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[3]=true" v-on:mouseleave="showInfo[3]=false" v-show="showDrag[3]"></i>
+            </p>
+            <el-card class="report">
+              <el-row>
+                <el-col :span="8" :xs="24" class="flightStatus">
+                  <p class="head top-head">运行报告 2017/09/03</p>
+                  <p class="head header">航班状态</p>
+                  <div class="content">
+                    <span>总航班数: 14</span>
+                    <span>出发: 3</span>
+                    <span>到达: 0</span>
+                    <span>延误: 0</span>
+                  </div>
+                  <div class="bottom">
+                    <div>
+                      <i class="iconfont icon-plane"></i>
+                      <p class="myLink">飞行报告</p>
+                    </div>
+                  </div>
+                </el-col>
+                <el-col :span="9" :xs="24" class="daily">
+                  <p class="head header">每日报告</p>
+                  <div class="content">
+                    <span>航空管制延误: 0</span>
+                    <span>机场繁忙延误: 0</span>
+                    <span>安全原因强制性延误: 0</span>
+                    <span>总延误航班: 0</span>
+                  </div>
+                  <div class="bottom">
+                    <div>
+                      <i class="iconfont icon-head"></i>
+                      <p class="myLink">服务评价报告</p>
+                    </div>
+                  </div>
+                </el-col>
+                <el-col :span="7" :xs="24" class="crew">
+                  <p class="head header">机组自评报告</p>
+                  <div class="content clearfix">
+                    <el-col>总航班数: 10</el-col>
+                    <el-col>5:0%</el-col>
+                    <el-col>4:0%</el-col>
+                    <el-col>3:0%</el-col>
+                    <el-col>2:0%</el-col>
+                    <el-col>1:0%</el-col>
+                  </div>
+                  <my-polar-area :data="polarAreaData" :options="polarAreaOption"></my-polar-area>
+                </el-col>
+              </el-row>
+            </el-card>
+          </li>
+          <!-- <li class="list-group-item" :class="{'dragActive':showDrag[4]}">
+						<p class="dragHead"  v-on:mouseover="dragShow(4)" v-on:mouseleave="dragHide(4)">
+							<span v-show="showInfo[4]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span> 					
+							<i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[4]=true" v-on:mouseleave="showInfo[4]=false" v-show="showDrag[4]"></i> 	
+						</p>
+						<el-card class="space">
+							<span slot="header">My Space</span>
+							<el-row  v-for="weibo in weibos">
+								<weibo :weibo='weibo'></weibo>
+							</el-row>
+							<el-input placeholder="Share Something" class="space-bottom">
+								<img slot="prepend" src="../assets/images/Image198.png">
+								<div slot="append">
+									<i class="iconfont icon-smile"></i>
+									<i class="iconfont icon-pics"></i>
+									<el-button type="primary">Post</el-button>
+								</div>
+							</el-input>
+						</el-card>
+					</li> -->
+        </ul>
+      </el-col>
+      <el-col :span="8" class="sideBox">
+        <ul class="list-group" v-sortable="optionsDragRight">
+          <li class="list-group-item" :class="{'dragActive':showDrag[5]}">
+            <p class="dragHead" v-on:mouseover="dragShow(5)" v-on:mouseleave="dragHide(5)">
+              <span v-show="showInfo[5]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[5]=true" v-on:mouseleave="showInfo[5]=false" v-show="showDrag[5]"></i>
+            </p>
+            <el-card class="contactList">
+              <span slot="header">公司同仁</span>
+              <el-input class="search" placeholder="请输入员工姓名">
+                <el-button slot="append">搜索</el-button>
+              </el-input>
+            </el-card>
+          </li>
+          <li class="list-group-item" :class="{'dragActive':showDrag[6]}">
+            <p class="dragHead" v-on:mouseover="dragShow(6)" v-on:mouseleave="dragHide(6)">
+              <span v-show="showInfo[6]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[6]=true" v-on:mouseleave="showInfo[6]=false" v-show="showDrag[6]"></i>
+            </p>
+            <el-menu mode="vertical" default-active="1" class="duty">
+              <el-menu-item-group title="今日值班">
+                <el-submenu index="1">
+                  <template slot="title">IT服务部</template>
+                  <el-menu-item index="2-1">莫文 : 138 4564 7841</el-menu-item>
+                  <!-- <el-menu-item index="1-1">Doc Searching</el-menu-item> -->
+                </el-submenu>
+                <el-submenu index="2">
+                  <template slot="title">地面服务部</template>
+                  <el-menu-item index="2-1">莫文耀 : 138 4164 7841</el-menu-item>
+                  <el-menu-item index="2-2">刘莉: 133 6415 57871</el-menu-item>
+                  <el-menu-item index="2-3">王立伟 : 134 3641 8874</el-menu-item>
+                  <el-menu-item index="2-4">王天峰 : 133 1248 4774</el-menu-item>
+                </el-submenu>
+                <el-submenu index="3">
+                  <template slot="title">货运部</template>
+                  <el-menu-item index="3-1">宋丽萍：135 4887 2561</el-menu-item>
+                </el-submenu>
+              </el-menu-item-group>
+            </el-menu>
+          </li>
+          <li class="list-group-item" :class="{'dragActive':showDrag[7]}">
+            <p class="dragHead" v-on:mouseover="dragShow(7)" v-on:mouseleave="dragHide(7)">
+              <span v-show="showInfo[7]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[7]=true" v-on:mouseleave="showInfo[7]=false" v-show="showDrag[7]"></i>
+            </p>
+            <el-card class="Workbench">
+              <span slot="header">日常事项</span>
+              <el-menu>
+                <el-menu-item index="1"><i class="iconfont icon-guizhang"></i>规章制度<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="2"><i class="iconfont icon-shouce"></i>使用手册<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="3"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
+              </el-menu>
+            </el-card>
+            <el-card class="mailbox">
+              <el-menu>
+                <el-menu-item index="1"><i class="iconfont icon-changyong"></i>常用办公软件<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="2"><i class="iconfont icon-youhui"></i>优惠机票<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="3"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
+              </el-menu>
+            </el-card>
+          </li>
+          <!-- <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
+						<p class="dragHead"  v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
+							<span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span> 					
+							<i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i> 	
+						</p>
+						<el-card class="flightSearch">
+							<span slot="header">Flight Search</span>
+							<el-radio-group v-model="tripType">
+								<el-radio label="date">One Way</el-radio>
+								<el-radio label="daterange">Round Trip</el-radio>
+							</el-radio-group>
+							<el-input v-model="tripFrom" placeholder="From">
+							</el-input>
+							<el-input v-model="tripTo"  placeholder="To" class="pullRight">
+							</el-input>
+							<search-date :type="tripType"></search-date>
+						</el-card>
+					</li> -->
+          <li class="list-group-item" :class="{'dragActive':showDrag[10]}">
+            <p class="dragHead" v-on:mouseover="dragShow(10)" v-on:mouseleave="dragHide(10)">
+              <span v-show="showInfo[10]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[10]=true" v-on:mouseleave="showInfo[10]=false" v-show="showDrag[10]"></i>
+            </p>
+            <el-card class="flightStatus">
+              <span slot="header">航班动态</span>
+              <search-date type="date" :button="false" tip="日期"></search-date>
+              <el-radio-group v-model="flightStatusType" class="myRadio">
+                <el-radio-button label="flightNo">航班号<i></i></el-radio-button>
+                <el-radio-button label="route">航段<i></i></el-radio-button>
+              </el-radio-group>
+              <div class="flightNo" v-show="flightStatusType=='flightNo'">
+                <el-select v-model="flightNoTitle">
+                  <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+                <el-input class="search">
+                  <el-button slot="append">搜索</el-button>
+                </el-input>
+              </div>
+              <div class="route" v-show="flightStatusType=='route'">
+                <el-input v-model="tripFrom" placeholder="出发">
+                </el-input>
+                <el-input v-model="tripTo" placeholder="到达">
+                </el-input>
+                <el-button>搜索</el-button>
+              </div>
+            </el-card>
+          </li>
+        </ul>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+<script>
+import MyPie from '../components/myPie'
+import MyPolarArea from '../components/myPolarArea'
+import SearchDate from '../components/searchDate'
+import MessageCenter from '../components/message'
+import Weibo from '../components/weibo'
+import DocList from '../components/doc'
+const msgs = [
+  { "type": "work", "color": "#0460AE", "text": "待签批公文:31", "font": "icon-sousuo" },
+  { "type": "work", "color": "#0460AE", "text": "跟踪中公文:33", "font": "icon-sousuo" },
+  { "type": "ss", "color": "#BE3B7F", "text": "邮件通知:5", "font": "icon-gongwen" },
+  { "type": "work", "color": "#0460AE", "text": "公文超时:2", "font": "icon-sousuo" },
+  { "type": "message", "color": "#51449C", "text": "生日提醒:3", "font": "icon-icon04" },
+  { "type": "ss", "color": "#BE3B7F", "text": "会议通知:3", "font": "icon-gongwen" },
+];
+const piedata = {
+  labels: ['Airport Services', 'Cockpit', 'Cabin', 'HQ Staff', 'Outport Others', 'Outport China', 'MRO'],
+  datasets: [{
+    backgroundColor: [
+      '#97BBCD',
+      '#7ED0CF',
+      '#DCDCDC',
+      '#F7464A',
+      '#FDB45C',
+      '#DCDCDC',
+      '#FAD2A2'
+    ],
+    data: [2, 688, 1732, 996, 110, 163, 231]
+  }]
+}
+const pieoption = {
+  responsive: true,
+  maintainAspectRatio: false,
+  legend: {
+    display: false
+  }
+};
+const polarAreaData = {
+  labels: ['Eating', 'Drinking', 'Sleeping', 'Designing', 'Coding'],
+  datasets: [{
+    label: 'My Second dataset',
+    backgroundColor: [
+      "#FF6384",
+      "#4BC0C0",
+      "#FFCE56",
+      "#E7E9ED",
+      "#36A2EB"
+    ],
+    pointBackgroundColor: 'rgba(255,99,132,1)',
+    pointBorderColor: '#fff',
+    pointHoverBackgroundColor: '#fff',
+    pointHoverBorderColor: 'rgba(255,99,132,1)',
+    data: [300, 500, 100, 50, 100]
+  }]
+};
+const polarAreaOption = {
+  responsive: true,
+  maintainAspectRatio: false,
+  legend: {
+    display: false,
+  },
+  title: {
+    display: false,
+    text: ''
+  },
+  scale: {
+    ticks: {
+      min: 0,
+      max: 500,
+      stepSize: 100,
+      backdropPaddingY: 0
+    }
+  }
+};
+const weibos = [{
+    'author': 'HR Group',
+    'text': '公司的進步實在有賴每位員工的寶貴意見，而CONNECT就是其中一個直達公司管理層的有效渠道。在跟進期間，您的身份將會被保密。 您可將意見寫信至connect@hkairlines.com。一經刊登，您將有機會獲得價值港幣500元的超市禮券。',
+    'img': '../assets/images/Image79.png',
+    'forword': '1',
+    'favorite': '2',
+    'comment': '3',
+    'time': '1213213233'
+  },
+  {
+    'author': 'HR Group',
+    'text': 'CONNECT is a great way to express your idea. Your comments are essential to HKA’s growth and your identity will be protected. Send us your opinion to connect@hkairlines.com and win a HKD500 coupon!',
+    'img': '../assets/images/Image79.png',
+    'forword': '3',
+    'favorite': '5',
+    'comment': '9',
+    'time': '2213789323'
+  },
+];
+const options = [{
+  value: '选项1',
+  label: 'DZ'
+}, {
+  value: '选项2',
+  label: 'DD'
+}, {
+  value: '选项3',
+  label: 'DJ'
+}];
+export default {
+  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, Weibo },
+
+  data() {
+    return {
+      msgs,
+      activeName: 'first',
+      piedata,
+      pieoption,
+      polarAreaData,
+      polarAreaOption,
+      weibos,
+      tripType: 'date',
+      tripFrom: '',
+      tripTo: '',
+      flightStatusType: 'flightNo',
+      options,
+      flightNoTitle: '选项1',
+      showDrag: [false, false, false, false, false, false, false, false, false, false, false],
+      showInfo: [false, false, false, false, false, false, false, false, false, false, false],
+      optionsDragLeft: {
+        group: 'left',
+        handle: '.handleDrag',
+        animation: 300,
+        scrollSensitivity: 100
+      },
+      optionsDragRight: {
+        group: 'right',
+        handle: '.handleDrag',
+        animation: 300,
+        scrollSensitivity: 100
+      }
+    }
+  },
+  methods: {
+    dragShow(index) {
+      this.showDrag.splice(index, 1, true);
+    },
+    dragHide(index) {
+      this.showDrag.splice(index, 1, false);
+    }
+  }
+}
+
+</script>
+<style lang="scss">
+$purple: #0460AE;
+$brown: #985D55;
+$lan:#0460AE;
+
+#home {
+
+  .list-group {
+    .list-group-item {
+      position: relative;
+      .el-card,
+      .el-menu {
+        border: 1px solid transparent;
+        &.personnel {
+          border-bottom-width: 0;
+        }
+      }
+      .dragHead {
+        position: absolute;
+        width: 100%;
+        line-height: 46px;
+        height: 46px;
+        padding: 0 12px;
+        text-align: right;
+        top: 0;
+        box-sizing: border-box;
+        color: #95989A;
+        cursor: pointer;
+        z-index: 9;
+        i {
+          vertical-align: middle;
+        }
+        .handleDrag {
+          padding: 10px 0 10px 5px;
+          color: $purple;
+          font-size: 20px;
+          cursor: move;
+        }
+      }
+    }
+    .dragActive {
+      .el-card,
+      >.el-menu {
+
+        border-color: $purple;
+        &.personnel {
+          border-bottom-width: 1px;
+          margin-bottom: 19px;
+        }
+      }
+    }
+  }
+  .el-carousel {
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16);
+    margin-bottom: 20px;
+    .el-carousel__indicators {
+      right: 10px;
+      top: 23px;
+      left: initial;
+      transform: initial;
+      .el-carousel__indicator {
+        padding: 0 2px;
+        button {
+          width: 13px;
+          height: 13px;
+          border-radius: 100%;
+          opacity: 1;
+        }
+        &.is-active {
+          button {
+            background: $purple;
+          }
+        }
+      }
+    }
+    @media (max-width: 768px) {
+      & {
+        margin-bottom: 1px;
+      }
+    }
+  }
+  .wrapRow {
+    @media (max-width: 1200px) {
+      margin:0!important;
+      .el-col:first-child {
+        padding: 0!important
+      }
+    }
+  }
+  .news {
+    padding: 0;
+    .el-card__header {
+      width: 220px;
+      padding: 6px 0 6px 15px;
+    }
+    .el-tab-pane {
+      &>div {
+        border-top: 1px solid #F2F2F2;
+        padding-left: 15px;
+        height: 62px;
+        @media (max-width: 768px) {
+          padding-left:0
+        }
+        p:first-child {
+          position: relative;
+          font-size: 15px;
+          margin: 12px 0 6px;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          padding-right: 30px;
+        }
+        p.new {
+          &:after {
+            content: 'new';
+            position: absolute;
+            top: 1px;
+            right: 0;
+            font-size: 12px;
+            background: $purple;
+            color: #fff;
+            border-radius: 3px;
+            padding: 0 2px;
+          }
+        }
+        p:last-child {
+          font-size: 12px;
+          margin: 6px 0;
+          &>span {
+            float: right;
+            i {
+              color: $purple;
+            }
+            span {
+              padding: 0 7px 0 5px;
+              margin-right: 7px;
+              border-right: 1px solid #BFBFBF;
+            }
+          }
+        }
+      }
+    }
+  }
+  .personnel {
+    padding: 0;
+    border: none;
+    .el-card__body {
+      &>.el-row {
+        .el-col:first-child {
+          font-size: 0; // padding-right:15px;
+          img {
+            max-width: 100%;
+          }
+          .el-row {
+            padding-top: 10px;
+            .el-col:first-child {
+              height: 158px;
+              position: relative;
+              ul {
+                position: absolute;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                bottom: 0;
+                li {
+                  font-size: 13px;
+                  position: relative;
+                  padding-left: 15px;
+                  margin-bottom: 2px;
+                  span {
+                    position: absolute;
+                    left: 0;
+                    bottom: 3px;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 2px;
+                  }
+                }
+              }
+            }
+            .el-col:last-child {
+              &>div {
+                height: 120px;
+                width: 120px;
+                float: right;
+                margin-bottom: 10px;
+              }
+              p {
+                margin: 0;
+                font-size: 12px;
+                text-align: right;
+                clear: both;
+                color: #676767;
+              }
+            }
+          }
+        }
+        &>.el-col:nth-child(2),
+        &>.el-col:nth-child(3) {
+          padding: 35px 15px 0;
+          height: 158px;
+          ul {
+            position: absolute;
+            bottom: 0;
+            padding-bottom: 13px;
+            li {
+              margin: 4px 0 0;
+            }
+          }
+        }
+        &>.el-col:nth-child(2) {
+          // border-left:1px solid #EEEEEE;
+          border-right: 1px solid #EEEEEE;
+          p,
+          li {
+            color: #BE3B7F;
+          }
+        }
+        &>.el-col:nth-child(3) {
+          p,
+          li {
+            color: $purple;
+          }
+        }
+      }
+    }
+  }
+  .report {
+    .el-col {
+      position: relative;
+      min-height: 220px;
+      .top-head {
+        margin-bottom: 30px;
+      }
+      .header {
+        color: $purple;
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+      .content {
+        span {
+          display: inline-block;
+          width: 49%;
+          margin-bottom: 5px;
+        }
+      }
+      .bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        div {
+          display: flex;
+          position: relative;
+          padding: 15px 0 0 50px;
+          margin: 0 10px;
+          height: 40px;
+          flex-direction: column;
+          justify-content: space-between;
+          border-top: 1px solid #F2F2F2;
+          i:first-child {
+            color: $purple;
+            font-size: 40px;
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            &.icon-plane {
+              background: #0460ae;
+              color: #fff;
+              width: 40px;
+              font-size: 22px;
+              height: 40px;
+              line-height: 40px;
+              text-align: center;
+              border-radius: 50%;
+            }
+            &.icon-plane+p {
+              margin-top: 10px;
+            }
+          }
+          span,
+          p {
+            color: $purple;
+            font-size: 15px;
+          }
+        }
+      }
+    }
+    .flightStatus {
+      padding-right: 15px;
+      .bottom {
+        div {
+          margin-left: 0;
+        }
+      }
+    }
+    .daily {
+      padding: 20px 15px 0;
+      border-right: 1px solid #EEEEEE;
+      border-left: 1px solid #EEEEEE;
+      .content span {
+        width: 100%;
+      }
+      .bottom {
+        div {
+          justify-content: center;
+          p {
+            font-size: 16px;
+          }
+        }
+      }
+    }
+    .crew {
+      padding: 20px 15px 0;
+      .content .el-col {
+        font-size: 13px;
+        height: auto;
+        margin-bottom: 1px;
+        min-height: 0;
+      }
+      &>div:last-child {
+        width: 140px;
+        height: 150px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+      }
+    }
+    @media (max-width: 768px) {
+      .el-col {
+        min-height: 0;
+        .bottom {
+          position: relative;
+        }
+      }
+      .daily {
+        padding: 10px 0 0;
+        .bottom div {
+          margin-left: 0;
+        }
+      }
+      .crew {
+        min-height: 200px;
+        padding: 20px 0 0;
+        &>div:last-child {
+          right: 30px;
+        }
+      }
+    }
+  }
+  .space {
+    padding-bottom: 5px;
+    .el-card__body {
+      &>.el-row {
+        border-bottom: 1px solid #f2f2f2;
+      }
+      .space-bottom {
+        padding-top: 10px;
+        .el-input-group__prepend {
+          border: none;
+          padding-right: 20px;
+          img {
+            width: 47px;
+            height: 55px;
+          }
+        }
+        input {
+          margin-top: 6px;
+          border: none;
+          background: #F2F2F2;
+          border-radius: 4px;
+        }
+        .el-input-group__append {
+          border: none;
+          div {
+            display: inline-table;
+            button {
+              display: inline-block;
+              font-size: 16px;
+              margin: 0 0 0 10px;
+              height: 38px;
+              background: $purple;
+              color: #fff;
+              padding: 10px 25px;
+            }
+            i {
+              font-size: 30px;
+              color: $purple;
+              padding: 0 3px;
+              vertical-align: middle;
+              display: table-cell;
+            }
+          }
+          @media (max-width:768px) {
+            & {
+              display: block;
+            }
+          }
+        }
+      }
+    }
+  }
+  .contactList {
+    .el-card__header {
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .el-card__body {
+      padding-top: 10px;
+    }
+  }
+  .duty {
+    margin-bottom: 20px;
+    .el-submenu.is-opened {
+      .el-submenu__title {
+        color: $purple;
+      }
+      .el-menu {
+        li:hover {
+          cursor: auto;
+        }
+        .is-active {
+          color: #676767;
+        }
+      }
+    }
+    .el-submenu .el-menu-item {
+      padding-left: 18px !important;
+      font-size: 15px;
+    }
+  }
+  @mixin linkList($color) {
+    .el-card__header {
+      padding-left: 14px;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .el-menu-item {
+      i:first-child {
+        font-size: 23px;
+        margin-right: 10px;
+        color: $color;
+        vertical-align: middle;
+        &.icon-youhui {
+          font-size: 18px;
+        }
+        &.icon-mail {
+          vertical-align: top;
+        }
+      }
+    }
+    .el-menu-item:hover {
+      i {
+        color: $color;
+      }
+      color:$color;
+    }
+    .el-menu-item.is-active {
+      i:last-child {
+        color: #676767;
+      }
+      color:#676767;
+    }
+  }
+  .Workbench {
+    padding: 12px 0 0;
+    @include linkList($purple);
+  }
+  .mailbox {
+    padding: 0;
+    @include linkList(#BE3B7F);
+  }
+  .flightSearch {
+    padding: 13px 0 20px;
+    .el-card__header {
+      padding-left: 12px;
+      border-bottom: 1px solid #F2F2F2;
+    }
+    .el-card__body {
+      padding: 0 12px;
+      .el-radio-group {
+        display: block;
+        margin: 20px 0;
+      }
+      &>.el-input {
+        display: inline-block;
+        width: 49%;
+        margin-bottom: 10px;
+      }
+      .pullRight {
+        float: right;
+      }
+    }
+  }
+  .flightStatus {
+    padding: 13px 0 20px;
+    .el-card__header {
+      padding-left: 12px;
+      border-bottom: 1px solid #F2F2F2;
+    }
+    .el-card__body {
+      padding: 20px 12px 0 12px;
+      .searchDate {
+        display: inline-flex;
+        width: 40%;
+        .showDate {
+          border-right: 1px solid #b7b7b7;
+        }
+      }
+      .el-radio-group {
+        display: inline-flex;
+        float: right;
+        .el-radio-button {
+          margin: 0 0 0 6px;
+          .el-radio-button__inner {
+            padding: 14px 29px;
+          }
+        }
+        @media (max-width:1200px) {
+          & {
+            float: initial;
+            margin-top: 10px;
+            .el-radio-button:first-child {
+              margin-left: 0;
+            }
+          }
+        }
+      }
+    }
+    .flightNo {
+      margin-top: 10px;
+      .el-select {
+        width: 20%;
+      }
+      .search {
+        width: 78%;
+        float: right;
+      }
+    }
+    .route {
+      margin-top: 10px;
+      .el-input {
+        width: 35%;
+        display: inline-block;
+      }
+      button {
+        float: right;
+        font-size: 18px;
+        width: 101px;
+        height: 46px;
+        color: #fff;
+        background: $purple;
+        border-color: $purple;
+      }
+    }
+  }
+}
+
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 150px;
+  margin: 0;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n+1) {
+  background-color: #d3dce6;
+}
+
+</style>
