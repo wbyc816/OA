@@ -560,29 +560,31 @@ h1, h2, h3, h4, h5, h6 {
   --------------------------*/
   /* Collapse
   --------------------------*/
+  /* Transfer
+  --------------------------*/
 }
 body {
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   font-weight: 400;
   font-size: 14px;
-  color: rgb(51, 31, 61);
+  color: rgb(31, 44, 61);
 }
 
 a {
-  color: #7C5598;
+  color: #0460AE;
   text-decoration: none
 }
 
 a:hover, a:focus {
-  color: rgb(150, 119, 173);
+  color: rgb(54, 128, 190);
 }
 
 a:active {
-  color: rgb(112, 77, 137);
+  color: rgb(4, 86, 157);
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: rgb(51, 31, 61);
+  color: rgb(31, 44, 61);
   font-weight: inherit
 }
 
@@ -629,7 +631,13 @@ sup, sub {
 small {
   font-size: 12px;
 }
-:root {
+
+hr {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 0;
+  border-top: 1px solid #eeeeee;
+}:root {
   /* Transition
   -------------------------- */
   /* Colors
@@ -715,5 +723,7 @@ small {
   /* Carousel
   --------------------------*/
   /* Collapse
+  --------------------------*/
+  /* Transfer
   --------------------------*/
 }

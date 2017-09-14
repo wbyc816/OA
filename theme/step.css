@@ -86,11 +86,17 @@
   --------------------------*/
     /* Collapse
   --------------------------*/
+    /* Transfer
+  --------------------------*/
 }
 
 .el-step{
     position: relative;
     vertical-align: top;
+}
+
+.el-step:last-child .el-step__main{
+    padding-right: 0;
 }
 
 .el-step.is-vertical{}
@@ -111,7 +117,7 @@
     display: inline-block;
     position: absolute;
     border-color: inherit;
-    background-color: rgb(208, 191, 217);
+    background-color: rgb(191, 202, 217);
 }
 
 .el-step__line.is-vertical{
@@ -141,6 +147,7 @@
     border-style: solid;
     border-color: inherit;
     transition: all 150ms;
+    box-sizing: border-box;
     width: 0;
     height: 0;
 }
@@ -168,8 +175,8 @@
 }
 
 .el-step__head.is-finish{
-    color: #7C5598;
-    border-color: #7C5598;
+    color: #0460AE;
+    border-color: #0460AE;
 }
 
 .el-step__head.is-error{
@@ -183,13 +190,13 @@
 }
 
 .el-step__head.is-wait{
-    color: rgb(208, 191, 217);
-    border-color: rgb(208, 191, 217);
+    color: rgb(191, 202, 217);
+    border-color: rgb(191, 202, 217);
 }
 
 .el-step__head.is-process{
-    color: rgb(208, 191, 217);
-    border-color: rgb(208, 191, 217);
+    color: rgb(191, 202, 217);
+    border-color: rgb(191, 202, 217);
 }
 
 .el-step__head.is-text{
@@ -200,8 +207,8 @@
 
 .el-step__head.is-text.is-finish{
     color: #fff;
-    background-color: #7C5598;
-    border-color: #7C5598;
+    background-color: #0460AE;
+    border-color: #0460AE;
 }
 
 .el-step__head.is-text.is-error{
@@ -217,15 +224,15 @@
 }
 
 .el-step__head.is-text.is-wait{
-    color: rgb(208, 191, 217);
+    color: rgb(191, 202, 217);
     background-color: #fff;
-    border-color: rgb(208, 191, 217);
+    border-color: rgb(191, 202, 217);
 }
 
 .el-step__head.is-text.is-process{
     color: #fff;
-    background-color: rgb(208, 191, 217);
-    border-color: rgb(208, 191, 217);
+    background-color: rgb(191, 202, 217);
+    border-color: rgb(191, 202, 217);
 }
 
 .el-step__main{
@@ -242,7 +249,7 @@
 
 .el-step__title.is-finish{
     font-weight: 700;
-    color: #7C5598;
+    color: #0460AE;
 }
 
 .el-step__title.is-error{
@@ -257,12 +264,12 @@
 
 .el-step__title.is-wait{
     font-weight: 400;
-    color: rgb(179, 151, 190);
+    color: rgb(151, 166, 190);
 }
 
 .el-step__title.is-process{
     font-weight: 700;
-    color: rgb(96, 72, 106);
+    color: rgb(72, 86, 106);
 }
 
 .el-step__description{
@@ -272,7 +279,7 @@
 }
 
 .el-step__description.is-finish{
-    color: #7C5598;
+    color: #0460AE;
 }
 
 .el-step__description.is-error{
@@ -284,11 +291,11 @@
 }
 
 .el-step__description.is-wait{
-    color: rgb(208, 191, 217);
+    color: rgb(191, 202, 217);
 }
 
 .el-step__description.is-process{
-    color: rgb(155, 131, 165);
+    color: rgb(131, 144, 165);
 }
 :root{
     /* Transition
@@ -376,5 +383,7 @@
     /* Carousel
   --------------------------*/
     /* Collapse
+  --------------------------*/
+    /* Transfer
   --------------------------*/
 }

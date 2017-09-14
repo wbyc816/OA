@@ -86,6 +86,8 @@
   --------------------------*/
     /* Collapse
   --------------------------*/
+    /* Transfer
+  --------------------------*/
 }
 
 .el-select-dropdown{}
@@ -97,24 +99,24 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: rgb(96, 72, 106);
+    color: rgb(72, 86, 106);
     height: 36px;
     line-height: 1.5;
     box-sizing: border-box;
     cursor: pointer
 }
 
-.el-select-dropdown__item.hover{
-    background-color: rgb(239, 228, 241)
+.el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
+    background-color: rgb(228, 231, 241)
 }
 
 .el-select-dropdown__item.selected{
     color: #fff;
-    background-color: #7C5598
+    background-color: #0460AE
 }
 
 .el-select-dropdown__item.selected.hover{
-    background-color: rgb(109, 75, 134)
+    background-color: rgb(4, 84, 153)
 }
 
 .el-select-dropdown__item span{
@@ -122,7 +124,7 @@
 }
 
 .el-select-dropdown__item.is-disabled{
-    color: rgb(208, 191, 217);
+    color: rgb(191, 202, 217);
     cursor: not-allowed
 }
 
@@ -215,5 +217,7 @@
     /* Carousel
   --------------------------*/
     /* Collapse
+  --------------------------*/
+    /* Transfer
   --------------------------*/
 }

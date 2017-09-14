@@ -86,6 +86,8 @@
   --------------------------*/
   /* Collapse
   --------------------------*/
+  /* Transfer
+  --------------------------*/
 }
 
 .el-loading-mask{
@@ -122,7 +124,7 @@
 }
 
 .el-loading-spinner .el-loading-text{
-  color: #7C5598;
+  color: #0460AE;
   margin: 3px 0;
   font-size: 14px;
 }
@@ -138,7 +140,7 @@
   stroke-dasharray: 90, 150;
   stroke-dashoffset: 0;
   stroke-width: 2;
-  stroke: #7C5598;
+  stroke: #0460AE;
   stroke-linecap: round;
 }
 
@@ -252,5 +254,7 @@
   /* Carousel
   --------------------------*/
   /* Collapse
+  --------------------------*/
+  /* Transfer
   --------------------------*/
 }

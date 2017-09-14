@@ -91,6 +91,8 @@
   --------------------------*/
   /* Collapse
   --------------------------*/
+  /* Transfer
+  --------------------------*/
 }
 
 .el-progress{
@@ -116,7 +118,7 @@
 
 .el-progress__text{
   font-size:14px;
-  color:rgb(96, 72, 106);
+  color:rgb(72, 86, 106);
   display: inline-block;
   vertical-align: middle;
   margin-left: 10px;
@@ -174,7 +176,7 @@
 .el-progress-bar__outer{
   height: 6px;
   border-radius: 100px;
-  background-color:rgb(239, 228, 241);
+  background-color:rgb(228, 231, 241);
   overflow: hidden;
   position: relative;
   vertical-align: middle;
@@ -186,10 +188,11 @@
   top: 0;
   height: 100%;
   border-radius: 2px 0 0 2px;
-  background-color:#7C5598;
+  background-color:#0460AE;
   text-align: right;
   border-radius: 100px;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .el-progress-bar__innerText{
@@ -294,5 +297,7 @@
   /* Carousel
   --------------------------*/
   /* Collapse
+  --------------------------*/
+  /* Transfer
   --------------------------*/
 }

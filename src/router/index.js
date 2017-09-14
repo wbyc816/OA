@@ -78,161 +78,161 @@ export default new Router({
 		path: '',
 		redirect: 'home'
 	},
-	{
-		path:'/doc',
-		name:'doc',
-		component:doc,
-		meta:{
-			breadcrumb:"Doc Submission",
-		},
-		children:[
-		{
-			path:'/doc/docSub',
-			name:'DocSub',
-			component:docSub
-		},
-		{
-			path:'/doc/approvalForm',
-			name:'ApprovalForm',
-			component:approvalForm,
-			meta:{
-				breadcrumb:"Approval Form",
-			}
-		},
-		{
-			path:'/doc/leisureTravel',
-			name:'leisureTravel',
-			component:leisureTravel,
-			meta:{
-				breadcrumb:"Leisure Travel",
-			}
-		},
-		{
-			path:'/doc/manuscriptPaper',
-			name:'manuscriptPaper',
-			component:manuscriptPaper,
-			meta:{
-				breadcrumb:"File Manuscript Paper",
-			}
-		},
-		{
-			path:'/doc/businessTrip',
-			name:'businessTrip',
-			component:business,
-			meta:{
-				breadcrumb:"Business Trip",
-			}
-		},
-		{
-			path:'/doc/mobSerReq',
-			name:'mobSerReq',
-			component:mobSerReq,
-			meta:{
-				breadcrumb:"Mobile Phone Services Request",
-			}
-		},
-		{
-			path:'/doc/businessCardReq',
-			name:'businessCardReq',
-			component:businessCardReq,
-			meta:{
-				breadcrumb:"Business Card Request Form",
-			}
-		},
-		{
-			path:'/doc/conVoucher',
-			name:'ConVoucher',
-			component:conVoucher,
-			meta:{
-				breadcrumb:"Concession Voucher Form",
-			}
-		},
-		{
-			path:'/doc/procureReq',
-			name:'ProcureReq',
-			component:procureReq,
-			meta:{
-				breadcrumb:"Procurement Requisition Form",
-			}
-		},
-		{
-			path:'/doc/reimburse',
-			name:'Reimburse',
-			component:reimburse,
-			meta:{
-				breadcrumb:"Reimbursement Form",
-			}
-		},
-		{
-			path:'/doc/payment',
-			name:'Payment',
-			component:payment,
-			meta:{
-				breadcrumb:"Payment Form",
-			}
-		},
-		{
-			path:'/doc/budget',
-			name:'Budget',
-			component:budget,
-			meta:{
-				breadcrumb:"Budget Form",
-			}
-		},
-		{
-			path:'/doc/contractBudget',
-			name:'ContractBudget',
-			component:contractBudget,
-			meta:{
-				breadcrumb:"Contract Budget Change",
-			}
-		},
-		{
-			path:'/doc/conChange',
-			name:'ContractChange',
-			component:conChange,
-			meta:{
-				breadcrumb:"Contract Budget Change ",
-			},
-		},
-		{
-			path:'/doc/conApprovalNew',
-			name:'ConApprovalNew',
-			component:conApprovalNew,
-			meta:{
-				breadcrumb:"Contract Approval New",
-			}
-		},
-		{
-			path:'/doc/conApproval',
-			name:'ConApproval',
-			component:conApproval,
-			meta:{
-				breadcrumb:"Contract Approval",
-			}
-		},
-		{
-			path:'/doc/docTracking',
-			name:'docTracking',
-			component:docTracking,
-			meta:{
-				breadcrumb:"Doc Tracking",
-			}
-		},
-		{
-			path:'/doc/paymentSearch',
-			name:'paymentSearch',
-			component:paymentSearch,
-			meta:{
-				breadcrumb:"Payment Search",
-			}
-		},
-		{
-			path:'/doc/',
-			redirect: '/doc/docSub'
-		},
-		]
-	},
+	// {
+	// 	path:'/doc',
+	// 	name:'doc',
+	// 	component:doc,
+	// 	meta:{
+	// 		breadcrumb:"Doc Submission",
+	// 	},
+	// 	children:[
+	// 	{
+	// 		path:'/doc/docSub',
+	// 		name:'DocSub',
+	// 		component:docSub
+	// 	},
+	// 	{
+	// 		path:'/doc/approvalForm',
+	// 		name:'ApprovalForm',
+	// 		component:approvalForm,
+	// 		meta:{
+	// 			breadcrumb:"Approval Form",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/leisureTravel',
+	// 		name:'leisureTravel',
+	// 		component:leisureTravel,
+	// 		meta:{
+	// 			breadcrumb:"Leisure Travel",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/manuscriptPaper',
+	// 		name:'manuscriptPaper',
+	// 		component:manuscriptPaper,
+	// 		meta:{
+	// 			breadcrumb:"File Manuscript Paper",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/businessTrip',
+	// 		name:'businessTrip',
+	// 		component:business,
+	// 		meta:{
+	// 			breadcrumb:"Business Trip",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/mobSerReq',
+	// 		name:'mobSerReq',
+	// 		component:mobSerReq,
+	// 		meta:{
+	// 			breadcrumb:"Mobile Phone Services Request",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/businessCardReq',
+	// 		name:'businessCardReq',
+	// 		component:businessCardReq,
+	// 		meta:{
+	// 			breadcrumb:"Business Card Request Form",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/conVoucher',
+	// 		name:'ConVoucher',
+	// 		component:conVoucher,
+	// 		meta:{
+	// 			breadcrumb:"Concession Voucher Form",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/procureReq',
+	// 		name:'ProcureReq',
+	// 		component:procureReq,
+	// 		meta:{
+	// 			breadcrumb:"Procurement Requisition Form",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/reimburse',
+	// 		name:'Reimburse',
+	// 		component:reimburse,
+	// 		meta:{
+	// 			breadcrumb:"Reimbursement Form",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/payment',
+	// 		name:'Payment',
+	// 		component:payment,
+	// 		meta:{
+	// 			breadcrumb:"Payment Form",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/budget',
+	// 		name:'Budget',
+	// 		component:budget,
+	// 		meta:{
+	// 			breadcrumb:"Budget Form",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/contractBudget',
+	// 		name:'ContractBudget',
+	// 		component:contractBudget,
+	// 		meta:{
+	// 			breadcrumb:"Contract Budget Change",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/conChange',
+	// 		name:'ContractChange',
+	// 		component:conChange,
+	// 		meta:{
+	// 			breadcrumb:"Contract Budget Change ",
+	// 		},
+	// 	},
+	// 	{
+	// 		path:'/doc/conApprovalNew',
+	// 		name:'ConApprovalNew',
+	// 		component:conApprovalNew,
+	// 		meta:{
+	// 			breadcrumb:"Contract Approval New",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/conApproval',
+	// 		name:'ConApproval',
+	// 		component:conApproval,
+	// 		meta:{
+	// 			breadcrumb:"Contract Approval",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/docTracking',
+	// 		name:'docTracking',
+	// 		component:docTracking,
+	// 		meta:{
+	// 			breadcrumb:"Doc Tracking",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/paymentSearch',
+	// 		name:'paymentSearch',
+	// 		component:paymentSearch,
+	// 		meta:{
+	// 			breadcrumb:"Payment Search",
+	// 		}
+	// 	},
+	// 	{
+	// 		path:'/doc/',
+	// 		redirect: '/doc/docSub'
+	// 	},
+	// 	]
+	// },
 	{
 		path:'/organizationStructure',
 		name:'organizationStructure',
@@ -320,11 +320,11 @@ export default new Router({
 		}
 	},
 	{
-		path:'/generalInfo/contactList',
+		path:'/contactList',
 		name:'contactList',
 		component:contactList,
 		meta:{
-			breadcrumb:"ContactList",
+			breadcrumb:"公司同仁",
 		}
 	},
 	{

@@ -86,6 +86,8 @@
   --------------------------*/
     /* Collapse
   --------------------------*/
+    /* Transfer
+  --------------------------*/
 }
 
 .el-carousel{
@@ -142,6 +144,7 @@
     transform: translateX(-50%);
     margin: 0;
     padding: 0;
+    z-index: 2;
 }
 
 .el-carousel__indicators--outside{
@@ -156,8 +159,26 @@
 }
 
 .el-carousel__indicators--outside button {
-    background-color: rgb(155, 131, 165);
+    background-color: rgb(131, 144, 165);
     opacity: 0.24;
+}
+
+.el-carousel__indicators--labels{
+    left: 0;
+    right: 0;
+    transform: none;
+    text-align: center;
+}
+
+.el-carousel__indicators--labels .el-carousel__button {
+    width: auto;
+    height: auto;
+    padding: 2px 18px;
+    font-size: 12px;
+}
+
+.el-carousel__indicators--labels .el-carousel__indicator {
+    padding: 6px 4px;
 }
 
 .el-carousel__indicator{
@@ -197,7 +218,8 @@
 .carousel-arrow-right-enter, .carousel-arrow-right-leave-active {
     transform: translateY(-50%) translateX(10px);
     opacity: 0;
-}:root{
+}
+:root{
     /* Transition
   -------------------------- */
     /* Colors
@@ -283,5 +305,7 @@
     /* Carousel
   --------------------------*/
     /* Collapse
+  --------------------------*/
+    /* Transfer
   --------------------------*/
 }

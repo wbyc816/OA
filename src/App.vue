@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :style="{'padding-top':$route.path=='/home'?'26px':'96px'}">
     <div class="mobieMenu" @click="menuToggle">
       <i class="iconfont icon-iconfuzhi"></i>
     </div>
@@ -53,7 +53,7 @@
         </div>
       </nav>
     </div>
-    <el-carousel height="429px" arrow="never">
+    <!-- <el-carousel height="429px" arrow="never" v-show="$route.path=='/home'">
       <el-carousel-item>
         <img src="./assets/images/bg4.jpg">
       </el-carousel-item>
@@ -63,10 +63,10 @@
       <el-carousel-item>
         <img src="./assets/images/bg5.jpg">
       </el-carousel-item>
-    </el-carousel>
-    <div class="container">
+    </el-carousel> -->
+    <div class="container" :class="{'childCon':!$route.path=='/home'}">
       <el-breadcrumb separator=" " v-show="breadcrumbShow">
-        <el-breadcrumb-item :to="{ path: '/' }"> <i class="iconfont icon-home home"></i> Home</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/' }"> <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: breadcrumb.path }" v-for="breadcrumb in breadcrumbs">{{breadcrumb.meta.breadcrumb}}</el-breadcrumb-item>
       </el-breadcrumb>
       <router-view></router-view>
@@ -83,7 +83,6 @@ import router from './router'
 Vue.directive('goto', {
   bind: function(el, binding) {
     el.addEventListener("click", function() {
-      console.log('111');
       if (binding.value.path) {
 
         if (new RegExp("^http").test(binding.value.path)) {
@@ -297,6 +296,9 @@ export default {
       scrollBanner: false
     }
   },
+  mounted(){
+
+  },
   methods: {
     handleSelect(key, keyPath) {
       this.menuToggle();
@@ -372,7 +374,7 @@ export default {
       } else if (document.body) {
         scrollTop = document.body.scrollTop;
       }
-      console.log(scrollTop)
+      // console.log(this.$route);
       if (scrollTop > 360) {
         this.scrollBanner = true;
       } else {
@@ -418,6 +420,7 @@ export default {
 <style lang="scss">
 $purple: #1465C0;
 $brown: #985D55;
+@import '../theme/index.css';
 @import './assets/styles/variables.scss';
 .el-breadcrumb__separator {
   width: 16px;

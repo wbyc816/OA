@@ -6,162 +6,279 @@
       </el-col>
       <el-col :span='19'>
         <el-card class="borderCard searchOptions">
-          <el-row :gutter="12" class="inputBox">
-            <el-col :span="7">
-              <el-input>
-                <template slot="prepend">Staff Name</template>
-              </el-input>
-            </el-col>
-            <el-col :span="7">
-              <el-input>
-                <template slot="prepend">Mobile No.</template>
-              </el-input>
-            </el-col>
-            <el-col :span="7">
-              <el-input>
-                <template slot="prepend">Fax No.</template>
-              </el-input>
-            </el-col>
-            <el-col :span="7">
-              <el-input>
-                <template slot="prepend">Direct Line</template>
-              </el-input>
-            </el-col>
-            <el-col :span="7">
-              <el-input>
-                <template slot="prepend">Email</template>
-              </el-input>
-            </el-col>
-            <el-col :span="3">
-              <el-button type="primary">Search</el-button>
-            </el-col>
-            <el-col :span="4">
-              <el-button type="primary">Group Contact</el-button>
-            </el-col>
+          <el-row :gutter="18" class="inputBox">
+            <el-form :model="searchForm" label-position="left" :rules="rules" ref="searchForm" label-width="100px" class="searchForm">
+              <el-col :span="9">
+                <el-form-item label="员工姓名" prop="name">
+                  <el-input :maxlength="20" v-model="searchForm.name">
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="9">
+                <el-form-item label="手机" prop="mobileNumber">
+                  <el-input v-model="searchForm.mobileNumber" :maxlength="11">
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="9">
+                <el-form-item label="工号" prop="workNo">
+                  <el-input v-model="searchForm.workNo" :maxlength="10">
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="9">
+                <el-form-item label="办公电话" prop="phoneNumber">
+                  <el-input v-model="searchForm.phoneNumber" :maxlength="11">
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="3">
+                <el-button type="primary" :disabled="searchLoading" @click.native="submitForm">搜索</el-button>
+              </el-col>
+            </el-form>
           </el-row>
         </el-card>
-        <el-table :data="searchData" class="myTable">      
-          <el-table-column prop="StaffName" label="Staff Name" width="110"></el-table-column>
-          <el-table-column prop="Company" label="Company" width="80"></el-table-column>
-          <el-table-column prop="Department" label="Department" width="100"></el-table-column>
-          <el-table-column prop="Position" label="Position" width="80"></el-table-column>
-          <el-table-column prop="DirectLine" label="Direct Line" width="125"></el-table-column>
-          <el-table-column prop="FaxNo" label="Fax No." width="100"></el-table-column>
-          <el-table-column prop="MobileNo" label="Mobile No." width="125"></el-table-column>
-          <el-table-column prop="Email" label="Email" width="140"></el-table-column>
-          <el-table-column prop="Location" label="Location"></el-table-column>
+        <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="showDetail">
+          <el-table-column prop="name" label="姓名" width="110"></el-table-column>
+          <el-table-column prop="workNo" label="工号" width="80"></el-table-column>
+          <el-table-column prop="workPlace" label="所属公司" width="140"></el-table-column>
+          <el-table-column prop="depts" label="部门" width="140"></el-table-column>
+          <el-table-column prop="jobtitle" label="职务" width="110"></el-table-column>
+          <el-table-column prop="phoneNumber" label="办公电话" width="160"></el-table-column>
+          <el-table-column prop="moblieNumber" label="手机"></el-table-column>
         </el-table>
+        <div class="pageBox" v-if="searchRes">
+          <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">
+          </el-pagination>
+        </div>
       </el-col>
     </el-row>
+    <el-dialog title="公司同仁详情" :visible.sync="dialogVisible" size="large"  class="myDialog detailDialog" :lock-scroll="false">
+      <el-row :gutter="20">
+        <el-col :span="18">
+          <h1 class="empName">{{empDetial.name}}</h1>
+          <dl>
+            <dt>基本信息</dt>
+            <dd><span>工号：</span>
+              <p>{{empDetial.workNo}}</p>
+            </dd>
+            <dd><span>所属公司：</span>
+              <p>{{empDetial.workPlace}}</p>
+            </dd>
+            <dd><span>部门：</span>
+              <p>{{empDetial.depts}}</p>
+            </dd>
+            <dd><span>职务：</span>
+              <p>{{empDetial.jobtitle}}</p>
+            </dd>
+            <dd><span>办公电话：</span>
+              <p>{{empDetial.phoneNumber}}</p>
+            </dd>
+            <dd><span>手机：</span>
+              <p>{{empDetial.moblieNumber}}</p>
+            </dd>
+            <dd><span>Email:</span>
+              <p>{{empDetial.workEmail}}</p>
+            </dd>
+          </dl>
+        </el-col>
+        <el-col :span="6">
+          <div class="photoBox">
+            <img src="../assets/images/Image97.png" alt="">
+          </div>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 <script>
-  import OrganList from '../components/organlist.component'
-  const searchData=[
-  {
-    'StaffName':'Sandy Wong',
-    'Company': 'HKA',
-    Department: 'HR&Admin',
-    Position:'Officer',
-    DirectLine:'(852)3467 6541',
-    FaxNo: '',
-    MobileNo: '(852)3467 6541',
-    Email: 'Sandy.wong@hkairlines.com',
-    Location: '',
-  },
-  {
-    'StaffName':'Mavis Mak',
-    'Company': 'HKA',
-    Department: 'HR&Admin',
-    Position:'Officer',
-    DirectLine:'(852)3467 6541',
-    FaxNo: '',
-    MobileNo: '(852)3467 6541',
-    Email: 'Sandy.wong@hkairlines.com',
-    Location: '',
-  },
-  {
-    'StaffName':'Luke Liu',
-    'Company': 'HKA',
-    Department: 'HR&Admin',
-    Position:'—',
-    DirectLine:'(852)3467 6541',
-    FaxNo: '',
-    MobileNo: '(852)3467 6541',
-    Email: 'Sandy.wong@hkairlines.com',
-    Location: '',
-  },
-  {
-    'StaffName':'Sandy Wong',
-    'Company': 'HKA',
-    Department: 'HR&Admin',
-    Position:'Officer',
-    DirectLine:'(852)3467 6541',
-    FaxNo: '',
-    MobileNo: '(852)3467 6541',
-    Email: 'Sandy.wong@hkairlines.com',
-    Location: '',
-  },
-  ]
-  export default{
-    data(){
-      return{
-        searchData,
-        
+import OrganList from '../components/organlist.component'
+import { mapGetters } from 'vuex'
+export default {
+  data() {
+    var validatePhone = (rule, value, callback) => {
+      if (value && value.length != 0) {
+        if (!(/^1[34578]\d{9}$/.test(value))) {
+          callback(new Error("手机号码格式有误"));
+        } else {
+          callback();
+        }
+      } else {
+        callback();
       }
+    };
+    return {
+      searchForm: {
+        name: '',
+        mobileNumber: '',
+        workNo: '',
+        phoneNumber: ''
+      },
+      rules: {
+        mobileNumber: [{ validator: validatePhone, trigger: 'blur,change' }]
+
+      },
+      dialogVisible: false
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'depts',
+      'userInfo',
+      'searchRes',
+      'queryDepId',
+      'depPageNumber',
+      'searchLoading',
+      'empDetial'
+    ])
+  },
+  created() {
+    this.$store.dispatch('getDeptList');
+    // this.$store.dispatch('setQueryDepId',this.userInfo.empId);
+    this.$store.dispatch('queryEmpList', { workNo: this.userInfo.workNo, });
+  },
+  components: {
+    OrganList
+  },
+  methods: {
+    handleCurrentChange(page) {
+      this.$store.dispatch('setQueryPage', page);
+      this.$store.dispatch('queryEmpList', {})
     },
-    components:{
-      OrganList
+    submitForm() {
+      this.$refs['searchForm'].validate((valid) => {
+        if (valid) {
+          this.$store.dispatch('setQueryPage', 1);
+          this.$store.dispatch('queryEmpList', this.searchForm);
+        } else {
+          return false;
+        }
+      });
     },
-    methods:{
-     
+    showDetail(row) {
+      this.dialogVisible = true;
+      this.$store.dispatch('getEmpDetail', row.empId);
+    },
+    handleClose() {
+
     }
   }
+}
+
 </script>
 <style lang='scss'>
-  $purple: #7C5598;
-  #contactList{
-    &>.el-row{
-      background: #fff;
-      .el-col-19{
-        position: relative;
-        .searchOptions{
-          box-shadow: none;
-          .el-card__body{
-            .el-col{
-              margin-top:13px;
-            }
+$main: #0460AE;
+#contactList {
+  .searchRes {
+    // min-height: 500px;
+    &:before {
+      display: none;
+    }
+  }
+  .pageBox {
+    overflow: hidden;
+    padding-right: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    .el-pagination {
+      float: right;
+    }
+  }
+  &>.el-row {
+    background: #fff;
+    margin-bottom: 50px;
+    .el-col-19 {
+      position: relative;
+      .searchOptions {
+        box-shadow: none;
+        margin-bottom: 45px;
+        .el-card__body {
+          .el-col {
+            // margin-top: 13px;
           }
         }
       }
     }
-    .inputBox{
-      .el-input-group__prepend{
-        width: 90px;
-        box-sizing: border-box;
-        color: #393939;
-        border: none;
-      }
-      button{
-        width: 100%;
-        height: 46px;
-      }
+  }
+  .inputBox {
+    padding-top: 20px;
+    .el-input-group__prepend {
+      width: 105px;
+      box-sizing: border-box;
+      color: #393939;
+      border: none;
     }
-    
-    .myTable{
-      .cell{
-        padding-left: 15px;
-      }
-      td{
-        height: 70px;
-      }
-      td.clickItem{
-        color:$purple;
-        cursor: pointer;
-      }
+    button {
+      width: 100%;
+      height: 46px;
     }
-    
   }
 
+  .myTable {
+    .cell {
+      padding-left: 15px;
+    }
+    td {
+      height: 80px;
+    }
+    .el-table__row {
+      cursor: pointer;
+    }
+  }
+  .detailDialog {
+    .el-dialog--large {
+      width: 750px;
+      .el-dialog__body {
+        padding: 30px 35px 35px;
+        .empName {
+          font-size: 18px;
+          color: $main;
+          border-bottom: 1px solid #F2F2F2;
+          padding-bottom: 12px;
+        }
+        dl {
+          dt {
+            font-size: 18px;
+            color: $main;
+            line-height: 45px;
+            padding-left: 14px;
+            position: relative;
+            &:before {
+              content: '';
+              position: absolute;
+              left: 0;
+              width: 4px;
+              height: 15px;
+              top: 50%;
+              margin-top: -8px;
+              background-color: $main;
+            }
+          }
+          dd {
+            line-height: 60px;
+
+            font-size: 15px;
+            color: #676767;
+            span {
+              display: inline-block;
+              width: 85px;
+            }
+            p {
+              display: inline-block;
+            }
+          }
+        }
+        .photoBox {
+          padding-top: 37px;
+          text-align: right;
+          font-size:0;
+          img{
+            max-width:100%;
+          }
+        }
+      }
+    }
+  }
+}
 
 </style>
