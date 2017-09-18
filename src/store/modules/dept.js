@@ -13,7 +13,7 @@ const state = {
 const actions = {
 
   //获取部门列表
-  getDeptList({ commit, rootState }, palyload) {
+  getDeptList({ commit, rootState }, payload) {
     if (!state.depts) {
       api.getDeptList()
         .then(res => {
@@ -22,17 +22,16 @@ const actions = {
     }
   },
   //按搜索条件查部门人员
-  queryEmpList({ commit, rootState }, palyload) {
+  queryEmpList({ commit, rootState }, payload) {
     if (!rootState.searchLoading) {
       commit(types.SET_SEARCH_LOADING, true, { root: true })
-      Object.keys(palyload).forEach(function(key) {
-        if (palyload[key].length == 0) {
-          delete palyload[key]
+      Object.keys(payload).forEach(function(key) {
+        if (payload[key] == '' || payload[key] == undefined || payload[key] == null) {
+          delete payload[key]
         }
       })
-      api.queryEmpList(Object.assign(palyload, { deptId: state.queryDepId, pageNumber: state.depPageNumber, pageSize: 10 }))
+      api.queryEmpList(Object.assign(payload, { deptId: state.queryDepId, pageNumber: state.depPageNumber, pageSize: 10 }))
         .then(res => {
-
           setTimeout(function() {
             commit(types.SET_SEARCH_LOADING, false, { root: true })
             commit(types.QUERY_EMP_LIST, res)
@@ -41,7 +40,7 @@ const actions = {
         }, res => {
           setTimeout(function() {
             commit(types.SET_SEARCH_LOADING, false, { root: true })
-            commit(types.QUERY_EMP_LIST, '')
+            // commit(types.QUERY_EMP_LIST, '')
           }, 300)
 
         })
@@ -49,16 +48,16 @@ const actions = {
 
   },
   //设置搜索部门
-  setQueryDepId({ commit }, palyload) {
-    commit(types.SET_QUERY_DEP_ID, palyload)
+  setQueryDepId({ commit }, payload) {
+    commit(types.SET_QUERY_DEP_ID, payload)
   },
   //设置分页
-  setQueryPage({ commit }, palyload) {
-    commit(types.SET_QUERY_PAGE, palyload)
+  setQueryPage({ commit }, payload) {
+    commit(types.SET_QUERY_PAGE, payload)
   },
   //获取人员详情
-  getEmpDetail({ commit, rootState }, palyload) {
-    api.getEmpDetail(palyload)
+  getEmpDetail({ commit, rootState }, payload) {
+    api.getEmpDetail(payload)
       .then(res => {
           commit(types.GET_EMP_DATAIL, res)
       }, res => {
@@ -87,11 +86,11 @@ const mutations = {
   [types.QUERY_EMP_LIST](state, res) {
     state.searchRes = res
   },
-  [types.SET_QUERY_DEP_ID](state, palyload) {
-    state.queryDepId = palyload
+  [types.SET_QUERY_DEP_ID](state, payload) {
+    state.queryDepId = payload
   },
-  [types.SET_QUERY_PAGE](state, palyload) {
-    state.depPageNumber = palyload
+  [types.SET_QUERY_PAGE](state, payload) {
+    state.depPageNumber = payload
   },
   [types.GET_EMP_DATAIL](state, res) {
     state.empDetial = res.data

@@ -1,22 +1,17 @@
 <template>
   <div id="app" :style="{'padding-top':$route.path=='/home'?'26px':'96px'}">
-    <div class="mobieMenu" @click="menuToggle">
-      <i class="iconfont icon-iconfuzhi"></i>
-    </div>
     <div class="topBar" :class="{'active':scrollBanner}">
-      <div class="chiBox">
-        <img src="./assets/images/chi.png" alt="">
-      </div>
       <div class="topNavbar">
         <div class="container">
           <a><i class="iconfont icon-1"></i> 简体</a>
           <a><i class="iconfont icon-shezhi"></i> 设置</a>
-          <a><i class="iconfont icon-user1"></i> 莫瑶瑶</a>
+          <router-link to="/HR"><i class="iconfont icon-user1"></i> 莫瑶瑶</router-link>
           <a><i class="iconfont icon-guanbi"></i> 登出</a>
         </div>
       </div>
       <nav class="navbar">
         <div class="container">
+          <img src="./assets/images/chi.png" alt="" class="navImgBg">
           <el-row>
             <el-col :span="8">
               <div class="sologo">
@@ -25,17 +20,16 @@
               </div>
             </el-col>
             <el-col :span="16">
-              <el-menu default-active="1" mode="horizontal" v-bind:class="{'open':mobieMenu}">
-                <el-menu-item index="1">首页</el-menu-item>
-                <el-menu-item index="5">个人中心</el-menu-item>
-                <el-menu-item index="2">我的工作</el-menu-item>
-                <el-menu-item index="3">业务系统</el-menu-item>
-                <el-menu-item index="4">公司同仁</el-menu-item>
+              <el-menu default-active="1" mode="horizontal" :router="true">
+                <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>
+                <el-menu-item :route="{path:'#'}" index="2">我的工作</el-menu-item>
+                <el-menu-item :route="{path:'#'}" index="3">业务系统</el-menu-item>
+                <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
               </el-menu>
             </el-col>
           </el-row>
         </div>
-        <div class="sub-menu" v-bind:class="{'open':shouSubMenu}" v-on:mouseleave="dropdownHidden()">
+        <!-- <div class="sub-menu" v-bind:class="{'open':shouSubMenu}" v-on:mouseleave="dropdownHidden()">
           <div class="container clearfix">
             <ul>
               <li v-for="(sub,index) in subMenu" ref="subMenu" :key="sub.name">
@@ -50,10 +44,10 @@
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
       </nav>
     </div>
-    <!-- <el-carousel height="429px" arrow="never" v-show="$route.path=='/home'">
+    <el-carousel height="429px" arrow="never" v-if="$route.path=='/home'">
       <el-carousel-item>
         <img src="./assets/images/bg4.jpg">
       </el-carousel-item>
@@ -63,7 +57,7 @@
       <el-carousel-item>
         <img src="./assets/images/bg5.jpg">
       </el-carousel-item>
-    </el-carousel> -->
+    </el-carousel>
     <div class="container" :class="{'childCon':!$route.path=='/home'}">
       <el-breadcrumb separator=" " v-show="breadcrumbShow">
         <el-breadcrumb-item :to="{ path: '/' }"> <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
@@ -134,160 +128,15 @@ export default {
                 { "name": "Personal", "path": "#" },
                 { "name": "Tax Return", "path": "#" }
               ]
-            },
-            {
-              "name": "General Info",
-              "path": "/generalInfo",
-              "child": [
-                { "name": "Forms", "path": "/generalInfo/forms" },
-                { "name": "Policies", "path": "#" },
-                { "name": "Training", "path": "#" },
-                { "name": "Contact List", "path": "/generalInfo/contactList" },
-                { "name": "Company News", "path": "/generalInfo/news" },
-                { "name": "E-School", "path": "#" },
-                { "name": "Daily News & Ads Update", "path": "#" },
-                { "name": "Department News", "path": "#" },
-                { "name": "Notice", "path": "#" },
-                { "name": "Meeting Reservation", "path": "/generalInfo/MeetingReservation" },
-                { "name": "Crew Evaluation", "path": "#" },
-                { "name": "Task Assignment", "path": "/generalInfo/taskAssignment" },
-                { "name": "Duty List", "path": "#" },
-                { "name": "Leave & Duty Trip", "path": "/generalInfo/leaveDutyTrip" },
-                { "name": "Staff Movement", "path": "#" },
-                { "name": "MyBenefit", "path": "/generalInfo/myBenefit" }
-              ]
-            },
-            {
-              "name": "Doc Approval Sys",
-              "path": "/doc",
-              "child": [
-                { "name": "Doc Submission", "path": "/doc/docSub" },
-                { "name": "Doc Tracking", "path": "/doc/docTracking" },
-                { "name": "Batch Approval ", "path": "#" },
-                { "name": "Action List", "path": "#" },
-                { "name": "Follow Up List", "path": "#" },
-                { "name": "Doc Searching", "path": "#" },
-                { "name": "Payment Searching", "path": "/doc/paymentSearch" },
-                { "name": "Doc Report", "path": "#" },
-                { "name": "System Managment", "path": "#" },
-                { "name": "Doc Archive", "path": "#" },
-                { "name": "Reimbursement Summary", "path": "#" },
-                { "name": "Outstanding Payment", "path": "#" }
-              ]
-            },
-            {
-              "name": "Staff Center",
-              "path": "/staffCenter",
-              "child": [
-                { "name": "My Account", "path": "#" },
-                { "name": "Public Mailbox", "path": "#" },
-                { "name": "IT Service", "path": "/staffCenter/jobRequest" },
-                { "name": "Flight Information", "path": "/staffCenter/flightSearch" },
-                { "name": "Booking Hotel", "path": "#" },
-                { "name": "Sign Dest", "path": "#" },
-                { "name": "My Attendance", "path": "#" },
-                { "name": "Attendance Monitor", "path": "#" },
-                { "name": "Appeal Searching", "path": "#" },
-                { "name": "Appeal Handling", "path": "#" },
-                { "name": "Contract Budget Info", "path": "#" },
-                { "name": "Budget Monitor", "path": "#" },
-                { "name": "Egress Apply", "path": "#" },
-                { "name": "Egress Apply Handle", "path": "#" },
-                { "name": "Attendance List", "path": "#" }
-              ]
-            },
-            {
-              "name": "Cabin Crew Center",
-              "path": "#",
-              "child": [
-                { "name": "Taxi Claim Request", "path": "#" },
-                { "name": "Taxi Claim Management", "path": "#" },
-              ]
             }
           ]
         },
         {
           "menus": [{
-              "name": "CMS",
-              "path": "http://ui.loogk.com/hkairlines/CMS",
-              "child": []
-            },
-            {
-              "name": "SOMS",
-              "path": "http://ui.loogk.com/hkairlines/SOBack",
-              "child": []
-            },
-            {
-              "name": "E-LIBRARY",
-              "path": "http://ui.loogk.com/hkairlines/ELibrary",
-              "child": []
-            },
-            {
-              "name": "PNS",
-              "path": "http://ui.loogk.com/hkairlines/PNS",
-              "child": []
-            },
-            {
-              "name": "E-LIBMS",
-              "path": "http://ui.loogk.com/hkairlines/ELibraryBack",
-              "child": []
-            },
-            {
-              "name": "PMS",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "PMP",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "SNS",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "FCS",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "SSO",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "FOP",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "PSMS",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "HNA Mail System",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "PDSS",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "IFNS",
-              "path": "#",
-              "child": []
-            },
-            {
-              "name": "AMS",
-              "path": "#",
-              "child": []
-            }
-          ]
+            "name": "CMS",
+            "path": "http://ui.loogk.com/hkairlines/CMS",
+            "child": []
+          }]
         }
       ],
       breadcrumbs: [],
@@ -296,7 +145,7 @@ export default {
       scrollBanner: false
     }
   },
-  mounted(){
+  mounted() {
 
   },
   methods: {
@@ -451,18 +300,7 @@ $brown: #985D55;
   left: 0;
   width: 100%;
   z-index: 999;
-  .chiBox {
-    width: 1200px;
-    margin: 0 auto;
-    position: absolute;
-    opacity: 0.14;
-    box-sizing: border-box;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding-left: 265px;
-    z-index: 2;
-  }
+
   &.active {
     .topNavbar {
       background-color: #07A9E9;
@@ -571,6 +409,17 @@ $brown: #985D55;
   transition-property: height;
   transition-delay: 0s;
   transition-timing-function: 'ease-in-out'; // margin-bottom: 15px;
+  .container {
+    position: relative;
+    .navImgBg {
+      position: absolute;
+      opacity: 0.14;
+      box-sizing: border-box;
+      top: -25px;
+      left: 265px;
+      z-index: 2;
+    }
+  }
   ul {
     float: right;
     box-shadow: none;

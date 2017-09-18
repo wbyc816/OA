@@ -14,7 +14,7 @@ const state = {
     "deptNames": null,
     "jobtitle": "专员",
     "workNo": "A00457",
-    "empId": "E069EA4C9C233D36FF9C7F329BC08FF1",
+    "empId": "777669AF68DBCCABC30C3B6BCAA81825",
     "isFirstLogin": 0,
     "levelNum": null,
     "deptParentId": null

@@ -1,10 +1,10 @@
 <template>
   <div id="home">
     <!-- <el-carousel height="347px" arrow="never">
-			<el-carousel-item v-for="o in 4">
-				<img src="../assets/images/Intersection16.png">
-			</el-carousel-item>
-		</el-carousel> -->
+      <el-carousel-item v-for="o in 4">
+        <img src="../assets/images/Intersection16.png">
+      </el-carousel-item>
+    </el-carousel> -->
     <el-row :gutter="20" class="wrapRow">
       <el-col :span="16">
         <ul class="list-group" v-sortable="optionsDragLeft">
@@ -179,21 +179,21 @@
                 <el-col :sm="10" :xs="24">
                   <img src="../assets/images/bg1.png" alt="">
                   <!-- <p class="head">Personnel Statistics</p>
-									<el-row>
-										<el-col :span="12" :xs="12">
-											<ul>
-												<li v-for="(dep,index) in piedata.labels">
-													<span :style="{background:piedata.datasets[0].backgroundColor[index]}"></span>
-													{{dep}}:&nbsp;{{piedata.datasets[0].data[index]}}
-												</li>
-											</ul>
-										</el-col>
-										<el-col :span="12" :xs="12">
-											<my-pie :data="piedata" :options="pieoption"></my-pie>
-											<p>Total: 4516 Person</p>
-											<p>Last Update: 2016-12-25</p>
-										</el-col>
-									</el-row> -->
+                  <el-row>
+                    <el-col :span="12" :xs="12">
+                      <ul>
+                        <li v-for="(dep,index) in piedata.labels">
+                          <span :style="{background:piedata.datasets[0].backgroundColor[index]}"></span>
+                          {{dep}}:&nbsp;{{piedata.datasets[0].data[index]}}
+                        </li>
+                      </ul>
+                    </el-col>
+                    <el-col :span="12" :xs="12">
+                      <my-pie :data="piedata" :options="pieoption"></my-pie>
+                      <p>Total: 4516 Person</p>
+                      <p>Last Update: 2016-12-25</p>
+                    </el-col>
+                  </el-row> -->
                 </el-col>
                 <el-col :sm="7" :xs="12">
                   <P class="myLink">今日请假</P>
@@ -269,25 +269,25 @@
             </el-card>
           </li>
           <!-- <li class="list-group-item" :class="{'dragActive':showDrag[4]}">
-						<p class="dragHead"  v-on:mouseover="dragShow(4)" v-on:mouseleave="dragHide(4)">
-							<span v-show="showInfo[4]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span> 					
-							<i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[4]=true" v-on:mouseleave="showInfo[4]=false" v-show="showDrag[4]"></i> 	
-						</p>
-						<el-card class="space">
-							<span slot="header">My Space</span>
-							<el-row  v-for="weibo in weibos">
-								<weibo :weibo='weibo'></weibo>
-							</el-row>
-							<el-input placeholder="Share Something" class="space-bottom">
-								<img slot="prepend" src="../assets/images/Image198.png">
-								<div slot="append">
-									<i class="iconfont icon-smile"></i>
-									<i class="iconfont icon-pics"></i>
-									<el-button type="primary">Post</el-button>
-								</div>
-							</el-input>
-						</el-card>
-					</li> -->
+            <p class="dragHead"  v-on:mouseover="dragShow(4)" v-on:mouseleave="dragHide(4)">
+              <span v-show="showInfo[4]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>          
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[4]=true" v-on:mouseleave="showInfo[4]=false" v-show="showDrag[4]"></i>  
+            </p>
+            <el-card class="space">
+              <span slot="header">My Space</span>
+              <el-row  v-for="weibo in weibos">
+                <weibo :weibo='weibo'></weibo>
+              </el-row>
+              <el-input placeholder="Share Something" class="space-bottom">
+                <img slot="prepend" src="../assets/images/Image198.png">
+                <div slot="append">
+                  <i class="iconfont icon-smile"></i>
+                  <i class="iconfont icon-pics"></i>
+                  <el-button type="primary">Post</el-button>
+                </div>
+              </el-input>
+            </el-card>
+          </li> -->
         </ul>
       </el-col>
       <el-col :span="8" class="sideBox">
@@ -309,26 +309,31 @@
               <span v-show="showInfo[6]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[6]=true" v-on:mouseleave="showInfo[6]=false" v-show="showDrag[6]"></i>
             </p>
-            <el-menu mode="vertical" default-active="1" class="duty">
-              <el-menu-item-group title="今日值班">
-                <el-submenu index="1">
-                  <template slot="title">IT服务部</template>
-                  <el-menu-item index="2-1">莫文 : 138 4564 7841</el-menu-item>
-                  <!-- <el-menu-item index="1-1">Doc Searching</el-menu-item> -->
-                </el-submenu>
-                <el-submenu index="2">
-                  <template slot="title">地面服务部</template>
-                  <el-menu-item index="2-1">莫文耀 : 138 4164 7841</el-menu-item>
-                  <el-menu-item index="2-2">刘莉: 133 6415 57871</el-menu-item>
-                  <el-menu-item index="2-3">王立伟 : 134 3641 8874</el-menu-item>
-                  <el-menu-item index="2-4">王天峰 : 133 1248 4774</el-menu-item>
-                </el-submenu>
-                <el-submenu index="3">
-                  <template slot="title">货运部</template>
-                  <el-menu-item index="3-1">宋丽萍：135 4887 2561</el-menu-item>
-                </el-submenu>
-              </el-menu-item-group>
-            </el-menu>
+            <el-card class="duty">
+              <div slot="header">今日值班
+                <router-link to="#">更多</router-link>
+              </div>
+              <el-menu mode="vertical" default-active="1">
+                <el-menu-item-group>
+                  <el-submenu index="1">
+                    <template slot="title">IT服务部</template>
+                    <el-menu-item index="2-1">莫文 : 138 4564 7841</el-menu-item>
+                    <!-- <el-menu-item index="1-1">Doc Searching</el-menu-item> -->
+                  </el-submenu>
+                  <el-submenu index="2">
+                    <template slot="title">地面服务部</template>
+                    <el-menu-item index="2-1">莫文耀 : 138 4164 7841</el-menu-item>
+                    <el-menu-item index="2-2">刘莉: 133 6415 57871</el-menu-item>
+                    <el-menu-item index="2-3">王立伟 : 134 3641 8874</el-menu-item>
+                    <el-menu-item index="2-4">王天峰 : 133 1248 4774</el-menu-item>
+                  </el-submenu>
+                  <el-submenu index="3">
+                    <template slot="title">货运部</template>
+                    <el-menu-item index="3-1">宋丽萍：135 4887 2561</el-menu-item>
+                  </el-submenu>
+                </el-menu-item-group>
+              </el-menu>
+            </el-card>
           </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[7]}">
             <p class="dragHead" v-on:mouseover="dragShow(7)" v-on:mouseleave="dragHide(7)">
@@ -352,23 +357,23 @@
             </el-card>
           </li>
           <!-- <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
-						<p class="dragHead"  v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
-							<span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span> 					
-							<i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i> 	
-						</p>
-						<el-card class="flightSearch">
-							<span slot="header">Flight Search</span>
-							<el-radio-group v-model="tripType">
-								<el-radio label="date">One Way</el-radio>
-								<el-radio label="daterange">Round Trip</el-radio>
-							</el-radio-group>
-							<el-input v-model="tripFrom" placeholder="From">
-							</el-input>
-							<el-input v-model="tripTo"  placeholder="To" class="pullRight">
-							</el-input>
-							<search-date :type="tripType"></search-date>
-						</el-card>
-					</li> -->
+            <p class="dragHead"  v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
+              <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>          
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>  
+            </p>
+            <el-card class="flightSearch">
+              <span slot="header">Flight Search</span>
+              <el-radio-group v-model="tripType">
+                <el-radio label="date">One Way</el-radio>
+                <el-radio label="daterange">Round Trip</el-radio>
+              </el-radio-group>
+              <el-input v-model="tripFrom" placeholder="From">
+              </el-input>
+              <el-input v-model="tripTo"  placeholder="To" class="pullRight">
+              </el-input>
+              <search-date :type="tripType"></search-date>
+            </el-card>
+          </li> -->
           <li class="list-group-item" :class="{'dragActive':showDrag[10]}">
             <p class="dragHead" v-on:mouseover="dragShow(10)" v-on:mouseleave="dragHide(10)">
               <span v-show="showInfo[10]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
@@ -552,7 +557,7 @@ export default {
 
 </script>
 <style lang="scss">
-$purple: #0460AE;
+$main: #0460AE;
 $brown: #985D55;
 $lan:#0460AE;
 
@@ -563,7 +568,7 @@ $lan:#0460AE;
       position: relative;
       .el-card,
       .el-menu {
-        border: 1px solid transparent;
+        // border: 1px solid transparent;
         &.personnel {
           border-bottom-width: 0;
         }
@@ -585,23 +590,33 @@ $lan:#0460AE;
         }
         .handleDrag {
           padding: 10px 0 10px 5px;
-          color: $purple;
+          color: $main;
           font-size: 20px;
           cursor: move;
         }
       }
     }
-    .dragActive {
-      .el-card,
-      >.el-menu {
+    // .dragActive {
 
-        border-color: $purple;
-        &.personnel {
-          border-bottom-width: 1px;
-          margin-bottom: 19px;
-        }
-      }
-    }
+    //   position: relative;
+    //   &:before {
+    //     content: '';
+    //     position: absolute;
+    //     width: 100%;
+    //     height: 100%;
+    //     top: 0;
+    //     left: 0;
+    //     border: 1px solid $main;
+    //   }
+    //   .el-card,
+    //   >.el-menu {
+
+    //     &.personnel {
+    //       border-bottom-width: 1px;
+    //       margin-bottom: 19px;
+    //     }
+    //   }
+    // }
   }
   .el-carousel {
     box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16);
@@ -621,7 +636,7 @@ $lan:#0460AE;
         }
         &.is-active {
           button {
-            background: $purple;
+            background: $main;
           }
         }
       }
@@ -643,14 +658,22 @@ $lan:#0460AE;
   .news {
     padding: 0;
     .el-card__header {
-      width: 220px;
+      width: 236px;
       padding: 6px 0 6px 15px;
+      border-bottom: none;
+      line-height: 35px;
+      font-size: 18px;
+      color: #151515;
+      background-color: #F7F7F7;
+    }
+    .el-card__body {
+      padding: 0;
     }
     .el-tab-pane {
       &>div {
         border-top: 1px solid #F2F2F2;
         padding-left: 15px;
-        height: 62px;
+        height: 64px;
         @media (max-width: 768px) {
           padding-left:0
         }
@@ -670,7 +693,7 @@ $lan:#0460AE;
             top: 1px;
             right: 0;
             font-size: 12px;
-            background: $purple;
+            background: $main;
             color: #fff;
             border-radius: 3px;
             padding: 0 2px;
@@ -682,7 +705,7 @@ $lan:#0460AE;
           &>span {
             float: right;
             i {
-              color: $purple;
+              color: $main;
             }
             span {
               padding: 0 7px 0 5px;
@@ -772,7 +795,7 @@ $lan:#0460AE;
         &>.el-col:nth-child(3) {
           p,
           li {
-            color: $purple;
+            color: $main;
           }
         }
       }
@@ -786,7 +809,7 @@ $lan:#0460AE;
         margin-bottom: 30px;
       }
       .header {
-        color: $purple;
+        color: $main;
         font-size: 16px;
         margin-bottom: 15px;
       }
@@ -805,18 +828,18 @@ $lan:#0460AE;
         div {
           display: flex;
           position: relative;
-          padding: 15px 0 0 50px;
+          padding: 10px 0 0 50px;
           margin: 0 10px;
           height: 40px;
           flex-direction: column;
           justify-content: space-between;
           border-top: 1px solid #F2F2F2;
           i:first-child {
-            color: $purple;
+            color: $main;
             font-size: 40px;
             position: absolute;
             left: 0;
-            bottom: -4px;
+            bottom: -10px;
             &.icon-plane {
               background: #0460ae;
               color: #fff;
@@ -833,7 +856,7 @@ $lan:#0460AE;
           }
           span,
           p {
-            color: $purple;
+            color: $main;
             font-size: 15px;
           }
         }
@@ -932,13 +955,13 @@ $lan:#0460AE;
               font-size: 16px;
               margin: 0 0 0 10px;
               height: 38px;
-              background: $purple;
+              background: $main;
               color: #fff;
               padding: 10px 25px;
             }
             i {
               font-size: 30px;
-              color: $purple;
+              color: $main;
               padding: 0 3px;
               vertical-align: middle;
               display: table-cell;
@@ -963,11 +986,29 @@ $lan:#0460AE;
   }
   .duty {
     margin-bottom: 20px;
+    .el-card__header {
+      a {
+        float: right;
+        color: #676767;
+        font-size: 14px;
+        line-height: 24px;
+      }
+    }
+    .el-menu-item-group__title {
+      display: none;
+    }
+    .el-card__body {
+      padding: 0;
+      .el-submenu__title {
+        border-bottom: 1px solid #F2F2F2;
+      }
+    }
     .el-submenu.is-opened {
       .el-submenu__title {
-        color: $purple;
+        color: $main;
       }
       .el-menu {
+        border-bottom: 1px solid #F2F2F2;
         li:hover {
           cursor: auto;
         }
@@ -986,10 +1027,15 @@ $lan:#0460AE;
       padding-left: 14px;
       border-bottom: 1px solid #f2f2f2;
     }
+    .el-card__body {
+      padding: 0;
+    }
     .el-menu-item {
+      border-bottom: 1px solid #f2f2f2;
+      font-size: 16px;
       i:first-child {
         font-size: 23px;
-        margin-right: 10px;
+        margin-right: 15px;
         color: $color;
         vertical-align: middle;
         &.icon-youhui {
@@ -998,6 +1044,10 @@ $lan:#0460AE;
         &.icon-mail {
           vertical-align: top;
         }
+      }
+      .el-icon-arrow-right {
+        float: right;
+        line-height: 56px;
       }
     }
     .el-menu-item:hover {
@@ -1014,8 +1064,8 @@ $lan:#0460AE;
     }
   }
   .Workbench {
-    padding: 12px 0 0;
-    @include linkList($purple);
+    padding: 0;
+    @include linkList($main);
   }
   .mailbox {
     padding: 0;
@@ -1044,7 +1094,7 @@ $lan:#0460AE;
     }
   }
   .flightStatus {
-    padding: 13px 0 20px;
+    padding: 0 0 20px;
     .el-card__header {
       padding-left: 12px;
       border-bottom: 1px solid #F2F2F2;
@@ -1064,7 +1114,9 @@ $lan:#0460AE;
         .el-radio-button {
           margin: 0 0 0 6px;
           .el-radio-button__inner {
-            padding: 14px 29px;
+            padding: 0 30px;
+            line-height: 45px;
+            height: 45px;
           }
         }
         @media (max-width:1200px) {
@@ -1100,8 +1152,8 @@ $lan:#0460AE;
         width: 101px;
         height: 46px;
         color: #fff;
-        background: $purple;
-        border-color: $purple;
+        background: $main;
+        border-color: $main;
       }
     }
   }

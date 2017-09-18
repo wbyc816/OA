@@ -10,6 +10,7 @@ import './assets/fonts/iconfont.css'
 import './assets/fonts/iconfont.js'
 import './filters/filters.js'
 import pdfjsLib from 'pdfjs-dist'
+import './common/util.js'
 
 import store from  './store'
 Vue.use(ElementUI)
