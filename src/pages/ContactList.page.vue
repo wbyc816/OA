@@ -41,19 +41,19 @@
         <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="showDetail">
           <el-table-column prop="name" label="姓名" width="110"></el-table-column>
           <el-table-column prop="workNo" label="工号" width="80"></el-table-column>
-          <el-table-column prop="workPlace" label="所属公司" width="140"></el-table-column>
-          <el-table-column prop="depts" label="部门" width="140"></el-table-column>
-          <el-table-column prop="jobtitle" label="职务" width="110"></el-table-column>
-          <el-table-column prop="phoneNumber" label="办公电话" width="160"></el-table-column>
+          <el-table-column prop="workPlace" label="所属公司" width="150"></el-table-column>
+          <el-table-column prop="depts" label="部门" width="150"></el-table-column>
+          <el-table-column prop="jobtitle" label="职务" width="150"></el-table-column>
+          <el-table-column prop="phoneNumber" label="办公电话"></el-table-column>
           <el-table-column prop="moblieNumber" label="手机"></el-table-column>
         </el-table>
-        <div class="pageBox" v-if="searchRes">
+        <div class="pageBox" v-show="searchRes.empVoList">
           <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">
           </el-pagination>
         </div>
       </el-col>
     </el-row>
-    <el-dialog title="公司同仁详情" :visible.sync="dialogVisible" size="large"  class="myDialog detailDialog" :lock-scroll="false">
+    <el-dialog title="公司同仁详情" :visible.sync="dialogVisible" size="large" class="myDialog detailDialog" :lock-scroll="false">
       <el-row :gutter="20">
         <el-col :span="18">
           <h1 class="empName">{{empDetial.name}}</h1>
@@ -66,7 +66,7 @@
               <p>{{empDetial.workPlace}}</p>
             </dd>
             <dd><span>部门：</span>
-              <p>{{empDetial.depts}}</p>
+              <p v-if="empDetial.deptVo">{{empDetial.deptVo.dept+" / "+empDetial.deptVo.fatherDept}}</p>
             </dd>
             <dd><span>职务：</span>
               <p>{{empDetial.jobtitle}}</p>
@@ -129,7 +129,8 @@ export default {
       'queryDepId',
       'depPageNumber',
       'searchLoading',
-      'empDetial'
+      'empDetial',
+      'organLoading'
     ])
   },
   created() {
@@ -142,8 +143,10 @@ export default {
   },
   methods: {
     handleCurrentChange(page) {
-      this.$store.dispatch('setQueryPage', page);
-      this.$store.dispatch('queryEmpList', {})
+      if (this.searchRes.status == '0') {
+        this.$store.dispatch('setQueryPage', page);
+        this.$store.dispatch('queryEmpList', {})
+      }
     },
     submitForm() {
       this.$refs['searchForm'].validate((valid) => {
@@ -189,6 +192,7 @@ $main: #0460AE;
     margin-bottom: 50px;
     .el-col-19 {
       position: relative;
+      padding-left: 15px;
       .searchOptions {
         box-shadow: none;
         margin-bottom: 45px;
@@ -219,7 +223,7 @@ $main: #0460AE;
       padding-left: 15px;
     }
     td {
-      height: 80px;
+      height: 60px;
     }
     .el-table__row {
       cursor: pointer;
@@ -271,9 +275,9 @@ $main: #0460AE;
         .photoBox {
           padding-top: 37px;
           text-align: right;
-          font-size:0;
-          img{
-            max-width:100%;
+          font-size: 0;
+          img {
+            max-width: 100%;
           }
         }
       }

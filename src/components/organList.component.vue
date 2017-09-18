@@ -1,5 +1,5 @@
 <template>
-  <div class="organlist">
+  <div class="organlist" v-loading.body="organLoading">
     <el-menu mode="vertical" :router="false" class="topMenu">
       <my-menu-item :depts="depts" v-if="depts.length>0"></my-menu-item>
     </el-menu>
@@ -13,17 +13,30 @@ export default {
     MyMenuItem
   },
   data() {
-    return {}
+    return {
+      organLoading: true
+    }
   },
   created() {
-    console.log(this.depts)
+    if(this.depts != '' || this.depts != undefined || this.depts != null){
+      this.organLoading = false;
+    }
+  },
+  mounted(){
+    
   },
   computed: {
     ...mapGetters([
       'depts'
     ])
   },
-  watch: {},
+  watch: {
+    depts: function(newValue) {
+      if (newValue != '' || newValue != undefined || newValue != null) {
+        this.organLoading = false;
+      }
+    }
+  },
 }
 
 </script>
@@ -50,9 +63,10 @@ $sub:#1465C0;
     position: relative; // padding: 0 8px;
     padding-right: 3px;
     box-shadow: none;
-    height: 1000px;
+    height: 800px;
     overflow-y: auto;
     overflow-x: hidden;
+    padding-bottom:250px;
     &::-webkit-scrollbar-track {
       border-radius: 10px;
       background-color: transparent;
@@ -121,9 +135,9 @@ $sub:#1465C0;
                                 >.el-submenu__title {
                                   padding: 0 10px 0 60px !important;
                                 }
-                                >.el-menu{
-                                  >.menu-wrapper{
-                                    >.el-menu-item{
+                                >.el-menu {
+                                  >.menu-wrapper {
+                                    >.el-menu-item {
                                       padding-left: 80px!important;
                                     }
                                   }

@@ -32,7 +32,7 @@ export default {
     selDep(item) {
       // this.selItem=item;
       this.$store.dispatch('setQueryDepId',item.id);
-      if(item.levelNum>=3){
+      if(item.levelNum>=30){
         this.$store.dispatch('setQueryPage',1);
         this.$store.dispatch('queryEmpList',{})
       }
