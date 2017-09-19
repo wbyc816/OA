@@ -8,6 +8,7 @@ import doc from 'pages/Doc-Approval'
 import docSub from 'pages/docSub/docSub.page'
 import docTracking from 'pages/docSub/docTracking.page'
 import paymentSearch from 'pages/docSub/paymentSearch.page'
+import docDetail from 'pages/docSub/docDetail.page'
 
 import approvalForm from 'pages/docSub/approvalForm.page'
 import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
@@ -251,14 +252,22 @@ export default new Router({
         // 			breadcrumb:"Contract Approval",
         // 		}
         // 	},
-        // 	{
-        // 		path:'/doc/docTracking',
-        // 		name:'docTracking',
-        // 		component:docTracking,
-        // 		meta:{
-        // 			breadcrumb:"Doc Tracking",
-        // 		}
-        // 	},
+        	{
+        		path:'/doc/docTracking',
+        		name:'docTracking',
+        		component:docTracking,
+        		meta:{
+        			breadcrumb:"公文追踪",
+        		}
+        	},
+            {
+                path:'/doc/docDetail/:id',
+                name:'docDetail',
+                component:docDetail,
+                meta:{
+                    breadcrumb:"公文详情",
+                }
+            },
         // 	{
         // 		path:'/doc/paymentSearch',
         // 		name:'paymentSearch',

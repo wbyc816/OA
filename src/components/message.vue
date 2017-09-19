@@ -1,13 +1,13 @@
 <template>
-    <a class='message' @click='route()'>
+    <router-link class='message' :to="data.link">
       <span class='logo' :style='{backgroundColor:data.color}'>
         <i class='iconfont' :class='data.font'></i>
       </span>
-      <span class='text text-tilte' v-text='data.text'></span>
+      <span class='text text-tilte' v-text='data.text'>{{data.value}}</span>
       <span class='text text-type' :class='myType' v-text=''>
         {{textChg}}
       </span>
-    </a>
+    </router-link>
 </template>
 <style scoped lang='scss'>
   .message{
@@ -118,6 +118,7 @@
         },
         methods:{
           route(){
+            this.routerP
           }
         }
     }

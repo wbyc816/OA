@@ -416,12 +416,12 @@ import MessageCenter from '../components/message'
 import Weibo from '../components/weibo'
 import DocList from '../components/doc'
 const msgs = [
-  { "type": "work", "color": "#0460AE", "text": "待签批公文:31", "font": "icon-sousuo" },
-  { "type": "work", "color": "#0460AE", "text": "跟踪中公文:33", "font": "icon-sousuo" },
-  { "type": "ss", "color": "#BE3B7F", "text": "邮件通知:5", "font": "icon-gongwen" },
-  { "type": "work", "color": "#0460AE", "text": "公文超时:2", "font": "icon-sousuo" },
-  { "type": "message", "color": "#51449C", "text": "生日提醒:3", "font": "icon-icon04" },
-  { "type": "ss", "color": "#BE3B7F", "text": "会议通知:3", "font": "icon-gongwen" },
+  { "type": "work", "color": "#0460AE", "text": "待签批公文:", "value":"31", "font": "icon-sousuo","link":"" },
+  { "type": "work", "color": "#0460AE", "text": "跟踪中公文:","value":"", "font": "icon-sousuo","link":"/doc/docTracking"},
+  { "type": "ss", "color": "#BE3B7F", "text": "邮件通知:","value":"", "font": "icon-gongwen" ,"link":"" },
+  { "type": "work", "color": "#0460AE", "text": "公文超时:","value":"", "font": "icon-sousuo" ,"link":"" },
+  { "type": "message", "color": "#51449C", "text": "生日提醒:","value":"", "font": "icon-icon04" ,"link":"" },
+  { "type": "ss", "color": "#BE3B7F", "text": "会议通知:", "font": "icon-gongwen" ,"link":"" },
 ];
 const piedata = {
   labels: ['Airport Services', 'Cockpit', 'Cabin', 'HQ Staff', 'Outport Others', 'Outport China', 'MRO'],

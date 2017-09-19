@@ -2,46 +2,40 @@
   <div id="docTracking">
     <el-card class="borderCard searchOptions">
       <div slot="header">
-        <span>Doc Tracking</span>
+        <span>公文追踪</span>
         <i class="iconfont icon-shuaxin"></i>
       </div>
       <el-row :gutter="10">
         <el-col :span="6">
-          <el-select v-model="urgency" placeholder="Urgency">
-            <el-option v-for="item in urgencyOptions" :label="item.label" :value="item.value"></el-option>
+          <el-select v-model="urgencyValue" placeholder="重要程度">
+            <el-option label="全部" value="0"></el-option>
+            <el-option v-for="item in urgency" :label="item.dictName" :value="item.dictCode"></el-option>
           </el-select>
         </el-col>
         <el-col :span="6">
-          <el-select v-model="type" placeholder="Type">
+          <el-select v-model="params.type" placeholder="公文类型">
             <el-option v-for="item in typeOptions" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
-          <el-input placeholder="Proposer" icon="icon-jiantou" v-model="proposer"></el-input>
+        <el-col :span="12">
+          <el-input placeholder="公文标题" v-model="params.keyWords"></el-input>
         </el-col>
         <el-col :span="6">
-          <el-input placeholder="Handled By" icon="icon-jiantou" v-model="handledBy"></el-input>
+          <el-input placeholder="公文编号" v-model="params.docNo"></el-input>
         </el-col>
         <el-col :span="12">
-          <el-select v-model="handledCategories" placeholder="Handled Categories">
-            <el-option v-for="item in handledCategoriesOptions" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="12">
-          <el-input placeholder="Subject"></el-input>
-        </el-col>
-        <el-col :span="6">
-          <el-input placeholder="Doc ID"></el-input>
-        </el-col>
-        <el-col :span="12">
-          <el-input placeholder="Apply Date "></el-input>
+          <el-date-picker
+            v-model="params.startTime"
+            type="date"
+            placeholder="选择呈报日期">
+          </el-date-picker>
         </el-col>
         <el-col :span="6">
-          <el-button class="searchButton">Search</el-button>
+          <el-button class="searchButton" @click="getDate">搜索</el-button>
         </el-col>
       </el-row>
     </el-card>
-    <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0">
+    <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0"  v-loading.body="searchLoading" >
       <caption>
       </caption>
       <thead align="left">
@@ -49,90 +43,52 @@
           <th v-for="title in tableTitle">{{title}}</th>
         </tr>
       </thead>
-      <tbody v-for="doc in processData">
+      <tbody v-for="doc in docData">
         <tr>
-          <td>{{doc.Confidentiality}}</td>
-          <td>{{doc.Urgency}}</td>
-          <td>{{doc.Type}}</td>
-          <td>{{doc.SubmitTime}}</td>
-          <td>{{doc.Submitby}}</td>
-          <td>{{doc.Proposer}}</td>
+          <td>{{doc.docDenseType}}</td>
+          <td>{{doc.docImprotType}}</td>
+          <td>{{doc.docTypeCode}}</td>
+          <td>{{doc.taskTime}}</td>
+          <td>{{doc.taskUser}}</td>
+          <td>{{doc.currentUser}}</td>
         </tr>
         <tr>
-          <td>{{doc.No}}</td>
-          <td colspan="3">{{doc.title}}</td>
+          <td>{{doc.docNo}}</td>
+          <td colspan="3">{{doc.docTitle}}</td>
           <td>
-            <span v-if="doc.detail">
-              <span @click="detailView = true">Detail</span> 
-              <span>Withdraw</span>
-              <span @click="contractView = true">Delete</span>
+            <span>
+              <router-link :to="'/doc/docDetail/'+doc.id">详情</router-link>
+              <!-- <span>Withdraw</span>
+              <span @click="contractView = true">Delete</span> -->
             </span>
           </td>
-          <td @click="processView = true">View</td>
+          <td @click="getProcess(doc.id)">查看流转</td>
         </tr>
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="3">Total: 4 Record(s).</td>
+          <td colspan="3">总{{totalSize}}条记录</td>
         </tr>
       </tfoot>
     </table>
-    <el-dialog title="Doc Tracking Process" v-model="processView" size="large" class="myDialog processDialog">
+    <!-- <div class="pageBox" v-show="searchRes.empVoList">
+      <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">
+      </el-pagination>
+    </div>
+ -->    <el-dialog title="流转详情" v-model="processView" size="large" class="myDialog processDialog">
       <div class="stepswrap">
         <el-steps direction="vertical" :active="processData.length-1" finish-status="process" process-status="finish" :center="true">
-          <el-step></el-step>
-          <el-step></el-step>
-          <el-step></el-step>         
-          <el-step></el-step>
-          <el-step></el-step>
+          <el-step v-for="step in processData"></el-step>
         </el-steps>
       </div>
       <el-table :data="processData"  class="myTable">      
-        <el-table-column  width="44"></el-table-column>
-        <el-table-column prop="Confidentiality" label="Confidentiality" width="100"></el-table-column>
-        <el-table-column prop="Urgency" label="Urgency" width="75"></el-table-column>
-        <el-table-column prop="HandledBy" label="Handled By" width="100"></el-table-column>
-        <el-table-column prop="ViewingTime" label="Viewing Time" width="155"></el-table-column>
-        <el-table-column prop="ProcessingTime" label="Processing Time" width="155"></el-table-column>
-        <el-table-column prop="Deadline" label="Deadline" width="150"></el-table-column>
-        <el-table-column prop="Overdue" label="Overdue" width="75"></el-table-column>
-        <el-table-column prop="Status" label="Status" width="90"></el-table-column>
-        <el-table-column prop="DepartmentTitle" label="Department/Title"></el-table-column>
-      </el-table>
-    </el-dialog>
-    <el-dialog title="Budget Form" v-model="detailView" size="large" class="myDialog detailDialog">
-      <div class="information">
-        <ul class="base">
-          <li><span>Staff Information</span></li>
-          <li><span>Proposer</span><span>Lei Ling Jin</span></li>
-          <li><span>Doc ID</span><span>411032</span></li>
-          <li><span>Staff No.</span><span>1000324713</span></li>
-          <li><span>Staff HK No.</span><span>10037</span></li>
-          <li><span>Company</span><span>HKA</span></li>
-          <li><span>Department</span><span>IT</span></li>
-          <li><span>Subject</span><span>Budget Form</span></li>
-          <li><span>Reimbursement Staff</span><span>Alex Hu</span></li>
-          <li><span>Contact No.</span><span>3014 0841</span></li>
-          <li><span>Email</span><span>Alex.hu@hkairlines.com</span></li>
-        </ul>
-        <div class="description">
-          <p>description</p>
-          <p></p>
-          <ul class="attachment">
-            <li><span>Approval Path</span><span>IT</span></li>
-            <li><span>Attachment</span><span>form.jpg</span></li>
-          </ul>
-        </div>
-      </div>
-      <el-table :data="budgetData" class="myTable">      
-        <el-table-column prop="BudgetYear" label="Budget Year" width="120"></el-table-column>
-        <el-table-column prop="UserOrganization" label="User Organization" width="150"></el-table-column>
-        <el-table-column prop="BudgetNature" label="Budget Nature" width="140"></el-table-column>
-        <el-table-column prop="CostCenter" label="Cost Center " width="130"></el-table-column>
-        <el-table-column prop="Currency" label="Currency" width="120"></el-table-column>
-        <el-table-column prop="AmountRequested" label="Amount Requested" width="150"></el-table-column>
-        <el-table-column prop="AmountinHKD" label="Amount in HKD" width="150"></el-table-column>
-        <el-table-column prop="CashAdvance" label="Cash Advance"></el-table-column>
+        <el-table-column  width="44"></el-table-column>s
+        <el-table-column prop="taskUserName" label="审批人" width="100"></el-table-column>
+        <el-table-column prop="startTime" label="审批时间" width="155"></el-table-column>
+        <el-table-column prop="截至时间" label="截至时间" width="150"></el-table-column>
+        <el-table-column prop="时限" label="时限" width="75"></el-table-column>
+        <el-table-column prop="nodeName" label="状态" width="90"></el-table-column>
+        <el-table-column prop="taskDeptMajorName/taskDeptName" label="部门/职位"></el-table-column>
       </el-table>
     </el-dialog>
     <el-dialog title="Contract Doc" v-model="contractView" size="large" class="myDialog contractDialog">
@@ -185,17 +141,7 @@
   </div>
 </template>
 <script>
-  const urgencyOptions=[
-  {
-    value: '1',
-    label: 'Normal'
-  },{
-    value: '2',
-    label: 'Secret'
-  },{
-    value: '3',
-    label: 'Top Secret'
-  }]
+  import { mapGetters } from 'vuex'
   const typeOptions=[{
     value: '1',
     label: 'Contract Approval(New)'
@@ -205,96 +151,7 @@
     label: 'Contract Approval(New)'
   }
   ]
-  const tableTitle=['Confidentiality','Urgency','Type','Submit Time','Submit by','Proposer']
-  const processData=
-  [
-  {
-    Confidentiality: 'normal',
-    Urgency: 'normal',
-    Type: 'Contract Approval(New)',
-    SubmitTime:'2016/12/10 23:12:34',
-    ViewingTime:'2016/12/10 23:12:34',
-    ProcessingTime:'2016/12/10 23:12:34',
-    Deadline:'2016/12/10 23:12:34',
-    Status:'Proposing',
-    Overdue:'In time',
-    DepartmentTitle:'IT/Manager,Project Management',
-    Submitby:'Leo Jing',
-    HandledBy:'Leo Jing',
-    Proposer:'Rayo LEUNG',
-    No:'401307',
-    title:'Statement of work for WCAG - Beyondsoft',
-    detail:false,
-  }, {
-    Confidentiality: 'normal',
-    Urgency: 'normal',
-    Type: 'Contract Approval(New)',
-    SubmitTime:'2016/12/10 23:12:34',
-    ViewingTime:'2016/12/10 23:12:34',
-    ProcessingTime:'2016/12/10 23:12:34',
-    Deadline:'2016/12/10 23:12:34',
-    Status:'Proposing',
-    Overdue:'In time',
-    DepartmentTitle:'IT/Manager,Project Management',
-    Submitby:'Leo Jing',
-    HandledBy:'Leo Jing',
-    Proposer:'Rayo LEUNG',
-    No:'401307',
-    title:'Statement of work for WCAG - Beyondsoft',
-    detail:false,
-  },{
-    Confidentiality: 'normal',
-    Urgency: 'normal',
-    Type: 'Contract Approval(New)',
-    SubmitTime:'2016/12/10 23:12:34',
-    ViewingTime:'2016/12/10 23:12:34',
-    ProcessingTime:'2016/12/10 23:12:34',
-    Deadline:'2016/12/10 23:12:34',
-    Status:'Proposing',
-    Overdue:'In time',
-    DepartmentTitle:'IT/Manager,Project Management',
-    Submitby:'Leo Jing',
-    HandledBy:'Leo Jing',
-    Proposer:'Rayo LEUNG',
-    No:'401307',
-    title:'Statement of work for WCAG - Beyondsoft',
-    detail:true,
-  },{
-    Confidentiality: 'normal',
-    Urgency: 'normal',
-    Type: 'Contract Approval(New)',
-    SubmitTime:'2016/12/10 23:12:34',
-    ViewingTime:'2016/12/10 23:12:34',
-    ProcessingTime:'2016/12/10 23:12:34',
-    Deadline:'2016/12/10 23:12:34',
-    Status:'Proposing',
-    Overdue:'In time',
-    DepartmentTitle:'IT/Manager,Project Management',
-    Submitby:'Leo Jing',
-    HandledBy:'Leo Jing',
-    Proposer:'Rayo LEUNG',
-    No:'401307',
-    title:'Statement of work for WCAG - Beyondsoft',
-    detail:false,
-  },{
-    Confidentiality: 'normal',
-    Urgency: 'normal',
-    Type: 'Contract Approval(New)',
-    SubmitTime:'2016/12/10 23:12:34',
-    ViewingTime:'2016/12/10 23:12:34',
-    ProcessingTime:'2016/12/10 23:12:34',
-    Deadline:'2016/12/10 23:12:34',
-    Status:'Proposing',
-    Overdue:'In time',
-    DepartmentTitle:'IT/Manager,Project Management',
-    Submitby:'Leo Jing',
-    HandledBy:'Leo Jing',
-    Proposer:'Rayo LEUNG',
-    No:'401307',
-    title:'Statement of work for WCAG - Beyondsoft',
-    detail:false, 
-  }
-  ]
+  const tableTitle=['密级程度','重要程度','公文类型','呈报时间','呈报人','当前节点']
   const budgetData=[
   {
     BudgetYear:'2017-01',
@@ -311,29 +168,78 @@
   export default{
     data(){
       return{
-        urgencyOptions,
-        urgency:'',
+        urgencyValue:"",
         typeOptions,
         type:'',
         proposer:'',
         handledBy:'',
         handledCategoriesOptions,
         handledCategories:'',
-        processData,
         tableTitle,
         processView:false,
         detailView:false,
         contractView:false,
         budgetData,
+        params:{
+          "keyWords": "",
+          "docNo": "",
+          "taskUserName": "",
+          "taskDeptName": "",
+          "taskDeptId": "",
+          "docType": "",
+          "startTime": "",
+          "userId": "",
+        },
+        processData:[],
+        docData:[],
+        totalSize:"",
+        searchLoading:false
       }
+    },
+    computed: {
+      ...mapGetters([
+        'userInfo',
+        'confidentiality',
+        'urgency'
+      ])
     },
     components:{
 
+    },
+    created() {
+      this.$store.dispatch('getConfident');
+      this.$store.dispatch('getUrgency');
+      this.params.userId=this.userInfo.empId;
+      this.getDate();
+    },
+    methods:{
+      getDate(){
+        this.searchLoading=true;
+        this.docData=[];
+        this.totalSize=0;
+        this.$http.post("/doc/trackingDocList",this.params,{body:true}).then(res=>{
+          this.searchLoading=false;
+          if(res.data.status==0){
+            this.docData=res.data.data.dList;
+            this.totalSize=res.data.data.totalSize;
+          }
+        },res=>{
+
+        })
+      },
+      getProcess(id){
+        this.processView=true;
+        this.$http.post("/doc/getTaskDetail",{id:id}).then(res=>{
+          this.processData=res.data.data;
+        },res=>{
+
+        })
+      }
     }
   }
 </script>
 <style lang='scss'>
-  $purple: #7C5598;
+  $purple: #0460AE;
   #docTracking{
     .searchOptions{
       .el-card__body{
@@ -344,6 +250,10 @@
           width: 100%;
         }
       }
+      padding-bottom:10px;
+    }
+    .el-date-editor.el-input{
+      width:100%;
     }
     &>table{
       thead{
@@ -353,7 +263,7 @@
         th{
           padding:6px 13px;
         }
-        $widths: (1: 15%, 2: 10%, 3: 25%,4: 22%,5: 12%,6: 16%); 
+        $widths: (1: 15%, 2: 10%, 3: 21%,4: 22%,5: 16%,6: 16%); 
         @each $num, $width in $widths {
           th:nth-child(#{$num}) {
             width: $width;
