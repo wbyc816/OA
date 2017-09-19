@@ -108,5 +108,11 @@ export default {
   selectDoc(id){
     return fetch('/doc/selectDoc',{empId:id})
   },
-
+  getDocForm(){
+    return fetch('/doc/getDocForm')
+  },
+  submitDoc(params){
+    return fetch('doc/submitDoc',params,{isBody:true})
+  },
+  
 }

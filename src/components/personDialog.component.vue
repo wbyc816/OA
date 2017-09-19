@@ -17,7 +17,7 @@
           <el-table-column prop="jobtitle" label="职务" width="150"></el-table-column>
           <el-table-column prop="moblieNumber" label="手机"></el-table-column>
         </el-table>
-        <div class="pageBox" v-show="searchRes.empVoList">
+        <div class="pageBox" :style="{visibility:searchRes.empVoList ? 'visible' : 'hidden'}">
           <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">
           </el-pagination>
         </div>
@@ -68,7 +68,7 @@ export default {
 
     },
     handleCurrentChange(page) {
-      if (this.searchRes.status == '0') {
+      if (this.searchRes.data) {
         this.$store.dispatch('setQueryPage', page);
         this.$store.dispatch('queryEmpList', {})
       }

@@ -14,17 +14,17 @@
       </el-form-item>
       <el-form-item label="附件">
         <el-col :span='18'>
-          <el-upload action="//jsonplaceholder.typicode.com/posts/" class="myUpload">
+          <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload">
             <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
         </el-col>
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
         <el-col :span='18' class="docs">
-          <el-input class="search" :readonly="true" :value="doc.quoteDocTitle" v-for="(doc,index) in docs" icon="search">
+          <el-input class="search" :readonly="true" :value="doc.quoteDocTitle" v-for="(doc,index) in docs" icon="search" :key="doc.quoteDocTitle">
             <div slot="append">
               <el-button @click='showDialog(index)'>选择</el-button>
-              <i class="el-icon-close" v-show="doc.quoteDocTitle"></i>
+              <i class="el-icon-close" v-show="doc.quoteDocTitle" @click="clearDoc(index)"></i>
             </div>
           </el-input>
         </el-col>
@@ -61,7 +61,6 @@ export default {
       none: "none",
       ruleForm: {
         des: '',
-        path: '',
       },
       rules: {
         des: [
@@ -71,23 +70,42 @@ export default {
       },
       dialogTableVisible: false,
       docs: [{ quoteDocTitle: '', quoteDocId: '' }],
-      activeDoc: ''
+      activeDoc: '',
+      attchment: [],
+      uploadOver: false,
+      fileIds:[]
     }
   },
   computed: {
     ...mapGetters([
-      'extraDocs'
+      'extraDocs',
+      'baseURL'
     ])
   },
   components: {
 
   },
   methods: {
-    submitRefdoc: function() {
-
+    submitForm() {
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {          
+          if (this.attchment.length != 0) {
+            this.$refs.myUpload.submit();
+          } else {
+            this.$emit('submitDes', {
+              taskContent: this.ruleForm.des,
+              quoteDocTitle: this.docs[0].quoteDocTitle,
+              quoteDocId: this.docs[0].quoteDocId
+            });
+          }
+        } else {
+          this.$emit('submitDes', false);
+          return false;
+        }
+      });
     },
-    handleIconClick(index) {
-      console.log(index);
+    clearDoc(index) {
+      this.docs.splice(index, 1, { quoteDocTitle: '', quoteDocId: '' });
     },
     selectDoc(row) {
       this.docs[this.activeDoc].quoteDocTitle = row.docTitle;
@@ -101,7 +119,41 @@ export default {
     },
     addDoc() {
       this.docs.push({ title: '', id: '' })
-    }
+    },
+    handleAvatarSuccess(res, file) {
+      // this.updateInfo(res.data);
+      this.fileIds.push(res.data);
+      if (this.fileIds.length==this.attchment.length) {
+          var params = {
+            fileId:this.fileIds,
+            taskContent: this.ruleForm.des,
+            quoteDocTitle: this.docs[0].quoteDocTitle,
+            quoteDocId: this.docs[0].quoteDocId
+          }
+          this.$emit('submitDes', params);
+      }
+    },
+    handleAvatarError(res, file) {
+      console.log(5);
+      this.$emit('submitDes', false);
+      this.$message.error('附件上传失败，请重试');
+    },
+    handleChange(file, fileList) {
+      // const isJPG = file.raw.type === 'image/jpeg' || file.raw.type === 'image/png';
+      // const isLt2M = file.size / 1024 / 1024 < 2;
+
+      // if (!isJPG) {
+      //   this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+      // }
+      // if (!isLt2M) {
+      //   this.$message.error('上传头像图片大小不能超过 2MB!');
+      // }
+      // if (isJPG && isLt2M) {
+      //   this.picChangeStatus = true;
+      //   this.baseForm.picUrl = file.url
+      // }
+      this.attchment = fileList;
+    },
   }
 }
 
@@ -141,7 +193,7 @@ $main:#0460AE;
         transition: all .3s;
         line-height: 46px;
         &:hover {
-          color:$main;
+          color: $main;
         }
       }
     }
@@ -161,6 +213,7 @@ $main:#0460AE;
       width: 800px;
       top: 50%!important;
       transform: translate(-50%, -50%);
+      margin-top:0;
       .el-dialog__header {
         display: none;
       }
@@ -173,7 +226,7 @@ $main:#0460AE;
       line-height: 47px;
       .tips {
         float: left;
-        font-size: 16px;
+        font-size: 18px;
         span {
           font-size: 14px;
           margin-left: 5px;

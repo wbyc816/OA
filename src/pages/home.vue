@@ -23,6 +23,41 @@
               </el-row>
             </el-card>
           </li>
+          <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
+            <p class="dragHead" v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
+              <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>
+            </p>
+            <el-card class="bedoneList">
+              <p slot="header">待办事项</p>
+              <el-row :gutter="20">
+                <el-col :span="12">
+                  <span>公文待审批</span>
+                  <p>刘志华9月23日年假休假申请</p>
+                </el-col>
+                <el-col :span="12">
+                  <span>公文待审批</span>
+                  <p>工程资产管理系统采购预算呈批单</p>
+                </el-col>
+                <el-col :span="12">
+                  <span>公文待审批</span>
+                  <p>以客为尊 提供一流乘坐体验 东海航空...</p>
+                </el-col>
+                <el-col :span="12">
+                  <span class="beRead">公文待阅</span>
+                  <p>东海航空参加深圳“公益金百万行”活动</p>
+                </el-col>
+                <el-col :span="12">
+                  <span>公文待审批</span>
+                  <p>工程管理部门车辆管理系统采购合同</p>
+                </el-col>
+                <el-col :span="12">
+                  <span>公文待审批</span>
+                  <p>新系统建设公开招标申请</p>
+                </el-col>
+              </el-row>
+            </el-card>
+          </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[1]}">
             <p class="dragHead" v-on:mouseover="dragShow(1)" v-on:mouseleave="dragHide(1)">
               <span v-show="showInfo[1]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
@@ -560,6 +595,7 @@ export default {
 $main: #0460AE;
 $brown: #985D55;
 $lan:#0460AE;
+$sub:#1465C0;
 
 #home {
 
@@ -595,9 +631,7 @@ $lan:#0460AE;
           cursor: move;
         }
       }
-    }
-    // .dragActive {
-
+    } // .dragActive {
     //   position: relative;
     //   &:before {
     //     content: '';
@@ -610,7 +644,6 @@ $lan:#0460AE;
     //   }
     //   .el-card,
     //   >.el-menu {
-
     //     &.personnel {
     //       border-bottom-width: 1px;
     //       margin-bottom: 19px;
@@ -921,6 +954,41 @@ $lan:#0460AE;
         &>div:last-child {
           right: 30px;
         }
+      }
+    }
+  }
+  .bedoneList{
+    position:relative;
+    &:before{
+      content:'';
+      height:80%;
+      border-left:1px solid #EEEEEE;
+      position:absolute;
+      top:50%;
+      left:48%;
+      transform:translate(-50%,-50%);
+    }
+    .el-card__header{
+      border-bottom:none;
+      padding-bottom:10px;
+    }
+    .el-card__body{
+      padding-top:0;
+      padding-bottom:10px;
+    }
+    .el-col{
+      line-height:50px;
+      font-size:15px;
+      cursor:pointer;
+      span{
+        color:$sub;
+        &.beRead{
+          color:#BE3B7F;
+        }
+      }
+      p{
+        display: inline-block;
+        white-space:nowrap;
       }
     }
   }

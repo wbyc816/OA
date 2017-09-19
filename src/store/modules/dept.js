@@ -14,12 +14,10 @@ const actions = {
 
   //获取部门列表
   getDeptList({ commit, rootState }, payload) {
-    if (!state.depts) {
-      api.getDeptList()
-        .then(res => {
-          commit(types.GET_DEPT_LIST, res)
-        })
-    }
+    api.getDeptList()
+      .then(res => {
+        commit(types.GET_DEPT_LIST, res)
+      })
   },
   //按搜索条件查部门人员
   queryEmpList({ commit, rootState }, payload) {
@@ -59,9 +57,9 @@ const actions = {
   getEmpDetail({ commit, rootState }, payload) {
     api.getEmpDetail(payload)
       .then(res => {
-          commit(types.GET_EMP_DATAIL, res)
+        commit(types.GET_EMP_DATAIL, res)
       }, res => {
-          commit(types.GET_EMP_DATAIL, '')
+        commit(types.GET_EMP_DATAIL, '')
       })
   },
   //清除人员详情
@@ -81,7 +79,6 @@ const getters = {
 
 const mutations = {
   [types.GET_DEPT_LIST](state, res) {
-    console.log(res);
     state.depts = res.data.deptList
   },
   [types.QUERY_EMP_LIST](state, res) {

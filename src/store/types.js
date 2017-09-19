@@ -14,6 +14,7 @@ export const UPDATE_EMP = 'UPDATE_EMP'
 
 //改变搜索loading
 export const SET_SEARCH_LOADING = 'SET_SEARCH_LOADING'
+export const SET_SUBMIT_LOADING = 'SET_SUBMIT_LOADING'
 //编辑状态
 export const SET_EDIT_STATUS = 'SET_EDIT_STATUS'
 
@@ -33,4 +34,8 @@ export const SET_RECIVER = 'SET_RECIVER'
 export const SELECT_DOC = 'SELECT_DOC'
 //管理员状态
 export const GET_ADMIN_STATUS = 'GET_ADMIN_STATUS'
+//提交公文
+export const SUBMIT_DOC = 'SUBMIT_DOC'
+//获取公文类型
+export const GET_DOC_FORM = 'GET_DOC_FORM'
 

@@ -9,7 +9,8 @@
         <el-row :gutter="20" class="baseDetail">
           <el-col :span="6" class="leftDetail">
             <div class="photoBox">
-              <img src="../../assets/images/Image97.png" alt="">
+              <img :src="userInfo.picUrl" alt="" v-show="userInfo.picUrl">
+              <img src="../../assets/images/blankHead.png" alt="" v-show="!userInfo.picUrl">
             </div>
           </el-col>
           <el-col :span="8">
@@ -127,7 +128,8 @@ export default {
   computed: {
     ...mapGetters([
       'resumeInfo',
-      'getEmpPostInfo'
+      'getEmpPostInfo',
+      'userInfo'
     ])
   },
   created() {

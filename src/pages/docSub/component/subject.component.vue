@@ -107,6 +107,21 @@ export default {
       this.dialogTableVisible=false;
       this.ruleForm.rec=this.reciver.reciUserName;
     },
+    returnT(){
+      return true;
+    },
+    submitForm() {
+        this.$refs.ruleForm.validate((valid) => {
+          if (valid) {
+            console.log(2);
+            this.$emit('submitSub',true);
+          } else {
+            console.log(2);
+            this.$emit('submitSub',false);
+            return false;
+          }
+        });
+      },
     ...mapMutations(['setConfident', 'setUrgency'])
   },
 
@@ -129,7 +144,7 @@ export default {
   .el-dialog--large {
     width: 1100px;
     top:50%!important;
-    transform:translate(-50%,-50%);
+    margin-top: -315px;
     .el-dialog__header {
       display: none;
     }
