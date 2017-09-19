@@ -137,7 +137,7 @@ export default new Router({
         		name:'ApprovalForm',
         		component:approvalForm,
         		meta:{
-        			breadcrumb:"Approval Form",
+        			breadcrumb:"公文呈报",
         		}
         	},
         	{

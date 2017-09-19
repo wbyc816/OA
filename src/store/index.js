@@ -14,12 +14,14 @@ Vue.use(Vuex);
 const state = {
   searchLoading: false,
   baseURL:'http://192.168.8.92:8080/DonghaiAirAPI',
-  editStatus:false
+  editStatus:false,
+  sumitLoading:false,
 }
 const getters ={
 	searchLoading: state => state.searchLoading,
   editStatus: state => state.editStatus,
-  baseURL: state => state.baseURL
+  baseURL: state => state.baseURL,
+  sumitLoading: state => state.sumitLoading,
 }
 const actions={
   setEditStatus({commit},palyload){
@@ -30,6 +32,9 @@ const mutations={
 	[types.SET_SEARCH_LOADING](state, palyload) {
 		state.searchLoading=palyload;
 	},
+  [types.SET_SUBMIT_LOADING](state, palyload) {
+    state.sumitLoading=palyload;
+  },
   [types.SET_EDIT_STATUS](state, palyload) {
     state.editStatus=palyload;
   },

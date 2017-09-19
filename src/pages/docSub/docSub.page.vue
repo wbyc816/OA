@@ -12,7 +12,7 @@
     </el-card>
     <el-card class='doc-block doc-finance'>
       <div slot="header">
-        <span>Financial Documents</span>
+        <span>财务申请</span>
       </div>
       <el-row :gutter='15'>
         <el-col :span="6" :xs='12' v-for="item in financeData">
@@ -22,10 +22,20 @@
     </el-card>
     <el-card class='doc-block doc-contrast'>
       <div slot="header" class='doc_title'>
-        <span>Contract Documents <span class='doc_small-title'>(Contract Documents Manual)</span></span>
+        <span>人事申请 </span>
       </div>
       <el-row :gutter='15'>
         <el-col :span="6" :xs='12' v-for="item in contrastData">
+          <doc-list :data='item'></doc-list>
+        </el-col>
+      </el-row>
+    </el-card>
+    <el-card class='doc-block doc-contrast'>
+      <div slot="header" class='doc_title'>
+        <span>优惠机票申请</span>
+      </div>
+      <el-row :gutter='15'>
+        <el-col :span="6" :xs='12' v-for="item in ticketData">
           <doc-list :data='item'></doc-list>
         </el-col>
       </el-row>
@@ -43,24 +53,35 @@ const adminData = [
   { 'logo': 'icon-biaodan', 'color': '#5BB5FC', 'text': '收文登记', 'link': '/doc/leisureTravel' }
 ];
 const financeData = [
-  { 'logo': 'icon-fukuan', 'color': '#5BB5FC', 'text': 'Budget Form', 'link': '/doc/budget' },
-  { 'logo': 'icon-fukuan2', 'color': '#FF754F', 'text': 'Payment Requisition Form', 'link': '/doc/payment' },
-  { 'logo': 'icon-fukuan1', 'color': '#A5A3FF', 'text': 'Reimbursement Form', 'link': '/doc/reimburse' },
-  { 'logo': 'icon-yusuankongzhi', 'color': '#FF5F88', 'text': 'Contract Budget Change', 'link': '/doc/contractBudget' },
+  { 'logo': 'icon-fukuan', 'color': '#5BB5FC', 'text': '预算申请', 'link': '#' },
+  { 'logo': 'icon-fukuan2', 'color': '#FF754F', 'text': '付款申请', 'link': '#' },
+  { 'logo': 'icon-fukuan1', 'color': '#A5A3FF', 'text': '报销申请', 'link': '#' },
+  { 'logo': 'icon-yusuankongzhi', 'color': '#FF5F88', 'text': '借款申请', 'link': '#' },
+  { 'logo': 'icon-weibiaoti-4', 'color': '#FFE066', 'text': '合同申请', 'link': '#' },
+  { 'logo': 'icon-imgtag', 'color': '#5BB5FC', 'text': '差旅报销申请', 'link': '#' },
+  { 'logo': 'icon-manage', 'color': '#9FD867', 'text': '预付款核销申请', 'link': '#' },
 ];
 const contrastData = [
-  { 'logo': 'icon-weibiaoti-4', 'color': '#FFE006', 'text': 'Pro-So Create', 'link': '#' },
-  { 'logo': 'icon-contract', 'color': '#5BB5FC', 'text': 'Contract Approval(New)', 'link': '/doc/conApprovalNew' },
-  { 'logo': 'icon-book-copy', 'color': '#FF5F88', 'text': 'Contract Supplement', 'link': '#' },
-  { 'logo': 'icon-hetong', 'color': '#9FD867', 'text': 'Contract Approval', 'link': '/doc/conApproval' },
+  { 'logo': 'icon-rili', 'color': '#A5A3FF', 'text': '请假申请', 'link': '#' },
+  { 'logo': 'icon-contract', 'color': '#FF5F88', 'text': '人员引进申请', 'link': '#' },
+  { 'logo': 'icon-book-copy', 'color': '#9FD867', 'text': '转正申请', 'link': '#' },
+  { 'logo': 'icon-hetong', 'color': '#FF5F88', 'text': '培训申请', 'link': '#' },
+  { 'logo': 'icon-file1', 'color': '#5BB5FC', 'text': '人事变动', 'link': '#' },
+  { 'logo': 'icon-gongwen', 'color': '#FF754F', 'text': '工伤申请', 'link': '#' },
+  { 'logo': 'icon-contract', 'color': '#FFE066', 'text': '离职申请', 'link': '#' },
+  { 'logo': 'icon-biaodan', 'color': '#9FD867', 'text': '晋升申请', 'link': '#' },
 ];
-
+const ticketData = [
+  { 'logo': 'icon-qiaquan', 'color': '#FF754F', 'text': '宾客优惠机票', 'link': '#' },
+  { 'logo': 'icon-jipiao', 'color': '#FF5F88', 'text': '员工优惠机票', 'link': '#' }
+];
 export default {
   data() {
     return {
       adminData,
       financeData,
       contrastData,
+      ticketData
     };
   },
   components: {

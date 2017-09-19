@@ -22,7 +22,7 @@
             <el-col :span="16">
               <el-menu default-active="1" mode="horizontal" :router="true">
                 <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>
-                <el-menu-item :route="{path:'#'}" index="2">我的工作</el-menu-item>
+                <el-menu-item :route="{path:'/doc'}" index="2">我的工作</el-menu-item>
                 <el-menu-item :route="{path:'#'}" index="3">业务系统</el-menu-item>
                 <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
               </el-menu>

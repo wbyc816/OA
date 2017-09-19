@@ -9,7 +9,8 @@
         <el-row :gutter="20" class="baseDetail">
           <el-col :span="8" class="leftDetail">
             <div class="photoBox">
-              <img src="../../assets/images/Image97.png" alt="">
+              <img :src="userInfo.picUrl" alt="" v-show="userInfo.picUrl">
+              <img src="../../assets/images/blankHead.png" alt="" v-show="!userInfo.picUrl">
             </div>
             <div class="infoItem">
               <span class="infoTittle">姓名</span>
@@ -113,7 +114,7 @@
           <el-form-item label="个人照片" class="uploadBox" :rules="[{ required: false, message: '头像未上传'}]" prop="picUrl">
             <el-upload ref="upload" class="avatar-uploader" :auto-upload="false" :action="baseURL+'/emp/updatePic'" :data="{id:userInfo.empId}" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange">
               <img v-if="baseForm.picUrl" :src="baseForm.picUrl" class="avatar">
-              <img v-else src="../../assets/images/blankHead.png" alt="">
+              <img v-else src="../../assets/images/blankHead1.png" alt="">
             </el-upload>
           </el-form-item>
           <div class="borderBox"></div>
@@ -127,10 +128,12 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import blankHead from '../../assets/images/blankHead.png'
 export default {
   components: {},
   data() {
     return {
+      blankHead,
       picChangeStatus: false,
       submitLoading: false,
       baseForm: {
@@ -167,7 +170,7 @@ export default {
     this.$store.dispatch('getEmpDetail', this.userInfo.empId);
     this.$store.dispatch('getEmergencyContactInfo', this.userInfo.empId);
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     this.$store.dispatch('setEditStatus', false);
     next()
   },
@@ -249,7 +252,9 @@ $sub:#1465C0;
           padding-top: 19px;
           height: 219px;
           margin-bottom: 10px;
+          line-height: 219px;
           img {
+            vertical-align: middle;
             max-height: 100%;
           }
         }
