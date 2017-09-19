@@ -444,19 +444,20 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import MyPie from '../components/myPie'
 import MyPolarArea from '../components/myPolarArea'
 import SearchDate from '../components/searchDate'
 import MessageCenter from '../components/message'
 import Weibo from '../components/weibo'
 import DocList from '../components/doc'
-const msgs = [
-  { "type": "work", "color": "#0460AE", "text": "待签批公文:", "value":"31", "font": "icon-sousuo","link":"" },
-  { "type": "work", "color": "#0460AE", "text": "跟踪中公文:","value":"", "font": "icon-sousuo","link":"/doc/docTracking"},
-  { "type": "ss", "color": "#BE3B7F", "text": "邮件通知:","value":"", "font": "icon-gongwen" ,"link":"" },
-  { "type": "work", "color": "#0460AE", "text": "公文超时:","value":"", "font": "icon-sousuo" ,"link":"" },
-  { "type": "message", "color": "#51449C", "text": "生日提醒:","value":"", "font": "icon-icon04" ,"link":"" },
-  { "type": "ss", "color": "#BE3B7F", "text": "会议通知:", "font": "icon-gongwen" ,"link":"" },
+var msgs = [
+  { "type": "work", "color": "#0460AE", "text": "待签批公文:", "value": "0", "font": "icon-sousuo", "link": "" },
+  { "type": "work", "color": "#0460AE", "text": "跟踪中公文:", "value": "0", "font": "icon-sousuo", "link": "/doc/docTracking" },
+  { "type": "ss", "color": "#BE3B7F", "text": "邮件通知:", "value": "0", "font": "icon-gongwen", "link": "" },
+  { "type": "work", "color": "#0460AE", "text": "公文超时:", "value": "0", "font": "icon-sousuo", "link": "" },
+  { "type": "message", "color": "#51449C", "text": "生日提醒:", "value": "0", "font": "icon-icon04", "link": "" },
+  { "type": "ss", "color": "#BE3B7F", "text": "会议通知:", "value": "0", "font": "icon-gongwen", "link": "" },
 ];
 const piedata = {
   labels: ['Airport Services', 'Cockpit', 'Cabin', 'HQ Staff', 'Outport Others', 'Outport China', 'MRO'],
@@ -580,12 +581,39 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+      'searchLoading',
+      'searchRes',
+      'depPageNumber'
+    ])
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getTips();
+    })
+  },
   methods: {
     dragShow(index) {
       this.showDrag.splice(index, 1, true);
     },
     dragHide(index) {
       this.showDrag.splice(index, 1, false);
+    },
+    getTips() {
+      this.$http.post('/doc/docTips', { empId: this.userInfo.empId })
+        .then(res => {
+          if (res.data.status == 0) {
+            console.log(res.data.data);
+            msgs[1].value=res.data.data.trackingNum;
+            msgs[2].value=res.data.data.toReadNum;
+            msgs[3].value=res.data.data.overTimeNum;
+            msgs[0].value=res.data.data.pendingNum;
+          }
+        }, res => {
+
+        })
     }
   }
 }
@@ -957,38 +985,38 @@ $sub:#1465C0;
       }
     }
   }
-  .bedoneList{
-    position:relative;
-    &:before{
-      content:'';
-      height:80%;
-      border-left:1px solid #EEEEEE;
-      position:absolute;
-      top:50%;
-      left:48%;
-      transform:translate(-50%,-50%);
+  .bedoneList {
+    position: relative;
+    &:before {
+      content: '';
+      height: 80%;
+      border-left: 1px solid #EEEEEE;
+      position: absolute;
+      top: 50%;
+      left: 48%;
+      transform: translate(-50%, -50%);
     }
-    .el-card__header{
-      border-bottom:none;
-      padding-bottom:10px;
+    .el-card__header {
+      border-bottom: none;
+      padding-bottom: 10px;
     }
-    .el-card__body{
-      padding-top:0;
-      padding-bottom:10px;
+    .el-card__body {
+      padding-top: 0;
+      padding-bottom: 10px;
     }
-    .el-col{
-      line-height:50px;
-      font-size:15px;
-      cursor:pointer;
-      span{
-        color:$sub;
-        &.beRead{
-          color:#BE3B7F;
+    .el-col {
+      line-height: 50px;
+      font-size: 15px;
+      cursor: pointer;
+      span {
+        color: $sub;
+        &.beRead {
+          color: #BE3B7F;
         }
       }
-      p{
+      p {
         display: inline-block;
-        white-space:nowrap;
+        white-space: nowrap;
       }
     }
   }
