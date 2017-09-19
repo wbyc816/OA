@@ -44,12 +44,16 @@
       	<el-row>
 		  <el-col :span="1">&nbsp;</el-col>
 		  <el-col :span="5">附件</el-col>
-		  <el-col :span="18"></el-col>
+		  <el-col :span="18">
+		  	<a v-for="file in docDetialInfo.taskFile" :href="file.filePath">{{file.fileName}}</a>
+		  </el-col>
 		</el-row>
       	<el-row>
 		  <el-col :span="1">&nbsp;</el-col>
 		  <el-col :span="5">附加公文</el-col>
-		  <el-col :span="18"></el-col>
+		  <el-col :span="18">
+		  	<a v-for="file in docDetialInfo.taskQuote" :href="file.filePath">{{file.fileName}}</a>
+		  </el-col>
 		</el-row>
       </div>
 	    <div class='doc-section'>
@@ -119,6 +123,10 @@ export default{
 				.el-col{
 					padding:15px 0;
 					min-height: 50px;
+					a{
+						display: block;
+						text-decoration: underline
+					}
 				}
 			}
 			h4{
