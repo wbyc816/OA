@@ -58,7 +58,7 @@
                     title:'公文签批',path:'#'
                 },
                 {
-                    title:'公文查询',path:'#'
+                    title:'公文查询',path:'/doc/docSearch'
                 },
                 {
                     title:'公文待阅',path:'#'
