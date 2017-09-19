@@ -96,5 +96,18 @@ export default {
     return concurrent([{ url: '/resume/updateEmergencyContactInfo', params: params.emergency, isBody: true },
       { url: '/emp/updateEmp', params: params.emp, isBody: true }
     ])
-  }
+  },
+  getDict(dictCode,dictName) {
+    return fetch('/api/getDict', { dictCode: dictCode,dictName:dictName })
+  },
+  getAdminStatus(id){
+    return fetch('/doc/selectRecipent',{empId:id})
+  },
+  getDepById(id){
+    return fetch('/dept/selectDeptOrgByDeptId',{deptId:id})
+  },
+  selectDoc(id){
+    return fetch('/doc/selectDoc',{empId:id})
+  },
+
 }

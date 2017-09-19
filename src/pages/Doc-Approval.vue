@@ -1,30 +1,30 @@
 <template>
   <div id='doc-approval'>
     <el-row :gutter='12'>
-      <el-col :span='18' :xs="24">
+      <el-col :span='17' :xs="24">
         <router-view></router-view>
       </el-col>
 
-      <el-col :span='6' class="sideBox">
+      <el-col :span='7' class="sideBox">
         <el-card class='doc-search-card'>
           <div slot="header" class='doc-bar_title'>
-            <span>Contact List</span>
+            <span>公司同仁</span>
           </div>
-          <el-input placeholder="Staff Name" class="search ">
-            <el-button slot="append">Search</el-button>
+          <el-input placeholder="请输入员工姓名" class="search ">
+            <el-button slot="append">搜索</el-button>
           </el-input>
         </el-card>
 
-          <el-menu mode="vertical" v-bind:router="true">
-            <el-menu-item-group title="Doc Approval System">
+          <el-menu mode="vertical" v-bind:router="true" class="mySideLink">
+            <el-menu-item-group title="公文流转">
               <template v-for='(item,index) in navMenu'>
                 <el-menu-item v-if='item.path' :index='index.toString()'  :route="{path:item.path}">{{item.title}}
                     <i class="el-icon-arrow-right"></i>
                 </el-menu-item>
-                <el-submenu v-if='item.child' :index='index.toString()' >
+                <!-- <el-submenu v-if='item.child' :index='index.toString()' >
                     <template slot="title" >{{item.title}}</template>
                     <el-menu-item v-for='(i,key) in item.child' :index='index.toString()+key.toString()' :route="{path:i.path}">&nbsp;{{i.title}}</el-menu-item>
-                </el-submenu>
+                </el-submenu> -->
               </template>
             </el-menu-item-group>
           </el-menu>
@@ -40,9 +40,6 @@
     line-height: 20px;
   }
 
-  #doc-approval .el-menu .el-menu-item{
-    font-size: 15px;
-  }
 
 </style>
 <script>
@@ -52,41 +49,23 @@
               breadcrumbItem:'',
               navMenu:[
                 {
-                    title:'Doc Submission',path:'/doc/docSub'
+                    title:'公文呈报',path:'/doc/docSub'
                 },
                 {
-                    title:'Doc Tracking',path:'/doc/docTracking'
+                    title:'公文跟踪',path:'#'
                 },
                 {
-                    title:'Batch Approval',path:'#'
+                    title:'公文签批',path:'#'
                 },
                 {
-                    title:'Action List',path:'#'
+                    title:'公文查询',path:'#'
                 },
                 {
-                    title:'Follow Up List',path:'#'
+                    title:'公文待阅',path:'#'
                 },
                 {
-                   title:'Doc Searching',
-                   child:[
-                     {title:'Doc Searching',path:'#'},
-                     ],
-                },
-                {
-                    title:'Payment Searching',path:'/doc/paymentSearch'
-                },
-                {
-                   title:'Reimbursement Summary',
-                   child:[
-                     {title:'Reimbursement Summary',path:'/doc'},
-                     ],
-                },
-                {
-                   title:'Outstanding Payment',
-                   child:[
-                     {title:'Outstanding Payment',path:'/doc'},
-                     ],
-                },
+                    title:'公文统计',path:'#'
+                }
               ]
             };
         },
