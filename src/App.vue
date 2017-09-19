@@ -257,6 +257,9 @@ export default {
     }
     this.outBreadcrumbs();
   },
+  created() {
+    console.log("我在加载");
+  },
   watch: {
     '$route' (to, from) {
       this.outBreadcrumbs();

@@ -65,17 +65,12 @@
           <td @click="getProcess(doc.id)">查看流转</td>
         </tr>
       </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="3">总{{totalSize}}条记录</td>
-        </tr>
-      </tfoot>
     </table>
-    <!-- <div class="pageBox" v-show="searchRes.empVoList">
-      <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">
+    <div class="pageBox">
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
- -->    <el-dialog title="流转详情" v-model="processView" size="large" class="myDialog processDialog">
+ <el-dialog title="流转详情" v-model="processView" size="large" class="myDialog processDialog">
       <div class="stepswrap">
         <el-steps direction="vertical" :active="processData.length-1" finish-status="process" process-status="finish" :center="true">
           <el-step v-for="step in processData"></el-step>
@@ -87,8 +82,8 @@
         <el-table-column prop="startTime" label="审批时间" width="155"></el-table-column>
         <el-table-column prop="截至时间" label="截至时间" width="150"></el-table-column>
         <el-table-column prop="时限" label="时限" width="75"></el-table-column>
-        <el-table-column prop="nodeName" label="状态" width="90"></el-table-column>
-        <el-table-column prop="taskDeptMajorName/taskDeptName" label="部门/职位"></el-table-column>
+        <el-table-column prop="nodeName" label="状态" width="90"  :formatter="formatter"></el-table-column>
+        <el-table-column prop="taskDeptMajorName" label="部门"></el-table-column>
       </el-table>
     </el-dialog>
     <el-dialog title="Contract Doc" v-model="contractView" size="large" class="myDialog contractDialog">
@@ -189,10 +184,12 @@
           "docType": "",
           "startTime": "",
           "userId": "",
+          "pageNumber":1,
+          "pageSize":5
         },
         processData:[],
         docData:[],
-        totalSize:"",
+        totalSize:0,
         searchLoading:false
       }
     },
@@ -215,8 +212,6 @@
     methods:{
       getDate(){
         this.searchLoading=true;
-        this.docData=[];
-        this.totalSize=0;
         this.$http.post("/doc/trackingDocList",this.params,{body:true}).then(res=>{
           this.searchLoading=false;
           if(res.data.status==0){
@@ -234,6 +229,29 @@
         },res=>{
 
         })
+      },
+      formatter(row, column, cellValue) {
+        switch (cellValue) {
+          case "start":
+            return "发起";
+            break;
+          case 'task':
+            return "批核";
+            break;
+          case 'trans':
+            return "转发";
+            break;
+          case 'end':
+            return "归档";
+            break;
+
+          default:
+            return cellValue;
+        }
+      },
+      handleCurrentChange(page) {
+        this.params.pageNumber=page;
+        this.getDate()
       }
     }
   }
@@ -241,6 +259,11 @@
 <style lang='scss'>
   $purple: #0460AE;
   #docTracking{
+    .pageBox{
+      text-align: right;
+      margin-top:20px;
+    }
+    margin-bottom:30px;
     .searchOptions{
       .el-card__body{
         .el-col{
