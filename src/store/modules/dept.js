@@ -81,6 +81,7 @@ const getters = {
 
 const mutations = {
   [types.GET_DEPT_LIST](state, res) {
+    console.log(res);
     state.depts = res.data.deptList
   },
   [types.QUERY_EMP_LIST](state, res) {

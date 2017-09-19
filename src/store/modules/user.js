@@ -17,7 +17,8 @@ const state = {
     "empId": "777669AF68DBCCABC30C3B6BCAA81825",
     "isFirstLogin": 0,
     "levelNum": null,
-    "deptParentId": null
+    "deptParentId": null,
+    "deptId":"33E75FF09DD601BBE69F351039152189"
   }
 }
 

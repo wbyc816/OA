@@ -8,9 +8,8 @@
           <subject class='doc-section'></subject>
           <description  class='doc-section'></description>
           <div class='doc-form-submit_btn'>
-            <el-button type="primary" >Submit</el-button>
+            <el-button type="primary" >提交</el-button>
           </div>
-
         </div>
       </el-card>
     </div>
@@ -24,7 +23,7 @@
     export default{
         data(){
             return{
-                docTitle:'Approval Form',
+                docTitle:'呈批单',
 
             }
         },

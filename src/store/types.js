@@ -21,3 +21,16 @@ export const SET_EDIT_STATUS = 'SET_EDIT_STATUS'
 export const GET_RESUME_INFO = 'GET_RESUME_INFO'
 export const GET_EMP_POST_INFO = 'GET_EMP_POST_INFO'
 
+//获取常量
+export const GET_DICT = 'GET_DICT'
+//密级程度
+export const SET_CONFIDENT = 'SET_CONFIDENT'
+//重要程度
+export const SET_URGENCY = 'SET_URGENCY'
+//公文接收人
+export const SET_RECIVER = 'SET_RECIVER'
+//附加公文
+export const SELECT_DOC = 'SELECT_DOC'
+//管理员状态
+export const GET_ADMIN_STATUS = 'GET_ADMIN_STATUS'
+
