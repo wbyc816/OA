@@ -37,6 +37,7 @@ const actions = {
     commit('setDocTtile', '')
     commit('setReciver', '')
   },
+
   getAdminStatus({ commit, state, rootState, rootGetters }) {
     api.getAdminStatus(rootGetters.userInfo.empId)
       .then(res => {
@@ -90,7 +91,7 @@ const actions = {
           type: 'error'
         });
       })
-  }
+  },
   //根据部门ID获取组织结构
   getDepById({ commit, state, rootState, rootGetters }) {
     api.getDepById(rootGetters.userInfo.deptId)
@@ -134,7 +135,7 @@ const actions = {
       "taskDeptId": rootGetters.userInfo.deptVo.deptId,
       "taskUserName": rootGetters.userInfo.name,
       "taskUserId": rootGetters.userInfo.empId,
-      "docTypeCode": "DOC_ADM_APPROVAL",
+      "docTypeCode": "CPD",
       "docTitle": state.docTtile,
     }
     Object.assign(params, state.reciver, state.selConfident, state.selUrgency, payLoad)
