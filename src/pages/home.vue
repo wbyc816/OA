@@ -339,6 +339,7 @@
               </el-input>
             </el-card>
           </li>
+
           <li class="list-group-item" :class="{'dragActive':showDrag[6]}">
             <p class="dragHead" v-on:mouseover="dragShow(6)" v-on:mouseleave="dragHide(6)">
               <span v-show="showInfo[6]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
@@ -370,45 +371,6 @@
               </el-menu>
             </el-card>
           </li>
-          <li class="list-group-item" :class="{'dragActive':showDrag[7]}">
-            <p class="dragHead" v-on:mouseover="dragShow(7)" v-on:mouseleave="dragHide(7)">
-              <span v-show="showInfo[7]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[7]=true" v-on:mouseleave="showInfo[7]=false" v-show="showDrag[7]"></i>
-            </p>
-            <el-card class="Workbench">
-              <span slot="header">日常事项</span>
-              <el-menu>
-                <el-menu-item index="1"><i class="iconfont icon-guizhang"></i>规章制度<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="2"><i class="iconfont icon-shouce"></i>使用手册<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="3"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
-              </el-menu>
-            </el-card>
-            <el-card class="mailbox">
-              <el-menu>
-                <el-menu-item index="1"><i class="iconfont icon-changyong"></i>常用办公软件<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="2"><i class="iconfont icon-youhui"></i>优惠机票<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="3"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
-              </el-menu>
-            </el-card>
-          </li>
-          <!-- <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
-            <p class="dragHead"  v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
-              <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>          
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>  
-            </p>
-            <el-card class="flightSearch">
-              <span slot="header">Flight Search</span>
-              <el-radio-group v-model="tripType">
-                <el-radio label="date">One Way</el-radio>
-                <el-radio label="daterange">Round Trip</el-radio>
-              </el-radio-group>
-              <el-input v-model="tripFrom" placeholder="From">
-              </el-input>
-              <el-input v-model="tripTo"  placeholder="To" class="pullRight">
-              </el-input>
-              <search-date :type="tripType"></search-date>
-            </el-card>
-          </li> -->
           <li class="list-group-item" :class="{'dragActive':showDrag[10]}">
             <p class="dragHead" v-on:mouseover="dragShow(10)" v-on:mouseleave="dragHide(10)">
               <span v-show="showInfo[10]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
@@ -438,6 +400,50 @@
               </div>
             </el-card>
           </li>
+          <li class="list-group-item" :class="{'dragActive':showDrag[7]}">
+            <p class="dragHead" v-on:mouseover="dragShow(7)" v-on:mouseleave="dragHide(7)">
+              <span v-show="showInfo[7]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[7]=true" v-on:mouseleave="showInfo[7]=false" v-show="showDrag[7]"></i>
+            </p>
+            <el-card class="Workbench">
+              <span slot="header">日常事项</span>
+              <el-menu>
+                <el-menu-item index="1"><i class="iconfont icon-guizhang"></i>规章制度<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="2"><i class="iconfont icon-shouce"></i>使用手册<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="3"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="4"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
+              </el-menu>
+            </el-card>
+            <el-card class="mailbox">
+              <el-menu>
+                <el-menu-item index="1"><i class="iconfont icon-changyong"></i>常用办公软件<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="2"><i class="iconfont icon-youhui"></i>优惠机票<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="3"><i class="iconfont icon-icon"></i>飞行准备网<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="5"><i class="iconfont icon-sms"></i>SMS管理系统<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="6"><i class="iconfont icon-rizhi"></i>航后日志系统<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="7"><i class="iconfont icon-weixiu"></i>ME维修信息管理系统<i class="el-icon-arrow-right"></i></el-menu-item>
+              </el-menu>
+            </el-card>
+          </li>
+          <!-- <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
+            <p class="dragHead"  v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
+              <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>          
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>  
+            </p>
+            <el-card class="flightSearch">
+              <span slot="header">Flight Search</span>
+              <el-radio-group v-model="tripType">
+                <el-radio label="date">One Way</el-radio>
+                <el-radio label="daterange">Round Trip</el-radio>
+              </el-radio-group>
+              <el-input v-model="tripFrom" placeholder="From">
+              </el-input>
+              <el-input v-model="tripTo"  placeholder="To" class="pullRight">
+              </el-input>
+              <search-date :type="tripType"></search-date>
+            </el-card>
+          </li> -->
+          
         </ul>
       </el-col>
     </el-row>
@@ -606,10 +612,10 @@ export default {
         .then(res => {
           if (res.data.status == 0) {
             console.log(res.data.data);
-            msgs[1].value=res.data.data.trackingNum;
-            msgs[2].value=res.data.data.toReadNum;
-            msgs[3].value=res.data.data.overTimeNum;
-            msgs[0].value=res.data.data.pendingNum;
+            msgs[1].value = res.data.data.trackingNum;
+            msgs[2].value = res.data.data.toReadNum;
+            msgs[3].value = res.data.data.overTimeNum;
+            msgs[0].value = res.data.data.pendingNum;
           }
         }, res => {
 

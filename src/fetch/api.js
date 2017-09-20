@@ -4,7 +4,7 @@ import Vue from 'vue'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.defaults.baseURL = 'http://192.168.8.92:8080/DonghaiAirAPI';
-// axios.defaults.baseURL = 'http://58.250.197.143:8899/DonghaiAirAPI';
+//axios.defaults.baseURL = 'http://58.250.197.143:8899/DonghaiAirAPI';
 
 
 //POST传参序列化
@@ -97,23 +97,23 @@ export default {
       { url: '/emp/updateEmp', params: params.emp, isBody: true }
     ])
   },
-  getDict(dictCode,dictName) {
-    return fetch('/api/getDict', { dictCode: dictCode,dictName:dictName })
+  submitDoc(params) {
+    return fetch('/doc/submitDoc', params, { isBody: true })
   },
-  getAdminStatus(id){
-    return fetch('/doc/selectRecipent',{empId:id})
-  },
-  getDepById(id){
-    return fetch('/dept/selectDeptOrgByDeptId',{deptId:id})
-  },
-  selectDoc(id){
-    return fetch('/doc/selectDoc',{empId:id})
-  },
-  getDocForm(){
+  getDocForm() {
     return fetch('/doc/getDocForm')
   },
-  submitDoc(params){
-    return fetch('doc/submitDoc',params,{isBody:true})
+  getDict(dictCode, dictName) {
+    return fetch('/api/getDict', { dictCode: dictCode, dictName: dictName })
   },
-  
+  getAdminStatus(id) {
+    return fetch('/doc/selectRecipent', { empId: id })
+  },
+  getDepById(id) {
+    return fetch('/dept/selectDeptOrgByDeptId', { deptId: id })
+  },
+  selectDoc(id) {
+    return fetch('/doc/selectDoc', { empId: id })
+  },
+
 }

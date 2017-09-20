@@ -33,8 +33,8 @@
         <el-row class="backV">
           <el-col :span="1">&nbsp;</el-col>
           <el-col :span="5">标题</el-col>
-          <el-col :span="18" v-if="docDetialInfo">
-            <h4>{{docDetialInfo.doc.docTitle}}</h4></el-col>
+          <el-col :span="18">
+            <h4 v-if="docDetialInfo">{{docDetialInfo.doc.docTitle}}</h4></el-col>
         </el-row>
         <el-row>
           <el-col :span="1">&nbsp;</el-col>
@@ -62,7 +62,7 @@
           <el-col :span="23" v-if="index==0">无</el-col>
         </el-row>
       </div>
-      <div class='doc-section'>
+      <div class='doc-section' v-if="docDetialInfo.doc&&docDetialInfo.doc.reciUserId==userInfo.empId">
         <h4 class='doc-form_title'>我的审批意见</h4>
         <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="审批意见" class="textarea">

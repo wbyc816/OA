@@ -52,21 +52,21 @@
           <el-col :span="8" class="leftDetail">
             <div class="infoItem">
               <span class="infoTittle">紧急联系人</span>
-              <p class="infoText">{{emergencyContactInfo[0].name}}</p>
+              <p class="infoText" v-if="emergencyContactInfo">{{emergencyContactInfo[0].name}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">联系人电话</span>
-              <p class="infoText">{{emergencyContactInfo[0].phoneNum}}</p>
+              <p class="infoText" v-if="emergencyContactInfo">{{emergencyContactInfo[0].phoneNum}}</p>
             </div>
           </el-col>
           <el-col :span="16">
             <div class="infoItem">
               <span class="infoTittle">联系人关系</span>
-              <p class="infoText">{{emergencyContactInfo[0].relationship}}</p>
+              <p class="infoText" v-if="emergencyContactInfo">{{emergencyContactInfo[0].relationship}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">联系人地址</span>
-              <p class="infoText">{{emergencyContactInfo[0].address}}</p>
+              <p class="infoText" v-if="emergencyContactInfo">{{emergencyContactInfo[0].address}}</p>
             </div>
           </el-col>
         </el-row>
@@ -195,7 +195,7 @@ export default {
     updateInfo(picUrl) {
       var emergencyParam = Object.assign({ empId: this.userInfo.empId }, this.baseForm.emergency);
       var empParam = { id: this.userInfo.empId, phoneNumber: this.baseForm.phoneNumber, picUrl: picUrl };
-      if (this.emergencyContactInfo[0]) {
+      if (this.emergencyContactInfo&&this.emergencyContactInfo[0]) {
         emergencyParam.oldId = this.emergencyContactInfo[0].id
       }
       // this.$store.dispatch('updateEmp', { id: this.userInfo.empId, phoneNumber: this.baseForm.phoneNumber, picUrl: picUrl });
@@ -230,7 +230,7 @@ export default {
     // },
     edit() {
       this.combineObj(this.baseForm, this.empDetial);
-      this.combineObj(this.baseForm.emergency, this.emergencyContactInfo[0] ? this.emergencyContactInfo[0] : {})
+      this.combineObj(this.baseForm.emergency, this.emergencyContactInfo&&this.emergencyContactInfo[0] ? this.emergencyContactInfo[0] : {})
       this.$store.dispatch('setEditStatus', true);
     }
   }

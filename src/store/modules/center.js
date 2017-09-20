@@ -40,10 +40,10 @@ const actions = {
       .then((res) => {
         if (res[0].status == '0') {
           dispatch('getEmergencyContactInfo', res[1].data.empId);
-          Notification({
-            message: '修改紧急联系人信息成功,请等待后台审核！',
-            type: 'success'
-          });
+          // Notification({
+          //   message: '修改紧急联系人信息成功,请等待后台审核！',
+          //   type: 'success'
+          // });
         } else {
           Notification({
             message: '修改紧急联系人信息失败，请重试！',
@@ -53,10 +53,10 @@ const actions = {
         if (res[1].status == '0') {
           dispatch('getEmpDetail', res[1].data.empId);
           setTimeout(function() {
-            Notification({
-              message: '修改个人基本信息成功！',
-              type: 'success'
-            });
+            // Notification({
+            //   message: '修改个人基本信息成功！',
+            //   type: 'success'
+            // });
           }, 200)
 
         } else {
@@ -64,6 +64,14 @@ const actions = {
             Notification({
               message: '修改个人基本信息失败，请重试！',
               type: 'error'
+            });
+          }, 200)
+        }
+        if(res[0].status == '0'&&res[1].status == '0'){
+          setTimeout(function() {
+            Notification({
+              message: '修改个人信息成功,请等待后台审核！',
+              type: 'success'
             });
           }, 200)
         }

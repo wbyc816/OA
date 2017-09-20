@@ -4,31 +4,9 @@ import * as types from '../types'
 
 const state = {
   userInfo: {
-    "name": "运标副总裁",
-    "gender": "F",
-    "workPlace": "东海航空",
-    "workEmail": null,
-    "mobileNumber": null,
-    "phoneNumber": "15099917405",
-    "depts": "运行标准部",
-    "deptNames": null,
-    "deptName": null,
-    "jobtitle": "虚拟岗",
-    "workNo": "S005",
-    "empId": "777669AF68DBCCABC30C3B6BCAA81825",
-    "isFirstLogin": null,
-    "levelNum": 30,
-    "deptParentId": "CFCD208495D565EF66E7DFF9F98764DA",
-    "picUrl": null,
-    "deptId": "33E75FF09DD601BBE69F351039152189",
-    "deptVo": {
-      "id": null,
-      "name": null,
-      "fatherDeptId": "33E75FF09DD601BBE69F351039152189",
-      "fatherDept": "运行标准部",
-      "deptId": null,
-      "dept": null
-    },
+    "name": "",
+    "empId": "",
+
   }
 }
 
@@ -45,6 +23,15 @@ const actions = {
   //       })
   //   }
   // }
+  getUserInfo({ commit, state }) {
+    api.getEmpDetail(state.userInfo.empId)
+      .then(res => {
+        console.log(res)
+          commit(types.SET_USER_INFO, res.data);
+      }, res => {
+
+      })
+  }
 }
 
 const getters = {
@@ -52,9 +39,13 @@ const getters = {
 }
 
 const mutations = {
-  // [types.GET_DEPT_LIST](state, res) {
-  //   state.depts = res.data.deptList
-  // }
+  [types.SET_USER_INFO](state, res) {
+    state.userInfo = res
+  },
+  setEmpId(state, id) {
+    state.userInfo.empId = id
+  },
+
 }
 
 export default {

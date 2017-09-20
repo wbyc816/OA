@@ -8,7 +8,7 @@ const state = {
   confidentiality: [], //机密程度
   urgency: [], //重要程度
 
-  docType: [],//公文类别
+  docType: [], //公文类别
   isAdmin: false,
   docTtile: '',
   reciver: '',
@@ -81,16 +81,19 @@ const actions = {
     }
   },
   //获取公文类型
-  getDocForm({ commit }) {
-    api.getDocForm()
-      .then(res => {
-        commit(types.GET_DOC_FORM, res)
-      }, res => {
-        Notification({
-          message: '获取公文类别失败！',
-          type: 'error'
-        });
-      })
+  getDocForm({ commit, state }) {
+    if (state.docType.length == 0) {
+      api.getDocForm()
+        .then(res => {
+          commit(types.GET_DOC_FORM, res)
+        }, res => {
+          Notification({
+            message: '获取公文类别失败！',
+            type: 'error'
+          });
+        })
+    }
+
   },
   //根据部门ID获取组织结构
   getDepById({ commit, state, rootState, rootGetters }) {
@@ -149,7 +152,7 @@ const actions = {
             type: 'success'
           });
           dispatch('clear')
-          router.push('/doc')
+          router.push('/doc/docTracking');
         } else {
           Notification({
             message: '呈报公文失败，请重试！',
@@ -192,7 +195,7 @@ const mutations = {
     state.isAdmin = res
   },
   [types.GET_DOC_FORM](state, res) {
-    state.docType = res.data
+    state.docType = res.data.data
   },
   [types.SELECT_DOC](state, res) {
     state.extraDocs = res.data;

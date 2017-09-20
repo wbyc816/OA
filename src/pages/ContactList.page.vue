@@ -84,7 +84,8 @@
         </el-col>
         <el-col :span="6">
           <div class="photoBox">
-            <img src="../assets/images/Image97.png" alt="">
+            <img :src="empDetial.picUrl" alt="" v-show="empDetial.picUrl">
+            <img src="../assets/images/blankHead.png" alt="">
           </div>
         </el-col>
       </el-row>

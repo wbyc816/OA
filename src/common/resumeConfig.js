@@ -49,11 +49,11 @@ export const assessreCordInfo = [{
 }, {
   head: '奖励记录',
   prop: [{ name: 'acquireDate', label: '奖励日期', width: '' ,type:'date'}, { name: 'name', label: '奖励名称', width: '' }, { name: 'reason', label: '奖励原因', width: '' }, { name: 'officeNum', label: '发文号', width: '' }],
-  url: '/resume/getAwardpunishInfo?isisAward=1'
+  url: '/resume/getAwardpunishInfo?isAward=1'
 }, {
   head: '处分记录',
   prop: [{ name: 'acquireDate', label: '处分日期', width: '' ,type:'date'}, { name: 'name', label: '处分名称', width: '' }, { name: 'reason', label: '处分原因', width: '' }, { name: 'officeNum', label: '发文号', width: '' }],
-  url: '/resume/getAwardpunishInfo?isisAward=0'
+  url: '/resume/getAwardpunishInfo?isAward=0'
 }]
 export const postExperienceInfo = [{
   head: '任职经历',

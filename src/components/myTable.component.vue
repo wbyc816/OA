@@ -60,11 +60,11 @@ export default {
             if (res.data.status == '0') {
               this.detailList = res.data.data
             } else {
-              this.requestLoading = false;
-              this.$notify.error({
-                title: '错误',
-                message: '获取' + this.tableInfo.head + '失败!'
-              });
+              // this.requestLoading = false;
+              // this.$notify.error({
+              //   title: '错误',
+              //   message: '获取' + this.tableInfo.head + '失败!'
+              // });
             }
           }, res => {
             this.searchLoading = false;

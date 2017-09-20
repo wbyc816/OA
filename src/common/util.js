@@ -1,8 +1,39 @@
 import Vue from 'vue';
-import {timeFilter} from '../filters/filters'
+import { timeFilter } from '../filters/filters'
 Vue.prototype.validatePhone = validatePhone
 Vue.prototype.combineObj = combineObj
 Vue.prototype.timeFilter = timeFilter
+
+function getCookie(c_name) {
+  if (document.cookie.length > 0) {
+    var c_start = document.cookie.indexOf(c_name + "=")
+    if (c_start != -1) {
+      c_start = c_start + c_name.length + 1
+      var c_end = document.cookie.indexOf(";", c_start)
+      if (c_end == -1) c_end = document.cookie.length
+      return unescape(document.cookie.substring(c_start, c_end))
+    }
+  }
+  return ""
+}
+
+Vue.prototype.getCookie = getCookie
+Vue.prototype.setCookie = function(c_name, value, expiredays) {
+  var exdate = new Date()
+  exdate.setDate(exdate.getDate() + expiredays)
+  document.cookie = c_name + "=" + escape(value) + ";path=/" +
+    ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString() + "")
+
+}
+Vue.prototype.delCookie = function(c_name) {
+  console.log(c_name);
+  var exp = new Date();
+  exp.setTime(exp.getTime() - 1);
+  var cval = this.getCookie(c_name);
+  if (cval != null)
+    document.cookie = c_name + "=" + cval + ";path=/" + ";expires=" + exp.toGMTString();
+
+}
 
 function validatePhone(rule, value, callback) {
   if (value && value.length != 0) {
@@ -25,4 +56,4 @@ function combineObj(target, source) {
   return target;
 }
 
-export default{combineObj}
+export default { combineObj }

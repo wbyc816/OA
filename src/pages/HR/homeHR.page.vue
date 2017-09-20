@@ -93,6 +93,7 @@ $main:#0460AE;
 $sub:#1465C0;
 
 #homeHR {
+  padding-top:10px;
   .sideBar {
     .searchBox {
       .el-card__header {
