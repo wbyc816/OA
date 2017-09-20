@@ -1,5 +1,6 @@
 import Vue from 'vue'
 Vue.filter('time',timeFilter);
+Vue.filter('nodeNameFormatter',nodeNameFormatter);
 
 function timeFilter(value, type) { //value为13位的时间戳
   function t(s) {
@@ -26,5 +27,23 @@ function timeFilter(value, type) { //value为13位的时间戳
     return value;
   }
 }
+function nodeNameFormatter(cellValue) {
+  switch (cellValue) {
+    case "start":
+      return "发起";
+      break;
+    case 'task':
+      return "批核";
+      break;
+    case 'trans':
+      return "转发";
+      break;
+    case 'end':
+      return "归档";
+      break;
 
+    default:
+      return cellValue;
+  }
+}
 export {timeFilter}

@@ -9,6 +9,7 @@ import docSub from 'pages/docSub/docSub.page'
 import docTracking from 'pages/docSub/docTracking.page'
 import paymentSearch from 'pages/docSub/paymentSearch.page'
 import docDetail from 'pages/docSub/docDetail.page'
+import docSearch from 'pages/docSub/docSearch.page'
 
 import approvalForm from 'pages/docSub/approvalForm.page'
 import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
@@ -266,6 +267,14 @@ export default new Router({
                 component:docDetail,
                 meta:{
                     breadcrumb:"公文详情",
+                }
+            },
+            {
+                path:'/doc/docSearch',
+                name:'docSearch',
+                component:docSearch,
+                meta:{
+                    breadcrumb:"公文查询",
                 }
             },
         // 	{
