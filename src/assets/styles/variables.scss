@@ -93,6 +93,23 @@ body {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   background: #EEEEEE;
   color: #393939;
+  padding-right: 0!important;
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar {
+    position: absolute;
+    width: 5px;
+    background-color: transparent;
+    height: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #D8D8D8;
+  }
 }
 
 .container {
@@ -175,7 +192,7 @@ ul {
     margin: 0 10px 0 0;
     flex: 1;
     border-bottom: 1px solid #D5DADF;
-    float:left;
+    float: left;
     .el-upload__file:last-child {
       border-bottom: none;
     }
@@ -508,7 +525,6 @@ ul {
 //   ;
 //   margin-top: -13px;
 // }
-
 .doc-section {
   border-bottom: 1px dashed #D5DADF;
   margin-bottom: 10px;
@@ -535,9 +551,7 @@ ul {
   }
   .form-box .el-col {
     height: 46px;
-  }
-
-  // .el-table {
+  } // .el-table {
   //   width: 100%;
   //   margin-bottom: 27px;
   //   .cell {
@@ -682,8 +696,6 @@ ul {
 }
 
 .el-form-item__label {
-  // height:46px;
-  // line-height:46px;
   padding: 16px 0 16px 10px;
 }
 
@@ -705,6 +717,7 @@ ul {
 }
 
 .mySideLink {
+  margin-bottom:20px;
   .el-menu-item-group__title {
     line-height: 55px;
     padding: 0;
@@ -725,182 +738,7 @@ ul {
   }
 }
 
-.el-dialog{
-  margin-bottom:0;
+.el-dialog {
+  margin-bottom: 0;
 }
-//  @media (max-width: 1200px) {
-//   .container,
-//   .page-container {
-//     width: 100%;
-//   }
-// }
-// @media (max-width: 1200px){
-//  .sideBox {
-//    display:none;
-//  }
-// }
-// @media (max-width:768px) {
-//   body {
-//     overflow-x: hidden;
-//   }
-//   .el-card {
-//     margin-bottom: 1px!important;
-//   }
-//   .mobieMenu {
-//     display: block;
-//     position: fixed;
-//     left: 0;
-//     top: 0;
-//     z-index: 11;
-//     color: #fff;
-//     background: rgba(91, 49, 121, .6);
-//     padding: 10px;
-//     i {
-//       font-size: 23px;
-//     }
-//     cursor:pointer;
-//   }
-//   .topNavbar,
-//   .sologo,
-//   .dragHead,
-//   .sub-menu {
-//     display: none;
-//   }
-//   .navbar {
-//     margin: 0 !important;
-//     .el-menu {
-//       width: 0;
-//       height: 100%;
-//       position: fixed;
-//       top: 0;
-//       left: 0;
-//       z-index: 10;
-//       background: rgba(91, 49, 121, .9);
-//       padding-top: 40px;
-//       -webkit-transition-duration: .45s;
-//       -webkit-transition-property: height;
-//       -webkit-transition-delay: 0s;
-//       -webkit-transition-timing-function: 'ease-in-out';
-//       transition-duration: .45s;
-//       transition-property: width;
-//       transition-delay: 0s;
-//       transition-timing-function: 'ease-in-out';
-//       li {
-//         float: inherit;
-//         display: block;
-//         width: 100%;
-//         color: #fff;
-//         line-height: 50px !important;
-//         height: auto !important;
-//         border-bottom: 1px solid #fff;
-//       }
-//       &.open {
-//         width: 100%;
-//       }
-//     }
-//   }
-//   #home {
-//     .el-carousel {
-//       .el-carousel__container {
-//         height: 120px !important;
-//       }
-//       img {
-//         height: 120px;
-//         width: 100%;
-//       }
-//       .el-carousel__indicators {
-//         top: inherit !important;
-//         bottom: 10px;
-//       }
-//     }
-//     .messageCenter,
-//     .space {
-//       .el-card__header {
-//         display: none;
-//       }
-//     }
-//     .list-group-item+.list-group-item {
-//       padding: 10px;
-//     }
-//     .el-card {
-//       padding-top: 10px;
-//     }
-//     .space-bottom {
-//       .el-input-group__prepend {
-//         display: none;
-//       }
-//       .el-input-group__append {
-//         width: 100%;
-//         margin: 10px 0;
-//       }
-//       position:relative;
-//       button {
-//         position: absolute;
-//         right: 20px;
-//       }
-//     }
-//     .myTab {
-//       .el-tabs__header {
-//         display: none;
-//       }
-//     }
-//     .news {
-//       .el-card__header {
-//         background: none !important;
-//       }
-//       .el-tab-pane>div {
-//         padding-left: 0 !important;
-//       }
-//     }
-//     .report .daily {
-//       border: none !important;
-//     }
-//     .bottom {
-//       .iconfont {
-//         display: none;
-//       }
-//     }
-//     .report {
-//       .flightStatus {
-//         padding-bottom: 10px !important;
-//       }
-//       .bottom {
-//         padding-bottom: 10px;
-//         border-bottom: 1px solid #F2F2F2;
-//         div {
-//           padding-left: 0 !important;
-//           border: none !important;
-//         }
-//       }
-//       .content {
-//         padding-bottom: 10px;
-//         border-bottom: 1px solid #F2F2F2;
-//       }
-//     }
-//     .report .el-col .top-head {
-//       padding-bottom: 10px;
-//       border-bottom: 1px solid #F2F2F2;
-//       margin-bottom: 10px !important;
-//     }
-//     .crew .content {
-//       border: none !important;
-//     }
-//     .sideBox {
-//       display: block;
-//       width: 100%;
-//       .contactList,
-//       .flightStatus {
-//         display: none;
-//       }
-//       .duty {
-//         margin-bottom: 0px;
-//       }
-//     }
-//   }
-//   .weibo {
-//     margin-top: 10px;
-//   }
-//   footer {
-//     display: none;
-//   }
-// }
+

@@ -1,10 +1,13 @@
 <template>
   <div class='descriptionBox'>
     <h4 class='doc-form_title'>详情信息</h4>
+    <component v-bind:is="currentView">
+      <!-- 组件在 vm.currentview 变化时改变！ -->
+    </component>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
-      <el-form-item label="请示内容" prop="des" class="textarea">
+      <el-form-item label="请示内容" prop="des">
         <el-col :span='18'>
-          <el-input type="textarea" v-bind:resize='none' v-model="ruleForm.des"></el-input>
+          <el-input type="textarea" :rows="8" resize='none' v-model="ruleForm.des"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item class='form-box' label="建议路径" prop="path">
@@ -54,6 +57,7 @@
 </template>
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+
 export default {
   data() {
     return {
@@ -73,7 +77,7 @@ export default {
       activeDoc: '',
       attchment: [],
       uploadOver: false,
-      fileIds:[]
+      fileIds: []
     }
   },
   computed: {
@@ -83,12 +87,12 @@ export default {
     ])
   },
   components: {
-
+    
   },
   methods: {
     submitForm() {
       this.$refs.ruleForm.validate((valid) => {
-        if (valid) {          
+        if (valid) {
           if (this.attchment.length != 0) {
             this.$refs.myUpload.submit();
           } else {
@@ -123,14 +127,14 @@ export default {
     handleAvatarSuccess(res, file) {
       // this.updateInfo(res.data);
       this.fileIds.push(res.data);
-      if (this.fileIds.length==this.attchment.length) {
-          var params = {
-            fileId:this.fileIds,
-            taskContent: this.ruleForm.des,
-            quoteDocTitle: this.docs[0].quoteDocTitle,
-            quoteDocId: this.docs[0].quoteDocId
-          }
-          this.$emit('submitDes', params);
+      if (this.fileIds.length == this.attchment.length) {
+        var params = {
+          fileId: this.fileIds,
+          taskContent: this.ruleForm.des,
+          quoteDocTitle: this.docs[0].quoteDocTitle,
+          quoteDocId: this.docs[0].quoteDocId
+        }
+        this.$emit('submitDes', params);
       }
     },
     handleAvatarError(res, file) {
@@ -213,7 +217,7 @@ $main:#0460AE;
       width: 800px;
       top: 50%!important;
       transform: translate(-50%, -50%);
-      margin-top:0;
+      margin-top: 0;
       .el-dialog__header {
         display: none;
       }

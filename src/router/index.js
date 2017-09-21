@@ -10,6 +10,7 @@ import docTracking from 'pages/docSub/docTracking.page'
 import paymentSearch from 'pages/docSub/paymentSearch.page'
 import docDetail from 'pages/docSub/docDetail.page'
 import docSearch from 'pages/docSub/docSearch.page'
+import docPending from 'pages/docSub/docPending.page'
 
 import approvalForm from 'pages/docSub/approvalForm.page'
 import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
@@ -254,11 +255,19 @@ export default new Router({
         // 		}
         // 	},
         	{
-        		path:'/doc/docTracking',
-        		name:'docTracking',
-        		component:docTracking,
+                path:'/doc/docTracking',
+                name:'docTracking',
+                component:docTracking,
+                meta:{
+                    breadcrumb:"公文追踪",
+                }
+            },
+            {
+        		path:'/doc/docPending',
+        		name:'docPending',
+        		component:docPending,
         		meta:{
-        			breadcrumb:"公文追踪",
+        			breadcrumb:"公文签批",
         		}
         	},
             {

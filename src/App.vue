@@ -6,7 +6,7 @@
           <a><i class="iconfont icon-1"></i> 简体</a>
           <a><i class="iconfont icon-shezhi"></i> 设置</a>
           <router-link to="/HR"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
-          <a><i class="iconfont icon-guanbi"></i> 登出</a>
+          <a @click="loginOut"><i class="iconfont icon-guanbi"></i> 登出</a>
         </div>
       </div>
       <nav class="navbar">
@@ -71,7 +71,7 @@
   </div>
 </template>
 <script>
-import { mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 import Vue from 'vue'
 import Sortable from 'sortablejs'
 import router from './router'
@@ -146,21 +146,35 @@ export default {
       scrollBanner: false
     }
   },
-   computed: {
+  computed: {
     ...mapGetters([
       'userInfo'
     ])
   },
   created() {
-    // if(this.getCookie('userId')){ // this.$store.commit('setEmpId',this.getCookie('userId')); // this.$store.dispatch('getUserInfo'); // }else{ // location.href="http://192.168.8.92:8080/login.html" // }
-
-    this.$store.commit('setEmpId','FB2E203234DF6DEE15934E448EE88971');
+    var url = ''
+    if (process.env.NODE_ENV == 'development') { //开发环境
+      // this.$store.commit('setEmpId', 'FB2E203234DF6DEE15934E448EE88971');
+      // this.$store.dispatch('getUserInfo');
+      url = 'http://127.0.0.1:8080'
+    } else {
+      url = 'http://192.168.8.92:8080'
+    }
+    if (this.getCookie('userId')) {
+      this.$store.commit('setEmpId', this.getCookie('userId'));
       this.$store.dispatch('getUserInfo');
+    } else {
+      location.href = url+"/login.html"
+    }
   },
   mounted() {
 
   },
   methods: {
+    loginOut() {
+      this.delCookie('userId');
+      location.href = "http://192.168.8.92:8080/login.html"
+    },
     handleSelect(key, keyPath) {
       this.menuToggle();
       if (key > 2) {
@@ -200,8 +214,8 @@ export default {
     outBreadcrumbs() {
       this.breadcrumbs = [];
       var tempRoute = this.$route.fullPath.split('/');
-      console.log(tempRoute)
-      if (tempRoute[1] == 'home' || tempRoute[1] == 'home#'||tempRoute[1]=='HR') {
+      // console.log(tempRoute)
+      if (tempRoute[1] == 'home' || tempRoute[1] == 'home#' || tempRoute[1] == 'HR') {
         this.breadcrumbShow = false;
       } else {
         this.breadcrumbShow = true;
@@ -270,7 +284,7 @@ export default {
     }
     this.outBreadcrumbs();
   },
-  
+
   watch: {
     '$route' (to, from) {
       this.outBreadcrumbs();

@@ -38,4 +38,8 @@ export const GET_ADMIN_STATUS = 'GET_ADMIN_STATUS'
 export const SUBMIT_DOC = 'SUBMIT_DOC'
 //获取公文类型
 export const GET_DOC_FORM = 'GET_DOC_FORM'
+//流程弹窗
+export const SET_PROCESS_VIEW = 'SET_PROCESS_VIEW'
+//流程数据
+export const GET_PROCESS_DATA ="GET_PROCESS_DATA"
 

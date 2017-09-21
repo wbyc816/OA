@@ -7,7 +7,6 @@ import router from '../../router'
 const state = {
   confidentiality: [], //机密程度
   urgency: [], //重要程度
-
   docType: [], //公文类别
   isAdmin: false,
   docTtile: '',
@@ -20,19 +19,21 @@ const state = {
     "docImportTypeCode": "",
     "docImportType": "",
   },
-  extraDocs: []
+  extraDocs: [],
+  processView: false,
+  processData: []
 }
 
 const actions = {
   //重置
   clear({ commit, state }) {
     commit('setConfident', {
-      "docDenseTypeCode": "",
-      "docDenseType": ""
+      "docDenseTypeCode": state.confidentiality[0].dictCode,
+      "docDenseType": state.confidentiality[0].dictName
     })
     commit('setUrgency', {
-      "docImportTypeCode": "",
-      "docImportType": "",
+      "docImportTypeCode": state.urgency[0].dictCode,
+      "docImportType": state.urgency[0].dictName,
     })
     commit('setDocTtile', '')
     commit('setReciver', '')
@@ -111,7 +112,7 @@ const actions = {
   },
   //获取额外公文
   selectDoc({ commit, rootGetters }) {
-    api.selectDoc(123)
+    api.selectDoc(rootGetters.userInfo.empId)
       .then(res => {
         if (res.status == "0") {
           commit(types.SELECT_DOC, res);
@@ -165,7 +166,27 @@ const actions = {
           type: 'error'
         });
       })
-  }
+  },
+  //流程信息
+  getTaskDetail({ commit, rootGetters }, id) {
+    commit(types.SET_PROCESS_VIEW, true)
+    api.getTaskDetail(id)
+      .then(res => {
+        if (res.status == "0") {
+          commit(types.GET_PROCESS_DATA, res);
+        } else {
+          // Notification({
+          //   message: '获取附加公文失败！',
+          //   type: 'error'
+          // });
+        }
+      }, res => {
+        Notification({
+          message: '获取流转信息失败！',
+          type: 'error'
+        });
+      })
+  },
 
 }
 
@@ -178,6 +199,9 @@ const getters = {
   reciver: state => state.reciver,
   extraDocs: state => state.extraDocs,
   docType: state => state.docType,
+  isAdmin: state => state.isAdmin,
+  processView: state => state.processView,
+  processData: state => state.processData,
 }
 
 const mutations = {
@@ -199,6 +223,12 @@ const mutations = {
   },
   [types.SELECT_DOC](state, res) {
     state.extraDocs = res.data;
+  },
+  [types.GET_PROCESS_DATA](state, res) {
+    state.processData = res.data;
+  },
+  [types.SET_PROCESS_VIEW](state, res) {
+    state.processView = res;
   },
   setConfident(state, payLoad) {
     state.selConfident = payLoad

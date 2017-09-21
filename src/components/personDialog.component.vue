@@ -50,11 +50,12 @@ export default {
       'userInfo',
       'searchLoading',
       'searchRes',
-      'depPageNumber'
+      'depPageNumber',
+      'isAdmin'
     ])
   },
-  props: ['note'],
   created() {
+    console.log(this.isAdmin)
     if (this.isAdmin) {
       this.$store.dispatch('getDeptList');
     } else {
@@ -79,7 +80,16 @@ export default {
 
     },
     selectPerson(row) {
-      this.selPerson = row;
+      console.log(row)
+      if (row.empId != this.userInfo.empId) {
+        this.selPerson = row;
+
+      } else {
+        this.$message({
+          message: '请重新选择收件人！',
+          type: 'warning'
+        })
+      }
 
     },
     submitPerson() {
@@ -94,7 +104,7 @@ export default {
         }
         this.$store.commit('setReciver', reciver);
         this.$emit('updatePerson');
-      }else{
+      } else {
         this.$message({
           message: '请先选择收件人！',
           type: 'warning'
@@ -162,6 +172,13 @@ $main:#0460AE;
         height: 50px;
         width: 100px;
       }
+    }
+  }
+  .el-table tr:hover {
+    background-color: #ccc;
+    cursor: pointer;
+    >td {
+      background-color: #ccc;
     }
   }
 }

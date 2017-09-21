@@ -19,8 +19,8 @@
           <el-col :span="5">部门</el-col>
           <el-col :span="6" v-if="docDetialInfo">{{docDetialInfo.doc.taskDeptMajorName}}{{docDetialInfo.doc.taskDeptName}}</el-col>
           <!-- <el-col :span="1">&nbsp;</el-col>
-		  <el-col :span="5">职务</el-col>
-		  <el-col :span="6">{{docDetialInfo.doc.docNo}}</el-col> -->
+      <el-col :span="5">职务</el-col>
+      <el-col :span="6">{{docDetialInfo.doc.docNo}}</el-col> -->
         </el-row>
         <el-row>
           <el-col :span="1">&nbsp;</el-col>
@@ -45,12 +45,20 @@
         <el-row>
           <el-col :span="1">&nbsp;</el-col>
           <el-col :span="5">附件</el-col>
-          <el-col :span="18"></el-col>
+          <el-col :span="18" class="attch">
+            <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
+              <p v-for="file in docDetialInfo.taskFile">{{file.fileName}}</p>
+            </template>
+          </el-col>
         </el-row>
         <el-row>
           <el-col :span="1">&nbsp;</el-col>
           <el-col :span="5">附加公文</el-col>
-          <el-col :span="18"></el-col>
+          <el-col :span="18" class="attch">
+            <template v-if="docDetialInfo&&docDetialInfo.taskQuote.length>0">
+              <p v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</p>
+            </template>
+          </el-col>
         </el-row>
       </div>
       <div class='doc-section'>
@@ -62,7 +70,7 @@
           <el-col :span="23" v-if="index==0">无</el-col>
         </el-row>
       </div>
-      <div class='doc-section' v-if="docDetialInfo.doc&&docDetialInfo.doc.reciUserId==userInfo.empId">
+      <div class='doc-section myAdvice' v-if="docDetialInfo.doc&&docDetialInfo.doc.reciUserId==userInfo.empId&&(docDetialInfo.task[0].state!=3&&docDetialInfo.task[0].state!=4)">
         <h4 class='doc-form_title'>我的审批意见</h4>
         <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="审批意见" class="textarea">
@@ -88,6 +96,7 @@
           <el-form-item>
             <el-col :span='18'>
               <el-button type="primary" size="large" class="submitButton" @click="submit">提交</el-button>
+              <el-button size="large" class="docArchiveButton" @click="docArchive" v-if="isAdmin">归档</el-button>
             </el-col>
           </el-form-item>
         </el-form>
@@ -137,7 +146,8 @@ export default {
   computed: {
     ...mapGetters([
       'reciver',
-      'userInfo'
+      'userInfo',
+      'isAdmin'
     ])
   },
   methods: {
@@ -151,7 +161,7 @@ export default {
     submit() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-        	this.docTask();
+          this.docTask();
         } else {
           return false;
         }
@@ -183,6 +193,28 @@ export default {
         }, res => {
 
         })
+    },
+    docArchive() {
+      var params = {
+        docId: this.docDetialInfo.doc.id,
+        "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
+        "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
+        "taskDeptName": this.userInfo.deptVo.dept,
+        "taskDeptId": this.userInfo.deptVo.deptId,
+        "taskUserName": this.userInfo.name,
+        "taskUserId": this.userInfo.empId,
+      }
+      this.$http.post('/doc/docArchive', params, { body: true })
+        .then(res => {
+          if (res.data.status == '0') {
+            this.$message.success('归档成功');
+            this.$router.push('/doc/docSearch');
+          } else {
+            this.$message.error('归档失败，请重试');
+          }
+        }, res => {
+
+        })
     }
   }
 }
@@ -192,6 +224,12 @@ export default {
 #docDetail {
   .el-card__header {
     margin-bottom: 10px;
+  }
+  .attch {
+    color: blue;
+    p {
+      cursor: pointer;
+    }
   }
   .doc-section {
     .doc-form_title {
@@ -226,10 +264,15 @@ export default {
       width: 200px;
       border-radius: 3px;
     }
+    .docArchiveButton {
+      border-radius: 3px;
+      float: right;
+    }
     .myRadio .el-radio-button .el-radio-button__inner {
       padding: 11px 24px;
     }
   }
+  .myAdvice {}
   .personDialog {
     .el-dialog--large {
       width: 1100px;

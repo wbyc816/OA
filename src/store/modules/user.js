@@ -26,7 +26,7 @@ const actions = {
   getUserInfo({ commit, state }) {
     api.getEmpDetail(state.userInfo.empId)
       .then(res => {
-        console.log(res)
+        // console.log(res)
           commit(types.SET_USER_INFO, res.data);
       }, res => {
 

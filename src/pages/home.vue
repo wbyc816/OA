@@ -332,14 +332,14 @@
               <span v-show="showInfo[5]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[5]=true" v-on:mouseleave="showInfo[5]=false" v-show="showDrag[5]"></i>
             </p>
-            <el-card class="contactList">
+            <side-Person-Search></side-Person-Search>
+            <!-- <el-card class="contactList">
               <span slot="header">公司同仁</span>
               <el-input class="search" placeholder="请输入员工姓名">
                 <el-button slot="append">搜索</el-button>
               </el-input>
-            </el-card>
+            </el-card> -->
           </li>
-
           <li class="list-group-item" :class="{'dragActive':showDrag[6]}">
             <p class="dragHead" v-on:mouseover="dragShow(6)" v-on:mouseleave="dragHide(6)">
               <span v-show="showInfo[6]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
@@ -443,7 +443,6 @@
               <search-date :type="tripType"></search-date>
             </el-card>
           </li> -->
-          
         </ul>
       </el-col>
     </el-row>
@@ -456,9 +455,10 @@ import MyPolarArea from '../components/myPolarArea'
 import SearchDate from '../components/searchDate'
 import MessageCenter from '../components/message'
 import Weibo from '../components/weibo'
+import SidePersonSearch from '../components/sidePersonSearch.component'
 import DocList from '../components/doc'
 var msgs = [
-  { "type": "work", "color": "#0460AE", "text": "待签批公文:", "value": "0", "font": "icon-sousuo", "link": "" },
+  { "type": "work", "color": "#0460AE", "text": "待签批公文:", "value": "0", "font": "icon-sousuo", "link": "/doc/docPending" },
   { "type": "work", "color": "#0460AE", "text": "跟踪中公文:", "value": "0", "font": "icon-sousuo", "link": "/doc/docTracking" },
   { "type": "ss", "color": "#BE3B7F", "text": "邮件通知:", "value": "0", "font": "icon-gongwen", "link": "" },
   { "type": "work", "color": "#0460AE", "text": "公文超时:", "value": "0", "font": "icon-sousuo", "link": "" },
@@ -554,7 +554,7 @@ const options = [{
   label: 'DJ'
 }];
 export default {
-  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, Weibo },
+  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, Weibo,SidePersonSearch },
 
   data() {
     return {

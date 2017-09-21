@@ -1,5 +1,5 @@
 <template>
-  <div class="organlist" v-loading.body="organLoading">
+  <div class="organlist" v-loading="organLoading">
     <el-menu mode="vertical" :router="false" class="topMenu">
       <my-menu-item :depts="depts" v-if="depts.length>0"></my-menu-item>
     </el-menu>
@@ -18,11 +18,13 @@ export default {
     }
   },
   created() {
-    if(this.depts != '' || this.depts != undefined || this.depts != null){
-      this.organLoading = false;
-    }
+    // if(this.depts != '' || this.depts != undefined || this.depts != null){
+    //   this.organLoading = false;
+    // }
+    console.log(this.organLoading)
   },
   mounted(){
+    console.log(this.organLoading)
     
   },
   computed: {
@@ -33,8 +35,10 @@ export default {
   watch: {
     depts: function(newValue) {
       if (newValue != '' || newValue != undefined || newValue != null) {
+
         this.organLoading = false;
       }
+      console.log(this.organLoading)
     }
   },
 }

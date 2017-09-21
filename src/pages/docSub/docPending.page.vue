@@ -1,8 +1,8 @@
 <template>
-  <div id="docTracking">
+  <div id="docPending">
     <el-card class="borderCard searchOptions">
       <div slot="header">
-        <span>公文追踪</span>
+        <span>公文签批</span>
         <i class="iconfont icon-shuaxin"></i>
       </div>
       <el-row :gutter="10">
@@ -54,7 +54,7 @@
           <td colspan="3">{{doc.docTitle}}</td>
           <td>
             <span>
-              <!-- <router-link :to="'/doc/docDetail/'+doc.id">详情</router-link> -->
+              <router-link :to="'/doc/docDetail/'+doc.id">签批</router-link>
               <!-- <span>Withdraw</span>
             <span @click="contractView = true">Delete</span> -->
             </span>
@@ -71,16 +71,40 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-
+const typeOptions = [{
+  value: '1',
+  label: 'Contract Approval(New)'
+}]
+const handledCategoriesOptions = [{
+  value: '1',
+  label: 'Contract Approval(New)'
+}]
 const tableTitle = ['密级程度', '重要程度', '公文类型', '呈报时间', '呈报人', '当前节点']
+const budgetData = [{
+  BudgetYear: '2017-01',
+  UserOrganization: 'IT',
+  BudgetNature: 'IT Activities',
+  CostCenter: 'IT',
+  Currency: 'CNY',
+  AmountRequested: '8,500.00',
+  AmountinHKD: '8,500.00',
+  CashAdvance: 'No'
 
+}]
 export default {
   data() {
     return {
       urgencyValue: "",
+      typeOptions,
       type: '',
+      proposer: '',
+      handledBy: '',
+      handledCategoriesOptions,
+      handledCategories: '',
       tableTitle,
       detailView: false,
+      contractView: false,
+      budgetData,
       params: {
         "keyWords": "",
         "docNo": "",
@@ -120,7 +144,7 @@ export default {
     getDate() {
       var that=this;
       this.searchLoading = true;
-      this.$http.post("/doc/trackingDocList", this.params, { body: true }).then(res => {
+      this.$http.post("/doc/docPendingList", this.params, { body: true }).then(res => {
         setTimeout(function() {
           that.searchLoading = false;
 
@@ -168,7 +192,7 @@ export default {
 </script>
 <style lang='scss'>
 $purple: #0460AE;
-#docTracking {
+#docPending {
   .pageBox {
     text-align: right;
     margin-top: 20px;
@@ -371,6 +395,7 @@ $purple: #0460AE;
       }
     }
   }
+
   .detailDialog {
     .information {
       @include base-ul;

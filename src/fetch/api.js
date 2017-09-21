@@ -115,5 +115,8 @@ export default {
   selectDoc(id) {
     return fetch('/doc/selectDoc', { empId: id })
   },
+  getTaskDetail(id) {
+    return fetch('/doc/getTaskDetail', { id: id })
+  },
 
 }

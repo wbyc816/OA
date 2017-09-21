@@ -179,6 +179,12 @@ $main: #0460AE;
       display: none;
     }
   }
+  .el-table tr:hover {
+    background-color: #ccc;
+    >td {
+      background-color: #ccc;
+    }
+  }
   .pageBox {
     overflow: hidden;
     padding-right: 50px;
