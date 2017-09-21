@@ -1,18 +1,11 @@
 <template>
   <div id='staffCenter'>
     <el-row :gutter='12'>
-      <el-col :span='18' >
+      <el-col :span='17' >
         <router-view></router-view>
       </el-col>
-      <el-col :span='6' class="sideNav">
-        <el-card>
-          <div slot="header" class='doc-bar_title'>
-            <span>Contact List</span>
-          </div>
-          <el-input placeholder="Staff Name" class="search">
-            <el-button slot="append">Search</el-button>
-          </el-input>
-        </el-card>
+      <el-col :span='7' class="sideNav">
+        <side-Person-Search></side-Person-Search>
 
         <el-menu mode="vertical" v-bind:router="true">
           <el-menu-item-group title="Staff Center">
@@ -42,7 +35,9 @@
   }
 </style>
 <script>
+  import SidePersonSearch from '../components/sidePersonSearch.component'
   export default{
+    components: {SidePersonSearch},
     data(){
       return{
         breadcrumbItem:'',
@@ -64,8 +59,6 @@
         ]
 
       };
-    },
-    components:{
     },
     watch: {
       '$route'(to, from) {

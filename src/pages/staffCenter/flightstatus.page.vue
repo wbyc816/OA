@@ -2,169 +2,109 @@
   <div id="paymentSearch">
     <el-card class="borderCard searchOptions">
       <div slot="header">
-        <span>Flight Status</span>
-        <div class="headRight" v-goto="{path:'/staffCenter/flightSearch'}">
-          <i class="iconfont icon-plane1"></i>
-          <span>Flight Information</span>
-          <i class="el-icon-arrow-right"></i>
-        </div> 
+        <span>航班动态</span>
       </div>
       <el-row :gutter="12">
         <el-col :span="6">
-          <search-date type="date" :button="false" tip="Date"></search-date>
+          <el-date-picker v-model="searchDate" type="date" placeholder="选择呈报日期" format="yyyy-MM-dd" @change="changDate"></el-date-picker>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="7">
           <el-radio-group v-model="flightStatusType" class="myRadio">
-            <el-radio-button label="flightNo">Flight No.<i></i></el-radio-button>
-            <el-radio-button label="route">Route<i></i></el-radio-button>
+            <el-radio-button label="flightNo">航班号<i></i></el-radio-button>
+            <el-radio-button label="route">路线<i></i></el-radio-button>
           </el-radio-group>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="8">
           <div class="flightNo" v-show="flightStatusType=='flightNo'">
             <el-select v-model="flightNoTitle">
               <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
             </el-select>
-            <el-input class="search">
-              <el-button slot="append">Search</el-button>
+            <el-input v-model="flightNo" >
             </el-input>
           </div>
           <div class="route" v-show="flightStatusType=='route'">
-            <el-input v-model="tripFrom" placeholder="From">
+            <el-input v-model="tripFrom" placeholder="出发地">
             </el-input>
-            <el-input class="search" v-model="tripTo" placeholder="To">
-              <el-button slot="append">Search</el-button>
+            <el-input v-model="tripTo" placeholder="目的地">
             </el-input>
           </div>
+        </el-col>
+        <el-col :span="3">
+          <el-button @click="getData" class="searchButton">搜索</el-button>
         </el-col>
       </el-row>
     </el-card>
     <el-card class="borderCard searchResult">
       <div slot="header">
-        <span @click="show">Total Flights  155</span>
+        <span @click="show">总计{{totalSize}}个航班</span>
       </div>
-      <ul class="tableHearder">
-        <li style="width:113px">Departure Date</li>
-        <li style="width:82px">From</li>
-        <li style="width:82px">To</li>
-        <li style="width:132px">Scheduled<br/>Departure Time</li>
-        <li style="width:132px">Scheduled<br/>Arrival Time</li>
-        <li style="width:132px">Actual<br/>Departure Time</li>
-        <li style="width:132px">Actual<br/>Arrival Time</li>
-        <li style="width:91px">Status</li>
-      </ul>
-      <el-table :data="searchData" class="myTable" :show-header="false">      
-        <el-table-column prop="DepartureDate" label="Departure Date" width="110"></el-table-column>
-        <el-table-column prop="From" label="From" width="80" class-name="purpleColor"></el-table-column>
-        <el-table-column prop="To" label="To" width="80" class-name="purpleColor"></el-table-column>
-        <el-table-column  label="Scheduled Departure Time" width="130">
-          <template scope="scope">
-            <p>{{ scope.row.date }}</p>
-            <p>{{ scope.row.time }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column  label="ScheduledArrival Time" width="130">
-          <template scope="scope">
-            <p>{{ scope.row.date }}</p>
-            <p>{{ scope.row.time }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column  label="Actual Departure Time" width="130">
-          <template scope="scope">
-            <p>{{ scope.row.date }}</p>
-            <p>{{ scope.row.time }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column  label="Actual Arrival Time" width="130">
-          <template scope="scope">
-            <p>{{ scope.row.date }}</p>
-            <p>{{ scope.row.time }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column prop="Status" label="Status" class-name="greenColor"> 
-
-        </el-table-column>
-      </el-table>
-      <p class="total">Total: 4 Record(s).</p>
+      <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0" v-loading.body="searchLoading">
+      <caption>
+      </caption>
+      <thead align="left">
+        <tr>
+          <th v-for="title in tableTitle">{{title}}</th>
+        </tr>
+      </thead>
+      <tbody v-for="flight in flightList">
+        <tr>
+          <td>{{flight.flightNo}}</td>
+          <td>{{flight.from}}</td>
+          <td>{{flight.to}}</td>
+          <td>{{flight.stdTime}}</td>
+          <td>{{flight.atdTime}}</td>
+          <td>{{flight.staTime}}</td>
+          <td>{{flight.ataTime}}</td>
+          <td>{{statusValue[flight.flightStatus-1]}}</td>
+        </tr>
+      </tbody>
+    </table>
     </el-card>
+
+    <div class="pageBox" v-show="flightList.length>0">
+      <el-pagination @current-change="handleCurrentChange" :current-page="pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
+      </el-pagination>
+    </div>
   </div>
 </template>
 <script>
-  import SearchDate from '../../components/searchDate'
-  const searchData=[
-  {
-    'DepartureDate':'2017-01-18',
-    'From': 'HKG',
-    To: 'PEK',
-    date: '2017-02-12',
-    time: '18:31:31',
-    Status: 'Arrived'
-  },
-  {
-    'DepartureDate':'2017-01-18',
-    'From': 'HKG',
-    To: 'PEK',
-    date: '2017-02-12',
-    time: '18:31:31',
-    Status: 'Arrived'
-  },
-  {
-    'DepartureDate':'2017-01-18',
-    'From': 'HKG',
-    To: 'PEK',
-    date: '2017-02-12',
-    time: '18:31:31',
-    Status: 'Arrived'
-  },
-  {
-    'DepartureDate':'2017-01-18',
-    'From': 'HKG',
-    To: 'PEK',
-    date: '2017-02-12',
-    time: '18:31:31',
-    Status: 'Arrived'
-  },
-  ]
-
-  const paymentData=[
-  {
-    BudgetNature:'2017-01',
-    'DocNo/ID': '41024487',
-    InvoiceNo: '64717754544HK',
-    CostCenter: 'IT',
-    Currency: 'CNY',
-    AmountRequested: '8,500.00',
-    AmountinHKD: '8,500.00',
-    PaymentAmount: '8,500.00',
-    'Total(HKD)':'8,500.00'
-
-  }
-  ]
+  const tableTitle = ['航班号', '出发地', '目的地', '计划起飞时间', '实际起飞时间', '计划到达时间','实际到达时间','状态']
   const options= [{
-    value: '选项1',
-    label: 'HX'
-  }, {
-    value: '选项2',
-    label: 'HD'
-  }, {
-    value: '选项3',
-    label: 'HJ'
+    value: 'DZ',
+    label: 'DZ'
   }]; 
+  const statusValue=['计划','延误','起飞','取消','备降','到达'];
   export default{
     data(){
       return{
-        searchData,
         handledBy:'',
         paymentView:false,
-        paymentData,
-        flightStatusType:'flightNo',
+        tableTitle,
+        searchDate:'',
+        flightStatusType:'',
         options,
-        flightNoTitle:'选项1',
+        flightNoTitle:'DZ',
+        flightNo:"",
         tripFrom:'',
         tripTo:'',
+        statusValue,
+        searchLoading: false,
+        flightList:[],
+        pageNumber:1,
+        totalSize:0
+
       }
     },
-    components:{
-      SearchDate
+    created() {
+      let temp=new Date();
+      let month=temp.getMonth()+1;
+      if(month<10){
+        month='0'+month;
+      }
+      this.searchDate=temp.getFullYear()+'-'+month+'-'+temp.getDate();
+      console.log(this.searchDate);
+      this.getData();
+
     },
     methods:{
       showDialog(){
@@ -172,13 +112,108 @@
       },
       show(){
         console.log(this.$parent);
+      },
+      changDate(){
+        let temp=new Date(this.searchDate);
+        let month=temp.getMonth()+1;
+        if(month<10){
+          month='0'+month;
+        }
+        this.searchDate=temp.getFullYear()+'-'+month+'-'+temp.getDate();
+        console.log(this.searchDate);
+      },
+      getData() {
+        if(this.flightStatusType==""){
+          this.getToDate();
+        }else if(this.flightStatusType==flightNo){
+          this.getToFlightNo();
+        }else{
+          this.getToRound();
+        }
+      },
+      getToDate(){
+        var that=this;
+        this.searchLoading = true;
+        this.$http.post("/flight/getFlightByDate", {
+          flightDate:this.searchDate,
+          pageNumber:this.pageNumber,
+          pageSize:"10"
+        }).then(res => {
+          setTimeout(function() {
+            that.searchLoading = false;
+          }, 200)
+          if (res.data.status == 0) {
+            this.flightList = res.data.flightList;
+            this.totalSize = res.data.totalSize;
+          } else {
+            this.flightList = [];
+            this.totalSize = 0;
+          }
+        }, res => {
+
+        })
+      },
+      getToFlightNo(){
+        var that=this;
+        this.searchLoading = true;
+        this.$http.post("/flight/getFlightByNo", {
+          flightDate:this.searchDate,
+          flightNo:this.flightNoTitle+this.flightNo,
+          pageNumber:this.pageNumber,
+          pageSize:"10"
+        }).then(res => {
+          setTimeout(function() {
+            that.searchLoading = false;
+          }, 200)
+          if (res.data.status == 0) {
+            this.flightList = res.data.flightList;
+            this.totalSize = res.data.totalSize;
+          } else {
+            this.flightList = [];
+            this.totalSize = 0;
+          }
+        }, res => {
+
+        })
+      },
+      getToRound(){
+        var that=this;
+        this.searchLoading = true;
+        this.$http.post("/flight/getFlightByFromTo", {
+          flightDate:this.searchDate,
+          det:that.tripFrom,
+          arr:that.tripTo,
+          pageNumber:this.pageNumber,
+          pageSize:"10"
+        }).then(res => {
+          setTimeout(function() {
+            that.searchLoading = false;
+          }, 200)
+          if (res.data.status == 0) {
+            this.flightList = res.data.flightList;
+            this.totalSize = res.data.totalSize;
+          } else {
+            this.flightList = [];
+            this.totalSize = 0;
+          }
+        }, res => {
+
+        })
+      },
+      handleCurrentChange(page) {
+        this.pageNumber = page;
+        this.getData()
       }
     }
   }
 </script>
 <style lang='scss'>
-  $purple: #7C5598;
+  $purple: #0460AE;
   #paymentSearch{
+    .pageBox {
+      text-align: right;
+      margin: 20px 0;
+    }
     .purpleColor{
       color:$purple;
     }
@@ -193,6 +228,7 @@
       }
     }
     .searchOptions{
+      padding-bottom: 10px;
       .el-card__body{
         .el-col{
           margin-top:13px;
@@ -204,34 +240,38 @@
           width: 100%;
           .el-radio-button{
             width: 45%;
+            margin-right:0;
             .el-radio-button__inner{
               width: 100%;
+              padding:15px;
             }
             &:first-child{
-              margin-right: 12px;
+              margin-right: 15px;
             }
           }
         }
         .flightNo{
           float: right;
-          .el-select{
-            width:20%;
-          }
-          .search{
-            width: 78%;
+          .el-input{
+            width: 60%;
             float: right;
+          }
+          .el-select{
+            width:30%;
+            margin-right:15px;
+            .el-input{
+              width: 100%
+            }
           }
         }
         .route{
           float: right;
-          .el-input:first-child{
-            width:35%;
+          .el-input{
+            width:45%;
             display:inline-block;
-          }
-          .search{
-            float: right;
-            width: 63%;
-            
+            &:first-child{
+              margin-right:15px;
+            }
           }
             
           
@@ -247,9 +287,67 @@
         }
       }
     }
+    
     .searchResult{
       padding-bottom: 0;
       .el-card__body{
+        &>table {
+          thead {
+            background: $purple;
+            color: #fff;
+            font-size: 13px;
+            th {
+              padding: 6px 13px;
+            }
+            $widths: (1: 10%, 2: 10%, 3: 10%, 4: 15%, 5: 15%, 6: 15%, 7:15%,8:10%);
+            @each $num,
+            $width in $widths {
+              th:nth-child(#{$num}) {
+                width: $width;
+              }
+            }
+          }
+          td {
+            padding: 4px 13px;
+            font-size: 14px;
+          }
+          tbody {
+            tr:first-child {
+              td {
+                border-bottom: 1px dashed #D5DADF;
+              }
+            }
+            tr:last-child {
+              td {
+                border-bottom: 1px solid #D5DADF;
+                vertical-align: middle;
+              }
+              height: 76px;
+              td {
+                font-size: 15px;
+              }
+              td:nth-child(3),
+              td:nth-child(2) {
+                color: $purple;
+                span {
+
+                  cursor: pointer;
+                }
+              }
+              td:last-child {
+                cursor: pointer;
+              }
+            }
+          }
+          tbody:nth-child(even) {
+            background: #F7F7F7;
+          }
+          tfoot {
+            td {
+              color: #95989A;
+            }
+          }
+        }
         padding: 0;
         .tableHearder{
           background: $purple;
