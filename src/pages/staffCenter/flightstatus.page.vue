@@ -19,8 +19,7 @@
             <el-select v-model="flightNoTitle">
               <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
             </el-select>
-            <el-input v-model="flightNo" >
-            </el-input>
+            <el-input v-model="flightNoValue"></el-input>
           </div>
           <div class="route" v-show="flightStatusType=='route'">
             <el-input v-model="tripFrom" placeholder="出发地">
@@ -84,7 +83,7 @@
         flightStatusType:'',
         options,
         flightNoTitle:'DZ',
-        flightNo:"",
+        flightNoValue:"",
         tripFrom:'',
         tripTo:'',
         statusValue,
@@ -125,7 +124,7 @@
       getData() {
         if(this.flightStatusType==""){
           this.getToDate();
-        }else if(this.flightStatusType==flightNo){
+        }else if(this.flightStatusType=="flightNo"){
           this.getToFlightNo();
         }else{
           this.getToRound();
@@ -158,7 +157,7 @@
         this.searchLoading = true;
         this.$http.post("/flight/getFlightByNo", {
           flightDate:this.searchDate,
-          flightNo:this.flightNoTitle+this.flightNo,
+          flightNo:this.flightNoTitle+this.flightNoValue,
           pageNumber:this.pageNumber,
           pageSize:"10"
         }).then(res => {
