@@ -6,25 +6,28 @@
       </el-col>
       <el-col :span='18'>
         <div class="topSearch clearfix">
-          <p class="tips">选择收件人<span>请双击姓名选择</span></p>
+          <p class="tips">选择收件人<span v-show="dialogType=='radio'">请双击姓名选择</span></p>
           <el-input class="search" v-model="name">
             <el-button slot="append" @click="search">搜索</el-button>
           </el-input>
         </div>
-        <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430">
+        <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430" @selection-change="handleSelectionChange" ref='multipleTable'>
+          <el-table-column type="selection" width="55" v-if="dialogType=='multi'">
+          </el-table-column>
           <el-table-column prop="name" label="姓名" width="110"></el-table-column>
-          <el-table-column prop="depts" label="部门" width="450"></el-table-column>
-          <el-table-column prop="jobtitle" label="职务" width="150"></el-table-column>
-          <el-table-column prop="moblieNumber" label="手机"></el-table-column>
+          <el-table-column prop="depts" label="部门" width="250"></el-table-column>
+          <el-table-column prop="jobtitle" label="职务" :width="dialogType=='multi'?'329':''"></el-table-column>
+          <el-table-column prop="moblieNumber" label="状态" width="80"></el-table-column>
         </el-table>
         <div class="pageBox" :style="{visibility:searchRes.empVoList ? 'visible' : 'hidden'}">
           <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">
           </el-pagination>
         </div>
         <div class="selInfoBox">
-          <p>已选中的收件人</p>
+          <p>{{ dialogType=='radio'?'已选中的收件人':' '}}</p>
           <div class="clearfix selInfo">
-            <span v-if="selPerson">{{selPerson.name}} - {{selPerson.depts}}</span>
+            <span v-if="selPerson&&dialogType=='radio'">{{selPerson.name}} - {{selPerson.depts}}</span>
+            <span v-for="person in multipleSelection" class="nameBox">{{person.name}}</span>
             <el-button type="primary" size="large" @click="submitPerson">选中</el-button>
           </div>
         </div>
@@ -42,7 +45,14 @@ export default {
   data() {
     return {
       name: '',
-      selPerson: ''
+      selPerson: '',
+      multipleSelection: ''
+    }
+  },
+  props: {
+    dialogType: {
+      type: String,
+      default: 'radio'
     }
   },
   computed: {
@@ -55,7 +65,6 @@ export default {
     ])
   },
   created() {
-    console.log(this.isAdmin)
     if (this.isAdmin) {
       this.$store.dispatch('getDeptList');
     } else {
@@ -69,10 +78,11 @@ export default {
 
     },
     handleCurrentChange(page) {
-      if (this.searchRes.data) {
+      if (this.searchRes.empVoList) {
         this.$store.dispatch('setQueryPage', page);
         this.$store.dispatch('queryEmpList', {})
       }
+
     },
     search() {
       this.$store.dispatch('setQueryPage', 1);
@@ -80,35 +90,60 @@ export default {
 
     },
     selectPerson(row) {
-      console.log(row)
-      if (row.empId != this.userInfo.empId) {
-        this.selPerson = row;
+      if (this.dialogType == 'radio') {
+        if (row.empId != this.userInfo.empId) {
+          this.selPerson = row;
 
+        } else {
+          this.$message({
+            message: '请重新选择收件人！',
+            type: 'warning'
+          })
+        }
+      }
+    },
+    submitPerson() {
+      if (this.dialogType == 'radio') {
+        if (this.selPerson) {
+          var reciver = {
+            "reciDeptMajorName": this.selPerson.deptName,
+            "reciDeptMajorId": this.selPerson.deptParentId,
+            "reciDeptName": this.selPerson.depts,
+            "reciDeptId": this.selPerson.deptId,
+            "reciUserName": this.selPerson.name,
+            "reciUserId": this.selPerson.empId,
+          }
+          this.$store.commit('setReciver', reciver);
+          this.$emit('updatePerson');
+        } else {
+          this.$message({
+            message: '请先选择收件人！',
+            type: 'warning'
+          })
+        }
       } else {
-        this.$message({
-          message: '请重新选择收件人！',
-          type: 'warning'
-        })
+        if (this.multipleSelection.length != 0) {
+
+          this.$emit('updatePerson', this.multipleSelection);
+        } else {
+          this.$message({
+            message: '请先选择收件人！',
+            type: 'warning'
+          })
+        }
       }
 
     },
-    submitPerson() {
-      if (this.selPerson) {
-        var reciver = {
-          "reciDeptMajorName": this.selPerson.deptName,
-          "reciDeptMajorId": this.selPerson.deptParentId,
-          "reciDeptName": this.selPerson.depts,
-          "reciDeptId": this.selPerson.deptId,
-          "reciUserName": this.selPerson.name,
-          "reciUserId": this.selPerson.empId,
-        }
-        this.$store.commit('setReciver', reciver);
-        this.$emit('updatePerson');
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
       } else {
-        this.$message({
-          message: '请先选择收件人！',
-          type: 'warning'
-        })
+        this.$refs.multipleTable.clearSelection();
       }
     }
   }
@@ -158,6 +193,7 @@ $main:#0460AE;
       font-size: 16px;
       padding-left: 15px;
       line-height: 40px;
+      height: 40px;
     }
     .selInfo {
       background-color: #E5E7EF;
@@ -166,6 +202,9 @@ $main:#0460AE;
       font-size: 15px;
       >span {
         color: $main;
+      }
+      .nameBox {
+        margin-right: 10px;
       }
       button {
         float: right;

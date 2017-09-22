@@ -29,11 +29,12 @@
       </div>
       <el-table :data="processData" class="myTable">
         <el-table-column width="44"></el-table-column>s
-        <el-table-column prop="taskUserName" label="审批人" width="100"></el-table-column>
+        <el-table-column prop="taskUserName" label="审批人" width="155"></el-table-column>
+        <el-table-column prop="isBack" label="审阅时间" width="155"></el-table-column>
         <el-table-column prop="startTime" label="审批时间" width="155"></el-table-column>
-        <el-table-column prop="截至时间" label="截至时间" width="150"></el-table-column>
-        <el-table-column prop="时限" label="时限" width="75"></el-table-column>
-        <el-table-column prop="nodeName" label="状态" width="90" :formatter="formatter"></el-table-column>
+        <el-table-column prop="isBack" label="截至时间" width="150"></el-table-column>
+        <el-table-column prop="isOvertime" label="时限" width="155"></el-table-column>
+        <el-table-column prop="nodeName" label="状态" width="155" :formatter="formatter"></el-table-column>
         <el-table-column prop="taskDeptMajorName" label="部门"></el-table-column>
       </el-table>
     </el-dialog>
@@ -83,9 +84,10 @@ export default {
       'processData'
     ])
   },
-  components: {SidePersonSearch},
+  components: { SidePersonSearch },
   created() {
     this.$store.dispatch('getAdminStatus');
+    this.$store.dispatch('getDocForm');
   },
   mounted: function() {
     this.breadcrumbItem = this.$route.meta.breadcrumb;

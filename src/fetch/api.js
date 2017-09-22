@@ -100,6 +100,9 @@ export default {
   submitDoc(params) {
     return fetch('/doc/submitDoc', params, { isBody: true })
   },
+  docDistribution(params) {
+    return fetch('/doc/docDistribution', params, { isBody: true })
+  },
   getDocForm() {
     return fetch('/doc/getDocForm')
   },

@@ -13,20 +13,20 @@ import docSearch from 'pages/docSub/docSearch.page'
 import docPending from 'pages/docSub/docPending.page'
 
 import approvalForm from 'pages/docSub/approvalForm.page'
-import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
-import leisureTravel from 'pages/docSub/staff-leisure-travel.page'
-import business from 'pages/docSub/businessTrip.page'
-import mobSerReq from 'pages/docSub/mobSerReq.page'
-import businessCardReq from 'pages/docSub/businessCardReq.page'
-import conVoucher from 'pages/docSub/conVoucher.page'
-import procureReq from 'pages/docSub/procureReq.page'
-import reimburse from 'pages/docSub/reimburse.page'
-import payment from 'pages/docSub/payment.page'
-import budget from 'pages/docSub/budgetForm.page'
-import contractBudget from 'pages/docSub/contractBudget.page'
-import conChange from 'pages/docSub/conChange.page'
-import conApprovalNew from 'pages/docSub/conApprovalNew.page'
-import conApproval from 'pages/docSub/conApproval.page'
+// import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
+// import leisureTravel from 'pages/docSub/staff-leisure-travel.page'
+// import business from 'pages/docSub/businessTrip.page'
+// import mobSerReq from 'pages/docSub/mobSerReq.page'
+// import businessCardReq from 'pages/docSub/businessCardReq.page'
+// import conVoucher from 'pages/docSub/conVoucher.page'
+// import procureReq from 'pages/docSub/procureReq.page'
+// import reimburse from 'pages/docSub/reimburse.page'
+// import payment from 'pages/docSub/payment.page'
+// import budget from 'pages/docSub/budgetForm.page'
+// import contractBudget from 'pages/docSub/contractBudget.page'
+// import conChange from 'pages/docSub/conChange.page'
+// import conApprovalNew from 'pages/docSub/conApprovalNew.page'
+// import conApproval from 'pages/docSub/conApproval.page'
 
 
 // import generalInfo from 'pages/GeneralInfo'
@@ -142,70 +142,70 @@ export default new Router({
         			breadcrumb:"公文呈报",
         		}
         	},
-        	{
-        		path:'/doc/leisureTravel',
-        		name:'leisureTravel',
-        		component:leisureTravel,
-        		meta:{
-        			breadcrumb:"Leisure Travel",
-        		}
-        	},
-        	{
-        		path:'/doc/manuscriptPaper',
-        		name:'manuscriptPaper',
-        		component:manuscriptPaper,
-        		meta:{
-        			breadcrumb:"File Manuscript Paper",
-        		}
-        	},
-        	{
-        		path:'/doc/businessTrip',
-        		name:'businessTrip',
-        		component:business,
-        		meta:{
-        			breadcrumb:"Business Trip",
-        		}
-        	},
-        	{
-        		path:'/doc/mobSerReq',
-        		name:'mobSerReq',
-        		component:mobSerReq,
-        		meta:{
-        			breadcrumb:"Mobile Phone Services Request",
-        		}
-        	},
-        	{
-        		path:'/doc/businessCardReq',
-        		name:'businessCardReq',
-        		component:businessCardReq,
-        		meta:{
-        			breadcrumb:"Business Card Request Form",
-        		}
-        	},
-        	{
-        		path:'/doc/conVoucher',
-        		name:'ConVoucher',
-        		component:conVoucher,
-        		meta:{
-        			breadcrumb:"Concession Voucher Form",
-        		}
-        	},
-        	{
-        		path:'/doc/procureReq',
-        		name:'ProcureReq',
-        		component:procureReq,
-        		meta:{
-        			breadcrumb:"Procurement Requisition Form",
-        		}
-        	},
-        	{
-        		path:'/doc/reimburse',
-        		name:'Reimburse',
-        		component:reimburse,
-        		meta:{
-        			breadcrumb:"Reimbursement Form",
-        		}
-        	},
+        	// {
+        	// 	path:'/doc/leisureTravel',
+        	// 	name:'leisureTravel',
+        	// 	component:leisureTravel,
+        	// 	meta:{
+        	// 		breadcrumb:"Leisure Travel",
+        	// 	}
+        	// },
+        	// {
+        	// 	path:'/doc/manuscriptPaper',
+        	// 	name:'manuscriptPaper',
+        	// 	component:manuscriptPaper,
+        	// 	meta:{
+        	// 		breadcrumb:"File Manuscript Paper",
+        	// 	}
+        	// },
+        	// {
+        	// 	path:'/doc/businessTrip',
+        	// 	name:'businessTrip',
+        	// 	component:business,
+        	// 	meta:{
+        	// 		breadcrumb:"Business Trip",
+        	// 	}
+        	// },
+        	// {
+        	// 	path:'/doc/mobSerReq',
+        	// 	name:'mobSerReq',
+        	// 	component:mobSerReq,
+        	// 	meta:{
+        	// 		breadcrumb:"Mobile Phone Services Request",
+        	// 	}
+        	// },
+        	// {
+        	// 	path:'/doc/businessCardReq',
+        	// 	name:'businessCardReq',
+        	// 	component:businessCardReq,
+        	// 	meta:{
+        	// 		breadcrumb:"Business Card Request Form",
+        	// 	}
+        	// },
+        	// {
+        	// 	path:'/doc/conVoucher',
+        	// 	name:'ConVoucher',
+        	// 	component:conVoucher,
+        	// 	meta:{
+        	// 		breadcrumb:"Concession Voucher Form",
+        	// 	}
+        	// },
+        	// {
+        	// 	path:'/doc/procureReq',
+        	// 	name:'ProcureReq',
+        	// 	component:procureReq,
+        	// 	meta:{
+        	// 		breadcrumb:"Procurement Requisition Form",
+        	// 	}
+        	// },
+        	// {
+        	// 	path:'/doc/reimburse',
+        	// 	name:'Reimburse',
+        	// 	component:reimburse,
+        	// 	meta:{
+        	// 		breadcrumb:"Reimbursement Form",
+        	// 	}
+        	// },
         // 	{
         // 		path:'/doc/payment',
         // 		name:'Payment',

@@ -8,12 +8,13 @@
       <el-row :gutter="10">
         <el-col :span="6">
           <el-select v-model="urgencyValue" placeholder="重要程度">
-            <el-option label="全部" value="0"></el-option>
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="item in urgency" :label="item.dictName" :value="item.dictCode"></el-option>
           </el-select>
         </el-col>
         <el-col :span="6">
           <el-select v-model="params.docType" placeholder="公文类型">
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="item in docType" :label="item.docName" :value="item.docTypeCode"></el-option>
           </el-select>
         </el-col>
@@ -24,7 +25,7 @@
           <el-input placeholder="公文编号" v-model="params.docNo"></el-input>
         </el-col>
         <el-col :span="12">
-          <el-date-picker v-model="params.startTime" type="date" placeholder="选择呈报日期">
+          <el-date-picker v-model="params.startTime" @change="dateChange" type="date" placeholder="选择呈报日期">
           </el-date-picker>
         </el-col>
         <el-col :span="6">
@@ -161,6 +162,9 @@ export default {
     handleCurrentChange(page) {
       this.params.pageNumber = page;
       this.getDate()
+    },
+    dateChange(val){
+      this.params.startTime=val;
     }
   }
 }

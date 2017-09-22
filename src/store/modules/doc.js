@@ -111,7 +111,7 @@ const actions = {
       })
   },
   //获取额外公文
-  selectDoc({ commit, rootGetters }) {
+  selectDoc({ commit, rootGetters, state }) {
     api.selectDoc(rootGetters.userInfo.empId)
       .then(res => {
         if (res.status == "0") {
@@ -143,7 +143,6 @@ const actions = {
       "docTitle": state.docTtile,
     }
     Object.assign(params, state.reciver, state.selConfident, state.selUrgency, payLoad)
-    console.log(params)
     api.submitDoc(params)
       .then(res => {
         if (res.status == "0") {
@@ -187,7 +186,26 @@ const actions = {
         });
       })
   },
+  //分发公文
+  docDistribution({ commit, rootGetters }, params) {
+    api.docDistribution(params)
+      .then(res => {
+        if (res.status == '0') {
+          Notification({
+            message: '分发公文成功',
+            type: 'success'
+          });
+          router.push('/doc/docSearch');
+        } else {
+          Notification({
+            message: '分发公文失败，请重试！',
+            type: 'error'
+          });
+        }
+      }, res => {
 
+      })
+  }
 }
 
 const getters = {
@@ -222,7 +240,7 @@ const mutations = {
     state.docType = res.data.data
   },
   [types.SELECT_DOC](state, res) {
-    state.extraDocs = res.data;
+    state.extraDocs = res.data.records;
   },
   [types.GET_PROCESS_DATA](state, res) {
     state.processData = res.data;

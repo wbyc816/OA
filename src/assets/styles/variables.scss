@@ -587,6 +587,8 @@ ul {
 }
 
 .el-button {
+  color: $sub;
+  border-color: $sub;
   .el-icon-icon-heart {
     font-family: "iconfont" !important;
     &:before {
@@ -599,6 +601,10 @@ ul {
       content: "\e607";
     }
   }
+}
+
+.el-button--primary {
+  color: #fff;
 }
 
 
@@ -717,7 +723,7 @@ ul {
 }
 
 .mySideLink {
-  margin-bottom:20px;
+  margin-bottom: 20px;
   .el-menu-item-group__title {
     line-height: 55px;
     padding: 0;
@@ -742,3 +748,18 @@ ul {
   margin-bottom: 0;
 }
 
+.addButton {
+  font-size: 45px;
+  line-height: 48px;
+  height: 48px;
+  padding: 0;
+  width: 48px;
+  color: $main;
+  border-color: $main;
+  border-radius: 5px;
+}
+
+.myButton{
+  border-radius:3px;
+  width:180px;
+}

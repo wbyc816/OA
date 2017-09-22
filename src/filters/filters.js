@@ -1,5 +1,6 @@
 import Vue from 'vue'
 Vue.filter('time',timeFilter);
+Vue.filter('sex',sexFilter);
 Vue.filter('nodeNameFormatter',nodeNameFormatter);
 
 function timeFilter(value, type) { //value为13位的时间戳
@@ -44,6 +45,20 @@ function nodeNameFormatter(cellValue) {
 
     default:
       return cellValue;
+  }
+}
+
+function sexFilter(val) {
+  switch (val) {
+    case "F":
+      return "女";
+      break;
+    case 'M':
+      return "男";
+      break;
+
+    default:
+      return val;
   }
 }
 export {timeFilter}

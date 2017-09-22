@@ -20,7 +20,7 @@
             </div>
             <div class="infoItem">
               <span class="infoTittle">性别</span>
-              <p class="infoText">{{resumeInfo.gender}}</p>
+              <p class="infoText">{{resumeInfo.gender | sex}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">出生日期</span>

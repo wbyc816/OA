@@ -143,7 +143,8 @@ export default {
       breadcrumbs: [],
       routers: [],
       breadcrumbShow: false,
-      scrollBanner: false
+      scrollBanner: false,
+      baseUrl:''
     }
   },
   computed: {
@@ -152,19 +153,18 @@ export default {
     ])
   },
   created() {
-    var url = ''
     if (process.env.NODE_ENV == 'development') { //开发环境
       // this.$store.commit('setEmpId', 'FB2E203234DF6DEE15934E448EE88971');
       // this.$store.dispatch('getUserInfo');
-      url = 'http://127.0.0.1:8080'
+      this.baseUrl = 'http://127.0.0.1:8080'
     } else {
-      url = 'http://192.168.8.92:8080'
+      this.baseUrl = 'http://192.168.8.92:8080'
     }
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));
       this.$store.dispatch('getUserInfo');
     } else {
-      location.href = url+"/login.html"
+      location.href = this.baseUrl+"/login.html"
     }
   },
   mounted() {
@@ -173,7 +173,7 @@ export default {
   methods: {
     loginOut() {
       this.delCookie('userId');
-      location.href = "http://192.168.8.92:8080/login.html"
+      location.href =this.baseUrl+"/login.html"
     },
     handleSelect(key, keyPath) {
       this.menuToggle();

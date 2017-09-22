@@ -8,12 +8,13 @@
       <el-row :gutter="10">
         <el-col :span="6">
           <el-select v-model="urgencyValue" placeholder="重要程度">
-            <el-option label="全部" value="0"></el-option>
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="item in urgency" :label="item.dictName" :value="item.dictCode"></el-option>
           </el-select>
         </el-col>
         <el-col :span="6">
           <el-select v-model="params.docType" placeholder="公文类型">
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="item in docType" :label="item.docName" :value="item.docTypeCode"></el-option>
           </el-select>
         </el-col>
@@ -24,7 +25,7 @@
           <el-input placeholder="公文编号" v-model="params.docNo"></el-input>
         </el-col>
         <el-col :span="12">
-          <el-date-picker v-model="params.startTime" type="date" placeholder="选择呈报日期">
+          <el-date-picker v-model="params.startTime" @change="dateChange" type="date" :editable="false" placeholder="选择呈报日期">
           </el-date-picker>
         </el-col>
         <el-col :span="6">
@@ -55,7 +56,7 @@
       </tbody>
     </table>
     <div class="pageBox" v-show="docData.length>0">
-      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="5" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
     <el-dialog title="流转详情" v-model="processView" size="large" class="myDialog processDialog">
@@ -91,7 +92,6 @@ export default {
   data() {
     return {
       urgencyValue: "",
-      typeOptions,
       type: '',
       proposer: '',
       handledBy: '',
@@ -181,6 +181,9 @@ export default {
     handleCurrentChange(page) {
       this.params.pageNumber = page;
       this.getDate()
+    },
+    dateChange(val){
+      this.params.startTime=val;
     }
   }
 }

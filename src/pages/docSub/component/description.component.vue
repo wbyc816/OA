@@ -1,9 +1,9 @@
 <template>
   <div class='descriptionBox'>
     <h4 class='doc-form_title'>详情信息</h4>
-    <component v-bind:is="currentView">
-      <!-- 组件在 vm.currentview 变化时改变！ -->
-    </component>
+    <!-- <component v-bind:is="currentView">
+      组件在 vm.currentview 变化时改变！
+    </component> -->
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
       <el-form-item label="请示内容" prop="des">
         <el-col :span='18'>
@@ -27,26 +27,24 @@
           <el-input class="search" :readonly="true" :value="doc.quoteDocTitle" v-for="(doc,index) in docs" icon="search" :key="doc.quoteDocTitle">
             <div slot="append">
               <el-button @click='showDialog(index)'>选择</el-button>
-              <i class="el-icon-close" v-show="doc.quoteDocTitle" @click="clearDoc(index)"></i>
+              <i class="el-icon-close" v-show="doc.quoteDocTitle||index>0" @click="clearDoc(index)"></i>
             </div>
           </el-input>
         </el-col>
-        <!-- <el-col :span='1'>
+        <el-col :span='1'>
           <el-button class="addButton" @click="addDoc">+</el-button>
-        </el-col> -->
+        </el-col>
       </el-form-item>
     </el-form>
     <el-dialog :visible.sync="dialogTableVisible" size="large" class="personDialog">
       <div class="topSearch clearfix">
         <p class="tips">选择公文<span>请双击公文选择</span></p>
       </div>
-      <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="300">
-        <el-table-column prop="docDenseType" label="密级程度" width="110"></el-table-column>
-        <el-table-column prop="docImportType" label="重要程度" width="110"></el-table-column>
-        <el-table-column prop="docTypeCode" label="公文类型" width="150"></el-table-column>
-        <el-table-column prop="docTitle" label="标题"></el-table-column>
-        <el-table-column prop="taskDeptId" label="呈报时间"></el-table-column>
-        <el-table-column prop="taskUserName" label="呈报人"></el-table-column>
+      <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="300" :row-class-name="tableRowClassName">
+        <el-table-column prop="docTypeCode" label="公文类型" :formatter="formatterDocType" width="110"></el-table-column>
+        <el-table-column prop="docTitle" label="标题" width="310"></el-table-column>
+        <el-table-column prop="taskUserName" label="呈报人" width="150"></el-table-column>
+        <el-table-column prop="taskTime" label="呈报时间"></el-table-column>
       </el-table>
       <!-- <div class="pageBox" v-show="searchRes.empVoList">
         <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">
@@ -83,11 +81,12 @@ export default {
   computed: {
     ...mapGetters([
       'extraDocs',
-      'baseURL'
+      'baseURL',
+      'docType'
     ])
   },
   components: {
-    
+
   },
   methods: {
     submitForm() {
@@ -98,8 +97,7 @@ export default {
           } else {
             this.$emit('submitDes', {
               taskContent: this.ruleForm.des,
-              quoteDocTitle: this.docs[0].quoteDocTitle,
-              quoteDocId: this.docs[0].quoteDocId
+              qutoes: this.docs[0].quoteDocId ? this.docs : []
             });
           }
         } else {
@@ -109,12 +107,19 @@ export default {
       });
     },
     clearDoc(index) {
-      this.docs.splice(index, 1, { quoteDocTitle: '', quoteDocId: '' });
+      if (this.docs.length == 1) {
+        this.docs.splice(index, 1, { quoteDocTitle: '', quoteDocId: '' });
+      } else {
+        this.docs.splice(index, 1)
+      }
     },
     selectDoc(row) {
-      this.docs[this.activeDoc].quoteDocTitle = row.docTitle;
-      this.docs[this.activeDoc].quoteDocId = row.id;
-      this.dialogTableVisible = false;
+      if (!this.docs.find(doc => doc.quoteDocId == row.id)) {
+        this.docs[this.activeDoc].quoteDocTitle = row.docTitle;
+        this.docs[this.activeDoc].quoteDocId = row.id;
+        this.dialogTableVisible = false;
+      }
+
     },
     showDialog(index) {
       this.dialogTableVisible = true;
@@ -143,21 +148,19 @@ export default {
       this.$message.error('附件上传失败，请重试');
     },
     handleChange(file, fileList) {
-      // const isJPG = file.raw.type === 'image/jpeg' || file.raw.type === 'image/png';
-      // const isLt2M = file.size / 1024 / 1024 < 2;
-
-      // if (!isJPG) {
-      //   this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
-      // }
-      // if (!isLt2M) {
-      //   this.$message.error('上传头像图片大小不能超过 2MB!');
-      // }
-      // if (isJPG && isLt2M) {
-      //   this.picChangeStatus = true;
-      //   this.baseForm.picUrl = file.url
-      // }
       this.attchment = fileList;
     },
+    tableRowClassName(row, index) {
+      if (this.docs.find(doc => doc.quoteDocId == row.id)) {
+        return 'selDoc';
+      }
+      return '';
+    },
+    formatterDocType(row, column, cellValue) {
+      if (this.docType.length != 0) {
+        return this.docType.find(type => type.docTypeCode == cellValue).docName
+      }
+    }
   }
 }
 
@@ -202,16 +205,7 @@ $main:#0460AE;
       }
     }
   }
-  .addButton {
-    font-size: 45px;
-    line-height: 48px;
-    height: 48px;
-    padding: 0;
-    width: 48px;
-    color: $main;
-    border-color: $main;
-    border-radius: 5px;
-  }
+
   .personDialog {
     .el-dialog--large {
       width: 800px;
@@ -240,6 +234,16 @@ $main:#0460AE;
     .myTable {
       &:before {
         display: none;
+      }
+      .selDoc {
+        cursor: not-allowed;
+        background-color: #eef1f6;
+        .cell {
+          color: #bfcbd9;
+        }
+      }
+      tr {
+        cursor:pointer;
       }
     }
     .pageBox {

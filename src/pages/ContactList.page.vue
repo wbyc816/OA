@@ -66,7 +66,7 @@
               <p>{{empDetial.workPlace}}</p>
             </dd>
             <dd><span>部门：</span>
-              <p v-if="empDetial.deptVo">{{empDetial.deptVo.dept+" / "+empDetial.deptVo.fatherDept}}</p>
+              <p>{{empDetial.deptNames[0]}}</p>
             </dd>
             <dd><span>职务：</span>
               <p>{{empDetial.jobtitle}}</p>
@@ -75,7 +75,7 @@
               <p>{{empDetial.phoneNumber}}</p>
             </dd>
             <dd><span>手机：</span>
-              <p>{{empDetial.moblieNumber}}</p>
+              <p>{{empDetial.mobileNumber}}</p>
             </dd>
             <dd><span>Email:</span>
               <p>{{empDetial.workEmail}}</p>
@@ -119,7 +119,8 @@ export default {
         mobileNumber: [{ validator: validatePhone, trigger: 'blur,change' }]
 
       },
-      dialogVisible: false
+      dialogVisible: false,
+      empDetial: { deptNames: [] }
     }
   },
   computed: {
@@ -130,7 +131,6 @@ export default {
       'queryDepId',
       'depPageNumber',
       'searchLoading',
-      'empDetial',
       'organLoading'
     ])
   },
@@ -146,7 +146,7 @@ export default {
     handleCurrentChange(page) {
       if (this.searchRes.status == '0') {
         this.$store.dispatch('setQueryPage', page);
-        this.$store.dispatch('queryEmpList', {})
+        this.$store.dispatch('queryEmpList', this.searchForm)
       }
     },
     submitForm() {
@@ -161,7 +161,8 @@ export default {
     },
     showDetail(row) {
       this.dialogVisible = true;
-      this.$store.dispatch('getEmpDetail', row.empId);
+      // this.$store.dispatch('getempDetial', row.empId);
+      this.empDetial=row;
     },
     handleClose() {
 
