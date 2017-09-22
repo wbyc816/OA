@@ -489,7 +489,7 @@ export default new Router({
     	name:'staffCenter',
     	component:staffCenter,
     	meta:{
-    		breadcrumb:"StaffCenter",
+    		breadcrumb:"员工中心",
     	},
     	children:[
     	{
@@ -521,7 +521,7 @@ export default new Router({
     		name:'flightStatus',
     		component:flightStatus,
     		meta:{
-    			breadcrumb:"Flight Status",
+    			breadcrumb:"航班动态",
     		}
     	},
     	{
