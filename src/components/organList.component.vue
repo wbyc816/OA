@@ -1,6 +1,6 @@
 <template>
   <div class="organlist" v-loading="organLoading">
-    <el-menu mode="vertical" :router="false" class="topMenu">
+    <el-menu mode="vertical" :router="false" class="topMenu" :default-openeds="defaultExpand">
       <my-menu-item :depts="depts" v-if="depts.length>0"></my-menu-item>
     </el-menu>
   </div>
@@ -14,22 +14,22 @@ export default {
   },
   data() {
     return {
-      organLoading: true
+      organLoading: true,
+      defaultExpand:['FD22DF607B10CC14A0CABA6CFDF9212F','DAFFED346E29C5654F54133D1FC65CCB']
     }
   },
   created() {
     // if(this.depts != '' || this.depts != undefined || this.depts != null){
     //   this.organLoading = false;
     // }
-    console.log(this.organLoading)
   },
   mounted(){
-    console.log(this.organLoading)
     
   },
   computed: {
     ...mapGetters([
-      'depts'
+      'depts',
+      'userInfo'
     ])
   },
   watch: {
@@ -41,6 +41,11 @@ export default {
       console.log(this.organLoading)
     }
   },
+  methods:{
+    expand(){
+
+    }
+  }
 }
 
 </script>

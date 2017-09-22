@@ -7,7 +7,8 @@ const state = {
     "name": "",
     "empId": "",
 
-  }
+  },
+  isReady:false
 }
 
 const actions = {
@@ -28,6 +29,7 @@ const actions = {
       .then(res => {
         // console.log(res)
           commit(types.SET_USER_INFO, res.data);
+          commit('setReady',true);
       }, res => {
 
       })
@@ -35,7 +37,9 @@ const actions = {
 }
 
 const getters = {
-  userInfo: state => state.userInfo
+  userInfo: state => state.userInfo,
+  isReady: state => state.isReady,
+
 }
 
 const mutations = {
@@ -45,7 +49,9 @@ const mutations = {
   setEmpId(state, id) {
     state.userInfo.empId = id
   },
-
+  setReady(state,val){
+    state.isReady=val;
+  }
 }
 
 export default {

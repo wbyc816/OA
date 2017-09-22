@@ -4,12 +4,20 @@ import { Notification } from 'element-ui';
 
 
 const state = {
-  emergencyContactInfo: [{}]
+  emergencyContactInfo: [{}],
+  airPortList:[]
 }
 
 const actions = {
 
-
+  getAirPortList({commit}){
+    api.getAirPortList()
+      .then(res => {
+        commit(types.SET_AIR_PORT_LIST, res.data)
+      }, res => {
+        // commit(types.GET_EMERGENCY_CONTACT_INFO, [{}])
+      })
+  },
 
   //获取紧急联系人信息
   getEmergencyContactInfo({ commit, rootState }, payload) {
@@ -82,11 +90,15 @@ const actions = {
 
 const getters = {
   emergencyContactInfo: state => state.emergencyContactInfo,
+  airPortList: state => state.airPortList,
 }
 
 const mutations = {
   [types.GET_EMERGENCY_CONTACT_INFO](state, res) {
     state.emergencyContactInfo = res.data
+  },
+  [types.SET_AIR_PORT_LIST](state, res) {
+    state.airPortList = res
   },
 }
 

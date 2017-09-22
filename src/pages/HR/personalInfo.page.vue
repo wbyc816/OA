@@ -174,6 +174,13 @@ export default {
     this.$store.dispatch('setEditStatus', false);
     next()
   },
+  watch:{
+    'editStatus':function(newValue){
+      if(!newValue){
+        this.submitLoading=false;
+      }
+    }
+  },
   methods: {
     onSubmit() {
       this.$refs['baseForm'].validate((valid) => {

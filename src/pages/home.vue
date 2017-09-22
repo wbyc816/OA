@@ -378,7 +378,7 @@
             </p>
             <el-card class="flightStatus">
               <span slot="header">航班动态</span>
-              <search-date type="date" :button="false" tip="日期"></search-date>
+              <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate" class="searchDate" :editable="false" :clearable="false"></el-date-picker>
               <el-radio-group v-model="flightStatusType" class="myRadio">
                 <el-radio-button label="flightNo">航班号<i></i></el-radio-button>
                 <el-radio-button label="route">航段<i></i></el-radio-button>
@@ -388,15 +388,13 @@
                   <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
                 </el-select>
                 <el-input class="search">
-                  <el-button slot="append">搜索</el-button>
+                  <el-button slot="append" @click="searchFlight">搜索</el-button>
                 </el-input>
               </div>
               <div class="route" v-show="flightStatusType=='route'">
-                <el-input v-model="tripFrom" placeholder="出发">
-                </el-input>
-                <el-input v-model="tripTo" placeholder="到达">
-                </el-input>
-                <el-button>搜索</el-button>
+                <el-autocomplete class="inline-input" v-model="tripFrom.cityName" :fetch-suggestions="querySearch" placeholder="出发地" @select="handleFrom"></el-autocomplete>
+                <el-autocomplete class="inline-input" v-model="tripTo.cityName" :fetch-suggestions="querySearch" placeholder="目的地" @select="handleTo"></el-autocomplete>
+                <el-button @click="searchFlight">搜索</el-button>
               </div>
             </el-card>
           </li>
@@ -546,15 +544,9 @@ const weibos = [{
 const options = [{
   value: '选项1',
   label: 'DZ'
-}, {
-  value: '选项2',
-  label: 'DD'
-}, {
-  value: '选项3',
-  label: 'DJ'
-}];
+},];
 export default {
-  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, Weibo,SidePersonSearch },
+  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, Weibo, SidePersonSearch },
 
   data() {
     return {
@@ -566,8 +558,8 @@ export default {
       polarAreaOption,
       weibos,
       tripType: 'date',
-      tripFrom: '',
-      tripTo: '',
+      tripFrom: { cityName: '' },
+      tripTo: { cityName: '' },
       flightStatusType: 'flightNo',
       options,
       flightNoTitle: '选项1',
@@ -584,7 +576,8 @@ export default {
         handle: '.handleDrag',
         animation: 300,
         scrollSensitivity: 100
-      }
+      },
+      searchDate: ''
     }
   },
   computed: {
@@ -592,13 +585,23 @@ export default {
       'userInfo',
       'searchLoading',
       'searchRes',
-      'depPageNumber'
+      'depPageNumber',
+      'airPortList'
     ])
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.getTips();
     })
+  },
+  created() {
+    this.$store.dispatch('getAirPortList');
+    let temp = new Date();
+    let month = temp.getMonth() + 1;
+    if (month < 10) {
+      month = '0' + month;
+    }
+    this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
   },
   methods: {
     dragShow(index) {
@@ -620,6 +623,75 @@ export default {
         }, res => {
 
         })
+    },
+    querySearch(queryString, cb) {
+      var airPortList = JSON.parse(JSON.stringify(this.airPortList));
+      var results = queryString ? airPortList.filter(this.createFilter(queryString)) : airPortList;
+      // 调用 callback 返回建议列表的数据
+      results.forEach(e => e.value = e.cityName);
+      console.log(results)
+      cb(results);
+    },
+    createFilter(queryString) {
+      return (airPort) => {
+        return (airPort.cityName.indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    handleFrom(item) {
+      this.tripFrom = JSON.parse(JSON.stringify(item));
+    },
+    handleTo(item) {
+      this.tripTo = JSON.parse(JSON.stringify(item));
+    },
+    changDate() {
+      let temp = new Date(this.searchDate);
+      let month = temp.getMonth() + 1;
+      if (month < 10) {
+        month = '0' + month;
+      }
+      this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
+    },
+    searchFlight() {
+      if (this.searchDate != 'NaN-NaN-NaN') {
+        console.log(1110)
+        if (this.flightStatusType == "route") {
+          if (this.tripFrom.city3cody && this.tripTo.city3cody) {
+            if (this.tripFrom.city3cody == this.tripTo.city3cody) {
+              this.$message.warning('出发地与目的地相同，请重新选择路线！')
+            } else {
+              // this.getToRound();
+
+              this.$router.push({ name: 'flightStatus', params: { 'type': 'route', 'date': this.searchDate, 'tripFrom': this.tripFrom, 'tripTo': this.tripTo } })
+              this.tripFrom = { 'cityName': '' };
+              this.tripTo = { 'cityName': '' };
+              this.searchDate = '';
+            }
+          } else {
+            // this.getToDate();
+            this.$router.push({ name: 'flightStatus', params: { 'type': 'date', 'date': this.searchDate } })
+            this.searchDate = '';
+          }
+        } else if (this.flightStatusType == "flightNo") {
+          console.log(1111)
+
+          if (this.flightNoValue) {
+            // this.getToFlightNo();
+            this.$router.push({ name: 'flightStatus', params: { 'type': 'route', 'date': this.searchDate, 'flightNoValue': this.flightNoValue, 'flightNoValue': this.flightNoValue } })
+            this.searchDate = '';
+          } else {
+            console.log(1112)
+            // this.getToDate();
+            this.$router.push({ name: 'flightStatus', params: { 'type': 'date', 'date': this.searchDate } })
+            this.searchDate = '';
+          }
+        } else {
+          // this.getTorDate();
+          this.$router.push({ name: 'flightStatus', params: { 'type': 'date', 'date': this.searchDate } })
+          this.searchDate = '';
+        }
+      } else {
+        this.$message.warning('请选择航班日期!')
+      }
     }
   }
 }
@@ -1244,14 +1316,20 @@ $sub:#1465C0;
     }
     .route {
       margin-top: 10px;
-      .el-input {
+      .el-autocomplete {
         width: 35%;
-        display: inline-block;
+        float: left;
+        &:first-child {
+          padding-right: 5px;
+        }
+        &:nth-child(2) {
+          padding-right: 5px;
+        }
       }
       button {
         float: right;
         font-size: 18px;
-        width: 101px;
+        width: 30%;
         height: 46px;
         color: #fff;
         background: $main;

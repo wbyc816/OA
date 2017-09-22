@@ -6,8 +6,8 @@
     </component> -->
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
       <el-form-item label="请示内容" prop="des">
-        <el-col :span='18'>
-          <el-input type="textarea" :rows="8" resize='none' v-model="ruleForm.des"></el-input>
+        <el-col :span='20'>
+          <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item class='form-box' label="建议路径" prop="path">
@@ -32,7 +32,7 @@
           </el-input>
         </el-col>
         <el-col :span='1'>
-          <el-button class="addButton" @click="addDoc">+</el-button>
+          <el-button class="addButton" @click="addDoc"><i class="el-icon-plus"></i></el-button>
         </el-col>
       </el-form-item>
     </el-form>

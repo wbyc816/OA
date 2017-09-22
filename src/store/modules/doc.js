@@ -117,10 +117,10 @@ const actions = {
         if (res.status == "0") {
           commit(types.SELECT_DOC, res);
         } else {
-          Notification({
-            message: '获取附加公文失败！',
-            type: 'error'
-          });
+          // Notification({
+          //   message: '获取附加公文失败！',
+          //   type: 'error'
+          // });
         }
       }, res => {
         Notification({
@@ -237,7 +237,7 @@ const mutations = {
     state.isAdmin = res
   },
   [types.GET_DOC_FORM](state, res) {
-    state.docType = res.data.data
+    state.docType = res.data
   },
   [types.SELECT_DOC](state, res) {
     state.extraDocs = res.data.records;

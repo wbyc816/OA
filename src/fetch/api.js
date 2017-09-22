@@ -41,7 +41,19 @@ export function fetch(url, params, isBody) {
       })
   })
 }
-
+export function getFetch(url, params) {
+  return new Promise((resolve, reject) => {
+    axios.get(url, params)
+      .then(response => {
+        resolve(response.data);
+      }, err => {
+        reject(err);
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  })
+}
 export function concurrent(requests) {
   requests = requests.map(makeRequest);
   return new Promise((resolve, reject) => {
@@ -121,5 +133,7 @@ export default {
   getTaskDetail(id) {
     return fetch('/doc/getTaskDetail', { id: id })
   },
-
+  getAirPortList(){
+    return getFetch('/api/getAirPortList')
+  }
 }

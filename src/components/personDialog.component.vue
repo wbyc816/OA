@@ -11,12 +11,18 @@
             <el-button slot="append" @click="search">搜索</el-button>
           </el-input>
         </div>
-        <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430" @selection-change="handleSelectionChange" ref='multipleTable'>
-          <el-table-column type="selection" width="55" v-if="dialogType=='multi'">
+        <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430" @selection-change="handleSelectionChange" ref='multipleTable' v-show="dialogType=='multi'">
+          <el-table-column type="selection" width="55">
           </el-table-column>
           <el-table-column prop="name" label="姓名" width="110"></el-table-column>
           <el-table-column prop="depts" label="部门" width="250"></el-table-column>
-          <el-table-column prop="jobtitle" label="职务" :width="dialogType=='multi'?'329':''"></el-table-column>
+          <el-table-column prop="jobtitle" label="职务"></el-table-column>
+          <el-table-column prop="moblieNumber" label="状态" width="80"></el-table-column>
+        </el-table>
+        <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430" @selection-change="handleSelectionChange" ref='multipleTable' v-show="dialogType!='multi'">
+          <el-table-column prop="name" label="姓名" width="110"></el-table-column>
+          <el-table-column prop="depts" label="部门" width="250"></el-table-column>
+          <el-table-column prop="jobtitle" label="职务"></el-table-column>
           <el-table-column prop="moblieNumber" label="状态" width="80"></el-table-column>
         </el-table>
         <div class="pageBox" :style="{visibility:searchRes.empVoList ? 'visible' : 'hidden'}">
@@ -68,6 +74,7 @@ export default {
     if (this.isAdmin) {
       this.$store.dispatch('getDeptList');
     } else {
+      this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
       this.$store.dispatch('getDepById');
     }
     this.$store.dispatch('setQueryPage', 1);

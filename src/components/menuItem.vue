@@ -2,7 +2,7 @@
   <div class='menu-wrapper'>
     <template v-for="item in depts">
       <el-menu-item :index="item.name" v-if="item.childNode.length==0" @click.native.stop="selDep(item)" :class="{'active':queryDepId==item.id}">{{item.name}}</el-menu-item>
-      <el-submenu :index="item.name" v-else @click.native.stop="selDep(item)" :class="{'active':queryDepId==item.id}">
+      <el-submenu :index="item.id" v-else @click.native.stop="selDep(item)" :class="{'active':queryDepId==item.id}">
         <template slot="title">{{item.name}}</template>
         <my-menu-item :depts="item.childNode" v-if="item.childNode&&item.childNode.length>0"></my-menu-item>
       </el-submenu>

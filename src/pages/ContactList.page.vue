@@ -131,13 +131,34 @@ export default {
       'queryDepId',
       'depPageNumber',
       'searchLoading',
-      'organLoading'
+      'organLoading',
+      'isReady'
     ])
+  },
+  watch: {
+    'isReady': function(newValue) {
+      if (newValue) {
+        console.log(111)
+        this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+        this.$store.dispatch('queryEmpList', {});
+      }
+    }
   },
   created() {
     this.$store.dispatch('getDeptList');
-    // this.$store.dispatch('setQueryDepId',this.userInfo.empId);
-    this.$store.dispatch('queryEmpList', { workNo: this.userInfo.workNo, });
+    console.log(this.$route.params)
+
+    if (this.$route.params.name) {
+
+      this.searchForm.name = this.$route.params.name;
+      this.$store.dispatch('queryEmpList', this.searchForm);
+    } else {
+      if (this.isReady) {
+        this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+        this.$store.dispatch('queryEmpList', {});
+      }
+
+    }
   },
   components: {
     OrganList
@@ -162,7 +183,7 @@ export default {
     showDetail(row) {
       this.dialogVisible = true;
       // this.$store.dispatch('getempDetial', row.empId);
-      this.empDetial=row;
+      this.empDetial = row;
     },
     handleClose() {
 

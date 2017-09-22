@@ -42,4 +42,5 @@ export const GET_DOC_FORM = 'GET_DOC_FORM'
 export const SET_PROCESS_VIEW = 'SET_PROCESS_VIEW'
 //流程数据
 export const GET_PROCESS_DATA ="GET_PROCESS_DATA"
+export const SET_AIR_PORT_LIST ="SET_AIR_PORT_LIST"
 

@@ -87,7 +87,7 @@
           <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         </div>
       </div>
-      <div class='doc-section myAdvice' v-if="docDetialInfo.doc&&docDetialInfo.doc.reciUserId==userInfo.empId&&(docDetialInfo.task[0].state!=3&&docDetialInfo.task[0].state!=4)">
+      <div class='doc-section myAdvice' v-if="docDetialInfo.taskDetail&&docDetialInfo.taskDetail[0].nextUserId==userInfo.empId">
         <h4 class='doc-form_title'>我的审批意见</h4>
         <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="审批意见" class="textarea" prop="state">
@@ -133,7 +133,7 @@
           <div class="reciverList">
             <el-tag type="primary" :closable="true" v-for="(person,index) in archiveForm.persons" @close="removePerson(index)">{{person.name}}</el-tag>
           </div>
-          <el-button class="addButton" @click="selectPerson('multi')">+</el-button>
+          <el-button class="addButton" @click="selectPerson('multi')"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="分发意见" prop="res">
           <el-input type="textarea" :rows="6" resize='none' v-model="archiveForm.res"></el-input>
@@ -214,7 +214,7 @@ export default {
   methods: {
     adviceChange(val) {
       if (val == 1) {
-        this.ruleForm.taskContent = '同意。请领导批示。'
+        this.ruleForm.taskContent = '同意。'
       } else {
         this.ruleForm.taskContent = "不同意。"
       }
@@ -439,7 +439,7 @@ $sub:#1465C0;
     }
   }
   .archiveSubmitDialog {
-    width:600px;
+    width: 600px;
     .el-dialog__body {
       padding: 25px 25px 25px 8px;
     }

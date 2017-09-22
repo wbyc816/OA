@@ -16,61 +16,61 @@
           <el-col :span="8">
             <div class="infoItem">
               <span class="infoTittle">姓名</span>
-              <p class="infoText">{{resumeInfo.name}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.name}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">性别</span>
-              <p class="infoText">{{resumeInfo.gender | sex}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.gender | sex}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">出生日期</span>
-              <p class="infoText">{{resumeInfo.birthday}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.birthday}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">籍贯</span>
-              <p class="infoText">{{resumeInfo.nativePlace}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.nativePlace}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">民族</span>
-              <p class="infoText">{{resumeInfo.nationality2}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.nationality2}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">出生地</span>
-              <p class="infoText">{{resumeInfo.birthplace}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.birthplace}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">身高</span>
-              <p class="infoText">{{resumeInfo.height}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.height}}</p>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="infoItem">
               <span class="infoTittle">工号</span>
-              <p class="infoText">{{resumeInfo.workNo}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.workNo}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">政治面貌</span>
-              <p class="infoText">{{resumeInfo.politicsStatus}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.politicsStatus}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">婚姻状况</span>
-              <p class="infoText">{{resumeInfo.marrieStatus}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.marrieStatus}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">手机</span>
-              <p class="infoText">{{resumeInfo.phoneNumber}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.phoneNumber}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">身份证号</span>
-              <p class="infoText">{{resumeInfo.idNumber}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.idNumber}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">工作地点</span>
-              <p class="infoText">{{resumeInfo.workPlace}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.workPlace}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">工作邮箱</span>
-              <p class="infoText">{{resumeInfo.workEmail}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.workEmail}}</p>
             </div>
           </el-col>
         </el-row>

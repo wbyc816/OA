@@ -4,14 +4,25 @@
       <div slot="header">
         <span>公司同仁</span>
       </div>
-      <el-input placeholder="请输入员工姓名" class="search ">
-        <el-button slot="append">搜索</el-button>
+      <el-input placeholder="请输入员工姓名" class="search " v-model="searchName">
+        <el-button slot="append" @click="search">搜索</el-button>
       </el-input>
     </el-card>
   </div>
 </template>
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      searchName:''
+    }
+  },
+  methods:{
+    search(){
+      this.$router.push({name:'contactList',params:{name:this.searchName}})
+    }
+  }
+}
 
 </script>
 <style lang='scss'>
