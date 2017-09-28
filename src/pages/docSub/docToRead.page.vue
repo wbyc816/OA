@@ -1,6 +1,6 @@
 <template>
-  <div id="docTracking">
-    <search-options title="公文跟踪" @search="setOptions"></search-options>   
+  <div id="docToRead">
+    <search-options title="公文待阅" @search="setOptions"></search-options>
     <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>
@@ -9,26 +9,17 @@
           <th v-for="title in tableTitle">{{title}}</th>
         </tr>
       </thead>
-      <tbody v-for="doc in docData" :key="doc.taskTime">
+      <tbody v-for="doc in docData">
         <tr>
-          <td>{{doc.docDenseType}}</td>
-          <td>{{doc.docImprotType}}</td>
+          <td>{{doc.docNo}}</td>
+          <td>{{doc.docTitle}}</td>
           <td>{{doc.docTypeCode}}</td>
           <td>{{doc.taskTime}}</td>
           <td>{{doc.taskUser}}</td>
-          <td>{{doc.currentUser}}</td>
-        </tr>
-        <tr>
-          <td>{{doc.docNo}}</td>
-          <td colspan="3">{{doc.docTitle}}</td>
+          <td>{{doc.nodeName | nodeNameFormatter}}</td>
           <td>
-            <span>
-              <!-- <router-link :to="'/doc/docDetail/'+doc.id">详情</router-link> -->
-              <!-- <span>Withdraw</span>
-            <span @click="contractView = true">Delete</span> -->
-            </span>
+            <router-link :to="'/doc/docDetail/'+doc.id">查看</router-link>
           </td>
-          <td @click="getProcess(doc.id)">查看流转</td>
         </tr>
       </tbody>
     </table>
@@ -42,15 +33,14 @@
 import SearchOptions from '../../components/searchOptions.component'
 import { mapGetters } from 'vuex'
 
-const tableTitle = ['密级程度', '重要程度', '公文类型', '呈报时间', '呈报人', '当前节点']
-
+const tableTitle = ['公文号', '标题', '类型', '分发时间', '分发人', '状态', '操作']
 export default {
+  components: {
+    SearchOptions
+  },
   data() {
     return {
-      urgencyValue: "",
-      type: '',
       tableTitle,
-      detailView: false,
       params: {
         "pageNumber": 1,
         "pageSize": 5
@@ -65,22 +55,19 @@ export default {
     ...mapGetters([
       'userInfo',
       'confidentiality',
-      'urgency',
-      'docType'
+      'docType',
+      'urgency'
     ])
-  },
-  components: {
-    SearchOptions
   },
   created() {
     this.getData();
   },
   methods: {
     getData() {
-      var that=this;
+      var that = this;
       this.searchLoading = true;
       var params = Object.assign({ userId: this.userInfo.empId }, this.params, this.searchOptions);
-      this.$http.post("/doc/trackingDocList", params, { body: true }).then(res => {
+      this.$http.post("/doc/toReadingDocList", params, { body: true }).then(res => {
         setTimeout(function() {
           that.searchLoading = false;
         }, 200)
@@ -96,7 +83,7 @@ export default {
       })
     },
     getProcess(id) {
-      this.$store.dispatch('getTaskDetail',id);
+      this.$store.dispatch('getTaskDetail', id);
     },
     formatter(row, column, cellValue) {
       switch (cellValue) {
@@ -132,12 +119,13 @@ export default {
 </script>
 <style lang='scss'>
 $purple: #0460AE;
-#docTracking {
+#docToRead {
   .pageBox {
     text-align: right;
     margin-top: 20px;
   }
   margin-bottom:30px;
+
   &>table {
     thead {
       background: $purple;
@@ -146,7 +134,7 @@ $purple: #0460AE;
       th {
         padding: 6px 13px;
       }
-      $widths: (1: 15%, 2: 10%, 3: 21%, 4: 22%, 5: 16%, 6: 16%);
+      $widths: (1: 15%, 2: 25%, 3: 15%, 4: 15%, 5: 10%, 6: 10%, 7:10%);
       @each $num,
       $width in $widths {
         th:nth-child(#{$num}) {

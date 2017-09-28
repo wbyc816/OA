@@ -65,7 +65,7 @@ export default {
         },
         {
           title: '公文待阅',
-          path: '#'
+          path: '/doc/docToRead'
         },
         {
           title: '公文统计',

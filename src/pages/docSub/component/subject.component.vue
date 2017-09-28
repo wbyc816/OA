@@ -3,36 +3,26 @@
     <h4 class='doc-form_title'>基本信息</h4>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
       <el-form-item class='form-box' label="收件人" prop="rec">
-        <el-col :span='18'>
-          <el-input class="search" v-model="ruleForm.rec" :readonly="true">
-            <el-button slot="append" @click='selectPerson'>选择</el-button>
-          </el-input>
-        </el-col>
+        <el-input class="search" v-model="ruleForm.rec" :readonly="true">
+          <el-button slot="append" @click='selectPerson'>选择</el-button>
+        </el-input>
       </el-form-item>
       <el-form-item class='form-box' label="标题" prop="sub">
-        <el-col :span='18'>
-          <el-input :value="docTtile" @input="updateTitle">
-          </el-input>
-        </el-col>
+        <el-input :value="docTtile" @input="updateTitle">
+        </el-input>
       </el-form-item>
       <el-form-item class='form-box' label="密级程度">
-        <el-col :span='18'>
-          <el-radio-group :value="selConfident.docDenseType" @input="updateCon" class="myRadio">
-            <el-radio-button :label="item.dictName" v-for="item in confidentiality">{{item.dictName}}<i></i></el-radio-button>
-          </el-radio-group>
-        </el-col>
+        <el-radio-group :value="selConfident.docDenseType" @input="updateCon" class="myRadio">
+          <el-radio-button :label="item.dictName" v-for="item in confidentiality">{{item.dictName}}<i></i></el-radio-button>
+        </el-radio-group>
       </el-form-item>
       <el-form-item class='form-box' label="重要程度">
-        <el-col :span='18'>
-          <el-radio-group :value="selUrgency.docImportType" @input="updateUrgency" class="myRadio">
-            <el-radio-button :label="item.dictName" v-for="item in urgency">{{item.dictName}}<i></i></el-radio-button>
-          </el-radio-group>
-        </el-col>
+        <el-radio-group :value="selUrgency.docImportType" @input="updateUrgency" class="myRadio">
+          <el-radio-button :label="item.dictName" v-for="item in urgency">{{item.dictName}}<i></i></el-radio-button>
+        </el-radio-group>
       </el-form-item>
     </el-form>
-    <el-dialog :visible.sync="dialogTableVisible" size="large" class="personDialog">
-        <person-dialog @updatePerson="updatePerson"></person-dialog>
-    </el-dialog>
+    <person-dialog @updatePerson="updatePerson" :visible.sync="dialogTableVisible"></person-dialog>
   </div>
 </template>
 <script>
@@ -100,28 +90,29 @@ export default {
       this.$store.commit('setUrgency', { docImportType: urgency.dictName, docImportTypeCode: urgency.dictCode })
     },
     updateTitle(val) {
-      this.ruleForm.sub=val;
+      this.ruleForm.sub = val;
       this.$store.commit('setDocTtile', val)
     },
-    updatePerson(){
-      this.dialogTableVisible=false;
-      this.ruleForm.rec=this.reciver.reciUserName;
+    updatePerson(reciver) {
+      this.$store.commit('setReciver', reciver);
+      this.dialogTableVisible = false;
+      this.ruleForm.rec = reciver.reciUserName;
     },
-    returnT(){
+    returnT() {
       return true;
     },
     submitForm() {
-        this.$refs.ruleForm.validate((valid) => {
-          if (valid) {
-            console.log(2);
-            this.$emit('submitSub',true);
-          } else {
-            console.log(2);
-            this.$emit('submitSub',false);
-            return false;
-          }
-        });
-      },
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          console.log(2);
+          this.$emit('submitStart', true);
+        } else {
+          this.$message.warning('请检查填写字段')
+          this.$emit('submitStart', false);
+          return false;
+        }
+      });
+    },
     ...mapMutations(['setConfident', 'setUrgency'])
   },
 
@@ -130,6 +121,7 @@ export default {
 </script>
 <style lang='scss'>
 .docBaseBox {
+  padding-right: 150px;
   .el-radio-button__inner {
     padding: 0;
     line-height: 45px;
@@ -137,20 +129,6 @@ export default {
   }
   .el-form-item__error {
     padding-left: 6px;
-  }
-}
-
-.personDialog {
-  .el-dialog--large {
-    width: 1100px;
-    top:50%!important;
-    margin-top: -315px;
-    .el-dialog__header {
-      display: none;
-    }
-    .el-dialog__body {
-      padding: 0;
-    }
   }
 }
 

@@ -18,9 +18,6 @@
           <el-col :span="1">&nbsp;</el-col>
           <el-col :span="5">部门</el-col>
           <el-col :span="6" v-if="docDetialInfo">{{docDetialInfo.doc.taskDeptMajorName}}{{docDetialInfo.doc.taskDeptName}}</el-col>
-          <!-- <el-col :span="1">&nbsp;</el-col>
-      <el-col :span="5">职务</el-col>
-      <el-col :span="6">{{docDetialInfo.doc.docNo}}</el-col> -->
         </el-row>
         <el-row>
           <el-col :span="1">&nbsp;</el-col>
@@ -87,7 +84,7 @@
           <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         </div>
       </div>
-      <div class='doc-section myAdvice' v-if="docDetialInfo.taskDetail&&docDetialInfo.taskDetail[0].nextUserId==userInfo.empId">
+      <div class='doc-section myAdvice' v-if="docDetialInfo.doc.isTask==1">
         <h4 class='doc-form_title'>我的审批意见</h4>
         <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="审批意见" class="textarea" prop="state">
@@ -143,9 +140,8 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dialog :visible.sync="dialogTableVisible" size="large" class="personDialog">
-      <person-dialog @updatePerson="updatePerson" :dialogType="personDialogType"></person-dialog>
-    </el-dialog>
+    <person-dialog @updatePerson="updatePerson" :visible.sync="dialogTableVisible" :dialogType="personDialogType"></person-dialog>
+
   </div>
 </template>
 <script>
@@ -170,7 +166,7 @@ export default {
         res: '',
         persons: []
       },
-      docDetialInfo: "",
+      docDetialInfo:{doc:{},task:[],taskDetail:[],taskFile:[],taskQuote:[]},
       rules: {
         rec: [
           { required: true, message: '请选择收件人' }
@@ -193,9 +189,9 @@ export default {
     }
   },
   created() {
-    this.$http.post("/doc/getDocDetailInfo", { id: this.$route.params.id }).then(res => {
-      if (res.data.status == 0) {
-        this.docDetialInfo = res.data.data
+    this.$http.post("/doc/getDocDetailInfo", { id: this.$route.params.id,empId:this.userInfo.empId }).then(res => {
+      if (res.status == 0) {
+        this.docDetialInfo = res.data
         if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
           this.getDistInfo();
         }
@@ -226,7 +222,7 @@ export default {
     updatePerson(payLoad) {
       this.dialogTableVisible = false;
       if (this.personDialogType == 'radio') {
-        this.ruleForm.rec = this.reciver.reciUserName;
+        this.ruleForm.rec = payLoad.reciUserName;
       } else {
         this.archiveForm.persons = payLoad;
       }
@@ -258,7 +254,7 @@ export default {
       }
       this.$http.post('/doc/docTask', params, { body: true })
         .then(res => {
-          if (res.data.status == '0') {
+          if (res.status == '0') {
             this.$message.success('审批成功');
             this.$router.push('/doc/docTracking');
           } else {
@@ -280,7 +276,7 @@ export default {
       }
       this.$http.post('/doc/docArchive', params, { body: true })
         .then(res => {
-          if (res.data.status == '0') {
+          if (res.status == '0') {
             this.$message.success('归档成功');
             if (isEnd) {
               this.$router.push('/doc/docSearch');
@@ -344,8 +340,8 @@ export default {
     getDistInfo() {
       this.$http.post('/doc/getDistInfo', { docId: this.$route.params.id })
         .then(res => {
-          if (res.data.status == '0') {
-            this.distData = res.data.data;
+          if (res.status == '0') {
+            this.distData = res.data;
             this.topDistData = this.distData.slice(0, 3);
           } else {
 

@@ -47,9 +47,9 @@ import DocList from '../../components/doc'
 const adminData = [
   { 'logo': 'icon-write', 'color': '#FF754F', 'text': '呈批单', 'link': '/doc/approvalForm' },
   { 'logo': 'icon-file11', 'color': '#FF5F88', 'text': '发文稿纸', 'link': '/doc/manuscriptPaper' },
-  { 'logo': 'icon-car', 'color': '#A5A3FF', 'text': '用车申请', 'link': '#' },
+  { 'logo': 'icon-car', 'color': '#A5A3FF', 'text': '用车申请', 'link': '/doc/vehicleApp' },
   { 'logo': 'icon-plane2', 'color': '#9FD867', 'text': '差旅申请', 'link': '/doc/businessTrip' },
-  { 'logo': 'icon-documents', 'color': '#FF5F88', 'text': '材料申请', 'link': '#' },
+  { 'logo': 'icon-documents', 'color': '#FF5F88', 'text': '材料申请', 'link': '/doc/materialApp' },
   { 'logo': 'icon-biaodan', 'color': '#5BB5FC', 'text': '收文登记', 'link': '/doc/leisureTravel' }
 ];
 const financeData = [

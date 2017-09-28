@@ -345,31 +345,7 @@
               <span v-show="showInfo[6]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[6]=true" v-on:mouseleave="showInfo[6]=false" v-show="showDrag[6]"></i>
             </p>
-            <el-card class="duty">
-              <div slot="header">今日值班
-                <router-link to="#">更多</router-link>
-              </div>
-              <el-menu mode="vertical" default-active="1">
-                <el-menu-item-group>
-                  <el-submenu index="1">
-                    <template slot="title">IT服务部</template>
-                    <el-menu-item index="2-1">莫文 : 138 4564 7841</el-menu-item>
-                    <!-- <el-menu-item index="1-1">Doc Searching</el-menu-item> -->
-                  </el-submenu>
-                  <el-submenu index="2">
-                    <template slot="title">地面服务部</template>
-                    <el-menu-item index="2-1">莫文耀 : 138 4164 7841</el-menu-item>
-                    <el-menu-item index="2-2">刘莉: 133 6415 57871</el-menu-item>
-                    <el-menu-item index="2-3">王立伟 : 134 3641 8874</el-menu-item>
-                    <el-menu-item index="2-4">王天峰 : 133 1248 4774</el-menu-item>
-                  </el-submenu>
-                  <el-submenu index="3">
-                    <template slot="title">货运部</template>
-                    <el-menu-item index="3-1">宋丽萍：135 4887 2561</el-menu-item>
-                  </el-submenu>
-                </el-menu-item-group>
-              </el-menu>
-            </el-card>
+            <duty></duty>
           </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[10]}">
             <p class="dragHead" v-on:mouseover="dragShow(10)" v-on:mouseleave="dragHide(10)">
@@ -455,13 +431,14 @@ import MessageCenter from '../components/message'
 import Weibo from '../components/weibo'
 import SidePersonSearch from '../components/sidePersonSearch.component'
 import DocList from '../components/doc'
+import Duty from '../components/duty.component'
 var msgs = [
-  { "type": "work", "color": "#0460AE", "text": "待签批公文:", "value": "0", "font": "icon-sousuo", "link": "/doc/docPending" },
-  { "type": "work", "color": "#0460AE", "text": "跟踪中公文:", "value": "0", "font": "icon-sousuo", "link": "/doc/docTracking" },
-  { "type": "ss", "color": "#BE3B7F", "text": "邮件通知:", "value": "0", "font": "icon-gongwen", "link": "" },
-  { "type": "work", "color": "#0460AE", "text": "公文超时:", "value": "0", "font": "icon-sousuo", "link": "" },
-  { "type": "message", "color": "#51449C", "text": "生日提醒:", "value": "0", "font": "icon-icon04", "link": "" },
-  { "type": "ss", "color": "#BE3B7F", "text": "会议通知:", "value": "0", "font": "icon-gongwen", "link": "" },
+  { "icon": "gou", "color": "#07A9E9", "text": "待批公文:", "value": "0", "link": "/doc/docPending" },
+  { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "#" },
+  { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
+  { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": "#" },
+  { "icon": "sousuo", "color": "#7562DE", "text": "查询公文:", "value": "0",  "link": "/doc/docSearch" },
+  { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0",  "link": "" },
 ];
 const piedata = {
   labels: ['Airport Services', 'Cockpit', 'Cabin', 'HQ Staff', 'Outport Others', 'Outport China', 'MRO'],
@@ -544,9 +521,9 @@ const weibos = [{
 const options = [{
   value: '选项1',
   label: 'DZ'
-},];
+}, ];
 export default {
-  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, Weibo, SidePersonSearch },
+  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, Weibo, SidePersonSearch, Duty },
 
   data() {
     return {
@@ -613,12 +590,12 @@ export default {
     getTips() {
       this.$http.post('/doc/docTips', { empId: this.userInfo.empId })
         .then(res => {
-          if (res.data.status == 0) {
-            console.log(res.data.data);
-            msgs[1].value = res.data.data.trackingNum;
-            msgs[2].value = res.data.data.toReadNum;
-            msgs[3].value = res.data.data.overTimeNum;
-            msgs[0].value = res.data.data.pendingNum;
+          if (res.status == 0) {
+            console.log(res.data);
+            // msgs[1].value = res.data.trackingNum;
+            msgs[2].value = res.data.toReadNum;    //待阅
+            msgs[3].value = res.data.overTimeNum;  //超时
+            msgs[0].value = res.data.pendingNum;  //待批
           }
         }, res => {
 
@@ -1156,44 +1133,6 @@ $sub:#1465C0;
     }
     .el-card__body {
       padding-top: 10px;
-    }
-  }
-  .duty {
-    margin-bottom: 20px;
-    .el-card__header {
-      a {
-        float: right;
-        color: #676767;
-        font-size: 14px;
-        line-height: 24px;
-      }
-    }
-    .el-menu-item-group__title {
-      display: none;
-    }
-    .el-card__body {
-      padding: 0;
-      .el-submenu__title {
-        border-bottom: 1px solid #F2F2F2;
-      }
-    }
-    .el-submenu.is-opened {
-      .el-submenu__title {
-        color: $main;
-      }
-      .el-menu {
-        border-bottom: 1px solid #F2F2F2;
-        li:hover {
-          cursor: auto;
-        }
-        .is-active {
-          color: #676767;
-        }
-      }
-    }
-    .el-submenu .el-menu-item {
-      padding-left: 18px !important;
-      font-size: 15px;
     }
   }
   @mixin linkList($color) {

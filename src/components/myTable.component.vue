@@ -57,8 +57,8 @@ export default {
         this.$http.post(this.tableInfo.url, { id: this.userInfo.empId })
           .then(res => {
             this.searchLoading = false;
-            if (res.data.status == '0') {
-              this.detailList = res.data.data
+            if (res.status == '0') {
+              this.detailList = res.data
             } else {
               // this.requestLoading = false;
               // this.$notify.error({

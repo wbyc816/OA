@@ -139,11 +139,12 @@ const actions = {
       "taskDeptId": rootGetters.userInfo.deptVo.deptId,
       "taskUserName": rootGetters.userInfo.name,
       "taskUserId": rootGetters.userInfo.empId,
-      "docTypeCode": "CPD",
+      "docTypeCode": payLoad.docTypeCode,
       "docTitle": state.docTtile,
+      "isSubmit":1
     }
-    Object.assign(params, state.reciver, state.selConfident, state.selUrgency, payLoad)
-    api.submitDoc(params)
+    Object.assign(params, state.reciver, state.selConfident, state.selUrgency, payLoad.params)
+    api.submitDoc(payLoad.url,params)
       .then(res => {
         if (res.status == "0") {
           this.commit(types.SET_SUBMIT_LOADING, false, { root: true })

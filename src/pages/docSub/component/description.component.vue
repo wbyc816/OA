@@ -4,26 +4,21 @@
     <!-- <component v-bind:is="currentView">
       组件在 vm.currentview 变化时改变！
     </component> -->
+    <slot></slot>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
       <el-form-item label="请示内容" prop="des">
-        <el-col :span='20'>
-          <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des"></el-input>
-        </el-col>
+        <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des"></el-input>
       </el-form-item>
-      <el-form-item class='form-box' label="建议路径" prop="path">
-        <el-col :span='18' class="suggestPath">
-          <img src="../../../assets/images/suggestPath.png" alt="">
-        </el-col>
+      <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
+        <img :src="options.suggestPath" alt="">
       </el-form-item>
       <el-form-item label="附件">
-        <el-col :span='18'>
-          <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload">
-            <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
-          </el-upload>
-        </el-col>
+        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload">
+          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+        </el-upload>
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
-        <el-col :span='18' class="docs">
+        <el-col :span='21' class="docs">
           <el-input class="search" :readonly="true" :value="doc.quoteDocTitle" v-for="(doc,index) in docs" icon="search" :key="doc.quoteDocTitle">
             <div slot="append">
               <el-button @click='showDialog(index)'>选择</el-button>
@@ -31,32 +26,37 @@
             </div>
           </el-input>
         </el-col>
-        <el-col :span='1'>
+        <el-col :span='3'>
           <el-button class="addButton" @click="addDoc"><i class="el-icon-plus"></i></el-button>
         </el-col>
       </el-form-item>
     </el-form>
-    <el-dialog :visible.sync="dialogTableVisible" size="large" class="personDialog">
+    <el-dialog :visible.sync="dialogTableVisible" size="large" class="docDialog">
       <div class="topSearch clearfix">
         <p class="tips">选择公文<span>请双击公文选择</span></p>
       </div>
-      <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="300" :row-class-name="tableRowClassName">
-        <el-table-column prop="docTypeCode" label="公文类型" :formatter="formatterDocType" width="110"></el-table-column>
+      <search-options @search="setOptions"></search-options>
+      <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="250" :row-class-name="tableRowClassName" v-loading="searchLoading">
+        <el-table-column prop="docTypeCode" label="公文类型" width="110"></el-table-column>
         <el-table-column prop="docTitle" label="标题" width="310"></el-table-column>
-        <el-table-column prop="taskUserName" label="呈报人" width="150"></el-table-column>
+        <el-table-column prop="taskUser" label="呈报人" width="150"></el-table-column>
         <el-table-column prop="taskTime" label="呈报时间"></el-table-column>
       </el-table>
-      <!-- <div class="pageBox" v-show="searchRes.empVoList">
-        <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">
+      <div class="pageBox" v-show="extraDocs.length>0">
+        <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="5" layout="total, prev, pager, next, jumper" :total="totalSize">
         </el-pagination>
-      </div> -->
+      </div>
     </el-dialog>
   </div>
 </template>
 <script>
+import SearchOptions from '../../../components/searchOptions.component'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
+  props:{
+    options:''
+  },
   data() {
     return {
       msg: 'hello vue',
@@ -75,18 +75,27 @@ export default {
       activeDoc: '',
       attchment: [],
       uploadOver: false,
-      fileIds: []
+      fileIds: [],
+      extraDocs: [],
+      params: {
+        "pageNumber": 1,
+        "pageSize": 5
+      },
+      totalSize: 0,
+      searchOptions: '',
+      searchLoading: false
     }
   },
   computed: {
     ...mapGetters([
-      'extraDocs',
       'baseURL',
-      'docType'
+      'docType',
+      'userInfo'
+
     ])
   },
   components: {
-
+    SearchOptions
   },
   methods: {
     submitForm() {
@@ -95,13 +104,15 @@ export default {
           if (this.attchment.length != 0) {
             this.$refs.myUpload.submit();
           } else {
-            this.$emit('submitDes', {
+            this.$emit('submitEnd', {
               taskContent: this.ruleForm.des,
-              qutoes: this.docs[0].quoteDocId ? this.docs : []
+              qutoes: this.docs[0].quoteDocId ? this.docs : [],
+              fileId:[]
             });
           }
         } else {
-          this.$emit('submitDes', false);
+          this.$message.warning('请检查填写字段')        
+          this.$emit('submitEnd', false);
           return false;
         }
       });
@@ -124,13 +135,14 @@ export default {
     showDialog(index) {
       this.dialogTableVisible = true;
       this.activeDoc = index;
-      this.$store.dispatch('selectDoc');
+      // this.$store.dispatch('selectDoc');
+      this.params.pageNumber = 1;
+      this.getData();
     },
     addDoc() {
       this.docs.push({ title: '', id: '' })
     },
     handleAvatarSuccess(res, file) {
-      // this.updateInfo(res.data);
       this.fileIds.push(res.data);
       if (this.fileIds.length == this.attchment.length) {
         var params = {
@@ -139,12 +151,12 @@ export default {
           quoteDocTitle: this.docs[0].quoteDocTitle,
           quoteDocId: this.docs[0].quoteDocId
         }
-        this.$emit('submitDes', params);
+        this.$emit('submitEnd', params);
       }
     },
     handleAvatarError(res, file) {
       console.log(5);
-      this.$emit('submitDes', false);
+      this.$emit('submitEnd', false);
       this.$message.error('附件上传失败，请重试');
     },
     handleChange(file, fileList) {
@@ -160,7 +172,35 @@ export default {
       if (this.docType.length != 0) {
         return this.docType.find(type => type.docTypeCode == cellValue).docName
       }
-    }
+    },
+    setOptions(options) {
+      this.searchOptions = options;
+      this.params.pageNumber = 1;
+      this.getData();
+    },
+    handleCurrentChange(page) {
+      this.params.pageNumber = page;
+      this.getData()
+    },
+    getData() {
+      var that = this;
+      this.searchLoading = true;
+      var params = Object.assign({ userId: this.userInfo.empId }, this.params, this.searchOptions);
+      this.$http.post("/doc/selectDocList", params, { body: true }).then(res => {
+        setTimeout(function() {
+          that.searchLoading = false;
+        }, 200)
+        if (res.status == 0) {
+          this.extraDocs = res.data.dList;
+          this.totalSize = res.data.totalSize;
+        } else {
+          this.extraDocs = [];
+          this.totalSize = 0;
+        }
+      }, res => {
+
+      })
+    },
   }
 }
 
@@ -168,12 +208,22 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 .descriptionBox {
+  padding-right: 150px;
+  .addButton {
+    float: right;
+    position: relative;
+    right: -5px;
+  }
   .textarea {
     height: 188px;
     margin-bottom: 27px;
     .el-textarea__inner {
       height: 188px;
     }
+  }
+  .pageBox {
+    text-align: right;
+    margin-top: 20px;
   }
   .suggestPath {
     line-height: 45px;
@@ -206,7 +256,7 @@ $main:#0460AE;
     }
   }
 
-  .personDialog {
+  .docDialog {
     .el-dialog--large {
       width: 800px;
       top: 50%!important;
@@ -231,6 +281,17 @@ $main:#0460AE;
         }
       }
     }
+    .searchOptions {
+      .el-card {
+        box-shadow: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+      .el-card__body .el-col {
+        margin-bottom: 13px;
+        margin-top: 0;
+      }
+    }
     .myTable {
       &:before {
         display: none;
@@ -243,7 +304,7 @@ $main:#0460AE;
         }
       }
       tr {
-        cursor:pointer;
+        cursor: pointer;
       }
     }
     .pageBox {

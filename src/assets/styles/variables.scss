@@ -386,6 +386,7 @@ ul {
       right: 0;
       top: 50%;
       transform: translateY(-50%);
+      border: none;
       i {
         margin-right: 5px;
       }
@@ -678,6 +679,11 @@ ul {
 
 .el-table {
   color: #393939;
+  .el-table__header {
+    th {
+      background: $sub;
+    }
+  }
   .cell {
     font-size: 15px;
   }
@@ -712,6 +718,10 @@ ul {
 }
 
 .clearfix:after {
+  clear: both
+}
+
+.clearBoth {
   clear: both
 }
 
@@ -759,7 +769,153 @@ ul {
   border-radius: 5px;
 }
 
-.myButton{
-  border-radius:3px;
-  width:180px;
+.myButton {
+  border-radius: 3px;
+  width: 180px;
+}
+
+.editForm {
+  font-size: 15px;
+  padding-top: 10px;
+  .header {
+    color: $main;
+    margin-bottom: 25px;
+    font-size: 18px;
+    position: relative;
+    padding-left: 15px;
+    line-height: 26px;
+    .title {
+      margin-right: 14px;
+    }
+    &:before {
+      content: '';
+      position: absolute;
+      height: 15px;
+      width: 4px;
+      background: $main;
+      left: 0;
+      top: 5px;
+    }
+    .el-button {
+      font-size: 12px;
+      border-radius: 5px;
+      vertical-align: middle;
+    }
+  }
+  .el-form-item {
+    width: 50%;
+    float: left;
+    padding-right: 30px;
+    &.pr70 {
+      padding-right: 70px;
+    }
+  }
+  .el-form-item__label {
+    color: $main;
+  }
+  .el-form-item__content {
+    // float: left;
+    // margin-left: 90px;
+    p {
+      line-height: 45px;
+    }
+  }
+  .el-select {
+    width: 100%;
+  }
+  .borderBox {
+    border-bottom: 1px solid #EAEAEA;
+    padding-top: 8px;
+    margin-bottom: 25px;
+    clear: both;
+  }
+  .bgBorder {
+    height: 10px;
+    background: rgba(204, 204, 204, 0.32);
+    margin-bottom: 25px;
+  }
+  .avatar-uploader {
+    // border: 1px dashed #d9d9d9;
+    // border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    height: 105px;
+  }
+  .avatar-uploader .el-upload {
+    height: 105px;
+    width: 105px;
+    text-align: left;
+  }
+
+  .avatar {
+    max-height: 100%;
+    max-width: 100%;
+    display: block;
+  }
+  .submitButton {
+    width: 160px;
+    height: 45px;
+    font-size: 16px;
+  }
+  .el-form-item__label {
+    padding: 16px 12px 16px 0;
+  }
+  .el-radio-button__inner {
+    padding: 15px 34px;
+    height: 45px;
+  }
+}
+
+.addbutton1 {
+  height: 46px;
+  float: right;
+  width: 100%;
+  position: relative;
+  right: -5px;
+}
+
+.fixF5 {
+  position: relative;
+  left: -5px;
+}
+
+.el-input {
+  &.hasUnit {
+    input{
+      padding-right:30px;
+    }
+    .el-input-group__append {
+      border: none;
+      position: absolute;
+      top: 0;
+      right: 10px;
+      line-height: 46px;
+      background: transparent;
+      color: #393939;
+      padding: 0;
+      width: initial;
+    }
+  }
+}
+.appTable{
+  .cell{
+    padding-right:5px;
+  }
+  td{
+    height:50px;
+  }
+}
+.personDialog {
+  .el-dialog--large {
+    width: 1100px;
+    top: 50%!important;
+    margin-top: -315px;
+    .el-dialog__header {
+      display: none;
+    }
+    .el-dialog__body {
+      padding: 0;
+    }
+  }
 }

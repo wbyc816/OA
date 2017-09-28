@@ -5,12 +5,12 @@ import { Notification } from 'element-ui';
 
 const state = {
   emergencyContactInfo: [{}],
-  airPortList:[]
+  airPortList: []
 }
 
 const actions = {
 
-  getAirPortList({commit}){
+  getAirPortList({ commit }) {
     api.getAirPortList()
       .then(res => {
         commit(types.SET_AIR_PORT_LIST, res.data)
@@ -42,12 +42,12 @@ const actions = {
     api.updateEmergencyContactInfo(payload)
   },
   //修改基本信息
-  updateBaseInfo({ commit, dispatch, rootState }, payload) {
+  updateBaseInfo({ commit, dispatch, rootState, rootGetters }, payload) {
 
     api.updateBaseInfo(payload)
       .then((res) => {
         if (res[0].status == '0') {
-          dispatch('getEmergencyContactInfo', res[1].data.empId);
+          dispatch('getEmergencyContactInfo', rootGetters.userInfo.empId);
           // Notification({
           //   message: '修改紧急联系人信息成功,请等待后台审核！',
           //   type: 'success'
@@ -59,7 +59,7 @@ const actions = {
           });
         }
         if (res[1].status == '0') {
-          dispatch('getEmpDetail', res[1].data.empId);
+          dispatch('getEmpDetail', rootGetters.userInfo.empId);
           setTimeout(function() {
             // Notification({
             //   message: '修改个人基本信息成功！',
@@ -75,15 +75,16 @@ const actions = {
             });
           }, 200)
         }
-        if(res[0].status == '0'&&res[1].status == '0'){
+        if (res[0].status == '0' && res[1].status == '0') {
           setTimeout(function() {
             Notification({
               message: '修改个人信息成功,请等待后台审核！',
               type: 'success'
             });
+            commit(types.SET_EDIT_STATUS, false, { root: true })
           }, 200)
         }
-        commit(types.SET_EDIT_STATUS, false, { root: true })
+
       })
   }
 }

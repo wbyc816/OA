@@ -3,6 +3,8 @@ import { timeFilter } from '../filters/filters'
 Vue.prototype.validatePhone = validatePhone
 Vue.prototype.combineObj = combineObj
 Vue.prototype.timeFilter = timeFilter
+Vue.prototype.clone = clone
+Vue.prototype.changeTime = changeTime
 
 function getCookie(c_name) {
   if (document.cookie.length > 0) {
@@ -56,4 +58,19 @@ function combineObj(target, source) {
   return target;
 }
 
+function clone(obj){
+  return JSON.parse(JSON.stringify(obj))
+}
+function changeTime(obj){
+  var _obj=obj;
+  Object.keys(_obj).forEach(name=>{
+    console.log(_obj[name] instanceof Date)
+    if(_obj[name] instanceof Date){
+      _obj[name]=_obj[name].getTime();
+      
+    }
+  })
+  console.log(_obj)
+  return _obj
+}
 export default { combineObj }

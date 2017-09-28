@@ -240,7 +240,7 @@ export default {
         setTimeout(function() {
           that.searchLoading = false;
         }, 200)
-        if (res.data.status == 0) {
+        if (res.status == 0) {
           this.flightList = res.data.flightList;
           this.totalSize = res.data.totalSize;
         } else {
@@ -263,7 +263,7 @@ export default {
         setTimeout(function() {
           that.searchLoading = false;
         }, 200)
-        if (res.data.status == 0) {
+        if (res.status == 0) {
           this.flightList = res.data.flightList;
           this.totalSize = res.data.totalSize;
         } else {
@@ -287,7 +287,7 @@ export default {
         setTimeout(function() {
           that.searchLoading = false;
         }, 200)
-        if (res.data.status == 0) {
+        if (res.status == 0) {
           this.flightList = res.data.flightList;
           this.totalSize = res.data.totalSize;
         } else {
@@ -305,8 +305,8 @@ export default {
     // getAirPortList() {
     //   this.$http.get('/api/getAirPortList')
     //     .then(res => {
-    //       if (res.data.status == 0) {
-    //         this.airPortList = res.data.data;
+    //       if (res.status == 0) {
+    //         this.airPortList = res.data;
     //       }
     //       console.log(this.airPortList)
     //     })

@@ -2,7 +2,7 @@
   <div id="contactList">
     <el-row>
       <el-col :span='5'>
-        <organ-list></organ-list>
+        <organ-list @reset="reset1"></organ-list>
       </el-col>
       <el-col :span='19'>
         <el-card class="borderCard searchOptions">
@@ -120,7 +120,8 @@ export default {
 
       },
       dialogVisible: false,
-      empDetial: { deptNames: [] }
+      empDetial: { deptNames: [] },
+      searchButton: false
     }
   },
   computed: {
@@ -138,7 +139,6 @@ export default {
   watch: {
     'isReady': function(newValue) {
       if (newValue) {
-        console.log(111)
         this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
         this.$store.dispatch('queryEmpList', {});
       }
@@ -160,6 +160,10 @@ export default {
 
     }
   },
+  beforeRouteLeave(to, from, next){
+    this.$store.dispatch('setQueryPage', 1);
+    next();
+  },
   components: {
     OrganList
   },
@@ -167,12 +171,17 @@ export default {
     handleCurrentChange(page) {
       if (this.searchRes.status == '0') {
         this.$store.dispatch('setQueryPage', page);
-        this.$store.dispatch('queryEmpList', this.searchForm)
+        if (this.searchButton) {
+          this.$store.dispatch('queryEmpList', this.searchForm);
+        } else {
+          this.$store.dispatch('queryEmpList', {});
+        }
       }
     },
     submitForm() {
       this.$refs['searchForm'].validate((valid) => {
         if (valid) {
+          this.searchButton = true;
           this.$store.dispatch('setQueryPage', 1);
           this.$store.dispatch('queryEmpList', this.searchForm);
         } else {
@@ -185,8 +194,14 @@ export default {
       // this.$store.dispatch('getempDetial', row.empId);
       this.empDetial = row;
     },
-    handleClose() {
-
+    reset1() {
+      this.searchButton = false;
+      this.searchForm = {
+        name: '',
+        mobileNumber: '',
+        workNo: '',
+        phoneNumber: ''
+      }
     }
   }
 }

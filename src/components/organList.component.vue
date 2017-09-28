@@ -1,7 +1,7 @@
 <template>
   <div class="organlist" v-loading="organLoading">
-    <el-menu mode="vertical" :router="false" class="topMenu" :default-openeds="defaultExpand">
-      <my-menu-item :depts="depts" v-if="depts.length>0"></my-menu-item>
+    <el-menu mode="vertical" :router="false" class="topMenu" :default-openeds="userInfo.deptIds">
+      <my-menu-item :depts="depts" v-if="depts.length>0" v-on:reset="reset2" @depChange="depChange" :itemType="organType"></my-menu-item>
     </el-menu>
   </div>
 </template>
@@ -12,10 +12,15 @@ export default {
   components: {
     MyMenuItem
   },
+  props:{
+    organType:{
+      type:String,
+      default:'person'
+    }
+  },
   data() {
     return {
       organLoading: true,
-      defaultExpand:['FD22DF607B10CC14A0CABA6CFDF9212F','DAFFED346E29C5654F54133D1FC65CCB']
     }
   },
   created() {
@@ -38,12 +43,14 @@ export default {
 
         this.organLoading = false;
       }
-      console.log(this.organLoading)
     }
   },
   methods:{
-    expand(){
-
+    reset2(){
+      this.$emit('reset');
+    },
+    depChange(id){
+      this.$emit('depChange',id);
     }
   }
 }

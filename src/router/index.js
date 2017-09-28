@@ -7,12 +7,14 @@ import doc from 'pages/Doc-Approval'
 
 import docSub from 'pages/docSub/docSub.page'
 import docTracking from 'pages/docSub/docTracking.page'
-import paymentSearch from 'pages/docSub/paymentSearch.page'
 import docDetail from 'pages/docSub/docDetail.page'
 import docSearch from 'pages/docSub/docSearch.page'
 import docPending from 'pages/docSub/docPending.page'
+import docToRead from 'pages/docSub/docToRead.page'
 
 import approvalForm from 'pages/docSub/approvalForm.page'
+import materialApp from 'pages/docSub/materialApp.page'
+import vehicleApp from 'pages/docSub/vehicleApp.page'
 // import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
 // import leisureTravel from 'pages/docSub/staff-leisure-travel.page'
 // import business from 'pages/docSub/businessTrip.page'
@@ -70,6 +72,7 @@ import HR from '../pages/HR/homeHR.page'
 import clildHR from '../pages/HR/clildHR.page'
 import personalInfo from '../pages/HR/personalInfo.page'
 import resume from '../pages/HR/resume.page'
+import editResume from '../pages/HR/editResume.page'
 Vue.use(Router)
 
 export default new Router({
@@ -110,6 +113,11 @@ export default new Router({
           component: resume,
         },
         {
+          path: '/HR/editResume',
+          name: 'editResume',
+          component: editResume,
+        },
+        {
           path: '/HR/',
           redirect: '/HR/clildHR'
         },
@@ -146,6 +154,22 @@ export default new Router({
           path: '/doc/approvalForm',
           name: 'ApprovalForm',
           component: approvalForm,
+          meta: {
+            breadcrumb: "公文呈报",
+          }
+        },
+        {
+          path: '/doc/materialApp',
+          name: 'materialApp',
+          component: materialApp,
+          meta: {
+            breadcrumb: "公文呈报",
+          }
+        },
+        {
+          path: '/doc/vehicleApp',
+          name: 'vehicleApp',
+          component: vehicleApp,
           meta: {
             breadcrumb: "公文呈报",
           }
@@ -292,6 +316,14 @@ export default new Router({
           component: docSearch,
           meta: {
             breadcrumb: "公文查询",
+          }
+        },
+        {
+          path: '/doc/docToRead',
+          name: 'docToRead',
+          component: docToRead,
+          meta: {
+            breadcrumb: "公文待阅",
           }
         },
         //  {

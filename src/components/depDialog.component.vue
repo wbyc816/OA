@@ -1,18 +1,18 @@
 <template>
-  <div class="personDialogBox">
-    <el-dialog size="large" class="personDialog" :visible.sync="personVisible" @close="close">
+  <div class="depDialogBox">
+    <el-dialog :visible.sync="depVisible" size="large" class="personDialog" @close="close">
       <el-row>
         <el-col :span='6'>
-          <organ-list @reset="reset1"></organ-list>
+          <organ-list @reset="reset1" organType="dep" @depChange="depChange"></organ-list>
         </el-col>
         <el-col :span='18'>
           <div class="topSearch clearfix">
-            <p class="tips">选择收件人<span v-show="dialogType=='radio'">请双击姓名选择</span></p>
-            <el-input class="search" v-model="name">
+            <p class="tips">选择部门<span v-show="dialogType=='radio'">请双击部门选择</span></p>
+            <el-input class="search" v-model="params.name">
               <el-button slot="append" @click="search">搜索</el-button>
             </el-input>
           </div>
-          <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
+          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
             <el-table-column type="selection" width="55" :reserve-selection="true">
             </el-table-column>
             <el-table-column prop="name" label="姓名" width="110"></el-table-column>
@@ -20,20 +20,18 @@
             <el-table-column prop="jobtitle" label="职务"></el-table-column>
             <el-table-column prop="moblieNumber" label="状态" width="80"></el-table-column>
           </el-table>
-          <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
-            <el-table-column prop="name" label="姓名" width="110"></el-table-column>
-            <el-table-column prop="depts" label="部门" width="250"></el-table-column>
-            <el-table-column prop="jobtitle" label="职务"></el-table-column>
-            <el-table-column prop="moblieNumber" label="状态" width="80"></el-table-column>
+          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
+            <el-table-column prop="name" label="部门"></el-table-column>
+            <el-table-column prop="companyName" label="所属公司"></el-table-column>
           </el-table>
-          <div class="pageBox" :style="{visibility:searchRes.empVoList ? 'visible' : 'hidden'}">
-            <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">
+          <div class="pageBox" :style="{visibility:searchRes.records ? 'visible' : 'hidden'}">
+            <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.total">
             </el-pagination>
           </div>
           <div class="selInfoBox">
-            <p>{{ dialogType=='radio'?'已选中的收件人':' '}}</p>
+            <p>{{ dialogType=='radio'?'已选中的部门':' '}}</p>
             <div class="clearfix selInfo">
-              <span v-if="selPerson&&dialogType=='radio'">{{selPerson.name}} - {{selPerson.depts}}</span>
+              <span v-if="selDep&&dialogType=='radio'">{{selDep.name}}</span>
               <span v-for="person in multipleSelection" class="nameBox">{{person.name}}</span>
               <el-button type="primary" size="large" @click="submitPerson">选中</el-button>
             </div>
@@ -53,11 +51,19 @@ export default {
   data() {
     return {
       name: '',
-      selPerson: '',
+      selDep: '',
       multipleSelection: [],
       initialReady: false,
       searchButton: false,
-      personVisible:false
+      searchLoading: false,
+      params: {
+        deptId: '',
+        name: '',
+        pageNumber: 1,
+        pageSize: 10
+      },
+      searchRes: '',
+      depVisible: false
     }
   },
   props: {
@@ -65,61 +71,54 @@ export default {
       type: String,
       default: 'radio'
     },
-    visible: {
+    dialogVisible: {
       type: Boolean,
       default: false
     }
   },
   watch: {
-    'visible': function(newVal) {
-      this.personVisible=newVal;
+    'dialogVisible': function(newVal) {
+      this.depVisible = this.dialogVisible
       if (newVal) {
-        if (this.isAdmin) {
-          this.$store.dispatch('getDeptList');
-        } else {
-          this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
-          this.$store.dispatch('getDepById');
-        }
-        this.$store.dispatch('setQueryPage', 1);
-        this.$store.dispatch('queryEmpList', {});
+        this.$store.dispatch('getDeptList');
+        this.params.deptId = "DAFFED346E29C5654F54133D1FC65CCB";
+        this.params.pageNumber = 1;
+        this.getData();
       }
     }
   },
   computed: {
     ...mapGetters([
       'userInfo',
-      'searchLoading',
-      'searchRes',
       'depPageNumber',
-      'isAdmin'
+      'isAdmin',
+      'queryDepId'
     ])
   },
   created() {
-
+    this.$store.dispatch('getDeptList');
   },
   methods: {
-    submitRefdoc: function() {
-
-    },
     handleCurrentChange(page) {
-      if (this.searchRes.empVoList) {
-        this.$store.dispatch('setQueryPage', page);
+      if (this.searchRes.records) {
+        this.params.pageNumber = page;
         if (this.searchButton) {
-          this.$store.dispatch('queryEmpList', { name: this.name })
+          this.getData();
         } else {
-          this.$store.dispatch('queryEmpList', {})
+          this.params.name = "";
+          this.getData();
         }
       }
     },
     search() {
       this.searchButton = true;
-      this.$store.dispatch('setQueryPage', 1);
-      this.$store.dispatch('queryEmpList', { name: this.name })
+      this.params.pageNumber = 1;
+      this.getData();
     },
     selectPerson(row) {
       if (this.dialogType == 'radio') {
         if (row.empId != this.userInfo.empId) {
-          this.selPerson = row;
+          this.selDep = row;
 
         } else {
           this.$message({
@@ -136,18 +135,10 @@ export default {
     },
     submitPerson() {
       if (this.dialogType == 'radio') {
-        if (this.selPerson) {
-          var reciver = {
-            "reciDeptMajorName": this.selPerson.deptName,
-            "reciDeptMajorId": this.selPerson.deptParentId,
-            "reciDeptName": this.selPerson.depts,
-            "reciDeptId": this.selPerson.deptId,
-            "reciUserName": this.selPerson.name,
-            "reciUserId": this.selPerson.empId,
-          }
-          this.$emit('updatePerson', reciver);
-          this.$emit('update:visible', false)
-          this.selPerson = '';
+        if (this.selDep) {
+          this.$emit('updateDep', this.selDep);
+          this.$emit('update:dialogVisible', false)
+          this.selDep = '';
         } else {
           this.$message({
             message: '请先选择收件人！',
@@ -157,8 +148,7 @@ export default {
       } else {
         if (this.multipleSelection.length != 0) {
 
-          this.$emit('updatePerson', this.multipleSelection);
-          this.$emit('update:visible', false)
+          this.$emit('updateDep', this.multipleSelection);
         } else {
           this.$message({
             message: '请先选择收件人！',
@@ -173,10 +163,25 @@ export default {
     },
     reset1() {
       this.searchButton = false;
-      this.name = '';
+      this.params.name = '';
+    },
+    getData() {
+      this.$http.post('/dept/selectDeptOrgByName', this.params)
+        .then(res => {
+          if (res.status == 0) {
+            this.searchRes = res.data
+          }
+        }, res => {
+
+        })
     },
     close() {
-      this.$emit('update:visible', false)
+      this.$emit('update:dialogVisible', false)
+    },
+    depChange(id) {
+      this.params.deptId = id;
+      this.params.pageNumber = 1;
+      this.getData();
     }
   }
 }
@@ -184,7 +189,7 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.personDialogBox {
+.depDialogBox {
   .topSearch {
     padding: 10px;
     line-height: 47px;

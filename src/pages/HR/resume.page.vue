@@ -3,7 +3,7 @@
     <el-card class="commonCard">
       <div slot="header" class="clearfix">
         <span>个人简历</span>
-        <el-button type="text" class="handleButton"><i class="iconfont icon-edit"></i>完善简历</el-button>
+        <router-link tag="el-button" to="editResume" type="text" class="handleButton"><i class="iconfont icon-edit"></i>完善简历</router-link>
       </div>
       <div class="showBox">
         <el-row :gutter="20" class="baseDetail">
@@ -109,11 +109,11 @@ export default {
   data() {
     return {
       activeName: 'post',
-      contractInfo: contractInfo,
-      postInfo: postInfo,
-      eduInfo: eduInfo,
-      assessreCordInfo: assessreCordInfo,
-      postExperienceInfo: postExperienceInfo,
+      contractInfo,
+      postInfo,
+      eduInfo,
+      assessreCordInfo,
+      postExperienceInfo,
       contactInfo: contactInfo,
       tabList: {
         post: false,

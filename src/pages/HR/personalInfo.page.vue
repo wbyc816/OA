@@ -205,9 +205,6 @@ export default {
       if (this.emergencyContactInfo&&this.emergencyContactInfo[0]) {
         emergencyParam.oldId = this.emergencyContactInfo[0].id
       }
-      // this.$store.dispatch('updateEmp', { id: this.userInfo.empId, phoneNumber: this.baseForm.phoneNumber, picUrl: picUrl });
-
-      // this.$store.dispatch('updateEmergencyContactInfo', emergencyParam)
       this.$store.dispatch('updateBaseInfo', { emergency: emergencyParam, emp: empParam });
     },
     handleAvatarSuccess(res, file) {
@@ -296,60 +293,6 @@ $sub:#1465C0;
   // height:150px;
 }
 
-.editForm {
-  font-size: 15px;
-  padding-top: 10px;
-  .el-form-item {
-    width: 50%;
-    float: left;
-    padding-right: 30px;
-    &.pr70 {
-      padding-right: 70px;
-    }
-  }
-  .el-form-item__label {
-    color: $main;
-  }
-  .el-form-item__content {
-    // float: left;
-    // margin-left: 90px;
-  }
-  .el-select {
-    width: 100%;
-  }
-  .borderBox {
-    border-bottom: 1px solid #EAEAEA;
-    padding-top: 8px;
-    margin-bottom: 25px;
-    clear: both;
-  }
-  .avatar-uploader {
-    // border: 1px dashed #d9d9d9;
-    // border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    height: 105px;
-  }
-  .avatar-uploader .el-upload {
-    height: 105px;
-    width: 105px;
-    text-align: left;
-  }
 
-  .avatar {
-    max-height: 100%;
-    max-width: 100%;
-    display: block;
-  }
-  .submitButton {
-    width: 160px;
-    height: 45px;
-    font-size: 16px;
-  }
-  .el-form-item__label {
-    padding: 16px 12px 16px 0;
-  }
-}
 
 </style>

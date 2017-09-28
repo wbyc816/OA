@@ -1,38 +1,6 @@
 <template>
   <div id="docPending">
-    <el-card class="borderCard searchOptions">
-      <div slot="header">
-        <span>公文签批</span>
-        <i class="iconfont icon-shuaxin"></i>
-      </div>
-      <el-row :gutter="10">
-        <el-col :span="6">
-          <el-select v-model="urgencyValue" placeholder="重要程度">
-            <el-option label="全部" value=""></el-option>
-            <el-option v-for="item in urgency" :label="item.dictName" :value="item.dictCode"></el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="6">
-          <el-select v-model="params.docType" placeholder="公文类型">
-            <el-option label="全部" value=""></el-option>
-            <el-option v-for="item in docType" :label="item.docName" :value="item.docTypeCode"></el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="12">
-          <el-input placeholder="公文标题" v-model="params.keyWords"></el-input>
-        </el-col>
-        <el-col :span="6">
-          <el-input placeholder="公文编号" v-model="params.docNo"></el-input>
-        </el-col>
-        <el-col :span="12">
-          <el-date-picker v-model="params.startTime" @change="dateChange" type="date" placeholder="选择呈报日期">
-          </el-date-picker>
-        </el-col>
-        <el-col :span="6">
-          <el-button class="searchButton" @click="getDate">搜索</el-button>
-        </el-col>
-      </el-row>
-    </el-card>
+    <search-options title="公文签批" @search="setOptions"></search-options>
     <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>
@@ -71,55 +39,24 @@
   </div>
 </template>
 <script>
+import SearchOptions from '../../components/searchOptions.component'
 import { mapGetters } from 'vuex'
-const typeOptions = [{
-  value: '1',
-  label: 'Contract Approval(New)'
-}]
-const handledCategoriesOptions = [{
-  value: '1',
-  label: 'Contract Approval(New)'
-}]
-const tableTitle = ['密级程度', '重要程度', '公文类型', '呈报时间', '呈报人', '当前节点']
-const budgetData = [{
-  BudgetYear: '2017-01',
-  UserOrganization: 'IT',
-  BudgetNature: 'IT Activities',
-  CostCenter: 'IT',
-  Currency: 'CNY',
-  AmountRequested: '8,500.00',
-  AmountinHKD: '8,500.00',
-  CashAdvance: 'No'
 
-}]
+const tableTitle = ['密级程度', '重要程度', '公文类型', '呈报时间', '呈报人', '当前节点']
+
 export default {
   data() {
     return {
-      urgencyValue: "",
-      type: '',
-      proposer: '',
-      handledBy: '',
-      handledCategoriesOptions,
-      handledCategories: '',
       tableTitle,
-      detailView: false,
       contractView: false,
-      budgetData,
       params: {
-        "keyWords": "",
-        "docNo": "",
-        "taskUserName": "",
-        "taskDeptName": "",
-        "taskDeptId": "",
-        "docType": "",
-        "startTime": "",
-        "userId": "",
         "pageNumber": 1,
         "pageSize": 5
       },
       docData: [],
       totalSize: 0,
-      searchLoading: false
+      searchLoading: false,
+      searchOptions: ''
     }
   },
   computed: {
@@ -131,27 +68,24 @@ export default {
     ])
   },
   components: {
-
+    SearchOptions
   },
   created() {
-    this.$store.dispatch('getConfident');
-    this.$store.dispatch('getUrgency');
-    this.$store.dispatch('getDocForm');
-    this.params.userId = this.userInfo.empId;
-    this.getDate();
+    this.getData();
   },
   methods: {
-    getDate() {
+    getData() {
       var that=this;
       this.searchLoading = true;
-      this.$http.post("/doc/docPendingList", this.params, { body: true }).then(res => {
+      var params = Object.assign({ userId: this.userInfo.empId }, this.params, this.searchOptions);
+      this.$http.post("/doc/docPendingList", params, { body: true }).then(res => {
         setTimeout(function() {
           that.searchLoading = false;
 
         }, 200)
-        if (res.data.status == 0) {
-          this.docData = res.data.data.dList;
-          this.totalSize = res.data.data.totalSize;
+        if (res.status == 0) {
+          this.docData = res.data.dList;
+          this.totalSize = res.data.totalSize;
         } else {
           this.docData = [];
           this.totalSize = 0;
@@ -184,10 +118,12 @@ export default {
     },
     handleCurrentChange(page) {
       this.params.pageNumber = page;
-      this.getDate()
+      this.getData()
     },
-    dateChange(val){
-      this.params.startTime=val;
+    setOptions(options) {
+      this.searchOptions = options;
+      this.params.pageNumber = 1;
+      this.getData();
     }
   }
 }
@@ -201,20 +137,6 @@ $purple: #0460AE;
     margin-top: 20px;
   }
   margin-bottom:30px;
-  .searchOptions {
-    .el-card__body {
-      .el-col {
-        margin-top: 13px;
-      }
-      .el-select {
-        width: 100%;
-      }
-    }
-    padding-bottom:10px;
-  }
-  .el-date-editor.el-input {
-    width: 100%;
-  }
   &>table {
     thead {
       background: $purple;
@@ -272,269 +194,6 @@ $purple: #0460AE;
     tfoot {
       td {
         color: #95989A;
-      }
-    }
-  }
-  .myDialog {
-    .el-dialog--large {
-      display: table;
-      width: 1200px;
-      top: 0 !important;
-      bottom: 0;
-      margin: auto !important;
-      left: 0;
-      right: 0;
-      transform: none;
-    }
-    .el-dialog__body {
-      padding: 0;
-      position: relative;
-    }
-    .el-dialog__header {
-      padding: 13px 12px;
-      border-bottom: 1px solid #F2F2F2;
-      .el-dialog__title {
-        color: #393939;
-        font-size: 18px;
-        font-weight: normal;
-      }
-      .el-dialog__close {
-        color: #676767;
-      }
-    }
-  }
-  .myTable {
-    border: none;
-    &:after {
-      width: 0;
-    }
-    tr:hover>td {
-      background: #fff;
-    }
-    tr:nth-child(even) {
-      td {
-        background: #F7F7F7;
-      }
-    }
-    th {
-      height: 26px;
-    }
-    td {
-      border: none;
-    }
-    .cell {
-      padding-left: 5px;
-      padding-right: 5px;
-    }
-  }
-  @mixin base-ul {
-    display: flex;
-    width: 100%;
-    .base {
-      width: 38%;
-      border-right: 1px solid #F2F2F2;
-      margin: 18px 0;
-      padding-right: 25px;
-      li {
-        height: 50px;
-        line-height: 50px;
-        border-bottom: 1px solid #F2F2F2;
-        padding-left: 24px;
-        span {
-          display: inline-block;
-          position: relative;
-          width: 50%;
-          font-size: 15px;
-          color: #393939;
-        }
-      }
-      li:first-child {
-        height: 35px;
-        line-height: 15px;
-      }
-      li:last-child {
-        border: none;
-      }
-    }
-  }
-  .description {
-    width: 61%;
-    font-size: 15px;
-    position: relative;
-    color: #393939;
-    padding-left: 28px;
-    p:first-child {
-      color: $purple;
-      height: 53px;
-      line-height: 53px;
-    }
-    .attachment {
-      position: absolute;
-      left: 0;
-      bottom: 18px;
-      width: 100%;
-      box-sizing: border-box;
-      padding-left: 28px;
-      padding-right: 25px;
-      li {
-        height: 50px;
-        line-height: 50px;
-        border-bottom: 1px solid #f2f2f2;
-        span {
-          display: inline-block;
-        }
-        span:first-child {
-          color: $purple;
-          width: 20%;
-        }
-      }
-      li:first-child {
-        border-top: 1px solid #f2f2f2;
-      }
-      li:last-child {
-        span:last-child {
-          text-decoration: underline;
-        }
-      }
-    }
-  }
-
-  .detailDialog {
-    .information {
-      @include base-ul;
-    }
-    .el-table {
-      td {
-        height: 54px;
-      }
-      .cell {
-        padding-left: 20px;
-        padding-right: 20px;
-      }
-    }
-  }
-  .paymentDialog {
-    .el-dialog__body {
-      position: static;
-    }
-    .savePdf {
-      position: absolute;
-      top: 4px;
-      right: 50px;
-      height: 35px;
-      border-radius: 2px;
-      width: 152px;
-      border: none;
-      font-size: 16px;
-    }
-    .staff {
-      @include base-ul;
-      .base {
-        li span:first-child {
-          color: $purple;
-        }
-      }
-      .payment {
-        width: 61%;
-        border: none;
-        padding-left: 25px;
-        li {
-          padding-left: 14px;
-          span:first-child {
-            width: 30%;
-          }
-        }
-      }
-    }
-    .el-table {
-      td {
-        height: 54px;
-      }
-      tr th:first-child .cell,
-      tr td:first-child .cell {
-        padding-left: 20px;
-      }
-      .cell {
-        padding-left: 5px;
-        padding-right: 5px;
-      }
-    }
-  }
-  .contractDialog {
-    .el-dialog__body {
-      position: static;
-    }
-    .topButtons {
-      position: absolute;
-      top: 4px;
-      left: 467px;
-      button {
-        border-radius: 2px;
-        border: none;
-        font-size: 16px;
-        padding: 10px 20px;
-      }
-    }
-    .information {
-      @include base-ul;
-      .base {
-        margin-bottom: 0;
-        li:first-child {
-          span {
-            color: $purple;
-          }
-        }
-      }
-    }
-    .information:nth-child(2) {
-      padding-bottom: 8px;
-      border-bottom: 10px solid $purple;
-      .base {
-        border-right: 2px solid #CECECE;
-      }
-    }
-    .infoBottom {
-      margin-bottom: 15px;
-      .base {
-        margin: 0;
-        li {
-          height: 55px !important;
-          line-height: 55px !important;
-        }
-      }
-      .base:first-child {
-        border-right: 2px solid #CECECE;
-        li:not(:first-child) {
-          span:first-child {
-            top: -10px;
-          }
-          span:last-child {
-            top: 10px;
-          }
-        }
-      }
-      .base:last-child {
-        padding-left: 28px;
-        padding-right: 0;
-        width: 61%;
-        li {
-          padding: 0;
-          margin-right: 25px;
-        }
-        li:not(:first-child) {
-          &>span:first-child {
-            width: 60%;
-            top: 9px;
-            span {
-              display: block;
-              width: 100%;
-              line-height: initial;
-            }
-          }
-          &>span:last-child {
-            width: 39%;
-          }
-        }
       }
     }
   }

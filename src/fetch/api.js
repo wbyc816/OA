@@ -22,7 +22,7 @@ axios.interceptors.response.use((res) => {
   // if (res.data.status != '0') {
   //   return Promise.reject(res);
   // }
-  return res;
+  return res.data;
 }, (error) => {
 
   return Promise.reject(error);
@@ -32,7 +32,7 @@ export function fetch(url, params, isBody) {
   return new Promise((resolve, reject) => {
     axios.post(url, params, { body: isBody })
       .then(response => {
-        resolve(response.data);
+        resolve(response);
       }, err => {
         reject(err);
       })
@@ -45,7 +45,7 @@ export function getFetch(url, params) {
   return new Promise((resolve, reject) => {
     axios.get(url, params)
       .then(response => {
-        resolve(response.data);
+        resolve(response);
       }, err => {
         reject(err);
       })
@@ -109,8 +109,8 @@ export default {
       { url: '/emp/updateEmp', params: params.emp, isBody: true }
     ])
   },
-  submitDoc(params) {
-    return fetch('/doc/submitDoc', params, { isBody: true })
+  submitDoc(url,params) {
+    return fetch(url, params, { isBody: true })
   },
   docDistribution(params) {
     return fetch('/doc/docDistribution', params, { isBody: true })

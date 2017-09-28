@@ -1,10 +1,10 @@
 <template>
   <div class='menu-wrapper'>
-    <template v-for="item in depts">
-      <el-menu-item :index="item.name" v-if="item.childNode.length==0" @click.native.stop="selDep(item)" :class="{'active':queryDepId==item.id}">{{item.name}}</el-menu-item>
-      <el-submenu :index="item.id" v-else @click.native.stop="selDep(item)" :class="{'active':queryDepId==item.id}">
+    <template v-for="item in depts" v-if="itemType=='dep'?item.levelNum<30:true">
+      <el-menu-item :index="item.name" v-if="itemType=='dep'?item.levelNum==20:item.childNode.length==0" @click.native.stop="selDep(item)" :class="{'active':queryDepId==item.id}">{{item.name}}</el-menu-item>
+      <el-submenu :index="item.id" v-if="itemType=='dep'?item.levelNum<20:item.childNode.length!=0" @click.native.stop="selDep(item)" :class="{'active':queryDepId==item.id}">
         <template slot="title">{{item.name}}</template>
-        <my-menu-item :depts="item.childNode" v-if="item.childNode&&item.childNode.length>0"></my-menu-item>
+        <my-menu-item v-on:reset="reset2" :itemType="itemType" @depChange="depChange1" :depts="item.childNode" v-if="item.childNode&&item.childNode.length>0"></my-menu-item>
       </el-submenu>
     </template>
   </div>
@@ -16,11 +16,15 @@ export default {
   props: {
     depts: {
       type: Array
+    },
+    itemType: {
+      type: String,
+      default: 'person'
     }
   },
-  data(){
-    return{
-      selItem:''
+  data() {
+    return {
+      selItem: ''
     }
   },
   computed: {
@@ -31,12 +35,24 @@ export default {
   methods: {
     selDep(item) {
       // this.selItem=item;
-      this.$store.dispatch('setQueryDepId',item.id);
-      if(item.levelNum>=30){
-        this.$store.dispatch('setQueryPage',1);
-        this.$store.dispatch('queryEmpList',{})
+      if (this.itemType == 'person') {
+        this.$store.dispatch('setQueryDepId', item.id);
+        if (item.levelNum >= 30) {
+          this.$store.dispatch('setQueryPage', 1);
+          this.$store.dispatch('queryEmpList', {})
+        }
+      } else {
+        this.$emit('depChange', item.id);
       }
+      this.$emit('reset');
+
       // console.log(item.id,this.queryDepId)
+    },
+    reset2() {
+      this.$emit('reset');
+    },
+    depChange1(id){
+      this.$emit('depChange', id);
     }
   }
 }
@@ -48,9 +64,11 @@ export default {
     background-color: rgb(209, 218, 229);
   }
 }
-.el-menu-item.is-active{
-  color:#393939;
+
+.el-menu-item.is-active {
+  color: #393939;
 }
+
 .el-menu-item.active {
   background-color: rgb(209, 218, 229);
 }

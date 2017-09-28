@@ -1,9 +1,9 @@
 <template>
   <router-link class='message' :to="data.link">
     <span class='logo' :style='{backgroundColor:data.color}'>
-        <i class='iconfont' :class='data.font'></i>
+        <i class='iconfont' :class="'icon-'+data.icon"></i>
       </span>
-    <span class='text text-tilte'>{{data.text}}{{data.value}}</span>
+    <span class='text text-tilte'>{{data.text}} <span :style='{color:data.color}'>{{data.value}}</span></span>
     <!-- <span class='text text-type' :class='myType' v-text=''>
         {{textChg}}
       </span> -->
@@ -92,34 +92,8 @@ export default {
       require: true
     }
   },
-  computed: {
-    myType: function() {
-      if (this.data.type == 'work') {
-        return 'bg-purple';
-      } else if (this.data.type == 'message') {
-        return 'bg-brown';
-
-      } else {
-        return 'bg-zi'
-      }
-    },
-    textChg: function() {
-      if (this.data.type == 'work') {
-        return '公文流转';
-      } else if (this.data.type == 'message') {
-        return '个人中心';
-
-      } else {
-        return '我的工作'
-      }
-
-    },
-  },
-  methods: {
-    route() {
-      this.routerP
-    }
-  }
+  computed: {},
+  methods: {}
 }
 
 </script>

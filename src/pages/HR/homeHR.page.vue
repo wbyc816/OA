@@ -51,7 +51,7 @@
 <script>
 const menuList = [{
     title: '个人中心',
-    child: [{ name: '个人信息', path: '/HR/personalInfo' }, { name: '个人简历', path: '/HR/resume' }, { name: '简历完善', path: '#' }]
+    child: [{ name: '个人信息', path: '/HR/personalInfo' }, { name: '个人简历', path: '/HR/resume' }, { name: '简历完善', path: '/HR/editResume' }]
   }, {
     title: '我要申请',
     child: [{ name: '请假申请', path: '#' }, { name: '转正申请', path: '#' }, { name: '离职申请', path: '#' }, { name: '工伤事故申请', path: '#' }, { name: '培训申请', path: '#' }, { name: '人事变动', path: '#' }]
