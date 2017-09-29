@@ -5,11 +5,34 @@
         <router-view></router-view>
       </el-col>
       <el-col :span="7" class="sideBar">
-        <el-card class="borderCard searchBox">
+        <el-card class="borderCard searchBox" v-show="$route.path=='/HR/clildHR'">
           <div slot="header">新闻查询</div>
           <el-input class="search">
             <el-button slot="append">搜索</el-button>
           </el-input>
+        </el-card>
+        <el-card class="borderCard searchBox" v-show="$route.name=='salary'">
+          <div slot="header">工资单查询</div>
+          <el-row>
+            <el-col :span="18">
+              <el-date-picker v-model="salaryDate"
+                type="daterange" :editable="false"
+                placeholder="起始及截止日期" format="yyyy-MM">
+              </el-date-picker>
+            </el-col>
+            <el-col :span="6">
+              <el-button @click="searchSalary" class="searchSalary">搜索</el-button>
+            </el-col>
+          </el-row>
+          
+        </el-card>
+        <el-card class="borderCard searchBox" v-show="$route.name=='salary'">
+          <div slot="header">最新工资单</div>
+          <el-row class="newSalary">
+            <el-col :span="12" v-for="month in newSalaryList">
+              <router-link :to="'/HR/salary/'+month.value">{{month.label}}</router-link>
+            </el-col>
+          </el-row>
         </el-card>
         <el-card class="department borderCard">
           <div slot="header">人力资源</div>
@@ -49,6 +72,8 @@
   </div>
 </template>
 <script>
+const nowDate=new Date();
+const nowMonth = nowDate.getMonth()+1;
 const menuList = [{
     title: '个人中心',
     child: [{ name: '个人信息', path: '/HR/personalInfo' }, { name: '个人简历', path: '/HR/resume' }, { name: '简历完善', path: '/HR/editResume' }]
@@ -58,7 +83,7 @@ const menuList = [{
   },
   {
     title: '薪资绩效',
-    child: [{ name: '最新工资单', path: '#' }, { name: '历史工资单', path: '#' }]
+    child: [{ name: '最新工资单', path: '/HR/salary/1'}, { name: '历史工资单', path: '#' }]
   }, {
     title: '相关链接',
     child: [{ name: '社会保障系统', path: '#' }, { name: '公积金系统', path: '#' }]
@@ -70,6 +95,8 @@ export default {
     return {
       menuList,
       dialogFormVisible: false,
+      salaryDate:"",
+      newSalaryList:[],
       form: {
         name: '',
         dep: '',
@@ -83,7 +110,36 @@ export default {
       formLabelWidth: '210px',
     }
   },
+  created(){
+    this.getNewSalaryList();
+  },
   methods:{
+    searchSalary(){
+      // this.$router.push({name:'salary',params:{name:this.searchName}})
+    },
+    getNewSalaryList(){
+      let temp = new Date();
+      let month = temp.getMonth();
+      if(temp.getDate()>8){
+        month = temp.getMonth() + 1;
+      }
+      let nowYear=temp.getFullYear();
+      for(let i=0;i<6;i++){
+        if(month==0){
+          nowYear -= 1;
+
+          month = 12;
+        }
+        if (month < 10) {
+          month = '0' + month;
+        }
+        this.newSalaryList.push({
+          label:nowYear+ '年' + month + '月',
+          value:nowYear+month
+        });
+        month-=1;
+      }
+    }
   }
 }
 
@@ -94,6 +150,20 @@ $sub:#1465C0;
 
 #homeHR {
   padding-top:10px;
+  .searchSalary{
+    background: #0460AE;
+    color: #fff;
+    height: 46px;
+  }
+  .newSalary{
+    text-align:center;
+    a{
+      color:#0460AE;
+      margin-bottom: 5px;
+      display:block;
+    }
+    
+  }
   .sideBar {
     .searchBox {
       .el-card__header {
