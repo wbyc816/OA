@@ -1,30 +1,21 @@
 <template>
-  <div id='preview'>
-    <el-card class="formDown">
-      <el-row>
-        <el-col :span='3'>
-          <img src="../assets/images/pdfImg.png">
-        </el-col >
-        <el-col class="formInfo" :span='18'>
-          <ul>
-            <li>
-              <p>Corporate PPT Template_TC <i class="el-icon-star-on"></i></p>
-              <p>Version:DEC_2016 Revision Date：2016-06-15</p>
-              <p>Department：COMMERCIAL</p>
-              <p>Category：Corporate PPT Template</p>
-              <p>Release Date：2016-12-22 Size：1.34M</p>
-            </li>
-          </ul>          
-        </el-col>
-        <el-col :span='3'>
-          <el-button type="primary">Download</el-button>
-        </el-col>
-
-      </el-row>
-    </el-card>
-    <el-row :gutter='12'>
-      <el-col :span='18'>
+  <div id='newsDetail'>
+    <el-row :gutter="20">
+      <el-col :span='17'>
         <el-card class="pdfBox" >
+        <div class="formDown" slot="header">
+          <el-row :gutter="20">
+        <el-col class="formInfo" :span='19'>
+          <p class="title">波音与东海航空完成五架787-9梦想飞机订单<i class=""></i></p>
+          <p class="others"><i class="iconfont icon-eye"></i><span>124</span><span class="time">2017-11-22</span><span class="person">签发人 刘志军</span><span class="person">校对人 刘志军</span></p>          
+        </el-col>
+        <el-col :span='5' class="downBox">
+          <p>附件</p>
+          <p class="link">集团下发文件.pdf</p>
+          <p class="link">集团下发文件.pdf</p>
+        </el-col>
+      </el-row>
+        </div>
           <canvas  id="newsCanvas"></canvas>
           <el-pagination
           :current-page="pafParam.pageNum"
@@ -34,25 +25,29 @@
           v-on:current-change="changePage">
         </el-pagination>
       </el-card>
-    </el-col>
-    <el-col :span='6' >
-      <ul class="sideBox">
-        <li v-for="o in 4">
-          <p>Corporate PPT Template_TCPPPPT Template_TCPPT Template_TC</p>
-          <div class="bottom">
-            <p>Deadline: 2016-02-19</p>
-            <p>Date：2016-12-22</p>
-          </div>
-        </li>
-      </ul>
-    </el-col>
-  </el-row>
+      </el-col>
+      <el-col :span='7'>
+        <el-card class="borderCard searchBox">
+          <div slot="header">新闻查询</div>
+          <el-input class="search">
+            <el-button slot="append">搜索</el-button>
+          </el-input>
+        </el-card>
+        <duty></duty>
+      </el-col>
+    </el-row>
+    
+
 </div>
 </template>
 <script>
-  import pdf from '../assets/pdf/test.pdf'
+  import pdf from '../../assets/pdf/test.pdf'
   import pdfjsLib from 'pdfjs-dist'
+import SidePersonSearch from '../../components/sidePersonSearch.component'
+import Duty from '../../components/duty.component'
+
   export default{
+  components: { SidePersonSearch, Duty },
     data(){
       return{
         checked:false,
@@ -66,8 +61,6 @@
 
       }
       
-    },
-    components:{
     },
     mounted(){
       this.initPdf();      
@@ -153,8 +146,9 @@
 
 </script>
 <style lang='scss'>
-  $purple: #7C5598;
-  #preview{
+$main: #0460AE;
+$sub:#1465C0;
+  #newsDetail{
     .divider{
       position: relative;
       margin-right: 7px;
@@ -174,48 +168,37 @@
     .flRight{
       float: right;
     }
-    .purple{
-      color:$purple;
+    .main{
+      color:$main;
     }
     .formDown{
-      padding:20px 35px;
       box-shadow: none;
       .el-row{
-        .el-col:first-child{
-          img{
-            height:100%;
-          }
-        }
         .formInfo{
-          padding-left: 30px;
-          li{
-            p:first-child{
-              line-height:35px;
-              font-size: 16px;
-              color:$purple;
-              &>i{
-                padding-left: 15px;
-                color:rgba(355,100,89,.9);
-              }
-            }
-            p:not(:first-child){
-              line-height: 20px;
-              font-size: 14px;
-              color:#676767;
+          border-right: 1px solid #F2F2F2;
+          .title{
+            font-size: 18px;
+            color: $sub;
+            padding-bottom: 20px;
+          }
+          .others{
+            font-size: 13px;
+            i{
+              color:$sub;
             }
           }
+          .time{
+            margin-left: 10px;
+          }
+          .person{
+            margin-left: 15px;
+          }
         }
-        .el-col:last-child{
-          position: absolute;
-          right: 0;
-          height: 45px;
-          margin: auto;
-          top: 0;
-          bottom: 0;
-          button{
-            width: 100%;
-            height: 100%;
-            font-size: 20px;
+        .downBox{
+          font-size: 13px;
+          .link{
+            color: $main;
+            cursor: pointer;
           }
         }
       }
@@ -237,40 +220,12 @@
         }
       }
     }
-    
-    .sideBox{
-      padding:0 8px;
-      background: #fff;
-      min-height: 1150px;
-      li{
-        position: relative;
-        min-height: 100px;
-        padding:12px 9px 56px 0;
-        border-bottom: 1px solid #f2f2f2;
-        box-sizing: border-box;
-        &>p:first-child{
-          color:$purple;
-          font-size: 14px;
-        }
-        .bottom{
-          position:absolute;
-          bottom: 6px;
-          left: 0;
-          width: 100%;
-
-          p{
-            color:#676767;
-            padding-right: 9px;
-            font-size: 12px;
-            line-height: 20px;
-          }
-          p:first-child{
-            color:#E50012;
-          }
-        }
-      }
-      li:last-child{
+    .searchBox{
+      .el-card__header{
         border-bottom: none;
+      }
+      .el-card__body{
+        padding-bottom: 20px;
       }
     }
   } 

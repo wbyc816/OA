@@ -59,11 +59,11 @@
               </p>
               <el-tabs v-model="activeName" class="myTab">
                 <el-tab-pane :label="list.name" :name="list.name" v-for="(list,index) in newsList">
-                  <div class="newBox" v-for="news in list.child">
+                  <router-link to="/HR/newsDetail" class="newBox" v-for="news in list.child">
                     <p>{{news.docTitle}}</p>
                     <p><span><i class="iconfont icon-eye"></i><span>{{news.browse}}</span>{{news.createTime | time('xie')}}</span>
                     </p>
-                  </div>
+                  </router-link>
                 </el-tab-pane>
               </el-tabs>
             </el-card>
