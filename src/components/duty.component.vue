@@ -4,23 +4,14 @@
       <div slot="header">今日值班
         <router-link to="#">更多</router-link>
       </div>
+      <p class="leader" v-if="dutys.leader&&dutys.leader.name"><span class="name">{{dutys.leader.name}}</span>{{dutys.leader.phone | phone}}</span></p>
       <el-menu mode="vertical" default-active="1">
         <el-menu-item-group>
-          <el-submenu index="1">
-            <template slot="title">IT服务部</template>
-            <el-menu-item index="2-1">莫文 : 138 4564 7841</el-menu-item>
-            <!-- <el-menu-item index="1-1">Doc Searching</el-menu-item> -->
-          </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">地面服务部</template>
-            <el-menu-item index="2-1">莫文耀 : 138 4164 7841</el-menu-item>
-            <el-menu-item index="2-2">刘莉: 133 6415 57871</el-menu-item>
-            <el-menu-item index="2-3">王立伟 : 134 3641 8874</el-menu-item>
-            <el-menu-item index="2-4">王天峰 : 133 1248 4774</el-menu-item>
-          </el-submenu>
-          <el-submenu index="3">
-            <template slot="title">货运部</template>
-            <el-menu-item index="3-1">宋丽萍：135 4887 2561</el-menu-item>
+          <el-submenu :index="duty.deptName" v-for="duty in dutys.ondutylist">
+            <template slot="title">{{duty.deptName}}</template>
+            <el-menu-item :index="duty.deptName+child.empName" v-for="child in duty.onduty">
+              <span class="name">{{child.empName}}</span>{{child.mobileNumber | phone}}
+            </el-menu-item>
           </el-submenu>
         </el-menu-item-group>
       </el-menu>
@@ -33,12 +24,11 @@ export default {
   data() {
     return {
       organLoading: false,
+      dutys: { ondutylist: [] }
     }
   },
   created() {
-    // if(this.depts != '' || this.depts != undefined || this.depts != null){
-    //   this.organLoading = false;
-    // }
+    this.getData();
   },
   mounted() {
 
@@ -50,8 +40,15 @@ export default {
     ])
   },
   methods: {
-    expand() {
-
+    getData() {
+      this.$http.post('/onduty/getDutyInfo', { dutyDate: this.timeFilter(new Date()) })
+        .then(res => {
+          if (res.status == 0) {
+            this.dutys = res.data;
+          } else {
+            console.log('获取值班信息失败')
+          }
+        })
     }
   }
 }
@@ -62,6 +59,18 @@ $main:#0460AE;
 $sub:#1465C0;
 .duty {
   margin-bottom: 20px;
+  .name {
+    width: 60px;
+    display: inline-block;
+  }
+  .leader {
+    line-height: 56px;
+    height: 56px;
+    padding-left: 20px;
+    font-size: 14px;
+    color: rgb(72, 86, 106);
+    border-bottom: 1px solid #F2F2F2;
+  }
   .el-card__header {
     a {
       float: right;

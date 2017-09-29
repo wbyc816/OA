@@ -3,8 +3,8 @@ import * as types from '../types'
 
 
 const state = {
-  depts: '',
-  searchRes: '',
+  depts: [],
+  searchRes: [],
   queryDepId: null,
   depPageNumber: 1,
   empDetial: ''

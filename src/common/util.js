@@ -5,6 +5,7 @@ Vue.prototype.combineObj = combineObj
 Vue.prototype.timeFilter = timeFilter
 Vue.prototype.clone = clone
 Vue.prototype.changeTime = changeTime
+Vue.prototype.renderContent = renderContent
 
 function getCookie(c_name) {
   if (document.cookie.length > 0) {
@@ -73,4 +74,16 @@ function changeTime(obj){
   console.log(_obj)
   return _obj
 }
+
+function renderContent(h, { node, data, store }) {
+        return (
+          <span>
+            <span>
+              <span>{data.name}</span>
+            </span>
+            <span style="float: right; margin-right: 20px">
+              <el-button class="depAdd" type="primary" icon="plus" size="mini" on-click={ () => this.addDep(store, data) }>添加</el-button>
+            </span>
+          </span>);
+      }
 export default { combineObj }

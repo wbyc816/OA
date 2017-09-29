@@ -58,7 +58,7 @@
             </div>
             <div class="infoItem">
               <span class="infoTittle">手机</span>
-              <p class="infoText" v-if="resumeInfo">{{resumeInfo.phoneNumber}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.mobileNumber}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">身份证号</span>

@@ -15,6 +15,7 @@ import docToRead from 'pages/docSub/docToRead.page'
 import approvalForm from 'pages/docSub/approvalForm.page'
 import materialApp from 'pages/docSub/materialApp.page'
 import vehicleApp from 'pages/docSub/vehicleApp.page'
+import manuscriptApp from 'pages/docSub/manuscriptApp.page'
 // import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
 // import leisureTravel from 'pages/docSub/staff-leisure-travel.page'
 // import business from 'pages/docSub/businessTrip.page'
@@ -170,6 +171,14 @@ export default new Router({
           path: '/doc/vehicleApp',
           name: 'vehicleApp',
           component: vehicleApp,
+          meta: {
+            breadcrumb: "公文呈报",
+          }
+        },
+        {
+          path: '/doc/manuscriptApp',
+          name: 'manuscriptApp',
+          component: manuscriptApp,
           meta: {
             breadcrumb: "公文呈报",
           }

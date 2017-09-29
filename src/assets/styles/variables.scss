@@ -270,13 +270,14 @@ ul {
       line-height: 64px;
       width: 100%;
       text-align: left;
+      color: $main;
       &:hover {
         color: $main;
       }
     }
     .el-tabs__item.is-active {
       background: #fff;
-      color: $main;
+      
       &:before {
         content: '';
         position: absolute;
@@ -730,6 +731,8 @@ ul {
   color: #393939;
   font-size: 16px;
   font-family: Arial;
+  padding:15px;
+  line-height:24px;
 }
 
 .mySideLink {
@@ -918,4 +921,7 @@ ul {
       padding: 0;
     }
   }
+}
+.el-tag{
+  margin-right:5px;
 }

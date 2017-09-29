@@ -29,33 +29,23 @@
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>
             </p>
             <el-card class="bedoneList">
-              <p slot="header">待办事项</p>
-              <el-row :gutter="20">
-                <el-col :span="12">
-                  <span>公文待审批</span>
-                  <p>刘志华9月23日年假休假申请</p>
-                </el-col>
-                <el-col :span="12">
-                  <span>公文待审批</span>
-                  <p>工程资产管理系统采购预算呈批单</p>
-                </el-col>
-                <el-col :span="12">
-                  <span>公文待审批</span>
-                  <p>以客为尊 提供一流乘坐体验 东海航空...</p>
-                </el-col>
-                <el-col :span="12">
-                  <span class="beRead">公文待阅</span>
-                  <p>东海航空参加深圳“公益金百万行”活动</p>
-                </el-col>
-                <el-col :span="12">
-                  <span>公文待审批</span>
-                  <p>工程管理部门车辆管理系统采购合同</p>
-                </el-col>
-                <el-col :span="12">
-                  <span>公文待审批</span>
-                  <p>新系统建设公开招标申请</p>
-                </el-col>
-              </el-row>
+              <p slot="header">待办事项 <span>{{doneLength}}</span></p>
+              <el-carousel height="150px" :autoplay="false" indicator-position="outside" arrow="never">
+                <el-carousel-item v-for="(list,index) in doneList" :key="index">
+                  <el-row :gutter="20">
+                    <el-col :span="12" v-for="item in list">
+                      <router-link :to="'/doc/docDetail/'+item.id">
+                        <span class="index">{{item.index}}</span>
+                        <p class="title">{{item.docTitle}}</p>
+                        <div class="timeline">
+                          <p>截止日</p>
+                          <p>{{item.endTime.slice(0,7)}}</p>
+                        </div>
+                      </router-link>
+                    </el-col>
+                  </el-row>
+                </el-carousel-item>
+              </el-carousel>
             </el-card>
           </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[1]}">
@@ -64,140 +54,14 @@
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[1]=true" v-on:mouseleave="showInfo[1]=false" v-show="showDrag[1]"></i>
             </p>
             <el-card class="news">
-              <span slot="header">新闻</span>
+              <p slot="header"><span>新闻</span>
+                <router-link to="#">更多</router-link>
+              </p>
               <el-tabs v-model="activeName" class="myTab">
-                <el-tab-pane label="公司新闻" name="first">
-                  <div>
-                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
-                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>124</span>2017/09/01</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空参加深圳“公益金百万行”活动</p>
-                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>214</span>2017/08/16</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
-                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>541</span>2017/07/26</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空开通贵阳=珠海航线</p>
-                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
-                    <p>公司新闻<span><i class="iconfont icon-eye"></i><span>213</span>2017/06/14</span>
-                    </p>
-                  </div>
-                </el-tab-pane>
-                <el-tab-pane label="部门新闻" name="second">
-                  <div>
-                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
-                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>541</span>2017/09/06</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
-                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>124</span>2017/09/01</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空参加深圳“公益金百万行”活动</p>
-                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>214</span>2017/08/16</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空开通贵阳=珠海航线</p>
-                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
-                    <p>部门新闻<span><i class="iconfont icon-eye"></i><span>213</span>2017/06/14</span>
-                    </p>
-                  </div>
-                </el-tab-pane>
-                <el-tab-pane label="人事变动" name="third">
-                  <div>
-                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
-                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>213</span>2017/08/14</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
-                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>541</span>2017/07/26</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空开通贵阳=珠海航线</p>
-                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
-                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>124</span>2017/06/01</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空参加深圳“公益金百万行”活动</p>
-                    <p>人事变动<span><i class="iconfont icon-eye"></i><span>214</span>2017/05/16</span>
-                    </p>
-                  </div>
-                </el-tab-pane>
-                <el-tab-pane label="公司文件" name="fourth">
-                  <div>
-                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
-                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>213</span>2017/08/14</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
-                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>541</span>2017/07/26</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空开通贵阳=珠海航线</p>
-                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
-                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>124</span>2017/06/01</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空参加深圳“公益金百万行”活动</p>
-                    <p>公司文件<span><i class="iconfont icon-eye"></i><span>214</span>2017/05/16</span>
-                    </p>
-                  </div>
-                </el-tab-pane>
-                <el-tab-pane label="部门文件" name="fifth">
-                  <div>
-                    <p>东海航空2017-2018年度工作人员制服采购公告</p>
-                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>213</span>2017/08/14</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>以客为尊 提供一流乘坐体验 —东海航空进行航空座椅选型工作</p>
-                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>541</span>2017/07/26</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空开通贵阳=珠海航线</p>
-                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>120</span>2017/06/16</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>波音与东海航空完成五架787-9梦想飞机订单</p>
-                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>124</span>2017/06/01</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p>东海航空参加深圳“公益金百万行”活动</p>
-                    <p>部门文件<span><i class="iconfont icon-eye"></i><span>214</span>2017/05/16</span>
+                <el-tab-pane :label="list.name" :name="list.name" v-for="(list,index) in newsList">
+                  <div class="newBox" v-for="news in list.child">
+                    <p>{{news.docTitle}}</p>
+                    <p><span><i class="iconfont icon-eye"></i><span>{{news.browse}}</span>{{news.createTime | time('xie')}}</span>
                     </p>
                   </div>
                 </el-tab-pane>
@@ -209,42 +73,44 @@
               <span v-show="showInfo[2]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[2]=true" v-on:mouseleave="showInfo[2]=false" v-show="showDrag[2]"></i>
             </p>
-            <el-card class="personnel">
+            <el-card class="shareBox">
               <el-row>
-                <el-col :sm="10" :xs="24">
-                  <img src="../assets/images/bg1.png" alt="">
-                  <!-- <p class="head">Personnel Statistics</p>
-                  <el-row>
-                    <el-col :span="12" :xs="12">
-                      <ul>
-                        <li v-for="(dep,index) in piedata.labels">
-                          <span :style="{background:piedata.datasets[0].backgroundColor[index]}"></span>
-                          {{dep}}:&nbsp;{{piedata.datasets[0].data[index]}}
-                        </li>
-                      </ul>
-                    </el-col>
-                    <el-col :span="12" :xs="12">
-                      <my-pie :data="piedata" :options="pieoption"></my-pie>
-                      <p>Total: 4516 Person</p>
-                      <p>Last Update: 2016-12-25</p>
-                    </el-col>
-                  </el-row> -->
-                </el-col>
-                <el-col :sm="7" :xs="12">
-                  <P class="myLink">今日请假</P>
+                <el-col :span="12" class="shareWith">
+                  <p> <i class="iconfont icon-renmian"></i> 人事任免
+                    <router-link to="#">更多</router-link>
+                  </p>
                   <ul>
-                    <li>刘志文</li>
-                    <li>王天宇</li>
-                    <li>刘菲菲</li>
+                    <li>
+                      <p>关于行政部王莉的人事任命通告 <span class="new">NEW</span></p>
+                      <p>人力资源部<span>2016-12-22</span></p>
+                    </li>
+                    <li>
+                      <p>关于货运部物流线主任一职的招募公告</p>
+                      <p>人力资源部<span>2016-12-22</span></p>
+                    </li>
+                    <li>
+                      <p>关于运行部周鹤翔的人事任命通告</p>
+                      <p>人力资源部<span>2016-12-22</span></p>
+                    </li>
                   </ul>
                 </el-col>
-                <el-col :sm="7" :xs="12">
-                  <P class="myLink">今日出差</P>
+                <el-col :span="12" class="shareWith myShare">
+                  <p> <i class="iconfont icon-hr"></i> HR政策
+                    <router-link to="#">更多</router-link>
+                  </p>
                   <ul>
-                    <li>张兆艺</li>
-                    <li>刘晓霞</li>
-                    <li>冯云</li>
-                    <li>王志伟</li>
+                    <li>
+                      <p>2017年绩效考核年中考核通知</p>
+                      <p>人力资源部<span>2016-12-22</span></p>
+                    </li>
+                    <li>
+                      <p>2017年飞跃新星奖评审开始公告</p>
+                      <p>行政部<span>2016-12-22</span></p>
+                    </li>
+                    <li>
+                      <p>年资考评新政策调研通知</p>
+                      <p>人力资源部<span>2016-12-22</span></p>
+                    </li>
                   </ul>
                 </el-col>
               </el-row>
@@ -434,11 +300,11 @@ import DocList from '../components/doc'
 import Duty from '../components/duty.component'
 var msgs = [
   { "icon": "gou", "color": "#07A9E9", "text": "待批公文:", "value": "0", "link": "/doc/docPending" },
-  { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "#" },
+  { "icon": "sousuo", "color": "#7562DE", "text": "公文追踪:", "value": "0", "link": "/doc/docTracking" },
   { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
   { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": "#" },
-  { "icon": "sousuo", "color": "#7562DE", "text": "查询公文:", "value": "0",  "link": "/doc/docSearch" },
-  { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0",  "link": "" },
+  { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "#" },
+  { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "" },
 ];
 const piedata = {
   labels: ['Airport Services', 'Cockpit', 'Cabin', 'HQ Staff', 'Outport Others', 'Outport China', 'MRO'],
@@ -528,7 +394,7 @@ export default {
   data() {
     return {
       msgs,
-      activeName: 'first',
+      activeName: '',
       piedata,
       pieoption,
       polarAreaData,
@@ -554,7 +420,10 @@ export default {
         animation: 300,
         scrollSensitivity: 100
       },
-      searchDate: ''
+      searchDate: '',
+      doneList: [],
+      doneLength: 0,
+      newsList:[]
     }
   },
   computed: {
@@ -579,6 +448,8 @@ export default {
       month = '0' + month;
     }
     this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
+    this.getDoneList();
+    this.getNews();
   },
   methods: {
     dragShow(index) {
@@ -592,10 +463,10 @@ export default {
         .then(res => {
           if (res.status == 0) {
             console.log(res.data);
-            // msgs[1].value = res.data.trackingNum;
-            msgs[2].value = res.data.toReadNum;    //待阅
-            msgs[3].value = res.data.overTimeNum;  //超时
-            msgs[0].value = res.data.pendingNum;  //待批
+            msgs[1].value = res.data.trackingNum;
+            msgs[2].value = res.data.toReadNum; //待阅
+            msgs[3].value = res.data.overTimeNum; //超时
+            msgs[0].value = res.data.pendingNum; //待批
           }
         }, res => {
 
@@ -669,7 +540,49 @@ export default {
       } else {
         this.$message.warning('请选择航班日期!')
       }
-    }
+    },
+    getDoneList() {
+      this.$http.post('/doc/backlogList', { userId: this.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            this.doneLength = res.data.length;
+            res.data.forEach((r, index) => r.index = index + 1);
+            for (var i = 0; i < res.data.length; i += 6) {
+              if (res.data.slice(i, i + 6)) {
+                this.doneList.push(res.data.slice(i, i + 6))
+              }
+            }
+          }
+        }, res => {
+
+        })
+    },
+    getNews() {
+      this.$http.post('/api/getDict', { dictCode: 'ADM04' })
+        .then(res => {
+          if (res.status == 0) {
+            res.data.forEach(r=>this.newsList.push({name:r.dictName,code:r.dictCode,child:[]}));
+            this.activeName=this.newsList[0].name;
+            this.$http.post('/doc/selectFileList',{empId:this.userInfo.empId})
+            .then(res1=>{
+              if(res1.status==0){
+                res1.data.selectDocInfoVolist.forEach(news=>{
+                  this.newsList.forEach(data=>{
+                    if(data.code==news.classify1){
+                      data.child.push(news)
+                    }
+                  });
+                })
+                console.log(this.newsList);
+              }
+            })
+          } else {
+            console.log('获取发文类型失败')
+          }
+        }, res => {
+
+        })
+    },
   }
 }
 
@@ -774,33 +687,50 @@ $sub:#1465C0;
   .news {
     padding: 0;
     .el-card__header {
-      width: 236px;
-      padding: 6px 0 6px 15px;
+
       border-bottom: none;
-      line-height: 35px;
-      font-size: 18px;
+
+
       color: #151515;
-      background-color: #F7F7F7;
+      overflow: hidden;
+      padding: 0 15px 0 0;
+      p {
+        line-height: 35px;
+        span {
+          display: inline-block;
+          background-color: #F7F7F7;
+          font-size: 18px;
+          width: 236px;
+          padding-left: 15px;
+        }
+        a {
+          float: right;
+          font-size: 14px;
+          color: #676767;
+        }
+      }
     }
     .el-card__body {
       padding: 0;
     }
+    .myTab .el-tabs__header .el-tabs__item {
+      line-height: 85px;
+      height: 85px;
+    }
     .el-tab-pane {
-      &>div {
+      .newBox {
         border-top: 1px solid #F2F2F2;
         padding-left: 15px;
-        height: 64px;
-        @media (max-width: 768px) {
-          padding-left:0
-        }
+        line-height: 50px;
+        overflow: hidden;
+        display: flex;
         p:first-child {
-          position: relative;
           font-size: 15px;
-          margin: 12px 0 6px;
           white-space: nowrap;
           text-overflow: ellipsis;
           overflow: hidden;
           padding-right: 30px;
+          width: 480px;
         }
         p.new {
           &:after {
@@ -817,7 +747,7 @@ $sub:#1465C0;
         }
         p:last-child {
           font-size: 12px;
-          margin: 6px 0;
+          flex: 1;
           &>span {
             float: right;
             i {
@@ -1040,6 +970,83 @@ $sub:#1465C0;
       }
     }
   }
+  .shareBox {
+    .el-card__body {
+      padding: 0 12px;
+    }
+    .shareWith {
+      border-right: 1px solid #E9E9E9;
+      padding-right: 14px;
+      &>p {
+        font-size: 18px;
+        color: $main;
+        line-height: 45px;
+        border-bottom: 1px solid #E9E9E9;
+        padding: 0 15px 0 3px;
+        i {
+          font-size: 20px;
+          vertical-align: middle;
+          margin-right: 10px;
+        }
+        a:last-child {
+          float: right;
+          font-size: 14px;
+          color: #676767;
+          cursor: pointer;
+        }
+      }
+      ul {
+        li {
+          padding: 18px 7px 18px;
+          border-top: 1px solid #E9E9E9;
+          color: #676767;
+          cursor: pointer;
+          p:first-child {
+            font-size: 16px;
+            line-height: 30px;
+            img {
+              vertical-align: sub;
+              padding-right: 5px;
+            }
+            .new {
+              font-size: 12px;
+              font-weight: normal;
+              background: #FF9300;
+              color: #fff;
+              border-radius: 2px;
+              padding: 0 2px;
+              vertical-align: top;
+            }
+          }
+          p:last-child {
+            margin-top: 10px;
+            font-size: 12px;
+            span {
+              float: right;
+            }
+          }
+        }
+        li:first-child {
+          border-top: none;
+        }
+      }
+    }
+    .myShare {
+      border: none;
+      padding-right: 0;
+      padding-left: 14px;
+      .purpleTip {
+        background: $main;
+        color: #fff;
+        padding: 5px 10px;
+        border-bottom-right-radius: 5px;
+        border-top-right-radius: 5px;
+      }
+      .greyTip {
+        background: #AAAAAA;
+      }
+    }
+  }
   .bedoneList {
     position: relative;
     &:before {
@@ -1054,24 +1061,72 @@ $sub:#1465C0;
     .el-card__header {
       border-bottom: none;
       padding-bottom: 10px;
+      span {
+        color: $main;
+        margin-left: 10px;
+      }
     }
     .el-card__body {
       padding-top: 0;
       padding-bottom: 10px;
     }
+    .el-carousel {
+      box-shadow: none;
+      position: static!important;
+      .el-carousel__indicators {
+        top: 23px;
+        right: 19px;
+        position: absolute;
+        z-index: 10;
+        .el-carousel__indicator button {
+          width: 8px;
+          height: 8px;
+        }
+      }
+    }
+    .el-carousel__item {
+      background: transparent;
+    }
     .el-col {
       line-height: 50px;
       font-size: 15px;
       cursor: pointer;
-      span {
+      position: relative;
+      a {
+        color: #676767;
+      }
+      &:nth-child(odd) {
+        .title{
+          width:280px;
+        }
+        .timeline {
+          right: 30px;
+        }
+      }
+      .index {
         color: $sub;
+        display: inline-block;
+        margin-right: 3px;
+        vertical-align: middle;
         &.beRead {
           color: #BE3B7F;
         }
       }
-      p {
+      .title {
         display: inline-block;
+        vertical-align: middle;
+        width: 300px;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .timeline {
+        line-height: initial;
+        position: absolute;
+        text-align: right;
+        font-size: 12px;
+        right: 10px;
+        top: 5px;
       }
     }
   }

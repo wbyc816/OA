@@ -2,7 +2,7 @@
   <div class="docBaseBox">
     <h4 class='doc-form_title'>基本信息</h4>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
-      <el-form-item class='form-box' label="收件人" prop="rec">
+      <el-form-item class='form-box' :label="reciverTtitle" prop="rec">
         <el-input class="search" v-model="ruleForm.rec" :readonly="true">
           <el-button slot="append" @click='selectPerson'>选择</el-button>
         </el-input>
@@ -31,6 +31,12 @@ import { mapGetters, mapMutations } from 'vuex'
 export default {
   components: {
     PersonDialog
+  },
+  props:{
+    reciverTtitle:{
+      type:String,
+      default:'收件人'
+    }
   },
   data() {
     return {

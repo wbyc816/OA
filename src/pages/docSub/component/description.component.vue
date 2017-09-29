@@ -1,13 +1,13 @@
 <template>
   <div class='descriptionBox'>
     <h4 class='doc-form_title'>详情信息</h4>
-    <!-- <component v-bind:is="currentView">
-      组件在 vm.currentview 变化时改变！
-    </component> -->
     <slot></slot>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
       <el-form-item label="请示内容" prop="des">
         <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des"></el-input>
+        <div class="tempBox"><span></span>
+          <div><i class="iconfont icon-moban"></i>模板</div>
+        </div>
       </el-form-item>
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
         <img :src="options.suggestPath" alt="">
@@ -54,8 +54,8 @@ import SearchOptions from '../../../components/searchOptions.component'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
-  props:{
-    options:''
+  props: {
+    options: ''
   },
   data() {
     return {
@@ -107,11 +107,11 @@ export default {
             this.$emit('submitEnd', {
               taskContent: this.ruleForm.des,
               qutoes: this.docs[0].quoteDocId ? this.docs : [],
-              fileId:[]
+              fileId: []
             });
           }
         } else {
-          this.$message.warning('请检查填写字段')        
+          this.$message.warning('请检查填写字段')
           this.$emit('submitEnd', false);
           return false;
         }
@@ -207,6 +207,7 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
+$sub:#1465C0;
 .descriptionBox {
   padding-right: 150px;
   .addButton {
@@ -229,6 +230,50 @@ $main:#0460AE;
     line-height: 45px;
     img {
       vertical-align: middle;
+    }
+  }
+  .tempBox {
+    // background :$sub;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 25px;
+    color: $sub; // transform:rotate(45deg);
+    cursor: pointer;
+    &:before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    span {
+      display: inline-block;
+      border-left: 25px solid transparent;
+      border-top: 25px solid $sub;
+    }
+    div {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 25px;
+      height: 25px;
+      transition: all .3s;
+      background: $sub;
+      padding-left: 10px;
+      line-height: 28px;
+      color: #fff;
+      border-bottom-left-radius: 15px;
+      color: #fff;
+      opacity: 0;
+      &:hover {
+        width: 65px;
+        height: 28px;
+        opacity: 1;
+      }
+    }
+    i {
+      margin-right: 3px;
+      font-size: 12px;
     }
   }
   .el-form-item__error {

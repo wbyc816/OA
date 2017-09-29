@@ -1,6 +1,6 @@
 <template>
   <div id="docTracking">
-    <search-options title="公文跟踪" @search="setOptions"></search-options>   
+    <search-options title="公文追踪" @search="setOptions"></search-options>   
     <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>

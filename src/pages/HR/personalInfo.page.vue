@@ -40,7 +40,7 @@
             </div>
             <div class="infoItem">
               <span class="infoTittle">手机</span>
-              <p class="infoText">{{empDetial.moblieNumber}}</p>
+              <p class="infoText">{{empDetial.mobileNumber}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">邮箱</span>
@@ -95,7 +95,7 @@
             <el-input v-model="baseForm.phoneNumber" :maxlength="11"></el-input>
           </el-form-item>
           <el-form-item label="手机">
-            <p>{{empDetial.moblieNumber}}</p>
+            <p>{{empDetial.mobileNumber}}</p>
           </el-form-item>
           <div class="borderBox"></div>
           <el-form-item label="紧急联系人" class="pr70">

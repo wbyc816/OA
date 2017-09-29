@@ -45,7 +45,7 @@
           <el-table-column prop="depts" label="部门" width="150"></el-table-column>
           <el-table-column prop="jobtitle" label="职务" width="150"></el-table-column>
           <el-table-column prop="phoneNumber" label="办公电话"></el-table-column>
-          <el-table-column prop="moblieNumber" label="手机"></el-table-column>
+          <el-table-column prop="mobileNumber" label="手机"></el-table-column>
         </el-table>
         <div class="pageBox" v-show="searchRes.empVoList">
           <el-pagination @current-change="handleCurrentChange" :current-page="depPageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="searchRes.totalSize">

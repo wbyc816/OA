@@ -48,7 +48,7 @@
         </div> -->
       </nav>
     </div>
-    <el-carousel height="429px" arrow="never" v-if="$route.path=='/home'">
+    <el-carousel height="382px" arrow="never" v-if="$route.path=='/home'">
       <el-carousel-item>
         <img src="./assets/images/bg4.jpg">
       </el-carousel-item>
@@ -356,6 +356,9 @@ $brown: #985D55;
 .el-carousel {
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16);
   margin-bottom: 20px;
+  .el-carousel__item img{
+    height:100%;
+  }
   .el-carousel__indicators {
     left: 50%;
     transform: translateX(-50%);

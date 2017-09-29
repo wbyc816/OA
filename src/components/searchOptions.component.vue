@@ -3,7 +3,7 @@
     <el-card class="borderCard">
       <div slot="header" v-if="title">
         <span>{{title}}</span>
-        <i class="iconfont icon-shuaxin"></i>
+        <!-- <i class="iconfont icon-shuaxin"></i> -->
       </div>
       <el-row :gutter="10">
         <el-col :span="6">

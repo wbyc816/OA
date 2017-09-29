@@ -1,73 +1,69 @@
 <template>
   <div id="docDetail">
-    <el-card class="borderCard searchOptions">
+    <el-card class="borderCard">
       <div slot="header">
-        <span>呈批单</span>
+        <span>{{docDetialInfo.doc.docTypeName}}</span>
       </div>
-      <div class='doc-section'>
+      <div class="baseInfoBox commonBox">
         <h4 class='doc-form_title'>公文信息</h4>
         <el-row>
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="5">公文号</el-col>
-          <el-col :span="6" v-if="docDetialInfo">{{docDetialInfo.doc.docNo}}</el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="5">呈报人</el-col>
-          <el-col :span="6" class="rightBorder" v-if="docDetialInfo">{{docDetialInfo.doc.taskUserName}}</el-col>
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="5">部门</el-col>
-          <el-col :span="6" v-if="docDetialInfo">{{docDetialInfo.doc.taskDeptMajorName}}{{docDetialInfo.doc.taskDeptName}}</el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="5">密级程度</el-col>
-          <el-col :span="6" class="rightBorder" v-if="docDetialInfo">{{docDetialInfo.doc.docDenseType}}</el-col>
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="5">重要程度</el-col>
-          <el-col :span="6" v-if="docDetialInfo">{{docDetialInfo.doc.docImportType}}</el-col>
-        </el-row>
-        <el-row class="backV">
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="5">标题</el-col>
-          <el-col :span="18">
-            <h4 v-if="docDetialInfo">{{docDetialInfo.doc.docTitle}}</h4></el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="5">请示内容</el-col>
-          <el-col :span="18" v-if="docDetialInfo">{{docDetialInfo.doc.taskContent}}
+          <el-col :span="24">
+            <h1 class="title">公文号</h1>
+            <p class="textContent">{{docDetialInfo.doc.docNo}}</p>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="5">附件</el-col>
-          <el-col :span="18" class="attch">
-            <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
-              <p v-for="file in docDetialInfo.taskFile">{{file.fileName}}</p>
-            </template>
+          <el-col :span="12" class="rightBorder">
+            <h1 class="title">呈报人</h1>
+            <p class="textContent">{{docDetialInfo.doc.taskUserName}}</p>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="5">附加公文</el-col>
-          <el-col :span="18" class="attch">
-            <template v-if="docDetialInfo&&docDetialInfo.taskQuote.length>0">
+          <el-col :span="12">
+            <h1 class="title">部门</h1>
+            <p class="textContent">{{docDetialInfo.doc.taskDeptMajorName}}</p>
+          </el-col>
+          <el-col :span="12" class="rightBorder">
+            <h1 class="title">密级程度</h1>
+            <p class="textContent">{{docDetialInfo.doc.docDenseType}}</p>
+          </el-col>
+          <el-col :span="12">
+            <h1 class="title">重要程度</h1>
+            <p class="textContent">{{docDetialInfo.doc.docImportType}}</p>
+          </el-col>
+          <el-col :span="24" class="backV">
+            <h1 class="title">标题</h1>
+            <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
+          </el-col>
+          <component v-bind:is="currentView" :info="docDetialInfo.otherInfo">
+            <!-- 组件在 vm.currentview 变化时改变！ -->
+          </component>
+          <el-col :span="24" style="min-height:90px">
+            <h1 class="title">请示内容</h1>
+            <p class="textContent">{{docDetialInfo.doc.taskContent}}</p>
+          </el-col>
+          <el-col :span="24">
+            <h1 class="title">附件</h1>
+            <p class="attch textContent">
+              <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
+                <p v-for="file in docDetialInfo.taskFile">{{file.fileName}}</p>
+              </template>
+            </p>
+          </el-col>
+          <el-col :span="24">
+            <h1 class="title">附加公文</h1>
+            <p class="attch textContent">
               <p v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</p>
-            </template>
+            </p>
           </el-col>
         </el-row>
       </div>
-      <div class='doc-section'>
+      <div class='history commonBox'>
         <h4 class='doc-form_title'>历史审批意见</h4>
-        <el-row class="backV" v-for="(task,index) in docDetialInfo.taskDetail">
+        <el-row class="backV" v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0||task.isFlag!=1">
           <!-- <el-col :span="1">&nbsp;</el-col> -->
-          <el-col :span="23">{{task.taskContent}}</el-col>
-          <el-col :span="24" class="timeRight">{{task.taskUserName}} {{task.startTime}}</el-col>
+          <el-col :span="23" :offset="1">{{task.taskContent}}</el-col>
+          <el-col :span="23" class="timeRight">{{task.taskUserName}} {{task.startTime}}</el-col>
           <!-- <el-col :span="23" v-if="index==0">无</el-col> -->
         </el-row>
       </div>
-      <div class='doc-section' v-if="distData.length!=0">
+      <div v-if="distData.length!=0">
         <h4 class='doc-form_title'>分发意见</h4>
         <el-table :data="topDistData" style="width: 100%" class="distTable" :stripe="true">
           <el-table-column prop="distUserName" label="分发人" width="100"></el-table-column>
@@ -84,7 +80,7 @@
           <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         </div>
       </div>
-      <div class='doc-section myAdvice' v-if="docDetialInfo.doc.isTask==1">
+      <div class='myAdvice' v-if="docDetialInfo.doc.isTask==1">
         <h4 class='doc-form_title'>我的审批意见</h4>
         <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="审批意见" class="textarea" prop="state">
@@ -141,22 +137,26 @@
       </el-form>
     </el-dialog>
     <person-dialog @updatePerson="updatePerson" :visible.sync="dialogTableVisible" :dialogType="personDialogType"></person-dialog>
-
   </div>
 </template>
 <script>
 import PersonDialog from '../../components/personDialog.component'
+import YCS from './component/vehicleDetail.component' //用车详情
+import CLS from './component/materialDetail.component' //材料详情
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    PersonDialog
+    PersonDialog,
+    YCS,
+    CLS
   },
   data() {
     return {
       dialogTableVisible: false,
       DialogArchiveVisible: false,
       DialogSubmitVisible: false,
+      currentView: '',
       ruleForm: {
         taskContent: '',
         state: '',
@@ -166,7 +166,7 @@ export default {
         res: '',
         persons: []
       },
-      docDetialInfo:{doc:{},task:[],taskDetail:[],taskFile:[],taskQuote:[]},
+      docDetialInfo: { doc: {}, task: [], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [] },
       rules: {
         rec: [
           { required: true, message: '请选择收件人' }
@@ -189,16 +189,18 @@ export default {
     }
   },
   created() {
-    this.$http.post("/doc/getDocDetailInfo", { id: this.$route.params.id,empId:this.userInfo.empId }).then(res => {
-      if (res.status == 0) {
-        this.docDetialInfo = res.data
-        if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
-          this.getDistInfo();
+    this.$http.post("/doc/getDocDetailInfo", { id: this.$route.params.id, empId: this.userInfo.empId })
+      .then(res => {
+        if (res.status == 0) {
+          this.docDetialInfo = res.data;
+          this.currentView = this.docDetialInfo.doc.pageCode;
+          if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
+            this.getDistInfo();
+          }
         }
-      }
-    }, res => {
+      }, res => {
 
-    })
+      })
   },
   computed: {
     ...mapGetters([
@@ -355,45 +357,92 @@ export default {
 
 </script>
 <style lang='scss'>
+$main:#0460AE;
 $sub:#1465C0;
 #docDetail {
+
   .el-card__header {
     margin-bottom: 10px;
   }
   .attch {
     color: blue;
-    p {
-      cursor: pointer;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .doc-form_title {
+    padding-bottom: 20px;
+    position: relative;
+    font-size: 18px;
+    line-height: 20px;
+    color: $main;
+    text-indent: 15px; // font-weight: bold;
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 2px;
+      width: 4px;
+      height: 15px;
+      background-color: #0460AE;
     }
   }
-  .doc-section {
-    .doc-form_title {
-      padding-bottom: 5px;
-    }
-    .el-row {
+  .backV {
+    background: #F7F7F7;
+  }
+  .commonBox {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px dashed #D5DADF;
+  }
+  .baseInfoBox {
+    margin-top: 15px;
+    .el-col {
       border-bottom: 1px solid #D5DADF;
-      .el-col {
-        padding: 15px 0;
-        min-height: 50px;
-      }
-    }
-    h4 {
-      font-weight: bold;
+      padding: 15px 24px;
+      overflow: hidden;
+      display: flex;
+      font-size: 15px;
     }
     .rightBorder {
       border-right: 1px solid #D5DADF;
     }
-    &+.doc-section {
-      margin-top: 20px;
+    .title {
+      width: 150px;
     }
-    .backV {
-      background: #F7F7F7;
+    .textContent {
+      flex: 1;
+      overflow: hidden;
+      word-wrap: break-word;
+      &.blackText {
+        font-weight: bold;
+      }
     }
-    .timeRight {
-      text-align: right;
-      padding-top: 0!important;
-      padding-right: 20px!important;
-      min-height: inherit!important;
+  }
+  .timeRight {
+    text-align: right;
+  }
+  .history {
+    .el-col {
+      min-height: 50px;
+      padding: 15px 0;
+    }
+    .el-row {
+      border-bottom: 1px solid #D5DADF;
+      &:first-of-type {
+        border-top: 1px solid #D5DADF;
+      }
+    }
+  }
+  .myAdvice {
+    .myRadio {
+      line-height: 45px;
+      .el-radio-button .el-radio-button__inner {
+        height: 45px;
+        width: 90px;
+        line-height: 45px;
+        padding: 0;
+      }
     }
     .submitButton {
       width: 200px;
@@ -403,14 +452,7 @@ $sub:#1465C0;
       border-radius: 3px;
       float: right;
     }
-    .myRadio {
-      line-height: 45px;
-      .el-radio-button .el-radio-button__inner {
-        padding: 11px 24px;
-      }
-    }
   }
-  .myAdvice {}
   .personDialog {
     .el-dialog--large {
       width: 1100px;
