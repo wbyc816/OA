@@ -73,6 +73,7 @@ import clildHR from '../pages/HR/clildHR.page'
 import personalInfo from '../pages/HR/personalInfo.page'
 import resume from '../pages/HR/resume.page'
 import editResume from '../pages/HR/editResume.page'
+import salary from '../pages/HR/salary.page'
 Vue.use(Router)
 
 export default new Router({
@@ -106,6 +107,11 @@ export default new Router({
           path: '/HR/personalInfo',
           name: 'personalInfo',
           component: personalInfo,
+        },
+        {
+          path: '/HR/salary/:salaryMonth',
+          name: 'salary',
+          component: salary,
         },
         {
           path: '/HR/resume',
