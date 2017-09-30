@@ -56,7 +56,7 @@
       </div>
       <div class='history commonBox'>
         <h4 class='doc-form_title'>历史审批意见</h4>
-        <el-row class="backV" v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0||task.isFlag!=1">
+        <el-row class="backV" v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0&&task.isFlag!=1">
           <!-- <el-col :span="1">&nbsp;</el-col> -->
           <el-col :span="23" :offset="1">{{task.taskContent}}</el-col>
           <el-col :span="23" class="timeRight">{{task.taskUserName}} {{task.startTime}}</el-col>
@@ -143,13 +143,15 @@
 import PersonDialog from '../../components/personDialog.component'
 import YCS from './component/vehicleDetail.component' //用车详情
 import CLS from './component/materialDetail.component' //材料详情
+import FWG from './component/manuscriptDetail.component' //材料详情
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
     PersonDialog,
     YCS,
-    CLS
+    CLS,
+    FWG
   },
   data() {
     return {
@@ -178,6 +180,7 @@ export default {
         }]
 
       },
+      reciver:'',
       archiveFormRule: {
 
       },
@@ -204,7 +207,6 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'reciver',
       'userInfo',
       'isAdmin'
     ])
@@ -225,6 +227,7 @@ export default {
       this.dialogTableVisible = false;
       if (this.personDialogType == 'radio') {
         this.ruleForm.rec = payLoad.reciUserName;
+        this.reciver=payLoad;
       } else {
         this.archiveForm.persons = payLoad;
       }

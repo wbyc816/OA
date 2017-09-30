@@ -138,8 +138,10 @@ export default {
       this.manuscriptForm.docFileId='';
     },
     submitForm() {
+      var that=this;
       this.$refs.manuscriptForm.validate((valid) => {
         if (valid) {
+          console.log(this.sendTypes)
           this.params = {
             "docFileId": "",
             "file": {
@@ -164,12 +166,13 @@ export default {
           console.log(this.params);
           this.params.fileSend.sendTypeDept = this.manuscriptForm.fileSend.depList.map(function(dep) {
             return {
-              sendType: this.sendTypes.find(type => type.dictEname == 'department').dictCode,
+              sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
               id: dep.id,
               max: dep.max,
               min: dep.min
             }
           });
+          console.log(this.params);
           this.params.fileSend.sendTypeEmp.ids = this.manuscriptForm.fileSend.personList.map(function(person) {
             return person.empId
           });

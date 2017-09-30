@@ -147,7 +147,7 @@ export default {
         picUrl: ''
       },
       rules: {
-        phoneNumber: [{ validator: this.validatePhone, trigger: 'blur,change' }],
+        // phoneNumber: [{ validator: this.validatePhone, trigger: 'blur,change' }],
         emergencPhone: [{ validator: this.validatePhone, trigger: 'blur,change' }],
       },
     }
@@ -201,11 +201,11 @@ export default {
     },
     updateInfo(picUrl) {
       var emergencyParam = Object.assign({ empId: this.userInfo.empId }, this.baseForm.emergency);
-      var empParam = { id: this.userInfo.empId, phoneNumber: this.baseForm.phoneNumber, picUrl: picUrl };
+      var empParam = { empId: this.userInfo.empId, phoneNumber: this.baseForm.phoneNumber, picUrl: picUrl };
       if (this.emergencyContactInfo&&this.emergencyContactInfo[0]) {
         emergencyParam.oldId = this.emergencyContactInfo[0].id
       }
-      this.$store.dispatch('updateBaseInfo', { emergency: emergencyParam, emp: empParam });
+      this.$store.dispatch('updateBaseInfo', { emergency: [emergencyParam], emp: empParam });
     },
     handleAvatarSuccess(res, file) {
       this.updateInfo(res.data);
@@ -259,7 +259,7 @@ $sub:#1465C0;
           line-height: 219px;
           img {
             vertical-align: middle;
-            max-height: 100%;
+            max-height: 180px;
           }
         }
         .infoItem {
