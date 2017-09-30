@@ -95,7 +95,7 @@ export default new Router({
                 breadcrumb: "公司同仁",
             }
         }, {
-            path: '/newsDetail',
+            path: '/newsDetail/:id',
             name: 'newsDetail',
             component: newsDetail,
             meta: {

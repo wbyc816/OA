@@ -13,10 +13,7 @@
           </el-select>
         </el-col>
         <el-col :span="6">
-          <el-select v-model="params.docType" placeholder="公文类型">
-            <el-option label="全部" value=""></el-option>
-            <el-option v-for="item in docType" :label="item.docName" :value="item.docTypeCode"></el-option>
-          </el-select>
+          <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false"></el-cascader>
         </el-col>
         <el-col :span="12">
           <el-input placeholder="公文标题" v-model="params.keyWords"></el-input>
@@ -51,6 +48,13 @@ export default {
         "docNo": "",
         "docType": "",
         "startTime": "",
+      },
+      docTypes: [],
+      docTypeOptions: [],
+      defaultProp: {
+        label: 'dictName',
+        value: 'dictCode',
+        children: 'childDict'
       }
     }
   },
@@ -66,13 +70,29 @@ export default {
     this.$store.dispatch('getConfident');
     this.$store.dispatch('getUrgency');
     this.$store.dispatch('getDocForm');
+    this.getTypes();
   },
   methods: {
     dateChange(val) {
       this.params.startTime = val;
     },
     submitParam() {
+      if (this.docTypes.length != 0) {
+        this.params.docType = this.docTypes[this.docTypes.length - 1]
+      }else{
+        this.params.docType='';
+      }
       this.$emit('search', this.params)
+    },
+    getTypes() {
+      this.$http.post('/doc/getDocTypeTreeList')
+        .then(res => {
+          if (res.status == 0) {
+            this.docTypeOptions = res.data
+          } else {
+
+          }
+        })
     }
   }
 }
@@ -94,7 +114,9 @@ $sub:#1465C0;
     }
   }
 }
-
+.el-cascader__label{
+  line-height: 46px;
+}
 .el-date-editor.el-input {
   width: 100%;
 }

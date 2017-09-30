@@ -59,7 +59,7 @@
               </p>
               <el-tabs v-model="activeName" class="myTab">
                 <el-tab-pane :label="list.name" :name="list.name" v-for="(list,index) in newsList">
-                  <router-link to="/newsDetail" class="newBox" v-for="news in list.child" v-if="index<6">
+                  <router-link :to="'/newsDetail/'+news.id" class="newBox" v-for="news in list.child" v-if="index<6">
                     <p>{{news.docTitle}}</p>
                     <p><span><i class="iconfont icon-eye"></i><span>{{news.browse}}</span>{{news.createTime | time('xie')}}</span>
                     </p>
@@ -721,8 +721,8 @@ $sub:#1465C0;
       padding: 0;
     }
     .myTab .el-tabs__header .el-tabs__item {
-      line-height: 85px;
-      height: 85px;
+      line-height: 92px;
+      height: 92px;
     }
     .el-tab-pane {
       .newBox {
@@ -1105,7 +1105,7 @@ $sub:#1465C0;
       }
       &:nth-child(odd) {
         .title {
-          width: 270px;
+          width: 255px;
         }
         .timeline {
           right: 30px;
@@ -1123,7 +1123,7 @@ $sub:#1465C0;
       .title {
         display: inline-block;
         vertical-align: middle;
-        width: 280px;
+        width: 270px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

@@ -6,8 +6,8 @@
           <div class="formDown" slot="header">
             <el-row :gutter="20">
               <el-col class="formInfo" :span='19'>
-                <p class="title">关于做好运行控制风险管控系统补充运行合格审定工作的通知<i class=""></i></p>
-                <p class="others"><i class="iconfont icon-eye"></i><span>124</span><span class="time">2017-10-12</span><span class="person">签发人 刘志军</span><span class="person">校对人 刘志军</span></p>
+                <p class="title">{{detail.title}}<i class=""></i></p>
+                <p class="others"><i class="iconfont icon-eye"></i><span>{{detail.browse}}</span><span class="time">{{detail.createTime | time}}</span><span class="person">签发人 {{detail.createUser}}</span><span class="person">校对人 {{detail.verifyName}}</span></p>
               </el-col>
               <el-col :span='5' class="downBox">
                 <p>附件</p>
@@ -51,17 +51,19 @@ export default {
       },
       pdfDoc: null,
       pageNumPending: null,
-
+      detail: ''
     }
 
   },
-  mounted() {
-    this.initPdf();
+  created() {
+    this.getDetail();
   },
+  mounted() {},
   methods: {
     initPdf() {
       pdfjsLib.PDFJS.workerSrc = '../pdf.worker.js';
-      var loadingTask = pdfjsLib.getDocument(pdf);
+      console.log(this.detail)
+      var loadingTask = pdfjsLib.getDocument('http://ui.loogk.com/test/test.pdf');
       var that = this;
       loadingTask.promise.then(function(pdfDoc_) {
         that.pdfDoc = pdfDoc_;
@@ -130,8 +132,16 @@ export default {
         this.renderPage(newPage);
       }
       this.pafParam.pageNum = newPage;
+    },
+    getDetail() {
+      this.$http.post('/doc/selectFileDetail', { Id: this.$route.params.id })
+        .then(res => {
+          if (res.status == 0) {
+            this.detail = res.data;
+            this.initPdf();
+          }
+        })
     }
-
   }
 
 }
@@ -203,7 +213,7 @@ $sub:#1465C0;
       height: 1150px;
       position: relative;
       text-align: center;
-      padding-top:10px;
+      padding-top: 10px;
       #newsCanvas {
         height: 1070px;
         max-width: 800px;
