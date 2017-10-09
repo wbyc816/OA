@@ -75,6 +75,7 @@ import personalInfo from '../pages/HR/personalInfo.page'
 import resume from '../pages/HR/resume.page'
 import editResume from '../pages/HR/editResume.page'
 import salary from '../pages/HR/salary.page'
+import salaryHistory from '../pages/HR/salaryHistory.page'
 import newsDetail from '../pages/HR/newsDetail.page'
 Vue.use(Router)
 
@@ -118,6 +119,10 @@ export default new Router({
                 name: 'salary',
                 component: salary,
             }, {
+              path: '/HR/salaryHistory/:salaryMonth',
+              name: 'salaryHistory',
+              component: salaryHistory
+            },{
                 path: '/HR/resume',
                 name: 'resume',
                 component: resume,

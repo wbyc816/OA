@@ -11,22 +11,20 @@
             <el-button slot="append">搜索</el-button>
           </el-input>
         </el-card>
-        <el-card class="borderCard searchBox" v-show="$route.name=='salary'">
+        <el-card class="borderCard searchBox" v-show="$route.name=='salary' || $route.name =='salaryHistory'">
           <div slot="header">工资单查询</div>
           <el-row>
             <el-col :span="18">
-              <el-date-picker v-model="salaryDate"
-                type="daterange" :editable="false"
-                placeholder="起始及截止日期" format="yyyy-MM">
+              <el-date-picker v-model="salaryDate" type="daterange" :editable="false" placeholder="起始及截止日期" format="yyyy-MM">
               </el-date-picker>
             </el-col>
             <el-col :span="6">
               <el-button @click="searchSalary" class="searchSalary">搜索</el-button>
             </el-col>
           </el-row>
-          
+
         </el-card>
-        <el-card class="borderCard searchBox" v-show="$route.name=='salary'">
+        <el-card class="borderCard searchBox" v-show="$route.name== 'salary' || $route.name == 'salaryHistory'">
           <div slot="header">最新工资单</div>
           <el-row class="newSalary">
             <el-col :span="12" v-for="month in newSalaryList">
@@ -36,7 +34,7 @@
         </el-card>
         <el-card class="department borderCard">
           <div slot="header">人力资源</div>
-          <el-menu class="el-menu-vertical-demo"  :default-openeds="['个人中心','我要申请','薪资绩效','相关链接']" :router="true">
+          <el-menu class="el-menu-vertical-demo" :default-openeds="['个人中心','我要申请','薪资绩效','相关链接']" :router="true">
             <el-submenu :index="menu.title" v-for="(menu,index) in menuList" :key="menu.title">
               <template slot="title">{{menu.title}}</template>
               <el-menu-item :index="child.path" v-for="child in menu.child" :key="menu.name">
@@ -72,22 +70,22 @@
   </div>
 </template>
 <script>
-const nowDate=new Date();
-const nowMonth = nowDate.getMonth()+1;
+const nowDate = new Date();
+const nowMonth = nowDate.getMonth() + 1;
 const menuList = [{
-    title: '个人中心',
-    child: [{ name: '个人信息', path: '/HR/personalInfo' }, { name: '个人简历', path: '/HR/resume' }, { name: '简历完善', path: '/HR/editResume' }]
-  }, {
-    title: '我要申请',
-    child: [{ name: '请假申请', path: '#' }, { name: '转正申请', path: '#' }, { name: '离职申请', path: '#' }, { name: '工伤事故申请', path: '#' }, { name: '培训申请', path: '#' }, { name: '人事变动', path: '#' }]
-  },
-  {
-    title: '薪资绩效',
-    child: [{ name: '最新工资单', path: '/HR/salary/1'}, { name: '历史工资单', path: '#' }]
-  }, {
-    title: '相关链接',
-    child: [{ name: '社会保障系统', path: '#' }, { name: '公积金系统', path: '#' }]
-  }
+  title: '个人中心',
+  child: [{ name: '个人信息', path: '/HR/personalInfo' }, { name: '个人简历', path: '/HR/resume' }, { name: '简历完善', path: '/HR/editResume' }]
+}, {
+  title: '我要申请',
+  child: [{ name: '请假申请', path: '#' }, { name: '转正申请', path: '#' }, { name: '离职申请', path: '#' }, { name: '工伤事故申请', path: '#' }, { name: '培训申请', path: '#' }, { name: '人事变动', path: '#' }]
+},
+{
+  title: '薪资绩效',
+  child: [{ name: '最新工资单', path: '/HR/salary/1' }, { name: '历史工资单', path: '/HR/salaryHistory/1' }]
+}, {
+  title: '相关链接',
+  child: [{ name: '社会保障系统', path: '#' }, { name: '公积金系统', path: '#' }]
+}
 ]
 export default {
   components: {},
@@ -95,8 +93,8 @@ export default {
     return {
       menuList,
       dialogFormVisible: false,
-      salaryDate:"",
-      newSalaryList:[],
+      salaryDate: "",
+      newSalaryList: [],
       form: {
         name: '',
         dep: '',
@@ -110,22 +108,22 @@ export default {
       formLabelWidth: '210px',
     }
   },
-  created(){
+  created() {
     this.getNewSalaryList();
   },
-  methods:{
-    searchSalary(){
+  methods: {
+    searchSalary() {
       // this.$router.push({name:'salary',params:{name:this.searchName}})
     },
-    getNewSalaryList(){
+    getNewSalaryList() {
       let temp = new Date();
       let month = temp.getMonth();
-      if(temp.getDate()>8){
+      if (temp.getDate() > 8) {
         month = temp.getMonth() + 1;
       }
-      let nowYear=temp.getFullYear();
-      for(let i=0;i<6;i++){
-        if(month==0){
+      let nowYear = temp.getFullYear();
+      for (let i = 0; i < 6; i++) {
+        if (month == 0) {
           nowYear -= 1;
 
           month = 12;
@@ -136,10 +134,10 @@ export default {
           month = '' + month;
         }
         this.newSalaryList.push({
-          label:nowYear+ '年' + month + '月',
-          value:nowYear+month
+          label: nowYear + '年' + month + '月',
+          value: nowYear + month
         });
-        month-=1;
+        month -= 1;
       }
     }
   }
@@ -151,20 +149,19 @@ $main:#0460AE;
 $sub:#1465C0;
 
 #homeHR {
-  padding-top:10px;
-  .searchSalary{
+  padding-top: 10px;
+  .searchSalary {
     background: #0460AE;
     color: #fff;
     height: 46px;
   }
-  .newSalary{
-    text-align:center;
-    a{
-      color:#0460AE;
+  .newSalary {
+    text-align: center;
+    a {
+      color: #0460AE;
       margin-bottom: 5px;
-      display:block;
+      display: block;
     }
-    
   }
   .sideBar {
     .searchBox {
@@ -209,8 +206,8 @@ $sub:#1465C0;
       .el-menu-item {
         padding-left: 14px!important;
         font-size: 15px;
-        color:$main;
-        height:35px;
+        color: $main;
+        height: 35px;
         line-height: 35px;
         white-space: normal;
       }
@@ -301,5 +298,4 @@ $sub:#1465C0;
     }
   }
 }
-
 </style>
