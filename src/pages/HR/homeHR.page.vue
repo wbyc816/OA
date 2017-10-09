@@ -132,6 +132,8 @@ export default {
         }
         if (month < 10) {
           month = '0' + month;
+        }else{
+          month = '' + month;
         }
         this.newSalaryList.push({
           label:nowYear+ '年' + month + '月',
