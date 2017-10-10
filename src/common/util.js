@@ -21,14 +21,14 @@ function getCookie(c_name) {
 }
 
 Vue.prototype.getCookie = getCookie
-Vue.prototype.setCookie = function(c_name, value, expiredays) {
+Vue.prototype.setCookie = function (c_name, value, expiredays) {
   var exdate = new Date()
   exdate.setDate(exdate.getDate() + expiredays)
   document.cookie = c_name + "=" + escape(value) + ";path=/" +
     ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString() + "")
 
 }
-Vue.prototype.delCookie = function(c_name) {
+Vue.prototype.delCookie = function (c_name) {
   console.log(c_name);
   var exp = new Date();
   exp.setTime(exp.getTime() - 1);
@@ -51,7 +51,7 @@ function validatePhone(rule, value, callback) {
 };
 
 function combineObj(target, source) {
-  Object.keys(target).forEach(function(key) {
+  Object.keys(target).forEach(function (key) {
     if (source.hasOwnProperty(key)) {
       target[key] = source[key]
     }
@@ -59,16 +59,16 @@ function combineObj(target, source) {
   return target;
 }
 
-function clone(obj){
+function clone(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
-function changeTime(obj){
-  var _obj=obj;
-  Object.keys(_obj).forEach(name=>{
+function changeTime(obj) {
+  var _obj = obj;
+  Object.keys(_obj).forEach(name => {
     console.log(_obj[name] instanceof Date)
-    if(_obj[name] instanceof Date){
-      _obj[name]=_obj[name].getTime();
-      
+    if (_obj[name] instanceof Date) {
+      _obj[name] = _obj[name].getTime();
+
     }
   })
   console.log(_obj)
@@ -76,14 +76,31 @@ function changeTime(obj){
 }
 
 function renderContent(h, { node, data, store }) {
-        return (
-          <span>
-            <span>
-              <span>{data.name}</span>
-            </span>
-            <span style="float: right; margin-right: 20px">
-              <el-button class="depAdd" type="primary" icon="plus" size="mini" on-click={ () => this.addDep(store, data) }>添加</el-button>
-            </span>
-          </span>);
-      }
-export default { combineObj }
+  return (
+    <span>
+      <span>
+        <span>{data.name}</span>
+      </span>
+      <span style="float: right; margin-right: 20px">
+        <el-button class="depAdd" type="primary" icon="plus" size="mini" on-click={() => this.addDep(store, data)}>添加</el-button>
+      </span>
+    </span>);
+}
+
+function formatTime (date, fmt) { //author: meizz 
+  var o = {
+      "M+": date.getMonth() + 1, //月份 
+      "d+": date.getDate(), //日 
+      "h+": date.getHours(), //小时 
+      "m+": date.getMinutes(), //分 
+      "s+": date.getSeconds(), //秒 
+      "q+": Math.floor((date.getMonth() + 3) / 3), //季度 
+      "S": date.getMilliseconds() //毫秒 
+  };
+  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o)
+  if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+  return fmt;
+}
+
+export default { combineObj, formatTime }

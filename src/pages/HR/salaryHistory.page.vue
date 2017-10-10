@@ -14,7 +14,7 @@
             <el-col style="text-align: center" v-for="item in tableTitle" :key="tableTitle[item]" :span="24/tableTitle.length">{{item}}</el-col>
           </el-row>
         </div>
-        <div class="alignCenter" v-if="salaryType==0"><br>暂无数据<br></div>
+        <div class="alignCenter" v-if="!salaryData.length"><br>暂无数据<br></div>
         <div class="salaryList" v-for="mouthData in salaryData" :key='salaryData[mouthData]'>
           <el-row>
             <el-col class="el-col" v-for="i in mouthData" :span="24/tableTitle.length" :key="mouthData[i]">{{i}}</el-col>
@@ -22,25 +22,24 @@
         </div>
       </div>
     </el-card>
-    <div class="block" v-show="salaryData">
+    <div class="block" v-if="salaryData.length">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="paginate.currentPage" :page-sizes="paginate.pageSizes" :page-size="paginate.currentPage" :layout="paginate.layout" :total="paginate.total">
       </el-pagination>
     </div>
   </div>
 </template>
 <script>
-import { tableTitle, tableFields, supportId } from '../../common/salaryHistoryConfig'
+import { tableTitle, tableFields, supportId, aviatorId, groundId } from '../../common/salaryHistoryConfig'
 import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      salaryMonth: "",
       salaryData: [],
-      salaryType: 0,
-      paramsMonth: "",
       supportId,
       tableTitle,
       tableFields,
+      startDate: '',
+      endDate: '',
       paginate: {
         pageSizes: [5, 10, 12, 36],
         currentSize: 5,
@@ -50,41 +49,51 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
   created() {
-    let month = this.$route.params.salaryMonth;
-    if (month != 1) {
-      this.paramsMonth = month;
-    }
-    this.getData();
+    this.getParam()
+    this.getData()
   },
   beforeRouteUpdate(to, from, next) {
-    next();
-    this.paramsMonth = this.$route.params.salaryMonth;
-    this.getData();
+    next()
+    this.getParam()
+    this.getData()
   },
   methods: {
+    getParam() {
+      if (this.$route.params.param) {
+        let param = this.$route.params.param.split('@')
+        this.startDate = param[0]
+        this.endDate = param[1]
+      }
+    },
     getData() {
       this.$http.post("/salary/getHistorySalary", {
-        empId: this.supportId,
+        empId: this.userInfo.empId,
         pageSize: this.paginate.currentSize,
-        pageNumber: this.paginate.currentPage
+        pageNumber: this.paginate.currentPage,
+        startDate: this.startDate,
+        endDate: this.endDate
       }).then(res => {
         if (res.status == 0) {
-          this.salaryType = 1
-          const records = res.data.records;
-          this.paginate.total = records.length;
-          this.salaryData = res.data.records.map((item) => {
-            const data = [];
+          const records = res.data.records
+          this.paginate.total = records.length       //  给分页器提供数据
+          this.salaryData = records.map((item) => {    // 转换函数 将 data 转换为渲染需要的二维数组格式
+            const data = []
             this.tableFields.forEach((field) => {
               if (item[field]) {
-                if (field === 'salaryMonth') {
+                if (field === 'salaryMonth') {   // 日期字段添加.符号
                   let x = item[field].slice(0, 4) + '.' + item[field].slice(4, 6)
-                  data.push(x);
+                  data.push(x)
                 } else {
                   data.push(item[field])
                 }
               }
-            });
+            })
             return data
           })
         }

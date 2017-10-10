@@ -70,8 +70,10 @@
   </div>
 </template>
 <script>
+import util from '../../common/util'
 const nowDate = new Date();
 const nowMonth = nowDate.getMonth() + 1;
+const defaultSalaryHistory = ''+'@'+ util.formatTime(nowDate, 'yyyyMM')   // 默认获取历史返回数据有待商榷
 const menuList = [{
   title: '个人中心',
   child: [{ name: '个人信息', path: '/HR/personalInfo' }, { name: '个人简历', path: '/HR/resume' }, { name: '简历完善', path: '/HR/editResume' }]
@@ -81,7 +83,7 @@ const menuList = [{
 },
 {
   title: '薪资绩效',
-  child: [{ name: '最新工资单', path: '/HR/salary/1' }, { name: '历史工资单', path: '/HR/salaryHistory/1' }]
+  child: [{ name: '最新工资单', path: '/HR/salary/1' }, { name: '历史工资单', path: `/HR/salaryHistory/${defaultSalaryHistory}` }]
 }, {
   title: '相关链接',
   child: [{ name: '社会保障系统', path: '#' }, { name: '公积金系统', path: '#' }]
@@ -113,7 +115,10 @@ export default {
   },
   methods: {
     searchSalary() {
-      // this.$router.push({name:'salary',params:{name:this.searchName}})
+      let startDate = util.formatTime(this.salaryDate[0], 'yyyyMM')
+      let endDate = util.formatTime(this.salaryDate[1], 'yyyyMM')
+      let param = startDate + '@' + endDate
+      this.$router.push({ name: 'salaryHistory', params: { param: param } })
     },
     getNewSalaryList() {
       let temp = new Date();
@@ -130,7 +135,7 @@ export default {
         }
         if (month < 10) {
           month = '0' + month;
-        }else{
+        } else {
           month = '' + month;
         }
         this.newSalaryList.push({
