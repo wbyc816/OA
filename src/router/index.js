@@ -119,7 +119,7 @@ export default new Router({
                 name: 'salary',
                 component: salary,
             }, {
-              path: '/HR/salaryHistory/:salaryMonth',
+              path: '/HR/salaryHistory/:param',
               name: 'salaryHistory',
               component: salaryHistory
             },{
