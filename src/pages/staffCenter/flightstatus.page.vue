@@ -241,8 +241,8 @@ export default {
           that.searchLoading = false;
         }, 200)
         if (res.status == 0) {
-          this.flightList = res.data.flightList;
-          this.totalSize = res.data.totalSize;
+          this.flightList = res.flightList;
+          this.totalSize = res.totalSize;
         } else {
           this.flightList = [];
           this.totalSize = 0;

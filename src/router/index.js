@@ -16,6 +16,7 @@ import approvalForm from 'pages/docSub/approvalForm.page'
 import materialApp from 'pages/docSub/materialApp.page'
 import vehicleApp from 'pages/docSub/vehicleApp.page'
 import manuscriptApp from 'pages/docSub/manuscriptApp.page'
+
 // import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
 // import leisureTravel from 'pages/docSub/staff-leisure-travel.page'
 // import business from 'pages/docSub/businessTrip.page'
@@ -76,6 +77,8 @@ import resume from '../pages/HR/resume.page'
 import editResume from '../pages/HR/editResume.page'
 import salary from '../pages/HR/salary.page'
 import newsDetail from '../pages/HR/newsDetail.page'
+
+import BirthdayReminder from 'pages/BirthdayReminder.page'
 Vue.use(Router)
 
 export default new Router({
@@ -101,7 +104,15 @@ export default new Router({
             meta: {
                 breadcrumb: "新闻详情",
             }
-        }, {
+
+        } , {
+            path: '/BirthdayReminder',
+            name: 'BirthdayReminder',
+            component: BirthdayReminder,
+            meta: {
+              breadcrumb: "生日提醒",
+            }
+       } , {
             path: '/HR',
             name: 'HR',
             component: HR,
@@ -505,7 +516,7 @@ export default new Router({
         //  meta:{
         //      breadcrumb:"My Benefit Detail",
         //  }
-        // },   
+        // },
         // {
         //  path:'/E-personnel',
         //  name:'E-personnel',
