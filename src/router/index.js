@@ -16,7 +16,11 @@ import approvalForm from 'pages/docSub/approvalForm.page'
 import materialApp from 'pages/docSub/materialApp.page'
 import vehicleApp from 'pages/docSub/vehicleApp.page'
 import manuscriptApp from 'pages/docSub/manuscriptApp.page'
+<<<<<<< HEAD
 
+=======
+import docCommonApp from 'pages/docSub/docCommonApp.page'
+>>>>>>> origin/wb
 // import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
 // import leisureTravel from 'pages/docSub/staff-leisure-travel.page'
 // import business from 'pages/docSub/businessTrip.page'
@@ -98,7 +102,7 @@ export default new Router({
                 breadcrumb: "公司同仁",
             }
         }, {
-            path: '/newsDetail',
+            path: '/newsDetail/:id',
             name: 'newsDetail',
             component: newsDetail,
             meta: {
@@ -189,6 +193,13 @@ export default new Router({
                     path: '/doc/manuscriptApp',
                     name: 'manuscriptApp',
                     component: manuscriptApp,
+                    meta: {
+                        breadcrumb: "公文呈报",
+                    }
+                }, {
+                    path: '/doc/docCommonApp/:code',
+                    name: 'docCommonApp',
+                    component: docCommonApp,
                     meta: {
                         breadcrumb: "公文呈报",
                     }

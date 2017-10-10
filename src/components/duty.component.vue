@@ -4,7 +4,8 @@
       <div slot="header">今日值班
         <router-link to="#">更多</router-link>
       </div>
-      <p class="leader" v-if="dutys.leader&&dutys.leader.name"><span class="name">{{dutys.leader.name}}</span>{{dutys.leader.phone | phone}}</span></p>
+      <p class="leader" v-if="dutys.leader&&dutys.leader.name"><span class="name">{{dutys.leader.name}}</span>{{dutys.leader.phone | phone}}</span>
+      </p>
       <el-menu mode="vertical" default-active="1">
         <el-menu-item-group>
           <el-submenu :index="duty.deptName" v-for="duty in dutys.ondutylist">
@@ -41,7 +42,8 @@ export default {
   },
   methods: {
     getData() {
-      this.$http.post('/onduty/getDutyInfo', { dutyDate: this.timeFilter(new Date()) })
+      var date1 = new Date().getTime()
+      this.$http.post('/onduty/getDutyInfo', { dutyDate:"2017-09-30" })
         .then(res => {
           if (res.status == 0) {
             this.dutys = res.data;
@@ -50,6 +52,7 @@ export default {
           }
         })
     }
+    
   }
 }
 

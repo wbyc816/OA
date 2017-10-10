@@ -46,45 +46,53 @@ const actions = {
 
     api.updateBaseInfo(payload)
       .then((res) => {
-        if (res[0].status == '0') {
-          dispatch('getEmergencyContactInfo', rootGetters.userInfo.empId);
-          // Notification({
-          //   message: '修改紧急联系人信息成功,请等待后台审核！',
-          //   type: 'success'
-          // });
-        } else {
+        // console.log(res)
+        // if (res[0].status == '0') {
+        //   dispatch('getEmergencyContactInfo', rootGetters.userInfo.empId);
+        //   // Notification({
+        //   //   message: '修改紧急联系人信息成功,请等待后台审核！',
+        //   //   type: 'success'
+        //   // });
+        // } else {
+        //   Notification({
+        //     message: '修改紧急联系人信息失败，请重试！',
+        //     type: 'error'
+        //   });
+        // }
+        // if (res[1].status == '0') {
+        //   dispatch('getEmpDetail', rootGetters.userInfo.empId);
+        //   setTimeout(function() {
+        //     // Notification({
+        //     //   message: '修改个人基本信息成功！',
+        //     //   type: 'success'
+        //     // });
+        //   }, 200)
+
+        // } else {
+        //   setTimeout(function() {
+        //     Notification({
+        //       message: '修改个人基本信息失败，请重试！',
+        //       type: 'error'
+        //     });
+        //   }, 200)
+        // }
+        // if (res[0].status == '0' && res[1].status == '0') {
+        //   setTimeout(function() {
+        //     Notification({
+        //       message: '修改个人信息成功,请等待后台审核！',
+        //       type: 'success'
+        //     });
+        //     commit(types.SET_EDIT_STATUS, false, { root: true })
+        //   }, 200)
+        // }
+        setTimeout(function() {
           Notification({
-            message: '修改紧急联系人信息失败，请重试！',
-            type: 'error'
+            message: '修改个人信息成功,请等待后台审核！',
+            type: 'success'
           });
-        }
-        if (res[1].status == '0') {
-          dispatch('getEmpDetail', rootGetters.userInfo.empId);
-          setTimeout(function() {
-            // Notification({
-            //   message: '修改个人基本信息成功！',
-            //   type: 'success'
-            // });
-          }, 200)
-
-        } else {
-          setTimeout(function() {
-            Notification({
-              message: '修改个人基本信息失败，请重试！',
-              type: 'error'
-            });
-          }, 200)
-        }
-        if (res[0].status == '0' && res[1].status == '0') {
-          setTimeout(function() {
-            Notification({
-              message: '修改个人信息成功,请等待后台审核！',
-              type: 'success'
-            });
-            commit(types.SET_EDIT_STATUS, false, { root: true })
-          }, 200)
-        }
-
+          commit(types.SET_EDIT_STATUS, false, { root: true })
+        }, 200)
+        dispatch('getUserInfo');
       })
   }
 }

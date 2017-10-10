@@ -122,8 +122,9 @@ export default {
       }
     },
     handleSubmit() {
-      this.getCheckId()
+      this.$http.post('/resume/insertCheck', { empId: this.userInfo.empId }, { body: true })
         .then(res => {
+          console.log(111)
           if (res.status == '0') {
             Object.keys(this.eduForm).forEach(name => {
               this.eduForm[name].forEach(c => c.checkID = res.data)
@@ -141,7 +142,7 @@ export default {
       var nameList = []
       this.dataList.forEach(e => {
         if (this.eduForm[e.enName].length > 0) {
-          var params=this.eduForm[e.name].map(c=>this.changeTime(c));
+          var params=this.eduForm[e.enName].map(c=>this.changeTime(c));
           if(e.extraParams){
             Object.assign(params,e.extraParams)
           }
@@ -154,7 +155,7 @@ export default {
           this.submitLoading = false;
           var successList = [];
           var failList = [];
-          res.forEach(r => {
+          res.forEach((r,index) => {
             if (r.status == 0) {
               successList.push(nameList[index]);
             } else {
