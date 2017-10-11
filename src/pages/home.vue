@@ -28,7 +28,7 @@
               <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>
             </p>
-            <el-card class="bedoneList">
+            <el-card class="bedoneList" v-if="doneLength!=0">
               <p slot="header">待办事项 <span>{{doneLength}}</span></p>
               <el-carousel height="150px" :autoplay="false" indicator-position="outside" arrow="never">
                 <el-carousel-item v-for="(list,index) in doneList" :key="index">
@@ -39,7 +39,7 @@
                         <p class="title">{{item.docTitle}}</p>
                         <div class="timeline">
                           <p>截止日</p>
-                          <p>{{item.endTime.slice(0,7)}}</p>
+                          <p>{{item.endTime.slice(0,10)}}</p>
                         </div>
                       </router-link>
                     </el-col>
@@ -59,7 +59,7 @@
               </p>
               <el-tabs v-model="activeName" class="myTab">
                 <el-tab-pane :label="list.name" :name="list.name" v-for="(list,index) in newsList">
-                  <router-link to="/HR/newsDetail" class="newBox" v-for="news in list.child">
+                  <router-link :to="'/newsDetail/'+news.id" class="newBox" v-for="news in list.child" v-if="index<6">
                     <p>{{news.docTitle}}</p>
                     <p><span><i class="iconfont icon-eye"></i><span>{{news.browse}}</span>{{news.createTime | time('xie')}}</span>
                     </p>
@@ -423,7 +423,7 @@ export default {
       searchDate: '',
       doneList: [],
       doneLength: 0,
-      newsList:[]
+      newsList: []
     }
   },
   computed: {
@@ -545,12 +545,17 @@ export default {
       this.$http.post('/doc/backlogList', { userId: this.userInfo.empId })
         .then(res => {
           if (res.status == 0) {
-            this.doneLength = res.data.length;
-            res.data.forEach((r, index) => r.index = index + 1);
-            for (var i = 0; i < res.data.length; i += 6) {
-              if (res.data.slice(i, i + 6)) {
-                this.doneList.push(res.data.slice(i, i + 6))
+            if (Array.isArray(res.data)) {
+              this.doneLength = res.data.length;
+
+              res.data.forEach((r, index) => r.index = index + 1);
+              for (var i = 0; i < res.data.length; i += 6) {
+                if (res.data.slice(i, i + 6)) {
+                  this.doneList.push(res.data.slice(i, i + 6))
+                }
               }
+            } else {
+              this.doneLength = 0;
             }
           }
         }, res => {
@@ -561,21 +566,23 @@ export default {
       this.$http.post('/api/getDict', { dictCode: 'ADM04' })
         .then(res => {
           if (res.status == 0) {
-            res.data.forEach(r=>this.newsList.push({name:r.dictName,code:r.dictCode,child:[]}));
-            this.activeName=this.newsList[0].name;
-            this.$http.post('/doc/selectFileList',{empId:this.userInfo.empId})
-            .then(res1=>{
-              if(res1.status==0){
-                res1.data.selectDocInfoVolist.forEach(news=>{
-                  this.newsList.forEach(data=>{
-                    if(data.code==news.classify1){
-                      data.child.push(news)
-                    }
-                  });
-                })
-                console.log(this.newsList);
-              }
-            })
+            res.data.forEach(r => this.newsList.push({ name: r.dictName, code: r.dictCode, child: [] }));
+            this.activeName = this.newsList[0].name;
+            this.$http.post('/doc/selectFileList', { empId: this.userInfo.empId })
+              .then(res1 => {
+                if (res1.status == 0) {
+                  if (Array.isArray(res1.data.selectDocInfoVolist)) {
+                    res1.data.selectDocInfoVolist.forEach(news => {
+                      this.newsList.forEach(data => {
+                        if (data.code == news.classify1) {
+                          data.child.push(news)
+                        }
+                      });
+                    })
+                  }
+                  console.log(this.newsList);
+                }
+              })
           } else {
             console.log('获取发文类型失败')
           }
@@ -714,8 +721,8 @@ $sub:#1465C0;
       padding: 0;
     }
     .myTab .el-tabs__header .el-tabs__item {
-      line-height: 85px;
-      height: 85px;
+      line-height: 92px;
+      height: 92px;
     }
     .el-tab-pane {
       .newBox {
@@ -731,6 +738,7 @@ $sub:#1465C0;
           overflow: hidden;
           padding-right: 30px;
           width: 480px;
+          color: #393939;
         }
         p.new {
           &:after {
@@ -1096,8 +1104,8 @@ $sub:#1465C0;
         color: #676767;
       }
       &:nth-child(odd) {
-        .title{
-          width:280px;
+        .title {
+          width: 255px;
         }
         .timeline {
           right: 30px;
@@ -1115,7 +1123,7 @@ $sub:#1465C0;
       .title {
         display: inline-block;
         vertical-align: middle;
-        width: 300px;
+        width: 270px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

@@ -16,11 +16,9 @@ import approvalForm from 'pages/docSub/approvalForm.page'
 import materialApp from 'pages/docSub/materialApp.page'
 import vehicleApp from 'pages/docSub/vehicleApp.page'
 import manuscriptApp from 'pages/docSub/manuscriptApp.page'
-<<<<<<< HEAD
 
-=======
 import docCommonApp from 'pages/docSub/docCommonApp.page'
->>>>>>> origin/wb
+
 // import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
 // import leisureTravel from 'pages/docSub/staff-leisure-travel.page'
 // import business from 'pages/docSub/businessTrip.page'
@@ -80,6 +78,7 @@ import personalInfo from '../pages/HR/personalInfo.page'
 import resume from '../pages/HR/resume.page'
 import editResume from '../pages/HR/editResume.page'
 import salary from '../pages/HR/salary.page'
+import salaryHistory from '../pages/HR/salaryHistory.page'
 import newsDetail from '../pages/HR/newsDetail.page'
 
 import BirthdayReminder from 'pages/BirthdayReminder.page'
@@ -133,6 +132,10 @@ export default new Router({
                 name: 'salary',
                 component: salary,
             }, {
+              path: '/HR/salaryHistory/:param',
+              name: 'salaryHistory',
+              component: salaryHistory
+            },{
                 path: '/HR/resume',
                 name: 'resume',
                 component: resume,

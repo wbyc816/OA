@@ -34,7 +34,10 @@ function timeFilter(value, type) { //value为13位的时间戳
       return months[m];
     } else if (type == 'all') {
       return y + '-' + t(m + 1) + '-' + t(d) + ' ' + t(h) + ':' + t(min) + ':' + t(s)
+    }else if (type == 'birthday') {
+      return  t(m + 1) + '月' + t(d) + '日'
     }
+
   } else {
     return value;
   }

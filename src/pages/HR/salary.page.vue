@@ -168,11 +168,9 @@
   </div>
 </template>
 <script>
-import MyTable from '../../components/myTable.component'
 import { salaryLeft,salaryRight } from '../../common/salaryConfig'
 import { mapGetters } from 'vuex'
 export default {
-  components: { MyTable },
   data() {
     return {
       activeName: 'post',
@@ -181,15 +179,7 @@ export default {
       salaryMonth:"",
       salaryData:{},
       salaryType:0,
-      paramsMonth:"",
-      tabList: {
-        post: false,
-        contract: false,
-        edu: false,
-        assessre: false,
-        postExp: false,
-        contact: false
-      }
+      paramsMonth:""
     }
   },
   computed: {

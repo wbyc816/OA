@@ -2,37 +2,55 @@
   <div id="paymentSearch">
     <el-row :gutter='12'>
       <el-col :span='17'>
-        <el-row style="background-color:#fff;height: 580px;">
-          <el-col :span="7" ><div class="grid-content bg-purple"><img src="../assets/images/birthday.png" width="100%" height="579"></div></el-col>
+        <el-row >
+          <el-col :span="7" ><div class="grid-content bg-purple" style="margin-bottom:70px"><img src="../assets/images/birthday.png" width="100%" height="579"></div></el-col>
           <el-col :span="17"><div class="grid-content bg-purple-light">
-            <div style="height:40px;line-height:40px;padding: 0 15px"><span style="font-size:18px">生日提醒</span> <span style="color:#1465C0;font-size:14px;float:right">9月23日-9月30日 共{{64}}人过生日</span></div>
+            <div class="reminder_title"><span class="title_font">生日提醒</span> <span class="birthday_date">{{startDate | time('birthday')}}-{{endDate | time('birthday')}} 共{{total}}人过生日</span></div>
 
-            <table bgcolor="#1465C0" class="myTableList" width="100%" cellspacing="0" v-loading.body="searchLoading" style="padding-left: 15px">
-              <caption>
-              </caption>
-              <thead align="left">
-              <tr>
-                <th v-for="title in tableTitle" style="height:26px;line-height:26px;color:#fff">{{title}}</th>
-              </tr>
-              </thead>
-              <tbody v-for="record in records">
-              <tr>
-                <td>{{record.empName}}</td>
-                <td>{{record.deptName}}</td>
-                <td>{{record.jobtitle}}</td>
-                <td>{{record.birthday=="null null"?'':record.birthday}}</td>
-                <td>{{record.mobileNumber}}</td>
-              </tr>
-              </tbody>
-            </table>
+
+            <el-table
+              :data="tableData"
+              stripe
+              style="width: 100%">
+              <el-table-column
+                prop="empName"
+                label="员工姓名"
+                width="90">
+              </el-table-column>
+              <el-table-column
+                prop="deptName"
+                label="部门"
+                width="160">
+              </el-table-column>
+              <el-table-column
+                prop="jobtitle"
+                label="职位"
+                width="130">
+              </el-table-column>
+
+              <el-table-column
+                label="生日"
+                width="100">
+                <template scope="scope">
+                  <span >{{ scope.row.birthday | time('birthday')}}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                prop="mobileNumber"
+                label="联系电话"
+                width="130">
+              </el-table-column>
+            </el-table>
+            <div class="pageBox" v-show="tableData.length>0" >
+              <el-pagination @current-change="handleCurrentChange" :current-page="pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="total">
+              </el-pagination>
+            </div>
 
 
           </div></el-col>
         </el-row>
-        <div class="pageBox" v-show="records.length>0">
-          <el-pagination @current-change="handleCurrentChange" :current-page="pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
-          </el-pagination>
-        </div>
+
       </el-col>
       <el-col :span='7' class="sideNav">
         <side-Person-Search></side-Person-Search>
@@ -91,11 +109,13 @@
         tripTo: { cityName: '' },
         statusValue,
         searchLoading: false,
-        flightList: [],
         pageNumber: 1,
         totalSize: 0,
         records: [],
-
+        total:1,
+        tableData:[],
+        startDate:1,
+        endDate:1,
       }
     },
     computed: {
@@ -104,7 +124,12 @@
       ])
   },
   created() {
+
+
+
+
     // this.getAirPortList();
+    this.getBirthdayData();
     var routeParam = this.$route.params;
     console.log(this.$route)
     if (routeParam.type == 'route') {
@@ -173,25 +198,7 @@
       this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
       console.log(this.searchDate);
     },
-    getBirthdayData(){
-      this.$http.post("/emp/birthdayDetai", {
-        pageNumber: this.pageNumber,
-        pageSize: "10"
-      }).then(res => {
-        setTimeout(function() {
-          that.searchLoading = false;
-        }, 200)
-      if (res.status == 0) {
-        this.records = res.data.records;
-        this.totalSize = res.data.total;
-      } else {
-        this.flightList = [];
-        this.totalSize = 0;
-      }
-    }, res => {
 
-      })
-    },
     getData() {
       if (this.searchDate != 'NaN-NaN-NaN') {
         if (this.flightStatusType == "route") {
@@ -211,77 +218,29 @@
             this.getToDate();
           }
         } else {
-          this.getToDate();
+          this.getBirthdayData();
         }
       } else {
         this.$message.warning('请选择航班日期!')
       }
 
     },
-    getToDate() {
-      var that = this;
-      this.searchLoading = true;
-      this.$http.post("/flight/getFlightByDate", {
-        flightDate: this.searchDate,
+    getBirthdayData(){
+      this.$http.post("/emp/birthdayDetail", {
         pageNumber: this.pageNumber,
         pageSize: "10"
       }).then(res => {
         setTimeout(function() {
-          that.searchLoading = false;
+          this.searchLoading = false;
         }, 200)
       if (res.status == 0) {
-        this.flightList = res.data.flightList;
-        this.totalSize = res.data.totalSize;
+        this.tableData = res.data.records;
+        this.total = res.data.total;
+        this.startDate=this.tableData[0].startDate;
+        this.endDate=this.tableData[0].endDate;
       } else {
-        this.flightList = [];
-        this.totalSize = 0;
-      }
-    }, res => {
-
-      })
-    },
-    getToFlightNo() {
-      var that = this;
-      this.searchLoading = true;
-      this.$http.post("/flight/getFlightByNo", {
-        flightDate: this.searchDate,
-        flightNo: this.flightNoTitle + this.flightNoValue,
-        pageNumber: this.pageNumber,
-        pageSize: "10"
-      }).then(res => {
-        setTimeout(function() {
-          that.searchLoading = false;
-        }, 200)
-      if (res.status == 0) {
-        this.flightList = res.data.flightList;
-        this.totalSize = res.data.totalSize;
-      } else {
-        this.flightList = [];
-        this.totalSize = 0;
-      }
-    }, res => {
-
-      })
-    },
-    getToRound() {
-      var that = this;
-      this.searchLoading = true;
-      this.$http.post("/flight/getFlightByFromTo", {
-        flightDate: this.searchDate,
-        dep: that.tripFrom.city3cody,
-        arr: that.tripTo.city3cody,
-        pageNumber: this.pageNumber,
-        pageSize: "10"
-      }).then(res => {
-        setTimeout(function() {
-          that.searchLoading = false;
-        }, 200)
-      if (res.status == 0) {
-        this.flightList = res.data.flightList;
-        this.totalSize = res.data.totalSize;
-      } else {
-        this.flightList = [];
-        this.totalSize = 0;
+        this.tableData = [];
+        this.total = 0;
       }
     }, res => {
 
@@ -289,7 +248,7 @@
     },
     handleCurrentChange(page) {
       this.pageNumber = page;
-      this.getData()
+      this.getBirthdayData()
     },
     // getAirPortList() {
     //   this.$http.get('/api/getAirPortList')
@@ -307,9 +266,36 @@
 <style lang='scss'>
   $main: #0460AE;
   #paymentSearch {
+  .el-row{
+    .el-row{
+      background-color:#fff;
+      height: 580px;
+      position:relative;
+    }
+  }
+  .reminder_title{
+    height:40px;
+    line-height:40px;
+    padding: 0 15px
+  }
+  .title_font{
+    font-size:18px
+  }
+  .birthday_date{
+    color:#1465C0;
+    font-size:14px;
+    float:right;
+  }
+  .el-table th{
+    height:26px;
+  }
+  .el-table td{
+    height:44px;
+  }
   .pageBox {
     text-align: right;
     margin: 20px 0;
+    position: absolute;right:0;bottom:0
   }
   .purpleColor {
     color: $main;
