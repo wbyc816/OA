@@ -24,7 +24,7 @@
           </el-row>
 
         </el-card>
-        <el-card class="borderCard searchBox" v-show="$route.name== 'salary' || $route.name == 'salaryHistory'">
+        <!-- <el-card class="borderCard searchBox" v-show="$route.name== 'salary' || $route.name == 'salaryHistory'">
           <div slot="header">最新工资单</div>
           <el-row class="newSalary">
             <el-col :span="12" v-for="month in newSalaryList">
@@ -32,13 +32,15 @@
             </el-col>
           </el-row>
         </el-card>
-        <el-card class="department borderCard">
+ -->        <el-card class="department borderCard">
           <div slot="header">人力资源</div>
-          <el-menu class="el-menu-vertical-demo" :default-openeds="['个人中心','我要申请','薪资绩效','相关链接']" :router="true">
+          <el-menu class="el-menu-vertical-demo" :default-openeds="['个人中心','我要申请','薪资绩效','相关链接']">
             <el-submenu :index="menu.title" v-for="(menu,index) in menuList" :key="menu.title">
               <template slot="title">{{menu.title}}</template>
               <el-menu-item :index="child.path" v-for="child in menu.child" :key="menu.name">
-                {{child.name}}
+                <a :href="child.path" :target="child.target">
+                   {{child.name}}
+                </a>
               </el-menu-item>
             </el-submenu>
           </el-menu>
@@ -76,17 +78,17 @@ const nowMonth = nowDate.getMonth() + 1;
 const defaultSalaryHistory = ''+'@'+ util.formatTime(nowDate, 'yyyyMM')   // 默认获取历史返回数据有待商榷
 const menuList = [{
   title: '个人中心',
-  child: [{ name: '个人信息', path: '/HR/personalInfo' }, { name: '个人简历', path: '/HR/resume' }, { name: '简历完善', path: '/HR/editResume' }]
+  child: [{ name: '个人信息', path: '#/HR/personalInfo' }, { name: '个人简历', path: '#/HR/resume' }, { name: '简历完善', path: '#/HR/editResume' }]
 }, {
   title: '我要申请',
   child: [{ name: '请假申请', path: '#' }, { name: '转正申请', path: '#' }, { name: '离职申请', path: '#' }, { name: '工伤事故申请', path: '#' }, { name: '培训申请', path: '#' }, { name: '人事变动', path: '#' }]
 },
 {
   title: '薪资绩效',
-  child: [{ name: '最新工资单', path: '/HR/salary/1' }, { name: '历史工资单', path: `/HR/salaryHistory/${defaultSalaryHistory}` }]
+  child: [{ name: '最新工资单', path: '#/HR/salary/1' }, { name: '历史工资单', path: `#/HR/salaryHistory/${defaultSalaryHistory}` }]
 }, {
   title: '相关链接',
-  child: [{ name: '社会保障系统', path: '#' }, { name: '公积金系统', path: '#' }]
+  child: [{ name: '社会保障系统', path: 'http://www.szsi.gov.cn/', target: '_blank' }, { name: '公积金系统', path: 'http://www.szzfgjj.com/', target: '_blank'}]
 }
 ]
 export default {
@@ -208,13 +210,17 @@ $sub:#1465C0;
         border-bottom: 1px solid #E9E9E9;
         padding: 10px 0;
       }
-      .el-menu-item {
+      .el-menu-item{
         padding-left: 14px!important;
         font-size: 15px;
-        color: $main;
         height: 35px;
         line-height: 35px;
-        white-space: normal;
+        a{
+          display:block;
+          color: $main;
+          white-space: normal;
+        }
+        
       }
     }
   }

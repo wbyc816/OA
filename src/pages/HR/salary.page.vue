@@ -165,12 +165,15 @@
         </el-row>
       </div>
     </el-card>
+    <salary-dialog :visible.sync="salaryDialogVisible"></salary-dialog>
   </div>
 </template>
 <script>
 import { salaryLeft,salaryRight } from '../../common/salaryConfig'
+import SalaryDialog from '../../components/salaryDialog.component'
 import { mapGetters } from 'vuex'
 export default {
+  components: { SalaryDialog },
   data() {
     return {
       activeName: 'post',
@@ -179,7 +182,8 @@ export default {
       salaryMonth:"",
       salaryData:{},
       salaryType:0,
-      paramsMonth:""
+      paramsMonth:"",
+      salaryDialogVisible:true
     }
   },
   computed: {
@@ -195,6 +199,9 @@ export default {
       this.paramsMonth=month;
     }
     this.getData();
+  },
+  checkPassword(){
+
   },
   beforeRouteUpdate(to, from, next){
     next();
