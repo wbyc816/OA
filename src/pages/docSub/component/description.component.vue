@@ -10,7 +10,8 @@
         </div>
       </el-form-item>
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
-        <img :src="options.suggestPath" alt="">
+        <el-input v-model="ruleForm.path" >
+        </el-input>
       </el-form-item>
       <el-form-item label="附件">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload">
@@ -18,7 +19,7 @@
         </el-upload>
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
-        <el-col :span='21' class="docs">
+        <el-col :span='21' class="docs" style="left: -6px;position: relative;">
           <el-input class="search" :readonly="true" :value="doc.quoteDocTitle" v-for="(doc,index) in docs" icon="search" :key="doc.quoteDocTitle">
             <div slot="append">
               <el-button @click='showDialog(index)'>选择</el-button>
@@ -59,16 +60,15 @@ export default {
   },
   data() {
     return {
-      msg: 'hello vue',
-      none: "none",
       ruleForm: {
         des: '',
+        path:''
       },
       rules: {
         des: [
           { required: true, message: '请输入请示内容', trigger: 'blur,change' }
         ],
-        path: [],
+        path: [{ required: true, message: '请输入建议路径', trigger: 'blur,change' }],
       },
       dialogTableVisible: false,
       docs: [{ quoteDocTitle: '', quoteDocId: '' }],
@@ -107,7 +107,8 @@ export default {
             this.$emit('submitEnd', {
               taskContent: this.ruleForm.des,
               qutoes: this.docs[0].quoteDocId ? this.docs : [],
-              fileId: []
+              fileId: [],
+              suggestPath:this.ruleForm.path
             });
           }
         } else {

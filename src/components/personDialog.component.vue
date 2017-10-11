@@ -57,7 +57,7 @@ export default {
       multipleSelection: [],
       initialReady: false,
       searchButton: false,
-      personVisible:false
+      personVisible: false
     }
   },
   props: {
@@ -72,7 +72,7 @@ export default {
   },
   watch: {
     'visible': function(newVal) {
-      this.personVisible=newVal;
+      this.personVisible = newVal;
       if (newVal) {
         if (this.isAdmin) {
           this.$store.dispatch('getDeptList');
@@ -113,6 +113,7 @@ export default {
     },
     search() {
       this.searchButton = true;
+      this.$store.dispatch('setQueryDepId', '')
       this.$store.dispatch('setQueryPage', 1);
       this.$store.dispatch('queryEmpList', { name: this.name })
     },

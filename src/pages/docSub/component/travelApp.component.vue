@@ -22,24 +22,24 @@
       </el-form-item>
       <el-form-item label="是否预订机票" prop="isBookFlight">
         <el-radio-group v-model="travelForm.isBookFlight" class="myRadio">
-          <el-radio-button :label="1">是<i></i></el-radio-button>
-          <el-radio-button :label="0">否<i></i></el-radio-button>
+          <el-radio-button label="1">是<i></i></el-radio-button>
+          <el-radio-button label="0">否<i></i></el-radio-button>
         </el-radio-group>
         <el-radio-group v-model="travelForm.bookType" class="myRadio bookType" v-show="travelForm.isBookFlight==1">
-          <el-radio-button :label="1">公务优惠机票<i></i></el-radio-button>
-          <el-radio-button :label="0">其他航司客票<i></i></el-radio-button>
+          <el-radio-button :label="bookType.dictCode" v-for="bookType in bookTypes">{{bookType.dictName}}<i></i></el-radio-button>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="报销归口" prop="budgetDept">
         <!-- <el-input class="search" :readonly="true" :value="travelForm.signName">
           <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
         </el-input> -->
-        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" style="width:100%"></el-cascader>
+        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" popper-class="myCascader" style="width:100%"></el-cascader>
       </el-form-item>
       <el-form-item label="出差总预算" prop="budgetMoney" class="budgetMoney">
-        <el-input v-model="travelForm.budgetMoney" ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit">
+        <el-input v-model="travelForm.budgetMoney" ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
           <template slot="append">元</template>
         </el-input>
+        <span class="usge">預算已使用率 75%</span>
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog>
@@ -58,10 +58,18 @@ export default {
         callback(new Error('请选择出差时间'))
       }
     };
+    var checkDept = (rule, value, callback) => {
+      if (value[0]) {
+        callback();
+      } else {
+        callback(new Error('请选择报销归口'))
+      }
+    };
     return {
       signDialogVisible: false,
+      bookTypes:[],
       travelForm: {
-        isBookFlight: 1,
+        isBookFlight: '1',
         deptArea: '',
         arrArea: '',
         bookType: '',
@@ -77,13 +85,14 @@ export default {
         arrArea: [{ required: true, message: '请输入目的地', trigger: 'blur' }],
         budgetMoney: [{ required: true, message: '请输入出差总预算', trigger: 'blur' }],
         timeRange: [{ type: 'array', required: true, validator: checkDate, trigger: 'blur' }],
+        budgetDept: [{ type: 'array', required: true, validator: checkDept, trigger: 'blur' }],
       },
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7;
         }
       },
-      budgetDeptList:[],
+      budgetDeptList: [],
       params: '',
       defaultProp: {
         label: 'budgetItemName',
@@ -100,6 +109,7 @@ export default {
   },
   created() {
     this.getBudgetDeptList();
+    this.getBookType();
   },
   methods: {
     updatePerson(list) {
@@ -111,6 +121,7 @@ export default {
       var that = this;
       this.$refs.travelForm.validate((valid) => {
         if (valid) {
+          var dep=this.getBudgetDep();
           this.params = {
             app: {
               "startTime": this.travelForm.timeRange[0].getTime(), //出差开始时间
@@ -118,16 +129,18 @@ export default {
               "deptArea": this.travelForm.deptArea, //出发地
               "arrArea": this.travelForm.arrArea, //目的地
               "isBookFlight": this.travelForm.isBookFlight, //是否预订机票 0否 1是
-              "bookType": "", //预定类型
+              "bookType": this.travelForm.bookType, //预定类型
               "budgetMoney": this.travelForm.budgetMoney, //预算
-              "budgetItemCode": "", //报销科目code
-              "budgetItemName": "", //报销科目名称
-              "person": this.travelForm.person.map(function(person) {
+              "budgetItemCode": dep.budgetItemCode, //报销科目code
+              "budgetItemName": dep.budgetItemName, //报销科目名称
+              "budgetDeptCode": dep.budgetDeptCode, //报销部门
+              "budgetDeptName": dep.budgetDeptName, //报销部门名称
+              "appPerson": this.travelForm.person.map(function(person) {
                 return {
                   "travelUserName": person.name, //随行人员姓名
                   "travelDeptId": person.deptId, //部门id
                   "travelDeptName": person.depts, //部门名称
-                  "travelDeptMajorId": perosn.deptId, //主部门id
+                  "travelDeptMajorId": person.deptId, //主部门id
                   "travelDeptMajorName": person.deptName, //主部门名称
                 }
               })
@@ -149,38 +162,68 @@ export default {
       if (val) {
         this.travelForm.budgetMoney = val[0];
         this.$refs.budgetMoney.setCurrentValue(val[0]);
-      }else{
-        this.travelForm.budgetMoney=''
+      } else {
+        this.travelForm.budgetMoney = ''
         this.$refs.budgetMoney.setCurrentValue('')
       }
     },
-    getBudgetDeptList(){
+    getBudgetDeptList() {
       this.$http.post('/doc/getBudItemTreeList')
-      .then(res=>{
-        if(res.status==0){
-          res.data.forEach(i=>i.items=[])
-          this.budgetDeptList=res.data
-        }else{
-          console.log(res)
-        }
-      }, res=>{})
+        .then(res => {
+          if (res.status == 0) {
+            res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
+            this.budgetDeptList = res.data
+          } else {
+            console.log(res)
+          }
+        }, res => {})
     },
     handleItemChange(val) {
-      console.log(val)
-      var len=val.length;
-      var temp=this.budgetDeptList;
-      while(len>0){
-        temp=temp.find(dep=>dep.budgetItemCode==val[len-1]).items;
-        len--
+      var len = val.length;
+      var temp = this.budgetDeptList;
+      var i = 0;
+      while (len > i) {
+        temp = temp.find(dep => dep.budgetItemCode == val[i]).items;
+        i++
       }
-      this.$http.post('/doc/getBudItemTreeList',{parentId:val[val.length-1]})
+      if (temp.length == 0) {
+        this.$http.post('/doc/getBudItemTreeList', { parentId: val[val.length - 1] })
+          .then(res => {
+            if (res.status == 0) {
+              res.data.forEach(i => {
+                i.isParent == 1 ? i.items = [] : i.items = null
+                temp.push(i)
+              })
+            }
+          })
+      }
+    },
+    getBookType(){
+      this.$http.post('/api/getDict',{dictCode:'ADM05'})
       .then(res=>{
         if(res.status==0){
-          res.data.forEach(i=>i.items=[])
-          temp=res.data
-          console.log(temp);
+          this.bookTypes=res.data;
+          this.travelForm.bookType=this.bookTypes[0].dictCode
         }
       })
+    },
+    getBudgetDep(){
+      var len=this.travelForm.budgetDept.length;
+      var temp=this.budgetDeptList;
+      for(var i=0;i<len;i++){
+        temp=temp.find(dep=>dep.budgetItemCode==this.travelForm.budgetDept[i]);
+        if(temp.items&&temp.items.length!=0){
+          temp=temp.items;
+        }
+      }
+      return temp;
+    },
+    blurInput(event){
+      var temp=event.target.value.split('.');
+      if(temp.length==2&&(temp[1]==undefined||temp[1]==''||temp[1]==null)){
+        this.travelForm.budgetMoney = temp[0];
+        this.$refs.budgetMoney.setCurrentValue(temp[0]);
+      }
     }
   }
 }
@@ -223,6 +266,10 @@ $main:#0460AE;
       line-height: 45px;
       width: 99px;
     }
+  }
+  .usge {
+    color: $main;
+    vertical-align: text-top;
   }
   .bookType {
     float: right;

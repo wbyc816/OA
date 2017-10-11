@@ -39,6 +39,10 @@
             <p class="textContent">{{docDetialInfo.doc.taskContent}}</p>
           </el-col>
           <el-col :span="24">
+            <h1 class="title">建议路径</h1>
+            <p class="textContent">{{docDetialInfo.doc.suggestPath}}</p>
+          </el-col>
+          <el-col :span="24">
             <h1 class="title">附件</h1>
             <p class="attch textContent">
               <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
@@ -144,6 +148,13 @@ import PersonDialog from '../../components/personDialog.component'
 import YCS from './component/vehicleDetail.component' //用车详情
 import CLS from './component/materialDetail.component' //材料详情
 import FWG from './component/manuscriptDetail.component' //材料详情
+import CLV from './component/travelDetail.component' //差旅详情
+import GSS from './component/injuryDetail.component' //工伤详情
+import QJS from './component/vacationDetail.component' //休假详情
+import RSB from './component/empChangeDetail.component' //人事变动详情
+import JSS from './component/empUpgradeDetail.component' //晋升详情
+import ZZS from './component/empBecomeDetail.component' //转正详情
+import JJS from './component/empUpgradeDetail.component' //晋升详情
 import { mapGetters } from 'vuex'
 
 export default {
@@ -151,7 +162,14 @@ export default {
     PersonDialog,
     YCS,
     CLS,
-    FWG
+    FWG,
+    CLV,
+    GSS,
+    QJS,
+    RSB,
+    JSS,
+    ZZS,
+    JJS
   },
   data() {
     return {
@@ -400,6 +418,7 @@ $sub:#1465C0;
   }
   .baseInfoBox {
     margin-top: 15px;
+    padding-bottom: 10px;
     .el-col {
       border-bottom: 1px solid #D5DADF;
       padding: 15px 24px;
@@ -409,6 +428,9 @@ $sub:#1465C0;
     }
     .rightBorder {
       border-right: 1px solid #D5DADF;
+    }
+    .blank{
+      height:51px;
     }
     .title {
       width: 150px;

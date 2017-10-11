@@ -7,12 +7,12 @@
     </el-carousel> -->
     <el-row :gutter="20" class="wrapRow">
       <el-col :span="16">
-        <ul class="list-group" v-sortable="optionsDragLeft">
+        <!-- <ul class="list-group" v-sortable="optionsDragLeft">
           <li class="list-group-item" :class="{'dragActive':showDrag[0]}">
             <p class="dragHead" v-on:mouseover="dragShow(0)" v-on:mouseleave="dragHide(0)">
               <span v-show="showInfo[0]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[0]=true" v-on:mouseleave="showInfo[0]=false" v-show="showDrag[0]"></i>
-            </p>
+            </p> -->
             <el-card class="messageCenter">
               <p slot="header">消息中心</p>
               <el-row :gutter="10">
@@ -22,12 +22,12 @@
                 </el-col>
               </el-row>
             </el-card>
-          </li>
+          <!-- </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
             <p class="dragHead" v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
               <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>
-            </p>
+            </p> -->
             <el-card class="bedoneList" v-if="doneLength!=0">
               <p slot="header">待办事项 <span>{{doneLength}}</span></p>
               <el-carousel height="150px" :autoplay="false" indicator-position="outside" arrow="never">
@@ -47,19 +47,19 @@
                 </el-carousel-item>
               </el-carousel>
             </el-card>
-          </li>
+          <!-- </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[1]}">
             <p class="dragHead" v-on:mouseover="dragShow(1)" v-on:mouseleave="dragHide(1)">
               <span v-show="showInfo[1]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[1]=true" v-on:mouseleave="showInfo[1]=false" v-show="showDrag[1]"></i>
-            </p>
+            </p> -->
             <el-card class="news">
               <p slot="header"><span>新闻</span>
                 <router-link to="#">更多</router-link>
               </p>
               <el-tabs v-model="activeName" class="myTab">
                 <el-tab-pane :label="list.name" :name="list.name" v-for="(list,index) in newsList">
-                  <router-link :to="'/newsDetail/'+news.id" class="newBox" v-for="news in list.child" v-if="index<6">
+                  <router-link :to="'/newsDetail/'+news.id" class="newBox clearfix" v-for="news in list.child" v-if="index<8">
                     <p>{{news.docTitle}}</p>
                     <p><span><i class="iconfont icon-eye"></i><span>{{news.browse}}</span>{{news.createTime | time('xie')}}</span>
                     </p>
@@ -67,12 +67,12 @@
                 </el-tab-pane>
               </el-tabs>
             </el-card>
-          </li>
+          <!-- </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[2]}">
             <p class="dragHead" v-on:mouseover="dragShow(2)" v-on:mouseleave="dragHide(2)">
               <span v-show="showInfo[2]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[2]=true" v-on:mouseleave="showInfo[2]=false" v-show="showDrag[2]"></i>
-            </p>
+            </p> -->
             <el-card class="shareBox">
               <el-row>
                 <el-col :span="12" class="shareWith">
@@ -115,12 +115,12 @@
                 </el-col>
               </el-row>
             </el-card>
-          </li>
+          <!-- </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[3]}">
             <p class="dragHead" v-on:mouseover="dragShow(3)" v-on:mouseleave="dragHide(3)">
               <span v-show="showInfo[3]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[3]=true" v-on:mouseleave="showInfo[3]=false" v-show="showDrag[3]"></i>
-            </p>
+            </p> -->
             <el-card class="report">
               <el-row>
                 <el-col :span="8" :xs="24" class="flightStatus">
@@ -168,7 +168,7 @@
                 </el-col>
               </el-row>
             </el-card>
-          </li>
+          <!-- </li> -->
           <!-- <li class="list-group-item" :class="{'dragActive':showDrag[4]}">
             <p class="dragHead"  v-on:mouseover="dragShow(4)" v-on:mouseleave="dragHide(4)">
               <span v-show="showInfo[4]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>          
@@ -189,15 +189,15 @@
               </el-input>
             </el-card>
           </li> -->
-        </ul>
+        <!-- </ul> -->
       </el-col>
       <el-col :span="8" class="sideBox">
-        <ul class="list-group" v-sortable="optionsDragRight">
+        <!-- <ul class="list-group" v-sortable="optionsDragRight">
           <li class="list-group-item" :class="{'dragActive':showDrag[5]}">
             <p class="dragHead" v-on:mouseover="dragShow(5)" v-on:mouseleave="dragHide(5)">
               <span v-show="showInfo[5]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[5]=true" v-on:mouseleave="showInfo[5]=false" v-show="showDrag[5]"></i>
-            </p>
+            </p> -->
             <side-Person-Search></side-Person-Search>
             <!-- <el-card class="contactList">
               <span slot="header">公司同仁</span>
@@ -205,19 +205,19 @@
                 <el-button slot="append">搜索</el-button>
               </el-input>
             </el-card> -->
-          </li>
+          <!-- </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[6]}">
             <p class="dragHead" v-on:mouseover="dragShow(6)" v-on:mouseleave="dragHide(6)">
               <span v-show="showInfo[6]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[6]=true" v-on:mouseleave="showInfo[6]=false" v-show="showDrag[6]"></i>
-            </p>
+            </p> -->
             <duty></duty>
-          </li>
-          <li class="list-group-item" :class="{'dragActive':showDrag[10]}">
+          <!-- </li> -->
+          <!-- <li class="list-group-item" :class="{'dragActive':showDrag[10]}">
             <p class="dragHead" v-on:mouseover="dragShow(10)" v-on:mouseleave="dragHide(10)">
               <span v-show="showInfo[10]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[10]=true" v-on:mouseleave="showInfo[10]=false" v-show="showDrag[10]"></i>
-            </p>
+            </p> -->
             <el-card class="flightStatus">
               <span slot="header">航班动态</span>
               <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate" class="searchDate" :editable="false" :clearable="false"></el-date-picker>
@@ -239,12 +239,12 @@
                 <el-button @click="searchFlight">搜索</el-button>
               </div>
             </el-card>
-          </li>
+          <!-- </li>
           <li class="list-group-item" :class="{'dragActive':showDrag[7]}">
             <p class="dragHead" v-on:mouseover="dragShow(7)" v-on:mouseleave="dragHide(7)">
               <span v-show="showInfo[7]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
               <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[7]=true" v-on:mouseleave="showInfo[7]=false" v-show="showDrag[7]"></i>
-            </p>
+            </p> -->
             <el-card class="Workbench">
               <span slot="header">日常事项</span>
               <el-menu>
@@ -264,7 +264,7 @@
                 <el-menu-item index="7"><i class="iconfont icon-weixiu"></i>ME维修信息管理系统<i class="el-icon-arrow-right"></i></el-menu-item>
               </el-menu>
             </el-card>
-          </li>
+          <!-- </li> -->
           <!-- <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
             <p class="dragHead"  v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
               <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>          
@@ -283,7 +283,7 @@
               <search-date :type="tripType"></search-date>
             </el-card>
           </li> -->
-        </ul>
+        <!-- </ul> -->
       </el-col>
     </el-row>
   </div>
@@ -365,25 +365,6 @@ const polarAreaOption = {
     }
   }
 };
-const weibos = [{
-    'author': 'HR Group',
-    'text': '公司的進步實在有賴每位員工的寶貴意見，而CONNECT就是其中一個直達公司管理層的有效渠道。在跟進期間，您的身份將會被保密。 您可將意見寫信至connect@hkairlines.com。一經刊登，您將有機會獲得價值港幣500元的超市禮券。',
-    'img': '../assets/images/Image79.png',
-    'forword': '1',
-    'favorite': '2',
-    'comment': '3',
-    'time': '1213213233'
-  },
-  {
-    'author': 'HR Group',
-    'text': 'CONNECT is a great way to express your idea. Your comments are essential to HKA’s growth and your identity will be protected. Send us your opinion to connect@hkairlines.com and win a HKD500 coupon!',
-    'img': '../assets/images/Image79.png',
-    'forword': '3',
-    'favorite': '5',
-    'comment': '9',
-    'time': '2213789323'
-  },
-];
 const options = [{
   value: '选项1',
   label: 'DZ'
@@ -399,7 +380,6 @@ export default {
       pieoption,
       polarAreaData,
       polarAreaOption,
-      weibos,
       tripType: 'date',
       tripFrom: { cityName: '' },
       tripTo: { cityName: '' },
@@ -580,7 +560,6 @@ export default {
                       });
                     })
                   }
-                  console.log(this.newsList);
                 }
               })
           } else {
@@ -660,8 +639,8 @@ $sub:#1465C0;
     .el-carousel__indicators {
       right: 10px;
       top: 23px;
-      left: initial;
-      transform: initial;
+      left: inherit;
+      transform: inherit;
       .el-carousel__indicator {
         padding: 0 2px;
         button {
@@ -730,15 +709,16 @@ $sub:#1465C0;
         padding-left: 15px;
         line-height: 50px;
         overflow: hidden;
-        display: flex;
+        display: block;
         p:first-child {
           font-size: 15px;
           white-space: nowrap;
           text-overflow: ellipsis;
           overflow: hidden;
-          padding-right: 30px;
-          width: 480px;
+          padding-right: 20px;
+          width: 400px;
           color: #393939;
+          float: left;
         }
         p.new {
           &:after {
@@ -755,9 +735,10 @@ $sub:#1465C0;
         }
         p:last-child {
           font-size: 12px;
-          flex: 1;
+          float: right;
           &>span {
             float: right;
+            height: 50px;
             i {
               color: $main;
             }
@@ -1129,7 +1110,7 @@ $sub:#1465C0;
         text-overflow: ellipsis;
       }
       .timeline {
-        line-height: initial;
+        line-height: 16px;
         position: absolute;
         text-align: right;
         font-size: 12px;
@@ -1222,8 +1203,10 @@ $sub:#1465C0;
         }
       }
       .el-icon-arrow-right {
-        float: right;
         line-height: 56px;
+        position: absolute;
+        right: 20px;
+        top: 0;
       }
     }
     .el-menu-item:hover {

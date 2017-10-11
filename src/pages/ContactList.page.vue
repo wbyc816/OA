@@ -146,7 +146,6 @@ export default {
   },
   created() {
     this.$store.dispatch('getDeptList');
-    console.log(this.$route.params)
 
     if (this.$route.params.name) {
 
@@ -182,6 +181,7 @@ export default {
       this.$refs['searchForm'].validate((valid) => {
         if (valid) {
           this.searchButton = true;
+          this.$store.dispatch('setQueryDepId', '')
           this.$store.dispatch('setQueryPage', 1);
           this.$store.dispatch('queryEmpList', this.searchForm);
         } else {

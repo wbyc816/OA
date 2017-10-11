@@ -6,7 +6,7 @@
       </el-col>
       <el-col :span="7" class="sideBar">
         <el-card class="borderCard searchBox" v-show="$route.path=='/HR/clildHR'">
-          <div slot="header">新闻查询</div>
+          <!-- <div slot="header">新闻查询</div> -->
           <el-input class="search">
             <el-button slot="append">搜索</el-button>
           </el-input>
@@ -172,6 +172,7 @@ $sub:#1465C0;
         border-bottom: none;
       }
       .el-card__body {
+        padding-top:15px;
         padding-bottom: 15px;
       }
     }
