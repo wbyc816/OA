@@ -81,7 +81,12 @@ import salary from '../pages/HR/salary.page'
 import salaryHistory from '../pages/HR/salaryHistory.page'
 import newsDetail from '../pages/HR/newsDetail.page'
 
+//生日提醒
 import BirthdayReminder from 'pages/BirthdayReminder.page'
+
+//文件首页
+import FilesHome from 'pages/FilesHome.page'
+
 Vue.use(Router)
 
 export default new Router({
@@ -116,6 +121,13 @@ export default new Router({
               breadcrumb: "生日提醒",
             }
        } , {
+          path: '/FilesHome',
+          name: 'FilesHome',
+          component: FilesHome,
+          meta: {
+            breadcrumb: "文件首页",
+          }
+       } ,{
             path: '/HR',
             name: 'HR',
             component: HR,
