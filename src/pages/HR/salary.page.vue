@@ -2,7 +2,7 @@
   <div id="salary">
     <el-card class="commonCard">
       <div slot="header" class="clearfix">
-        <span>最新工资单</span>
+        <span>{{pageTitle}}</span>
         <div class="salaryHearder">
           <span>增加</span>
           <span>扣减</span>
@@ -15,7 +15,7 @@
             <el-col :span="12">{{userInfo.name}}</el-col>
           </el-row>
         </div>
-        <div class="alignCenter" v-if="salaryType==0"><br>暂无数据<br></div>
+        <div class="alignCenter" @click="checkPassword" v-if="salaryType==0"><br>暂无数据<br></div>
         <el-row class="salaryList" v-if="salaryType>0">
           <el-col :span="12">
             <el-row v-for="salary in salaryLeft" v-if="salaryData[salary.name]">
@@ -165,14 +165,15 @@
         </el-row>
       </div>
     </el-card>
+    <salary-dialog @updateSalary="updateSalary" :visible.sync="salaryDialogVisible"></salary-dialog>
   </div>
 </template>
 <script>
-import MyTable from '../../components/myTable.component'
 import { salaryLeft,salaryRight } from '../../common/salaryConfig'
+import SalaryDialog from '../../components/salaryDialog.component'
 import { mapGetters } from 'vuex'
 export default {
-  components: { MyTable },
+  components: { SalaryDialog },
   data() {
     return {
       activeName: 'post',
@@ -182,14 +183,8 @@ export default {
       salaryData:{},
       salaryType:0,
       paramsMonth:"",
-      tabList: {
-        post: false,
-        contract: false,
-        edu: false,
-        assessre: false,
-        postExp: false,
-        contact: false
-      }
+      salaryDialogVisible:false,
+      pageTitle:"最新工资单"
     }
   },
   computed: {
@@ -199,19 +194,30 @@ export default {
       'userInfo'
     ])
   },
+  mounted(){
+    this.checkPassword();
+  },
   created() {
     let month=this.$route.params.salaryMonth;
     if(month!=1){
       this.paramsMonth=month;
+      this.pageTitle="工资单明细"
+    }else{
+      this.pageTitle="最新工资单"
     }
-    this.getData();
-  },
-  beforeRouteUpdate(to, from, next){
+  },beforeRouteUpdate(to, from, next){
     next();
     this.paramsMonth=this.$route.params.salaryMonth;
-    this.getData();
+    this.checkPassword();
   },
   methods: {
+    checkPassword(){
+      if(this.getCookie('salaryAccount')==this.userInfo.empId){
+        this.getData();
+      }else{
+        this.salaryDialogVisible=true;
+      }
+    },
     getData(){
       this.$http.post("/salary/getNewSalaryOrMonth", {
         empId:this.userInfo.empId,
@@ -240,6 +246,12 @@ export default {
       }, res => {
 
       })
+    },
+    updateSalary(val){
+      console.log(val);
+      if(val){
+        this.getData();
+      }
     }
   }
 }
