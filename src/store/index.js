@@ -16,12 +16,14 @@ const state = {
   baseURL:'http://192.168.8.92:8080/DonghaiAirAPI',
   editStatus:false,
   sumitLoading:false,
+  DHId:'CFCD208495D565EF66E7DFF9F98764DA'
 }
 const getters ={
 	searchLoading: state => state.searchLoading,
   editStatus: state => state.editStatus,
   baseURL: state => state.baseURL,
   sumitLoading: state => state.sumitLoading,
+  DHId: state => state.DHId,
 }
 const actions={
   setEditStatus({commit},palyload){

@@ -7,8 +7,8 @@
       <el-form-item label="规格" class="inlinItem" prop="specification">
         <el-input v-model="materialForm.specification"></el-input>
       </el-form-item>
-      <el-form-item label="计划单价" class="inlinItem" prop="plannedUnitPriceL">
-        <el-input v-model.number="materialForm.plannedUnitPriceL" class="hasUnit">
+      <el-form-item label="计划单价" class="inlinItem" prop="plannedUnitPrice">
+        <el-input v-model.number="materialForm.plannedUnitPrice" class="hasUnit">
           <template slot="append">元</template>
         </el-input>
       </el-form-item>
@@ -29,7 +29,7 @@
       <el-table-column type="index" label=" " width="40"></el-table-column>
       <el-table-column property="productName" label="品名" width="160"></el-table-column>
       <el-table-column property="specification" label="规格" width="65"></el-table-column>
-      <el-table-column property="plannedUnitPriceL" label="计划单价" width="85"></el-table-column>
+      <el-table-column property="plannedUnitPrice" label="计划单价" width="85"></el-table-column>
       <el-table-column property="quantity" label="数量" width="65"></el-table-column>
       <el-table-column property="remark" label="备注"></el-table-column>
       <el-table-column label="操作" width="55">
@@ -51,14 +51,14 @@ export default {
         productName: '',
         specification: '',
         quantity: '',
-        plannedUnitPriceL: '',
+        plannedUnitPrice: '',
         remark: ''
       },
       rules: {
         productName: [{ required: true, message: '请输入品名', trigger: 'blur' }],
         specification: [{ required: true, message: '请输入规格', trigger: 'blur' }],
         quantity: [{ required: true, message: '请输入数量' }, { type: 'number', message: '数量必须为数字值' }],
-        plannedUnitPriceL: [{ required: true, message: '请输入单价' }, { type: 'number', message: '单价必须为数字值' }],
+        plannedUnitPrice: [{ required: true, message: '请输入单价' }, { type: 'number', message: '单价必须为数字值' }],
       },
       materials: []
     }
@@ -68,7 +68,7 @@ export default {
       if(this.materials.length!=0){
         var num=0;
         this.materials.forEach(m=>{
-          num+=m.plannedUnitPriceL*m.quantity
+          num+=m.plannedUnitPrice*m.quantity
         })
         return num
       }else{
@@ -84,7 +84,7 @@ export default {
       this.$refs.materialForm.validate((valid) => {
         if (valid) {
           var temp = this.clone(this.materialForm);
-          temp.plannedUnitPriceL = this.fomatFloat(temp.plannedUnitPriceL, 1);
+          temp.plannedUnitPrice = this.fomatFloat(temp.plannedUnitPrice, 1);
           temp.quantity = parseInt(temp.quantity);
           this.materials.push(temp);
           this.$refs.materialForm.resetFields();

@@ -49,7 +49,7 @@
     }
     .doc-text {
       display: inline-block;
-      max-width: 130px;
+      // max-width: 130px;
       padding-left: 40px;
       text-align: left;
       text-indent: 0;

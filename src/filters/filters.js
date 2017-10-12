@@ -8,9 +8,9 @@ function timeFilter(value, type) { //value为13位的时间戳
   function t(s) {
     return s < 10 ? '0' + s : s;
   };
-  if (type == 'all') {
+  
     value = parseInt(value);
-  }
+
   if (typeof value == 'number') {
     var time = new Date(value);
     var y = time.getFullYear(); //年
@@ -32,6 +32,8 @@ function timeFilter(value, type) { //value为13位的时间戳
       return weeks[w];
     } else if (type == 'month') {
       return months[m];
+    } else if (type == 'ch') {
+      return y+'年'+(m + 1)+'月'+d+'日';
     } else if (type == 'all') {
       return y + '-' + t(m + 1) + '-' + t(d) + ' ' + t(h) + ':' + t(min) + ':' + t(s)
     }else if (type == 'birthday') {
