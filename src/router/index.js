@@ -77,6 +77,7 @@ import resume from '../pages/HR/resume.page'
 import editResume from '../pages/HR/editResume.page'
 import salary from '../pages/HR/salary.page'
 import newsDetail from '../pages/HR/newsDetail.page'
+import BirthdayReminder from 'pages/BirthdayReminder.page'
 Vue.use(Router)
 
 import operationSystem from './operationSystem'
@@ -141,6 +142,13 @@ export default new Router({
             component: flightStatus,
             meta: {
                 breadcrumb: "航班动态",
+            }
+        },{
+            path: '/BirthdayReminder',
+            name: 'BirthdayReminder',
+            component: BirthdayReminder,
+            meta: {
+                breadcrumb: "生日提醒",
             }
         }, {
             path: '/doc',

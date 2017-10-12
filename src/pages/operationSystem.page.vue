@@ -60,7 +60,7 @@ export default {
       },
       {
         title: '公文超时',
-        path: '#'
+        path: '/doc/docPending'
       },
       {
         title: '生日提醒',
