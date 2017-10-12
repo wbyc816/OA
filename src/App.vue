@@ -22,7 +22,7 @@
             <el-col :span="16">
               <el-menu default-active="1" mode="horizontal" :router="true">
                 <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>                
-                <el-menu-item :route="{path:'/HR'}" index="5">个人中心</el-menu-item>
+                <el-menu-item :route="{path:'/HR'}" index="5">人力资源</el-menu-item>
                 <el-menu-item :route="{path:'/doc'}" index="2">我的工作</el-menu-item>
                 <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
                 <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
@@ -161,12 +161,12 @@ export default {
     } else {
       this.baseUrl = 'http://192.168.8.92:8080'
     }
-    if (this.getCookie('userId')) {
-      this.$store.commit('setEmpId', this.getCookie('userId'));
-      this.$store.dispatch('getUserInfo');
-    } else {
-      location.href = this.baseUrl+"/login.html"
-    }
+    // if (this.getCookie('userId')) {
+    //   this.$store.commit('setEmpId', this.getCookie('userId'));
+    //   this.$store.dispatch('getUserInfo');
+    // } else {
+    //   location.href = this.baseUrl+"/login.html"
+    // }
   },
   mounted() {
 

@@ -63,7 +63,7 @@ export default {
     initPdf() {
       pdfjsLib.PDFJS.workerSrc = '../pdf.worker.js';
       console.log(this.detail)
-      var loadingTask = pdfjsLib.getDocument('http://ui.loogk.com/test/test.pdf');
+      var loadingTask = pdfjsLib.getDocument(decodeURI(this.detail.url));
       var that = this;
       loadingTask.promise.then(function(pdfDoc_) {
         that.pdfDoc = pdfDoc_;
