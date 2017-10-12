@@ -2,7 +2,7 @@
   <div class='descriptionBox'>
     <h4 class='doc-form_title'>详情信息</h4>
     <slot></slot>
-    <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
+    <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
       <el-form-item label="请示内容" prop="des">
         <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des"></el-input>
         <div class="tempBox"><span></span>
@@ -10,8 +10,18 @@
         </div>
       </el-form-item>
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
-        <el-input v-model="ruleForm.path" >
-        </el-input>
+        <div class="pathBox clearfix">
+          <template v-for="(node,index) in ruleForm.path">
+            <div class="nodeBox">
+              <span v-if="node.nodeName=='sign'" class="signList">
+                #<span v-for="child in node.children">{{child.typeIdName}}</span>#
+              </span>
+              <span v-else>{{node.typeIdName}}</span>
+            </div>
+            <i class="iconfont icon-jiantouyou" v-if="index!=ruleForm.path.length-1"></i>
+          </template>
+        </div>
+        <el-button size="small" type="text" @click="pathDialogVisible=true"><i class="iconfont icon-edit"></i>编辑</el-button>
       </el-form-item>
       <el-form-item label="附件">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload">
@@ -48,29 +58,34 @@
         </el-pagination>
       </div>
     </el-dialog>
+    <path-dialog @updatePath="updatePath" :visible.sync="pathDialogVisible" :paths="ruleForm.path"></path-dialog>
   </div>
 </template>
 <script>
 import SearchOptions from '../../../components/searchOptions.component'
+import PathDialog from '../../../components/pathDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   props: {
-    options: ''
+    options: {
+      type: Object
+    }
   },
   data() {
     return {
       ruleForm: {
         des: '',
-        path:''
+        path: []
       },
       rules: {
         des: [
           { required: true, message: '请输入请示内容', trigger: 'blur,change' }
         ],
-        path: [{ required: true, message: '请输入建议路径', trigger: 'blur,change' }],
+        path: [{type:'array', required: true, message: '请选择建议路径', trigger: 'blur,change' }],
       },
       dialogTableVisible: false,
+      pathDialogVisible: false,
       docs: [{ quoteDocTitle: '', quoteDocId: '' }],
       activeDoc: '',
       attchment: [],
@@ -95,7 +110,8 @@ export default {
     ])
   },
   components: {
-    SearchOptions
+    SearchOptions,
+    PathDialog
   },
   methods: {
     submitForm() {
@@ -108,7 +124,7 @@ export default {
               taskContent: this.ruleForm.des,
               qutoes: this.docs[0].quoteDocId ? this.docs : [],
               fileId: [],
-              suggestPath:this.ruleForm.path
+              suggests: this.handlePath(this.ruleForm.path)
             });
           }
         } else {
@@ -150,7 +166,8 @@ export default {
           fileId: this.fileIds,
           taskContent: this.ruleForm.des,
           quoteDocTitle: this.docs[0].quoteDocTitle,
-          quoteDocId: this.docs[0].quoteDocId
+          quoteDocId: this.docs[0].quoteDocId,
+          suggests: this.handlePath(this.ruleForm.path)
         }
         this.$emit('submitEnd', params);
       }
@@ -202,6 +219,49 @@ export default {
 
       })
     },
+    updatePath(list) {
+      console.log(list)
+      this.ruleForm.path = this.clone(list);
+      this.pathDialogVisible = false;
+    },
+    handlePath(list) {
+      var _list = [];
+      list.forEach((item, index, arr) => {
+        var nodeName = '';
+        if (index == 0) {
+          nodeName = 'start';
+        } else if (index == arr.length - 1) {
+          nodeName = 'end';
+        }else{
+          nodeName='task';
+        }
+        if (item.nodeName == 'sign') {
+          nodeName = 'sign';
+          item.children.forEach((child, i) => {
+            _list.push({
+              nodeId: index + 1 + '-' + i,
+              nodeName: nodeName,
+              typeId: child.typeId,
+              typeIdName: child.typeIdName,
+              type: child.type,
+              docType: this.options.docType
+            })
+          })
+        } else {
+
+          _list.push({
+            nodeId: index + 1,
+            nodeName: nodeName,
+            typeId: item.typeId,
+            typeIdName: item.typeIdName,
+            type: item.type,
+            docType: this.options.docType
+          })
+        }
+      })
+      console.log(_list)
+      return _list
+    }
   }
 }
 
@@ -228,9 +288,42 @@ $sub:#1465C0;
     margin-top: 20px;
   }
   .suggestPath {
-    line-height: 45px;
-    img {
-      vertical-align: middle;
+    .pathBox {
+      width: 88%;
+      float: left;
+      line-height: 20px;
+      padding-top: 12px;
+      .nodeBox {
+        float: left;
+        padding-right: 10px;
+        .signList {
+          color: #main;
+          span {
+            padding-right: 5px;
+            &:last-of-type {
+              padding-right: 0;
+            }
+          }
+        }
+      }
+      i {
+        float: left;
+        padding-right: 10px;
+        color: $main;
+      }
+    }
+    .el-button {
+      width: 12%;
+      float: right;
+      border-left: 1px solid #95989A;
+      line-height: 30px;
+      padding: 0;
+      font-size: 15px;
+      margin-top: 7px;
+      text-align: right;
+      i {
+        margin-right: 5px;
+      }
     }
   }
   .tempBox {

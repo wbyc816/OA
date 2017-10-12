@@ -199,7 +199,7 @@ $main:#0460AE;
     }
     .search {
       float: right;
-      width: initial;
+      width: auto;
     }
   }
   .organlist .topMenu {

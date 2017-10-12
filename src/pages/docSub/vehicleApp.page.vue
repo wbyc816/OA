@@ -28,7 +28,7 @@ export default {
     return {
       docTitle: '用车申请',
       middleParams: '',
-      options: { suggestPath: suggestPath }
+      options: { docType: 'YCS' }
     }
   },
   computed: {

@@ -65,7 +65,7 @@ const contrastData = [
   { 'logo': 'icon-rili', 'color': '#A5A3FF', 'text': '请假申请', 'link': '/doc/docCommonApp/QJS' },
   { 'logo': 'icon-contract', 'color': '#FF5F88', 'text': '人员引进申请', 'link': '#' },
   { 'logo': 'icon-book-copy', 'color': '#9FD867', 'text': '转正申请', 'link': '/doc/docCommonApp/ZZS' },
-  { 'logo': 'icon-hetong', 'color': '#FF5F88', 'text': '培训申请', 'link': '#' },
+  { 'logo': 'icon-hetong', 'color': '#FF5F88', 'text': '培训申请', 'link': '/doc/docCommonApp/PXS' },
   { 'logo': 'icon-file1', 'color': '#5BB5FC', 'text': '人事变动', 'link': '/doc/docCommonApp/RSB' },
   { 'logo': 'icon-gongwen', 'color': '#FF754F', 'text': '工伤申请', 'link': '/doc/docCommonApp/GSS' },
   { 'logo': 'icon-contract', 'color': '#FFE066', 'text': '离职申请', 'link': '#' },

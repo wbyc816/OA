@@ -4,7 +4,7 @@
       <div slot="header">今日值班
         <router-link to="#">更多</router-link>
       </div>
-      <p class="leader" v-if="dutys.leader&&dutys.leader.name"><span class="name">{{dutys.leader.name}}</span>{{dutys.leader.phone | phone}}</span>
+      <p class="leader" v-if="dutys.leader&&dutys.leader.name"><span class="name">01 {{dutys.leader.name}}</span>{{dutys.leader.phone | phone}}</span>
       </p>
       <el-menu mode="vertical" default-active="1">
         <el-menu-item-group>

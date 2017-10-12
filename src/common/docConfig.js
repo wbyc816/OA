@@ -36,4 +36,9 @@ export const docConfig = [{
     code: 'ZZS',
     url:'/doc/empBecome'
   },
+  {
+    docName: '培训申请',
+    code: 'PXS',
+    url:'/doc/trainApplication'
+  },
 ]

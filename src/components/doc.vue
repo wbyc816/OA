@@ -16,14 +16,11 @@
   cursor: pointer;
   .doc-title {
     position: relative;
-    display: flex;
-    justify-content: left;
-    align-items: center;
     float: right;
     width: 85%;
     height: 100%;
     font-size: 16px;
-    line-height: 18px;
+    line-height: 57px;
     text-indent: 14px;
     text-align: center;
     background-color: #fff;
@@ -50,7 +47,6 @@
     .doc-text {
       display: inline-block;
       // max-width: 130px;
-      padding-left: 40px;
       text-align: left;
       text-indent: 0;
       color: #393939;

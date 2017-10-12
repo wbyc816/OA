@@ -30,14 +30,14 @@ import GSS from './component/injuryApp.component.vue'
 import RSB from './component/empChangeApp.component.vue'
 import JJS from './component/empUpgradeApp.component.vue'
 import ZZS from './component/empBecomeApp.component.vue'
-import suggestPath from '../../assets/images/suggestPath1.png'
+import PXS from './component/empTrainingApp.component.vue'
 
 export default {
   data() {
     return {
       docConfig,
       middleParams: '',
-      options: { suggestPath: suggestPath },
+      options: { docType: '' },
       doc:''
     }
   },
@@ -58,7 +58,8 @@ export default {
     GSS,
     RSB,
     JJS,
-    ZZS
+    ZZS,
+    PXS
   },
   created(){
     this.initDoc();
@@ -66,6 +67,7 @@ export default {
   methods: {
     initDoc(){
       this.doc=this.docConfig.find(doc=>doc.code==this.$route.params.code);
+      this.options.docType=this.doc.code;
     },  
     submitDoc() {
       this.$store.commit('SET_SUBMIT_LOADING', true)
