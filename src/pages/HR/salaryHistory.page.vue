@@ -93,7 +93,7 @@ export default {
     },
     getData() {
       this.$http.post("/salary/getHistorySalary", {
-        //empId: '77CDFC1E11E36A23BB030892EE00B8CF',
+        // empId: '77CDFC1E11E36A23BB030892EE00B8CF',
         empId: this.userInfo.empId,
         pageSize: this.paginate.currentSize,
         pageNumber: this.paginate.currentPage,
