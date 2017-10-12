@@ -10,7 +10,7 @@
           <el-menu-item-group title="消息中心">
             <template v-for='(item,index) in navMenu'>
               <div class="badge" v-if="message[index]" :style="{'top': getTop(index)}">{{ message[index] }}</div>
-              <el-menu-item v-if='item.path' :key="item.path" :index='index.toString()' :route="{path:item.path}">
+              <el-menu-item v-if='item.path' :index='index.toString()' :route="{path:item.path}">
                 <span>{{item.title}}</span>
                 <i class="el-icon-arrow-right"></i>
               </el-menu-item>
@@ -48,11 +48,11 @@ export default {
       breadcrumbItem: '',
       navMenu: [{
         title: '待批公文',
-        path: '#'
+        path: '/doc/docPending'
       },
       {
         title: '跟踪公文',
-        path: '#'
+        path: '/doc/docTracking'
       },
       {
         title: '邮件通知',
@@ -64,7 +64,7 @@ export default {
       },
       {
         title: '生日提醒',
-        path: '#'
+        path: '/BirthdayReminder'
       },
       {
         title: '会议通知',
@@ -92,16 +92,16 @@ export default {
   created() {
     this.$store.dispatch('getAdminStatus');
     this.$store.dispatch('getDocForm');
-    this.$http.post("/salary/getHistorySalary", {
+    this.$http.post("/doc/docTips", {
       empId: this.userInfo.empId
     }).then((res) => {
       if (res.status == 0) {
-        this.messge.push(res.data.pendingNum)
-        this.messge.push(res.data.trackingNum)
-        this.message.push(res.data.toReadNum)  
-        this.message.push(res.data.overTimeNum)
-        this.message.push(res.data.birthdayNum)
-        this.message.push(0)   
+        this.message.push(res.data.pendingNum);
+        this.message.push(res.data.trackingNum);
+        this.message.push(res.data.toReadNum);
+        this.message.push(res.data.overTimeNum);
+        this.message.push(res.data.birthdayNum);
+        this.message.push(0);
 
       }
     })
@@ -165,11 +165,13 @@ export default {
       position: absolute;
       padding-top: .6px;
       left: 95px;
-      background-color: #A06BB5;
+      background-color: #BE3B7F;
+      color:#fff;
       border-radius: 50%;
       text-align: center;
-      width: 15px;
-      height: 15px;
+      width: 19px;
+      height: 19px;
+      line-height: 19px;
       font-size: 12px;
     }
   }
