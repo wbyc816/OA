@@ -85,7 +85,7 @@ const menuList = [{
 },
 {
   title: '薪资绩效',
-  child: [{ name: '最新工资单', path: '#/HR/salary/1' }, { name: '历史工资单', path: `#/HR/salaryHistory/${defaultSalaryHistory}` }]
+  child: [{ name: '最新工资单', path: '#/HR/salary/1' }, { name: '历史工资单', path: '#/HR/salaryHistory/1' }]
 }, {
   title: '相关链接',
   child: [{ name: '社会保障系统', path: 'http://www.szsi.gov.cn/', target: '_blank' }, { name: '公积金系统', path: 'http://www.szzfgjj.com/', target: '_blank'}]
