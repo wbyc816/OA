@@ -79,6 +79,8 @@ import salary from '../pages/HR/salary.page'
 import newsDetail from '../pages/HR/newsDetail.page'
 Vue.use(Router)
 
+import operationSystem from './operationSystem'
+
 export default new Router({
 
     // mode: 'history',
@@ -626,5 +628,6 @@ export default new Router({
         //  }
         //  ]
         // }
+       operationSystem
     ]
 })
