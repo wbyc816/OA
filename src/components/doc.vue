@@ -1,12 +1,12 @@
 <template>
-  <a @click="routerFn()" class='doc-block'>
-        <span class='doc-title'>
-            <span class='logo' :style={backgroundColor:data.color}>
-              <i class='iconfont' :class='data.logo'></i>
-            </span>
-            <span class='doc-text' v-text='data.text'></span>
-        </span>
-    </a>
+  <a :href="data.link" :target='target' class='doc-block'>
+    <span class='doc-title'>
+      <span class='logo' :style={backgroundColor:data.color}>
+        <i class='iconfont' :style="{'font-size': fontSize,'color': data.fontColor }" :class='data.logo'></i>
+      </span>
+      <span class='doc-text' v-text='data.text'></span>
+    </span>
+  </a>
 </template>
 <style scoped lang='scss'>
 .doc-block {
@@ -43,36 +43,45 @@
     }
     .iconfont {
       line-height: 57px;
-      font-size: 22px;
       text-indent: 0;
       color: #fff;
+      // color: green;
+      // background-color: white;
     }
     .doc-text {
       display: inline-block;
       max-width: 130px;
       padding-left: 40px;
       text-align: left;
+      font-size: 14px;
       text-indent: 0;
       color: #393939;
     }
   }
 }
-
 </style>
 <script>
 export default {
   data() {
-    return {}
+    return {
+      target: '_self',
+    }
   },
   props: {
     data: {
       type: Object,
       require: true
+    },
+    fontSize: {
+      type: String,
+      default: '22px'
     }
   },
-  methods: {
-    routerFn: function() {
-      this.$router.push(this.data.link)
+  created() {
+    if (/^http/.test(this.data.link)) {
+      this.target = '_blank'
+    } else {
+      this.data.link = '#' + this.data.link
     }
   }
 }
