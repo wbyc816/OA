@@ -219,6 +219,7 @@ export default {
     },
     search() {
       this.searchButton = true;
+      this.$store.dispatch('setQueryDepId', '');
       this.$store.dispatch('setQueryPage', 1);
       this.$store.dispatch('queryEmpList', { name: this.name })
     },

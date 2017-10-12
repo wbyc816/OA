@@ -29,7 +29,7 @@ export default {
       if(this.info.length!=0){
         var num=0;
         this.info.forEach(m=>{
-          num+=m.plannedUnitPriceL*m.quantity
+          num+=m.plannedUnitPrice*m.quantity
         })
         return num
       }else{

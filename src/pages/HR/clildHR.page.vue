@@ -44,7 +44,7 @@
       </el-row>
     </el-card>
     <div class="imgBox">
-      <img src="../../assets/images/Image88.png" alt="">
+      <img src="../../assets/images/Image88.jpg" alt="">
     </div>
     <el-card class="borderCard highLight">
       <p slot="header"><i class="iconfont icon-zhinan"></i>办事指南<router-link to="#" class="headRight">更多</router-link></p>

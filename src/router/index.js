@@ -16,9 +16,7 @@ import approvalForm from 'pages/docSub/approvalForm.page'
 import materialApp from 'pages/docSub/materialApp.page'
 import vehicleApp from 'pages/docSub/vehicleApp.page'
 import manuscriptApp from 'pages/docSub/manuscriptApp.page'
-
 import docCommonApp from 'pages/docSub/docCommonApp.page'
-
 // import manuscriptPaper from'pages/docSub/fileManuscriptPaper.page'
 // import leisureTravel from 'pages/docSub/staff-leisure-travel.page'
 // import business from 'pages/docSub/businessTrip.page'
@@ -81,6 +79,7 @@ import salary from '../pages/HR/salary.page'
 import salaryHistory from '../pages/HR/salaryHistory.page'
 import newsDetail from '../pages/HR/newsDetail.page'
 
+
 //生日提醒
 import BirthdayReminder from 'pages/BirthdayReminder.page'
 
@@ -88,6 +87,8 @@ import BirthdayReminder from 'pages/BirthdayReminder.page'
 import FilesHome from 'pages/FilesHome.page'
 
 Vue.use(Router)
+
+import operationSystem from './operationSystem'
 
 export default new Router({
 
@@ -127,7 +128,7 @@ export default new Router({
           meta: {
             breadcrumb: "文件首页",
           }
-       } ,{
+       } , {
             path: '/HR',
             name: 'HR',
             component: HR,
@@ -169,7 +170,7 @@ export default new Router({
             meta: {
                 breadcrumb: "航班动态",
             }
-        }, {
+        },{
             path: '/doc',
             name: 'doc',
             component: doc,
@@ -542,7 +543,7 @@ export default new Router({
         //  meta:{
         //      breadcrumb:"My Benefit Detail",
         //  }
-        // },
+        // },   
         // {
         //  path:'/E-personnel',
         //  name:'E-personnel',
@@ -655,5 +656,6 @@ export default new Router({
         //  }
         //  ]
         // }
+       operationSystem
     ]
 })

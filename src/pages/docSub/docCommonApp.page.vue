@@ -5,7 +5,7 @@
         <span v-text='doc.docName'></span>
       </div>
       <div>
-        <subject class='doc-section' ref="subject" @submitStart="submitStart" reciverTtitle="校对人"></subject>
+        <subject class='doc-section' ref="subject" @submitStart="submitStart"></subject>
         <description class='doc-section' ref="description" @submitEnd="submitEnd" :options="options">
           <!-- <manuscript-app  @submitMiddle="submitMiddle"></manuscript-app> -->
           <component v-bind:is="$route.params.code" ref="middleCom" @submitMiddle="submitMiddle">
@@ -25,6 +25,11 @@ import {docConfig} from '../../common/docConfig'
 import Subject from './component/subject.component.vue'
 import Description from './component/description.component.vue'
 import CLV from './component/travelApp.component.vue'
+import QJS from './component/vacationApp.component.vue'
+import GSS from './component/injuryApp.component.vue'
+import RSB from './component/empChangeApp.component.vue'
+import JJS from './component/empUpgradeApp.component.vue'
+import ZZS from './component/empBecomeApp.component.vue'
 import suggestPath from '../../assets/images/suggestPath1.png'
 
 export default {
@@ -48,7 +53,12 @@ export default {
   components: {
     Subject,
     Description,
-    CLV
+    CLV,
+    QJS,
+    GSS,
+    RSB,
+    JJS,
+    ZZS
   },
   created(){
     this.initDoc();
@@ -69,6 +79,7 @@ export default {
       }
     },
     submitMiddle(params) {
+      console.log(params);
       if (params) {
         this.middleParams = params;
         this.$refs.description.submitForm();

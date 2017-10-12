@@ -132,7 +132,6 @@ const actions = {
   //提交公文
   submitDoc({ commit, state, rootState, rootGetters, dispatch }, payLoad) {
     var params = {
-      "suggestPath": "",
       "taskDeptMajorName": rootGetters.userInfo.deptVo.fatherDept,
       "taskDeptMajorId": rootGetters.userInfo.deptVo.fatherDeptId,
       "taskDeptName": rootGetters.userInfo.deptVo.dept,
