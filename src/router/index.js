@@ -89,6 +89,7 @@ import FilesHome from 'pages/FilesHome.page'
 Vue.use(Router)
 
 import operationSystem from './operationSystem'
+import duty from './duty'
 
 export default new Router({
 
@@ -656,6 +657,7 @@ export default new Router({
         //  }
         //  ]
         // }
-       operationSystem
+       operationSystem,
+       duty
     ]
 })
