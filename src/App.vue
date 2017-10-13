@@ -3,10 +3,14 @@
     <div class="topBar" :class="{'active':scrollBanner}">
       <div class="topNavbar">
         <div class="container">
-          <a><i class="iconfont icon-1"></i> 简体</a>
-          <a><i class="iconfont icon-shezhi"></i> 设置</a>
-          <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
-          <a @click="loginOut"><i class="iconfont icon-guanbi"></i> 登出</a>
+          <a>
+            <i class="iconfont icon-1"></i> 简体</a>
+          <a>
+            <i class="iconfont icon-shezhi"></i> 设置</a>
+          <router-link to="/HR/personalInfo">
+            <i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
+          <a @click="loginOut">
+            <i class="iconfont icon-guanbi"></i> 登出</a>
         </div>
       </div>
       <nav class="navbar">
@@ -21,7 +25,7 @@
             </el-col>
             <el-col :span="16">
               <el-menu default-active="1" mode="horizontal" :router="true">
-                <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>                
+                <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>
                 <el-menu-item :route="{path:'/HR'}" index="5">人力资源</el-menu-item>
                 <el-menu-item :route="{path:'/doc'}" index="2">我的工作</el-menu-item>
                 <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
@@ -31,21 +35,21 @@
           </el-row>
         </div>
         <!-- <div class="sub-menu" v-bind:class="{'open':shouSubMenu}" v-on:mouseleave="dropdownHidden()">
-          <div class="container clearfix">
-            <ul>
-              <li v-for="(sub,index) in subMenu" ref="subMenu" :key="sub.name">
-                <span v-on:mouseenter="dropdown(sub.child,index)" v-goto="{path:sub.path}" @click="dropdownHidden">{{sub.name}}</span>
-              </li>
-            </ul>
-          </div>
-          <div class="childMenu" v-bind:style="childMenuStyle">
-            <ul ref="childMenu" v-bind:style="childUlStyle">
-              <li v-for="child in childMenu" :key="child.name">
-                <router-link :to="child.path" @click="dropdownHidden">{{child.name}}</router-link>
-              </li>
-            </ul>
-          </div>
-        </div> -->
+            <div class="container clearfix">
+              <ul>
+                <li v-for="(sub,index) in subMenu" ref="subMenu" :key="sub.name">
+                  <span v-on:mouseenter="dropdown(sub.child,index)" v-goto="{path:sub.path}" @click="dropdownHidden">{{sub.name}}</span>
+                </li>
+              </ul>
+            </div>
+            <div class="childMenu" v-bind:style="childMenuStyle">
+              <ul ref="childMenu" v-bind:style="childUlStyle">
+                <li v-for="child in childMenu" :key="child.name">
+                  <router-link :to="child.path" @click="dropdownHidden">{{child.name}}</router-link>
+                </li>
+              </ul>
+            </div>
+          </div> -->
       </nav>
     </div>
     <el-carousel height="382px" arrow="never" v-if="$route.path=='/home'">
@@ -61,7 +65,8 @@
     </el-carousel>
     <div class="container" :class="{'childCon':!$route.path=='/home'}">
       <el-breadcrumb separator=" " v-show="breadcrumbShow">
-        <el-breadcrumb-item :to="{ path: '/' }"> <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/' }">
+          <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: breadcrumb.path }" v-for="breadcrumb in breadcrumbs">{{breadcrumb.meta.breadcrumb}}</el-breadcrumb-item>
       </el-breadcrumb>
       <router-view></router-view>
@@ -112,40 +117,40 @@ export default {
       },
       childMenu: [],
       menu: [{
-          "menus": [{
-              "name": "Organization Structure",
-              "path": "/organizationStructure",
-              "child": []
-            },
-            {
-              "name": "E-personnel",
-              "path": "/E-personnel",
-              "child": [
-                { "name": "Personal Info", "path": "#" },
-                { "name": "Reimbursement", "path": "/E-personnel/reimbursement" },
-                { "name": "Benefits", "path": "#" },
-                { "name": "Nomination List", "path": "#" },
-                { "name": "Travel Record", "path": "#" },
-                { "name": "Leave Record", "path": "#" },
-                { "name": "Personal", "path": "#" },
-                { "name": "Tax Return", "path": "#" }
-              ]
-            }
-          ]
+        "menus": [{
+          "name": "Organization Structure",
+          "path": "/organizationStructure",
+          "child": []
         },
         {
-          "menus": [{
-            "name": "CMS",
-            "path": "http://ui.loogk.com/hkairlines/CMS",
-            "child": []
-          }]
+          "name": "E-personnel",
+          "path": "/E-personnel",
+          "child": [
+            { "name": "Personal Info", "path": "#" },
+            { "name": "Reimbursement", "path": "/E-personnel/reimbursement" },
+            { "name": "Benefits", "path": "#" },
+            { "name": "Nomination List", "path": "#" },
+            { "name": "Travel Record", "path": "#" },
+            { "name": "Leave Record", "path": "#" },
+            { "name": "Personal", "path": "#" },
+            { "name": "Tax Return", "path": "#" }
+          ]
         }
+        ]
+      },
+      {
+        "menus": [{
+          "name": "CMS",
+          "path": "http://ui.loogk.com/hkairlines/CMS",
+          "child": []
+        }]
+      }
       ],
       breadcrumbs: [],
       routers: [],
       breadcrumbShow: false,
       scrollBanner: false,
-      baseUrl:''
+      baseUrl: ''
     }
   },
   computed: {
@@ -174,7 +179,7 @@ export default {
   methods: {
     loginOut() {
       this.delCookie('userId');
-      location.href =this.baseUrl+"/login.html"
+      location.href = this.baseUrl + "/login.html"
     },
     handleSelect(key, keyPath) {
       this.menuToggle();
@@ -287,7 +292,7 @@ export default {
   },
 
   watch: {
-    '$route' (to, from) {
+    '$route'(to, from) {
       this.outBreadcrumbs();
       window.scrollTo(0, 0);
     }
@@ -300,6 +305,11 @@ $purple: #1465C0;
 $brown: #985D55;
 @import '../theme/index.css';
 @import './assets/styles/variables.scss';
+
+a {
+  cursor: pointer;
+}
+
 .el-breadcrumb__separator {
   width: 16px;
   display: inline-block;
@@ -356,8 +366,8 @@ $brown: #985D55;
 .el-carousel {
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16);
   margin-bottom: 20px;
-  .el-carousel__item img{
-    height:100%;
+  .el-carousel__item img {
+    height: 100%;
   }
   .el-carousel__indicators {
     left: 50%;
@@ -596,5 +606,4 @@ footer {
     transform: translateX(-50%);
   }
 }
-
 </style>

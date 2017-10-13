@@ -87,7 +87,8 @@ function renderContent(h, { node, data, store }) {
     </span>);
 }
 
-function formatTime (date, fmt) { //author: meizz 
+function formatTime (date, fmt) { //author: meizz
+  date = new Date(date) 
   var o = {
       "M+": date.getMonth() + 1, //月份 
       "d+": date.getDate(), //日 

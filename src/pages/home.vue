@@ -171,8 +171,8 @@
           <!-- </li> -->
           <!-- <li class="list-group-item" :class="{'dragActive':showDrag[4]}">
             <p class="dragHead"  v-on:mouseover="dragShow(4)" v-on:mouseleave="dragHide(4)">
-              <span v-show="showInfo[4]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>          
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[4]=true" v-on:mouseleave="showInfo[4]=false" v-show="showDrag[4]"></i>  
+              <span v-show="showInfo[4]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[4]=true" v-on:mouseleave="showInfo[4]=false" v-show="showDrag[4]"></i>
             </p>
             <el-card class="space">
               <span slot="header">My Space</span>
@@ -267,8 +267,8 @@
           <!-- </li> -->
           <!-- <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
             <p class="dragHead"  v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
-              <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>          
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>  
+              <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
+              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>
             </p>
             <el-card class="flightSearch">
               <span slot="header">Flight Search</span>
@@ -303,7 +303,7 @@ var msgs = [
   { "icon": "sousuo", "color": "#7562DE", "text": "公文追踪:", "value": "0", "link": "/doc/docTracking" },
   { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
   { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": "#" },
-  { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "#" },
+  { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
   { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "" },
 ];
 const piedata = {

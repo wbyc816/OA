@@ -78,9 +78,18 @@ import editResume from '../pages/HR/editResume.page'
 import salary from '../pages/HR/salary.page'
 import salaryHistory from '../pages/HR/salaryHistory.page'
 import newsDetail from '../pages/HR/newsDetail.page'
+
+
+//生日提醒
+import BirthdayReminder from 'pages/BirthdayReminder.page'
+
+//文件首页
+import FilesHome from 'pages/FilesHome.page'
+
 Vue.use(Router)
 
 import operationSystem from './operationSystem'
+import duty from './duty'
 
 export default new Router({
 
@@ -105,7 +114,22 @@ export default new Router({
             meta: {
                 breadcrumb: "新闻详情",
             }
-        }, {
+
+        } , {
+            path: '/BirthdayReminder',
+            name: 'BirthdayReminder',
+            component: BirthdayReminder,
+            meta: {
+              breadcrumb: "生日提醒",
+            }
+       } , {
+          path: '/FilesHome',
+          name: 'FilesHome',
+          component: FilesHome,
+          meta: {
+            breadcrumb: "文件首页",
+          }
+       } , {
             path: '/HR',
             name: 'HR',
             component: HR,
@@ -147,7 +171,7 @@ export default new Router({
             meta: {
                 breadcrumb: "航班动态",
             }
-        }, {
+        },{
             path: '/doc',
             name: 'doc',
             component: doc,
@@ -633,6 +657,7 @@ export default new Router({
         //  }
         //  ]
         // }
-       operationSystem
+       operationSystem,
+       duty
     ]
 })

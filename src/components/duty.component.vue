@@ -2,7 +2,7 @@
   <div class="duty" v-loading="organLoading">
     <el-card>
       <div slot="header">今日值班
-        <router-link to="#">更多</router-link>
+        <router-link to="/duty/">更多</router-link>
       </div>
       <p class="leader" v-if="dutys.leader&&dutys.leader.name"><span class="name">{{dutys.leader.name}}</span>{{dutys.leader.phone | phone}}</span>
       </p>

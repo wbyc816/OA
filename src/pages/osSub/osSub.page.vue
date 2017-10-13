@@ -50,28 +50,27 @@ const production = [
   { 'logo': 'icon-jingcha', 'color': '#8ACCB8', 'text': '飞行准备网', 'link': 'http://foc.donghaiair.cn/' },
   { 'logo': 'icon-nvchengwuyuan', 'color': '#6693A5', 'text': '乘务准备网', 'link': 'http://foc.donghaiair.cn:8011/SignIn.aspx' },
   { 'logo': 'icon-repair', 'color': '#7956A5', 'text': 'ME机务维修信息管理系统', 'link': 'http://116.31.80.79/mis2' },
-  { 'logo': 'icon-clock', 'color': '#7F70B0', 'text': '排班系统', 'link': '#' },
-  { 'logo': 'icon-yqf-feiji', 'color': '#9A73A9', 'text': '飞行排班系统', 'link': '#' },
-  { 'logo': 'icon-1144panzihecha-copy', 'color': '#B7C565', 'text': '机供品配餐管理系统', 'link': '#' },
+  // { 'logo': 'icon-clock', 'color': '#7F70B0', 'text': '排班系统', 'link': '#' },
+  // { 'logo': 'icon-yqf-feiji', 'color': '#9A73A9', 'text': '飞行排班系统', 'link': '#' },
+  { 'logo': 'icon-1144panzihecha-copy', 'color': '#B7C565', 'text': '机供品配餐管理系统', 'link': 'http://192.168.8.150:8090/base/themes/style4/login.jsp' },
   { 'logo': 'icon-chexianguanli', 'color': '#FAAC19', 'text': '地面保障系统', 'link': 'http://192.168.8.147:8081/GroundWeb/ ' },
-  { 'logo': 'icon-99', 'color': '#F88634', 'text': '飞行计划系统', 'link': '#' },
-  { 'logo': 'icon-feihangpaiban', 'color': '#FA5C26', 'text': '飞行排班系统', 'link': '#' }
+  // { 'logo': 'icon-99', 'color': '#F88634', 'text': '飞行计划系统', 'link': '#' }
 ];
 const saleService = [
   { 'logo': 'icon-b2b', 'color': '#FF6036', 'text': 'B2B系统', 'link': 'http://dzb2b.travelsky.com/dzb2b/' },
   { 'logo': 'icon-msnui-network', 'color': '#75BF90', 'text': '服务信息网', 'link': 'http://192.168.8.23:8080/dzsis/mainMenu.html' },
   { 'logo': 'icon-user2', 'color': '#B9EE99', 'text': '常旅客系统', 'link': 'http://ffp.donghaiair.com/' },
-  { 'logo': 'icon-yusuankongzhi', 'color': '#01D1AD', 'text': '运价系统', 'link': '#' },
+  // { 'logo': 'icon-yusuankongzhi', 'color': '#01D1AD', 'text': '运价系统', 'link': '#' },
   { 'logo': 'icon-Cus-service', 'color': '#7956A7', 'text': '呼叫中心系统', 'link': 'http://192.168.10.77:8080/DZCCOS/' },
-  { 'logo': 'icon-chiyoushouyiyuan', 'color': '#FF8435', 'text': '收益辅助系统', 'link': '#' },
+  // { 'logo': 'icon-chiyoushouyiyuan', 'color': '#FF8435', 'text': '收益辅助系统', 'link': '#' },
 ];
 const management = [
   { 'logo': 'icon-money', 'color': '#FDAB8B', 'text': '财务EBS系统', 'link': 'http://ebs01.donghaiair.cn:8000' },
-  { 'logo': 'icon-caiwu', 'color': '#FDB82E', 'text': '收入管理系统', 'link': '#' },
-  { 'logo': 'icon-caiwutouzi', 'color': '#CDCD2E', 'text': '财务预算系统', 'link': '#' },
-  { 'logo': 'icon-stgl', 'color': '#B77DBA', 'text': '食堂管理系统', 'link': '#' },
+  // { 'logo': 'icon-caiwu', 'color': '#FDB82E', 'text': '收入管理系统', 'link': '#' },
+  // { 'logo': 'icon-caiwutouzi', 'color': '#CDCD2E', 'text': '财务预算系统', 'link': '#' },
+  // { 'logo': 'icon-stgl', 'color': '#B77DBA', 'text': '食堂管理系统', 'link': '#' },
   { 'logo': 'icon-tubiao01', 'color': '#7953A8', 'text': '邮箱', 'link': 'http://mail.donghaiair.cn/' },
-  { 'logo': 'icon-duanxin', 'color': '#F98837', 'text': '短信平台', 'link': '#' }
+  // { 'logo': 'icon-duanxin', 'color': '#F98837', 'text': '短信平台', 'link': '#' }
 ];
 const staffService = [
   { 'logo': 'icon-zhifeiji-copy', 'color': '#7BB36A', 'text': '中国民用航空网', 'link': 'http://www.ccaonline.cn/' },
