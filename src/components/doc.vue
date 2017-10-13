@@ -81,7 +81,7 @@ export default {
     if (/^http/.test(this.data.link)) {
       this.target = '_blank'
     } else {
-      this.data.link = '#' + this.data.link
+      // this.data.link = '#' + this.data.link
     }
   }
 }
