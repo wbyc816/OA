@@ -3,8 +3,8 @@ import qs from 'qs'
 import Vue from 'vue'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.defaults.baseURL = 'http://apitest.donghaiair.com:8080/DonghaiAirAPI';
-// axios.defaults.baseURL = 'http://apitest.donghaiair.com:8899/DonghaiAirAPI';
+// axios.defaults.baseURL = 'http://apitest.donghaiair.com:8080/DonghaiAirAPI';
+axios.defaults.baseURL = 'http://apitest.donghaiair.com:8899/DonghaiAirAPI';
 
 
 //POST传参序列化
@@ -59,11 +59,11 @@ export function concurrent(requests) {
   return new Promise((resolve, reject) => {
     axios.all(requests)
       .then(
-        res => {
-          resolve(res.map(function(elem) { return elem.data }))
-        }, err => {
-          reject(err);
-        }
+      res => {
+        resolve(res.map(function (elem) { return elem.data }))
+      }, err => {
+        reject(err);
+      }
       )
       .catch((error) => {
         reject(error);
@@ -106,10 +106,10 @@ export default {
   },
   updateBaseInfo(params) {
     return concurrent([{ url: '/resume/updateEmergencyContactInfo', params: params.emergency, isBody: true },
-      { url: '/emp/updateEmp', params: params.emp, isBody: true }
+    { url: '/emp/updateEmp', params: params.emp, isBody: true }
     ])
   },
-  submitDoc(url,params) {
+  submitDoc(url, params) {
     return fetch(url, params, { isBody: true })
   },
   docDistribution(params) {
@@ -133,7 +133,10 @@ export default {
   getTaskDetail(id) {
     return fetch('/doc/getTaskDetail', { id: id })
   },
-  getAirPortList(){
+  getAirPortList() {
     return getFetch('/api/getAirPortList')
+  },
+  getDutyMessage(information) {
+    return fetch('/onduty/getDutyInfoDetail', information)
   }
 }

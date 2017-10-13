@@ -26,7 +26,7 @@
       </div>
     </el-card>
     <div class="block" v-if="salaryData.length">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="paginate.currentPage" :page-sizes="paginate.pageSizes" :page-size="paginate.currentPage" :layout="paginate.layout" :total="paginate.total">
+      <el-pagination @current-change="handleCurrentChange" :current-page.sync="paginate.currentPage" :page-sizes="paginate.pageSizes" :layout="paginate.layout" :total="paginate.total">
       </el-pagination>
     </div>
     <salary-dialog @updateSalary="updateSalary" :visible.sync="salaryDialogVisible"></salary-dialog>
@@ -48,9 +48,9 @@ export default {
       salaryDialogVisible:false,
       paginate: {
         pageSizes: [5, 10, 12, 36],
-        currentSize: 5,
+        currentSize: 10,
         currentPage: 1,
-        layout: "total, sizes, prev, pager, next, jumper",
+        layout: "total, prev, pager, next, jumper",
         total: 10
       }
     }
