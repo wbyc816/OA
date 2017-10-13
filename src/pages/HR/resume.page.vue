@@ -165,6 +165,7 @@ $sub:#1465C0;
           margin-bottom: 10px;
           img {
             max-height: 100%;
+            max-width: 100%;
           }
         }
         .infoItem {

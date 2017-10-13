@@ -84,6 +84,7 @@ export default {
   watch: {
     'visible': function(newVal) {
       this.pathVisible = newVal;
+      this.type = '0';
       this.pathList=this.clone(this.paths);
     }
   },
@@ -115,7 +116,7 @@ export default {
         if (last.children.length == 0) {
           this.$message.warning('会签列表不能为空')
         } else {
-          this.pathList.pus({
+          this.pathList.push({
             typeId: 'secretary',
             typeIdName: '公文秘书',
             type: 3

@@ -21,11 +21,11 @@
             </el-col>
             <el-col :span="16">
               <el-menu default-active="1" mode="horizontal" :router="true">
-                <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>                
-                <el-menu-item :route="{path:'/HR'}" index="5">人力资源</el-menu-item>
+                <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>
                 <el-menu-item :route="{path:'/doc'}" index="2">我的工作</el-menu-item>
-                <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
+                <el-menu-item :route="{path:'/HR'}" index="5">人力资源</el-menu-item>
                 <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
+                <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
               </el-menu>
             </el-col>
           </el-row>
@@ -101,51 +101,12 @@ export default {
   name: 'app',
   data: function() {
     return {
-      subMenu: {},
-      shouSubMenu: false,
-      mobieMenu: false,
-      childMenuStyle: {
-        height: 0
-      },
-      childUlStyle: {
-        left: 0
-      },
-      childMenu: [],
-      menu: [{
-          "menus": [{
-              "name": "Organization Structure",
-              "path": "/organizationStructure",
-              "child": []
-            },
-            {
-              "name": "E-personnel",
-              "path": "/E-personnel",
-              "child": [
-                { "name": "Personal Info", "path": "#" },
-                { "name": "Reimbursement", "path": "/E-personnel/reimbursement" },
-                { "name": "Benefits", "path": "#" },
-                { "name": "Nomination List", "path": "#" },
-                { "name": "Travel Record", "path": "#" },
-                { "name": "Leave Record", "path": "#" },
-                { "name": "Personal", "path": "#" },
-                { "name": "Tax Return", "path": "#" }
-              ]
-            }
-          ]
-        },
-        {
-          "menus": [{
-            "name": "CMS",
-            "path": "http://ui.loogk.com/hkairlines/CMS",
-            "child": []
-          }]
-        }
-      ],
+      homePics: [],
       breadcrumbs: [],
       routers: [],
       breadcrumbShow: false,
       scrollBanner: false,
-      baseUrl:''
+      baseUrl: ''
     }
   },
   computed: {
@@ -159,58 +120,46 @@ export default {
       // this.$store.dispatch('getUserInfo');
       this.baseUrl = 'http://127.0.0.1:8080'
     } else {
-      this.baseUrl = 'http://192.168.8.92:8080'
+      this.baseUrl = 'http://192.168.8.92:8082'
     }
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));
       this.$store.dispatch('getUserInfo');
     } else {
-      location.href = this.baseUrl+"/login.html"
+      location.href = this.baseUrl + "/login.html"
     }
+    this.getHomePics();
   },
   mounted() {
-
+    window.addEventListener('scroll', this.handleScroll);
+    var routes = this.$router.options.routes;
+    for (var a = 0; a < routes.length; a++) {
+      if (!routes[a].redirect) {
+        this.routers.push(routes[a])
+        if (routes[a].children) {
+          var subChildren = routes[a].children;
+          for (var b = 0; b < subChildren.length; b++) {
+            if (!subChildren[b].redirect) {
+              this.routers.push(subChildren[b]);
+              if (subChildren[b].children) {
+                var rootChildren = subChildren[b].children;
+                for (c = 0; c < rootChildren.length; c++) {
+                  if (!rootChildren[c].redirect) {
+                    this.routers.push(rootChildren[c]);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    this.outBreadcrumbs();
   },
   methods: {
     loginOut() {
       this.delCookie('userId');
-      location.href =this.baseUrl+"/login.html"
-    },
-    handleSelect(key, keyPath) {
-      this.menuToggle();
-      if (key > 2) {
-        this.subMenu = this.menu[key - 3].menus;
-        if (this.subMenu.length > 0) {
-          this.shouSubMenu = true;
-        }
-      } else {
-        this.shouSubMenu = false;
-      }
-    },
-    dropdown(child, key) {
-      this.childMenu = child;
-      var self = this;
-      setTimeout(function() {
-        self.childUlStyle.left = self.$refs.subMenu[key].getBoundingClientRect().left + "px";
-        if (child.length > 0) {
-          self.childMenuStyle.height = self.$refs.childMenu.getBoundingClientRect().height + "px";
-          self.childMenuStyle['border-top'] = '1px solid #fff';
-        } else {
-          self.childMenuStyle.height = "0px";
-          self.childMenuStyle['border-top'] = 'none';
-          setTimeout(function() {
-            self.childMenuStyle['border-top'] = 'none';
-          }, 450)
-        }
-      }, 10);
-    },
-    dropdownHidden() {
-      var self = this;
-      this.childMenuStyle.height = "0px";
-      self.childMenuStyle['border-top'] = 'none';
-      setTimeout(function() {
-        self.childMenuStyle['border-top'] = 'none';
-      }, 450)
+      location.href = this.baseUrl + "/login.html"
     },
     outBreadcrumbs() {
       this.breadcrumbs = [];
@@ -241,9 +190,6 @@ export default {
         }
       }
     },
-    menuToggle() {
-      this.mobieMenu = !this.mobieMenu;
-    },
     handleScroll() {
       var scrollTop = 0;
       if (document.documentElement && document.documentElement.scrollTop) {
@@ -257,37 +203,25 @@ export default {
       } else {
         this.scrollBanner = false;
       }
-    }
-  },
-  mounted() {
-    window.addEventListener('scroll', this.handleScroll);
-    var routes = this.$router.options.routes;
-    for (var a = 0; a < routes.length; a++) {
-      if (!routes[a].redirect) {
-        this.routers.push(routes[a])
-        if (routes[a].children) {
-          var subChildren = routes[a].children;
-          for (var b = 0; b < subChildren.length; b++) {
-            if (!subChildren[b].redirect) {
-              this.routers.push(subChildren[b]);
-              if (subChildren[b].children) {
-                var rootChildren = subChildren[b].children;
-                for (c = 0; c < rootChildren.length; c++) {
-                  if (!rootChildren[c].redirect) {
-                    this.routers.push(rootChildren[c]);
-                  }
-                }
+    },
+    getHomePics() {
+      if (this.$route.path == 'home') {
+        if (this.homePics.length == 0) {
+          this.$http.post('/index/getBasicImage', { imageType: 'ADM0601' })
+            .then(res => {
+              if (res.status == 0) {
+                this.homePics = res.data;
               }
-            }
-          }
+            })
         }
       }
     }
-    this.outBreadcrumbs();
   },
+
 
   watch: {
     '$route' (to, from) {
+      this.getHomePics();
       this.outBreadcrumbs();
       window.scrollTo(0, 0);
     }
@@ -356,8 +290,8 @@ $brown: #985D55;
 .el-carousel {
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16);
   margin-bottom: 20px;
-  .el-carousel__item img{
-    height:100%;
+  .el-carousel__item img {
+    height: 100%;
   }
   .el-carousel__indicators {
     left: 50%;

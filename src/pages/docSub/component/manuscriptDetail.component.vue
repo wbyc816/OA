@@ -2,15 +2,15 @@
   <div class="manuscriptDetail">
     <el-col :span="12" class="rightBorder">
       <h1 class="title">发文类型</h1>
-      <p v-if="info" class="textContent">公司发文</p>
+      <p v-if="info" class="textContent">{{info[0].classify1}}</p>
     </el-col>
     <el-col :span="12">
       <h1 class="title">发文日期</h1>
-      <p v-if="info" class="textContent">2017-09-30</p>
+      <p v-if="info" class="textContent">{{info[0].issueDate | time('date')}}</p>
     </el-col>
     <el-col :span="24">
       <h1 class="title">发文目录</h1>
-      <p v-if="info" class="textContent">行政申请</p>
+      <p v-if="info" class="textContent">{{info[0].catalogueId}}</p>
     </el-col>
     <el-col :span="24">
       <h1 class="title">主送</h1>
@@ -28,15 +28,15 @@
     </el-col>
     <el-col :span="12" class="rightBorder">
       <h1 class="title">签发人</h1>
-      <p v-if="info" class="textContent">李健</p>
+      <p v-if="info" class="textContent">{{info[0].signId}}</p>
     </el-col>
     <el-col :span="12" class="rightBorder">
       <h1 class="title">校对人</h1>
-      <p v-if="info" class="textContent">王陈</p>
+      <p v-if="info" class="textContent">{{info[0].verifyId}}</p>
     </el-col>
     <el-col :span="24">
       <h1 class="title">正文</h1>
-      <p v-if="info" class="textContent" style="color:#0460AE">正文.pdf</p>
+      <p v-if="info" class="textContent" style="color:#0460AE">{{info[0].classify1}}.pdf</p>
     </el-col>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div id='commonApp' v-loading.fullscreen="sumitLoading">
+  <div class='commonApp' v-loading.fullscreen="sumitLoading">
     <el-card>
       <div slot="header" class='doc_title'>
         <span v-text='doc.docName'></span>
@@ -31,6 +31,8 @@ import RSB from './component/empChangeApp.component.vue'
 import JJS from './component/empUpgradeApp.component.vue'
 import ZZS from './component/empBecomeApp.component.vue'
 import PXS from './component/empTrainingApp.component.vue'
+import RYY from './component/empIntroduceApp.component.vue'
+import SWD from './component/docCheckInApp.component.vue'
 
 export default {
   data() {
@@ -59,7 +61,9 @@ export default {
     RSB,
     JJS,
     ZZS,
-    PXS
+    PXS,
+    RYY,
+    SWD
   },
   created(){
     this.initDoc();
@@ -104,6 +108,17 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-#commonApp {}
+.commonApp {
+  .deptArea,
+  .arrArea {
+    float: left;
+    width: 50%;
+  }
+  .arrArea {
+    .el-form-item__label {
+      padding-left: 18px;
+    }
+  }
+}
 
 </style>

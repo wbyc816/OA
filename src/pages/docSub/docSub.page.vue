@@ -50,7 +50,7 @@ const adminData = [
   { 'logo': 'icon-car', 'color': '#A5A3FF', 'text': '用车申请', 'link': '/doc/vehicleApp' },
   { 'logo': 'icon-plane2', 'color': '#9FD867', 'text': '差旅申请', 'link': '/doc/docCommonApp/CLV' },
   { 'logo': 'icon-documents', 'color': '#FF5F88', 'text': '材料申请', 'link': '/doc/materialApp' },
-  { 'logo': 'icon-biaodan', 'color': '#5BB5FC', 'text': '收文登记', 'link': '/doc/leisureTravel' }
+  { 'logo': 'icon-biaodan', 'color': '#5BB5FC', 'text': '收文登记', 'link': '/doc/docCommonApp/SWD' }
 ];
 const financeData = [
   { 'logo': 'icon-fukuan', 'color': '#5BB5FC', 'text': '预算申请', 'link': '#' },
@@ -63,7 +63,7 @@ const financeData = [
 ];
 const contrastData = [
   { 'logo': 'icon-rili', 'color': '#A5A3FF', 'text': '请假申请', 'link': '/doc/docCommonApp/QJS' },
-  { 'logo': 'icon-contract', 'color': '#FF5F88', 'text': '人员引进申请', 'link': '#' },
+  { 'logo': 'icon-contract', 'color': '#FF5F88', 'text': '人员引进申请', 'link': '/doc/docCommonApp/RYY' },
   { 'logo': 'icon-book-copy', 'color': '#9FD867', 'text': '转正申请', 'link': '/doc/docCommonApp/ZZS' },
   { 'logo': 'icon-hetong', 'color': '#FF5F88', 'text': '培训申请', 'link': '/doc/docCommonApp/PXS' },
   { 'logo': 'icon-file1', 'color': '#5BB5FC', 'text': '人事变动', 'link': '/doc/docCommonApp/RSB' },
