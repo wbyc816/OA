@@ -28,7 +28,8 @@ export default {
     return {
       docTitle: '发文稿纸',
       middleParams: '',
-      options: { suggestPath: suggestPath }
+      options: { docType: 'FWG' }
+      
     }
   },
   computed: {

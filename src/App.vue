@@ -164,7 +164,7 @@ export default {
       // this.$store.dispatch('getUserInfo');
       this.baseUrl = 'http://127.0.0.1:8080'
     } else {
-      this.baseUrl = 'http://192.168.8.92:8080'
+      this.baseUrl = 'http://192.168.8.92:8082'
     }
     // if (this.getCookie('userId')) {
     //   this.$store.commit('setEmpId', this.getCookie('userId'));

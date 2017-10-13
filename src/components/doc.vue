@@ -45,12 +45,12 @@
       line-height: 57px;
       text-indent: 0;
       color: #fff;
-      // color: green;
-      // background-color: white;
+      /*color: green;
+      background-color: white;*/
     }
     .doc-text {
       display: inline-block;
-      // max-width: 130px;
+      max-width: 150px;
       padding-left: 40px;
       text-align: left;
       font-size: 14px;

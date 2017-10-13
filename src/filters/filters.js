@@ -2,6 +2,7 @@ import Vue from 'vue'
 Vue.filter('time', timeFilter);
 Vue.filter('sex', sexFilter);
 Vue.filter('phone', phone);
+Vue.filter('didDate', didDate);
 Vue.filter('nodeNameFormatter', nodeNameFormatter);
 
 function timeFilter(value, type) { //value为13位的时间戳
@@ -48,6 +49,13 @@ function timeFilter(value, type) { //value为13位的时间戳
 function phone(val) {
   if (val) {
     return val.slice(0, 3) + ' ' + val.slice(3, 7) + ' ' + val.slice(7, 11)
+  }else{
+    return val
+  }
+}
+function didDate(val) {
+  if (val) {
+    return val.slice(0, 4) + '.' + val.slice(4, 6);
   }else{
     return val
   }

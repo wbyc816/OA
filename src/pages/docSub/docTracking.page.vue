@@ -159,6 +159,7 @@ $purple: #0460AE;
       font-size: 14px;
     }
     tbody {
+      background:#fff;
       tr:first-child {
         td {
           border-bottom: 1px dashed #D5DADF;
