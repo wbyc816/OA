@@ -1,5 +1,5 @@
 <template>
-  <div id="paymentSearch">
+  <div id="birthdayReminder">
     <el-row :gutter='12'>
       <el-col :span='17'>
         <el-row >
@@ -25,7 +25,7 @@
               <el-table-column
                 prop="jobtitle"
                 label="职位"
-                width="130">
+                width="145">
               </el-table-column>
 
               <el-table-column
@@ -265,7 +265,7 @@
 </script>
 <style lang='scss'>
   $main: #0460AE;
-  #paymentSearch {
+  #birthdayReminder {
   .el-row{
     .el-row{
       background-color:#fff;
