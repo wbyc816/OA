@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{'padding-top':$route.path=='/home'?'26px':'96px'}">
+  <div id="app" :style="{'padding-top':$route.path=='/home'?'26px':'96px'}" v-if="login">
     <div class="topBar" :class="{'active':scrollBanner}">
       <div class="topNavbar">
         <div class="container">
@@ -106,7 +106,8 @@ export default {
       routers: [],
       breadcrumbShow: false,
       scrollBanner: false,
-      baseUrl: ''
+      baseUrl: '',
+      login:false
     }
   },
   computed: {
@@ -125,6 +126,7 @@ export default {
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));
       this.$store.dispatch('getUserInfo');
+      this.login=true;
     } else {
       location.href = this.baseUrl + "/login.html"
     }

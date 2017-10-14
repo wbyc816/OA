@@ -1,36 +1,22 @@
 <template>
   <div id='newsDetail'>
-    <el-row :gutter="20">
-      <el-col :span='17'>
-        <el-card class="pdfBox">
-          <div class="formDown" slot="header">
-            <el-row :gutter="20">
-              <el-col class="formInfo" :span='19'>
-                <p class="title">{{detail.title}}<i class=""></i></p>
-                <p class="others"><i class="iconfont icon-eye"></i><span>{{detail.browse}}</span><span class="time">{{detail.createTime | time}}</span><span class="person">签发人 {{detail.createUser}}</span><span class="person">校对人 {{detail.verifyName}}</span></p>
-              </el-col>
-              <el-col :span='5' class="downBox">
-                <p>附件</p>
-                <p class="link">集团下发文件.pdf</p>
-                <p class="link">集团下发文件.pdf</p>
-              </el-col>
-            </el-row>
-          </div>
-          <canvas id="newsCanvas"></canvas>
-          <el-pagination :current-page="pafParam.pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="pafParam.total" v-on:current-change="changePage">
-          </el-pagination>
-        </el-card>
-      </el-col>
-      <el-col :span='7'>
-        <el-card class="borderCard searchBox">
-          <div slot="header">新闻查询</div>
-          <el-input class="search">
-            <el-button slot="append">搜索</el-button>
-          </el-input>
-        </el-card>
-        <duty></duty>
-      </el-col>
-    </el-row>
+    <el-card class="pdfBox">
+      <div class="formDown" slot="header">
+        <el-row :gutter="20">
+          <el-col class="formInfo" :span='19'>
+            <p class="title">{{detail.fileNameOld}}<i class=""></i></p>
+            <p class="others"><i class="iconfont icon-eye"></i><span>{{detail.browse}}</span><span class="time">{{detail.createTime | time}}</span><span class="person">类别：{{detail.name}}</span><span class="person">级别：{{detail.majorName}}</span></p>
+          </el-col>
+          <el-col :span='5' class="downBox">
+            <p>下载</p>
+            <a :href="detail.fileUrlNew" class="link">{{detail.fileNameOld}}</a>
+          </el-col>
+        </el-row>
+      </div>
+      <canvas id="newsCanvas"></canvas>
+      <el-pagination :current-page="pafParam.pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="pafParam.total" v-on:current-change="changePage">
+      </el-pagination>
+    </el-card>
   </div>
 </template>
 <script>
@@ -51,10 +37,7 @@ export default {
       },
       pdfDoc: null,
       pageNumPending: null,
-      detail:{
-        title:'',
-        url:'',
-      }
+      detail:""
     }
 
   },
@@ -66,7 +49,7 @@ export default {
     initPdf() {
       pdfjsLib.PDFJS.workerSrc = '../pdf.worker.js';
       console.log(this.detail)
-      var loadingTask = pdfjsLib.getDocument(decodeURI(this.detail.url));
+      var loadingTask = pdfjsLib.getDocument(decodeURI(this.detail.fileUrlNew));
       var that = this;
       loadingTask.promise.then(function(pdfDoc_) {
         that.pdfDoc = pdfDoc_;
@@ -137,7 +120,7 @@ export default {
       this.pafParam.pageNum = newPage;
     },
     getDetail() {
-      this.$http.post('/doc/selectFileDetail', { Id: this.$route.params.id })
+      this.$http.post('/index/selectByFileId', { fileId: this.$route.params.id })
         .then(res => {
           if (res.status == 0&&res.data) {
             this.detail = res.data;
