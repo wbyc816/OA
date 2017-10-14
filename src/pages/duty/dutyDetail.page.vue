@@ -21,14 +21,15 @@
           <dept-list @deptChange="deptChange"></dept-list>
         </el-col>
         <el-col :span="8">
-          <el-row :gutter="0">
-            <el-col :span="16">
-              <el-input v-model="empName" placeholder="值班人"></el-input>
-            </el-col>
-            <el-col :span="8">
-              <el-button class="search" @click="search" type="primary">搜索</el-button>
-            </el-col>
-          </el-row>
+          <!-- <el-row :gutter="0">
+              <el-col :span="16">
+                <el-input v-model="empName" placeholder="值班人"></el-input>
+              </el-col>
+              <el-col :span="8">
+                <el-button class="search" @click="search" type="primary">搜索</el-button>
+              </el-col>
+            </el-row> -->
+          <el-button class="search" @click="search" type="primary">搜索</el-button>
         </el-col>
       </el-row>
     </el-card>
@@ -36,9 +37,9 @@
       <div slot="header">
         <el-row class="title">
           <!-- <el-col class="titleRight" :offset="20" :span="4">
-            <i class="el-icon-edit"></i>
-            <a style="color: #0460AE" href="#/duty/dutyEdit">值班信息维护</a>
-          </el-col> -->
+              <i class="el-icon-edit"></i>
+              <a style="color: #0460AE" href="#/duty/dutyEdit">值班信息维护</a>
+            </el-col> -->
         </el-row>
       </div>
       <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
@@ -184,6 +185,9 @@ export default {
   }
   .paginateWrap {
     margin: 20px auto 50px
+  }
+  .search{             // 临时search
+    transform: translateX(-7px)
   }
 }
 </style>
