@@ -1,5 +1,5 @@
 <template>
-  <a href="javascript:;" class='doc-block' @click="goTo">
+  <a :href="data.link" class='doc-block' :target="target">
     <span class='doc-title'>
       <span class='logo' :style={backgroundColor:data.color}>
         <i class='iconfont' :style="{'font-size': fontSize,'color': data.fontColor }" :class='data.logo'></i>
@@ -61,7 +61,7 @@
 export default {
   data() {
     return {
-      // target: '_self',
+      target: '_self',
     }
   },
   props: {
@@ -75,20 +75,20 @@ export default {
     }
   },
   created() {
-    // if (/^http/.test(this.data.link)) {
-    //   this.target = '_blank'
-    // } else {
+    if (/^http/.test(this.data.link)) {
+      this.target = '_blank'
+    } else {
 
-    // }
+    }
   },
   methods: {
-    goTo() {
-      if (/^http/.test(this.data.link)) {
-        window.location.href=this.data.link;
-      } else {
-        this.$router.push(this.data.link);
-      }
-    }
+    // goTo() {
+    //   if (/^http/.test(this.data.link)) {
+    //     window.location.href=this.data.link;
+    //   } else {
+    //     this.$router.push(this.data.link);
+    //   }
+    // }
   }
 }
 

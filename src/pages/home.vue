@@ -581,6 +581,22 @@ export default {
 
         })
     },
+    getOtherNews(classify){
+      this.$http.post('/doc/selectFileList', { classify2: classify })
+      .then(res1 => {
+        if (res1.status == 0) {
+          if (Array.isArray(res1.data.selectDocInfoVolist)) {
+            res1.data.selectDocInfoVolist.forEach(news => {
+              this.newsList.forEach(data => {
+                if (data.code == news.classify1) {
+                  data.child.push(news)
+                }
+              });
+            })
+          }
+        }
+      })
+    }
   }
 }
 
