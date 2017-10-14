@@ -1,7 +1,7 @@
 <template>
   <a :href="data.link" class='doc-block' :target="target">
     <span class='doc-title'>
-      <span class='logo' :style={backgroundColor:data.color}>
+      <span class='logo' :style="{'background-color':data.color, 'padding': data.padding}">
         <i class='iconfont' :style="{'font-size': data.font ? data.font : fontSize }" :class='data.logo'></i>
       </span>
       <span class='doc-text' v-text='data.text'></span>
@@ -41,7 +41,7 @@
     .iconfont {
       line-height: 57px;
       text-indent: 0;
-      color: #fff; 
+      color: #fff;
     }
     .doc-text {
       display: inline-block; // max-width: 130px;
@@ -54,7 +54,6 @@
     }
   }
 }
-
 </style>
 <script>
 export default {

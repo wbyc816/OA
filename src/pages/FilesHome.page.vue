@@ -1,5 +1,5 @@
 <template>
-  <div id="paymentSearch">
+  <div id="filesHome">
     <el-row :gutter='12'>
       <el-col :span='17'>
         <el-row >
@@ -7,13 +7,13 @@
             <el-card class="mailbox">
               <div slot="header" class="clearfix">
                 <span style="line-height: 36px;">{{title}}</span>
-                <span style="margin-left:423px;font-size:15px;color:#1465C0;cursor:pointer">发布时间
+                <span style="margin-left:423px;font-size:15px;color:#1465C0;cursor:pointer" @click="changeSort">发布时间
                 </span> 
 
-                <div style="height:40px;position:absolute;right:60px;top:20px;width:200px;font-size:3px;color:#1465C0">
-                   <i class="iconfont icon-shangsanjiao" style="font-size:12px;position:absolute;left:0;top:0px;cursor:pointer"></i>
-                   <i class="iconfont icon-xiasanjiao-copy" style="font-size:12px;position:absolute;left:0;top:8px;cursor:pointer"></i>
-                   <el-dropdown style="margin-left:20px;margin-top:5px;color:#1465C0" @command="handleCommand_dept">
+                <div style="height:40px;position:absolute;right:60px;top:12px;width:200px;font-size:3px;color:#1465C0">
+                   <i class="iconfont icon-shangsanjiao" style="font-size:12px;position:absolute;left:0;top:8px;cursor:pointer" v-if="params.sort==0"></i>
+                   <i class="iconfont icon-xiasanjiao-copy" style="font-size:12px;position:absolute;left:0;top:8px;cursor:pointer" v-if="params.sort==1"></i>
+                   <el-dropdown trigger="click" style="margin-left:20px;margin-top:5px;color:#1465C0" @command="handleCommand_dept" >
                     <span class="el-dropdown-link">
                       所有部门<i class="el-icon-caret-bottom el-icon--right"></i>
                     </span>
@@ -22,7 +22,7 @@
                     </el-dropdown-menu>
                   </el-dropdown>
                   
-                   <el-dropdown style="margin-left:20px;margin-top:5px;color:#1465C0" @command="handleCommand">
+                   <el-dropdown trigger="click" style="margin-left:20px;margin-top:5px;color:#1465C0" @command="handleCommand">
                     <span class="el-dropdown-link">
                       文件类型<i class="el-icon-caret-bottom el-icon--right"></i>
                     </span>
@@ -36,7 +36,7 @@
                  
               </div>
               <div style="position:relative;">
-                 <ul style="color:#676767;height:742px" class="file_ul">
+                 <ul style="color:#676767;" class="file_ul">
                    <li  v-for="fileData in fileDatas" @click="goTo(fileData)">
                      <div class="title_li" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:300px">{{fileData.docTitle}}</div>
                         <div class="content_li">
@@ -52,8 +52,8 @@
                  </ul>
                   <div class="vertical_line"> </div>
                   
-                  <div class="pageBox" v-show="true" >
-                    <el-pagination @current-change="handleCurrentChange" :current-page="pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
+                  <div class="pageBox" v-if="fileDatas.length>0">
+                    <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
                     </el-pagination>
                   </div>
                   <hr style="position:absolute;top:664px;left:10px;width:790px;border:1px solid #E9E9E9">
@@ -68,7 +68,7 @@
           <el-menu>
             <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">
             <span style="margin-left:0;width:200px;display:inline-block">{{fileType[0]}}</span>
-            <span>{{fileType[1]}}</span>
+            <span>{{fileType[2]}}</span>
             </el-menu-item>
           </el-menu>
         </el-card>
@@ -76,7 +76,7 @@
          <el-card class="highSearch" >
            
                 <span class="title_label">标题</span>
-                <el-input class="" placeholder=""  v-model="file_title" style="margin:12px 0; ">
+                <el-input class="" placeholder=""  v-model="params.docTitle" style="margin:12px 0; ">
                 </el-input>
                 <div class="block">
                  <span class="title_label">日历</span>
@@ -163,7 +163,18 @@
           }]
         },
         startTime: '',
-        endTime: ''
+        endTime: '',
+        params:{
+          empId:'',
+          classify1:'',
+          pageNumber:1,
+          pageSize:20,
+          startTime:'',
+          endTime:'',
+          deptId:'',
+          docTitle:'',
+          sort:0,
+        }
       }
     },
     computed: {
@@ -175,8 +186,10 @@
   created() {
       this.getFileType();
       this.getleftFileType();
+      this.params.empId=this.userInfo.empId;
+      this.params.classify1="ADM0401";
       this.getDept();
-      this.left_search_type("ADM0401");
+      this.getData();
   },
   methods: {
      click_highSearch() {
@@ -185,76 +198,34 @@
      close_highSearch() {
       this.ishighSearch=0;
      },
+     getData(){
+      this.$http.post("/doc/selectFileList", this.params).then(res => {
+          setTimeout(function() {
+            this.searchLoading = false;
+          }, 200)
+        if (res.status == 0&&res.data.selectDocInfoVolist) {
+          this.fileDatas = res.data.selectDocInfoVolist;
+          this.totalSize = res.data.totalSize;
+        } else {
+          this.fileDatas = [];
+          this.totalSize = 0;
+        }
+      }, res => {
+
+      })
+    },
      search_type(fileType){
-        this.title=fileType[0];
-        this.fileCode=fileType[3];
-        console.log(fileType[3]);
-        this.$http.post("/doc/selectFileList", {
-            pageNumber: this.pageNumber,
-            pageSize: "10",
-            classify1:this.fileCode,
-            empId:this.userInfo.empId,
-          }).then(res => {
-            setTimeout(function() {
-              this.searchLoading = false;
-            }, 200)
-          if (res.status == 0) {
-            this.fileDatas = res.data.selectDocInfoVolist;
-            this.totalSize = res.data.totalSize;
-          } else {
-            this.tableData = [];
-            this.totalSize = 0;
-          }
-        }, res => {
-
-        })
-     },
-      left_search_type(fileType){
-        this.fileCode=fileType;
-        this.$http.post("/doc/selectFileList", {
-            pageNumber: this.pageNumber,
-            pageSize: "10",
-            classify1:this.fileCode,
-            empId:this.userInfo.empId,
-          }).then(res => {
-            setTimeout(function() {
-              this.searchLoading = false;
-            }, 200)
-          if (res.status == 0) {
-            this.fileDatas = res.data.selectDocInfoVolist;
-            this.totalSize = res.data.totalSize;
-          } else {
-            this.tableData = [];
-            this.totalSize = 0;
-          }
-        }, res => {
-
-        })
+        this.params.classify1=fileType[1];
+        this.params.startTime='';
+        this.params.endTime='';
+        this.getData();
      },
      click_Search() {
-        let startTime = util.formatTime(this.startTime[0], 'yyyy-MM-dd')
-        let endTime = util.formatTime(this.startTime[1], 'yyyy-MM-dd')
-         this.$http.post("/doc/selectFileList", {
-              pageNumber: this.pageNumber,
-              docTitle:this.file_title,
-              pageSize: "10",
-              empId:this.userInfo.empId,
-              startTime:startTime,
-              endTime:endTime,
-            }).then(res => {
-              setTimeout(function() {
-                this.searchLoading = false;
-              }, 200)
-            if (res.status == 0) {
-              this.fileDatas = res.data.selectDocInfoVolist;
-              this.totalSize = res.data.totalSize;
-            } else {
-              this.tableData = [];
-              this.totalSize = 0;
-            }
-          }, res => {
-
-          })
+        this.params.startTime = util.formatTime(this.startTime[0], 'yyyy-MM-dd')
+        this.params.endTime = util.formatTime(this.startTime[1], 'yyyy-MM-dd')
+        this.params.deptId=''
+        this.params.deptId=''
+        this.getData();
      },
 
        getFileType(){
@@ -309,50 +280,30 @@
         })
       },
 
-      handleCommand(command){
-         this.left_search_type(command);
-
-       },
+    handleCommand(command){
+       this.params.classify1=command;
+       this.getData();
+     },
     handleCommand_dept(command){
-        this.$http.post("/doc/selectFileList", {
-            pageNumber: this.pageNumber,
-            pageSize: "10",
-            empId:this.userInfo.empId,
-            deptId:command,
-            levelNum:30,
-          }).then(res => {
-            setTimeout(function() {
-              this.searchLoading = false;
-            }, 200)
-          if (res.status == 0) {
-            this.fileDatas = res.data.selectDocInfoVolist;
-            this.totalSize = res.data.totalSize;
-          } else {
-            this.tableData = [];
-            this.totalSize = 0;
-          }
-        }, res => {
-
-        })
+      this.params.deptId=command;
+      this.getData();
     },
-   
+    changeSort(){
+      if(this.params.sort==0){
+        this.params.sort=1;
+      }else{
+        this.params.sort=0;
+      }
+      this.getData();
+    },
     handleCurrentChange(page) {
       this.pageNumber = page;
-      this.click_Search()
+      this.getData()
     },
     goTo(data){
       console.log(data);
       this.$router.push('/newsDetail/'+data.id)
     }
-    // getAirPortList() {
-    //   this.$http.get('/api/getAirPortList')
-    //     .then(res => {
-    //       if (res.status == 0) {
-    //         this.airPortList = res.data;
-    //       }
-    //       console.log(this.airPortList)
-    //     })
-    // }
   }
   }
 
@@ -360,14 +311,17 @@
 <style lang='scss'>
   $main: #0460AE;
 
-  #paymentSearch {
-
-  .el-row{
+  #filesHome {
+  .file_ul{
+    overflow: hidden;
+  }
+  .el-dropdown{
+    cursor: pointer;
+  }
   .el-row{
     background-color:#fff;
     height: 580px;
     position:relative;
-  }
   }
   @mixin linkList($color) {
     .el-card__header {
@@ -512,9 +466,8 @@
     height:44px;
   }
   .pageBox {
-    position: absolute;
-    right:30px;
-    bottom:20px;
+    text-align: right;
+    margin:20px;
   }
   .purpleColor {
     color: $main;
