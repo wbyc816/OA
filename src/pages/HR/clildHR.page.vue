@@ -9,39 +9,23 @@
       <el-row>
         <el-col :span="12" class="shareWith">
           <p> <i class="iconfont icon-renmian"></i> 人事任免
-            <router-link to="#">更多</router-link>
+            <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0301' }}">更多</router-link>
           </p>
           <ul>
-            <li>
-              <p>关于行政部王莉的人事任命通告 <span class="new">NEW</span></p>
-              <p>人力资源部<span>2016-12-22</span></p>
-            </li>
-            <li>
-              <p>关于货运部物流线主任一职的招募公告</p>
-              <p>人力资源部<span>2016-12-22</span></p>
-            </li>
-            <li>
-              <p>关于运行部周鹤翔的人事任命通告</p>
-              <p>人力资源部<span>2016-12-22</span></p>
+            <li v-for="(hr,index) in hr1" v-if="index<3" @click="goTo(hr)">
+              <p>{{hr.fileNameOld}} <span class="new" v-if="index==0">NEW</span></p>
+              <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
             </li>
           </ul>
         </el-col>
         <el-col :span="12" class="shareWith myShare">
           <p> <i class="iconfont icon-hr"></i> HR政策
-            <router-link to="#">更多</router-link>
+            <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0302' }}">更多</router-link>
           </p>
           <ul>
-            <li>
-              <p>2017年绩效考核年中考核通知</p>
-              <p>人力资源部<span>2016-12-22</span></p>
-            </li>
-            <li>
-              <p>2017年飞跃新星奖评审开始公告</p>
-              <p>行政部<span>2016-12-22</span></p>
-            </li>
-            <li>
-              <p>年资考评新政策调研通知</p>
-              <p>人力资源部<span>2016-12-22</span></p>
+            <li v-for="(hr,index) in hr2" v-if="index<3" @click="goTo(hr)">
+              <p>{{hr.fileNameOld}} <span class="new" v-if="index==0">NEW</span></p>
+              <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
             </li>
           </ul>
         </el-col>
@@ -52,44 +36,14 @@
     </div>
     <el-card class="borderCard highLight">
       <p slot="header"><i class="iconfont icon-zhinan"></i>办事指南
-        <router-link to="#" class="headRight">更多</router-link>
+        <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0305' }}" class="headRight">更多</router-link>
       </p>
       <el-row>
         <template>
-          <el-col :span="12">
-            <div>
-              <p>饭卡申请单表及申请指南</p>
-              <p>行政部<span>2016-12-22</span></p>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div>
-              <p>公司制服申请流程</p>
-              <p>行政部<span>2016-12-22</span></p>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div>
-              <p>东海E网系统使用指导手册</p>
-              <p>信息科技部<span>2016-12-22</span></p>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div>
-              <p>办公室行政手册</p>
-              <p>行政部<span>2016-12-22</span></p>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div>
-              <p>职位晋升申请流程</p>
-              <p>人力资源部<span>2016-12-22</span></p>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div>
-              <p>公司宿舍申请及使用指导手册</p>
-              <p>行政部<span>2016-12-22</span></p>
+          <el-col :span="12" v-for="(hr,index) in hr3" v-if="index<3">
+            <div @click="goTo(hr)">
+              <p>{{hr.fileNameOld}} </p>
+              <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
             </div>
           </el-col>
         </template>
@@ -103,12 +57,18 @@ export default {
   data() {
     return {
       pics: [],
-      childPic:''
+      childPic:'',
+      hr1:[],
+      hr2:[],
+      hr3:[]
     }
   },
   created() {
     this.getPics();
     this.getChildPic();
+    this.getOtherNews('FIL0301');
+    this.getOtherNews('FIL0302');
+    this.getOtherNews('FIL0305');
   },
   methods: {
     getPics() {
@@ -126,6 +86,23 @@ export default {
             this.childPic = res.data[0];
           }
         })
+    },
+    getOtherNews(classify){
+      this.$http.post('/index/selectFileList', { classify2: classify })
+      .then(res1 => {
+        if (res1.status == 0) {
+          if(classify=='FIL0301'){
+            this.hr1=res1.data;
+          }else if(classify=='FIL0302'){
+            this.hr2=res1.data;
+          }else{
+            this.hr3=res1.data;
+          }
+        }
+      })
+    },
+    goTo(data){
+      this.$router.push('/HR/newsDetailHr/'+data.fileId);
     }
   }
 }
@@ -231,6 +208,9 @@ $brown: #985D55;
           p:first-child {
             font-size: 16px;
             line-height: 30px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
             img {
               vertical-align: sub;
               padding-right: 5px;

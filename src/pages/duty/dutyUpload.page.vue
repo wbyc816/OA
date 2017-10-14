@@ -8,40 +8,30 @@
           </el-col>
         </el-row>
       </div>
-      <el-upload ref="upload" :multiple="false" :on-success="uploadSuccess" :on-error="uploadError" action="http://apitest.donghaiair.com:8899/DonghaiAirAPI//onduty/excelInsert" :file-list="fileList" :auto-upload="false">
-        <!-- <el-row :gutter="0"> -->
-        <!-- <el-col :span="1"> -->
-        <!-- <span class="accessory">附件</span> -->
-        <!-- </el-col> -->
-        <!-- <el-col :offset="17" :span="3"> -->
-        <el-button slot="trigger" size="small" class="choosebtn">选择文件</el-button>
-        <!-- </el-col> -->
-        <!-- <el-col :span="14">
-                                    <el-input></el-input>
-                                  </el-col> -->
-        <!-- <el-col :span="3"> -->
-        <el-button type="primary" class="uploadbtn" @click="submitUpload">上传</el-button>
-        <!-- </el-col> -->
-        </el-row>
-      </el-upload>
+      <div class="rlt">
+        <el-upload ref="upload" :multiple="false" :on-success="uploadSuccess" :on-error="uploadError" action="http://apitest.donghaiair.com:8899/DonghaiAirAPI//onduty/excelInsert" :file-list="fileList" :auto-upload="false">
+          <span class="accessory">附件</span>
+          <span class="underline"></span>
+          <el-button slot="trigger" size="large">选择文件 <i class="iconfont icon-jiantou"></i></el-button>
+          <el-button type="primary" size="large" class="uploadbtn" @click="submitUpload">上传</el-button>
+        </el-upload>
+      </div>
     </el-card>
     <el-card>
       <div slot="header">
-        <el-row :gutter="23">
+        <el-row :gutter="30">
           <el-col class="titleLeft" :span="5">
             <span>值班信息上传结果</span>
           </el-col>
-          <el-col :offset="13" :span="2" class="titleRight">
-            <el-button icon="edit" @click="edit">编辑</el-button>
-          </el-col>
-          <el-col :span="2" style="margin-left: 15px" class="titleRight">
-            <el-button type="primary" @click="saveAndSubmit" class="save">保存并提交</el-button>
+          <!-- <el-col :offset="12" :span="2" class="titleRight">
+            <el-button icon="edit" size="large" @click="edit">编辑</el-button>
+          </el-col> -->
+          <el-col :offset="15" :span="2" class="titleRight">
+            <el-button type="primary" size="large" @click="saveAndSubmit" class="save">提交并发布</el-button>
           </el-col>
         </el-row>
       </div>
       <el-table :data="tableData" highlight-current-row style="width: 100%">
-        <el-table-column v-if="editAble" type="selection" width="50">
-        </el-table-column>
         <el-table-column type="index" width="50">
         </el-table-column>
         <el-table-column property="dutyDate" sortable label="日期" width="120">
@@ -53,6 +43,13 @@
         <el-table-column property="mobileNumber" label="手机">
         </el-table-column>
         <el-table-column property="phoneNumber" label="电话">
+        </el-table-column>
+        <el-table-column v-if="editAble" fixed="right">
+          <template scope="scope">
+            <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small">
+              移除
+            </el-button>
+          </template>
         </el-table-column>
       </el-table>
     </el-card>
@@ -89,12 +86,6 @@ export default {
       'userInfo'
     ])
   },
-  // watch: {
-  //   submitDisable: function(newVal, oldVal) {
-  //     console.log(1)
-  //     console.log(newVal,oldVal)
-  //   }
-  // },
   methods: {
     submitUpload() {
       this.$refs.upload.submit();
@@ -103,11 +94,10 @@ export default {
       this.editAble = !this.editAble
     },
     uploadSuccess(data) {
-      // console.log(data.data.ondutylist, 'success')
       if (data.status == '0') {
-        if(data.data.ondutylist.length){
-        this.originData = data.data.ondutylist
-        this.tableData = dataTransform(this.originData, fmts)
+        if (data.data.ondutylist.length) {
+          this.originData = data.data.ondutylist
+          this.tableData = dataTransform(this.originData, fmts)
         }
         this.$message.success('上传成功')
       } else {
@@ -131,6 +121,10 @@ export default {
         })
       }
     },
+    deleteRow(row) {
+      this.tableData.splice(row, 1)
+      this.originData.splice(row, 1)
+    }
   }
 }
 </script>
@@ -143,13 +137,13 @@ export default {
       padding-left: 0;
       padding-right: 0;
       .titleLeft {
-        font-size: 13px;
-        transform: translateY(12px);
+        padding-top: 7px;
+        font-size: 17px;
       }
       .titleRight {
         .el-button {
           font-size: 14px;
-          border-radius: 2px;
+          border-radius: 4px;
         }
       }
     }
@@ -158,19 +152,45 @@ export default {
       .el-table .cell {
         font-size: 12px;
       }
-      .el-upload {
-        .el-button {
-          font-size: 14px;
+      .rlt {
+        position: relative;
+        .accessory {
+          position: absolute;
+          left: 10px;
+          transform: translateY(9px);
+          font-size: 15px;
         }
-      }
-      .el-button {
-        font-size: 14px;
-        border-radius: 2px;
-        height: 33px;
-        box-sizing: border-box;
-        &.uploadbtn {
-          transform: translateY(1px);
-          width: 80px;
+        .underline {
+          display: block;
+          width: 58%;
+          position: absolute;
+          right: 13%;
+          bottom: 3px;
+          border-bottom: 1px solid #D5DADF
+        }
+        .el-upload {
+          .el-button {
+            margin-left: 120px;
+            padding: 11px;
+            span{
+              font-size: 13px;
+            }
+          }
+        }
+        .uploadbtn {
+          width: 101px;
+        }
+        .el-button {
+          float: right;
+          font-size: 15px;
+          border-radius: 4px;
+        }
+        .el-upload-list {
+          width: 55%;
+          margin-left: 10px;
+          display: inline-block;
+          text-indent: 30px;
+          transform: translateY(-6px);
         }
       }
     }

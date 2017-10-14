@@ -104,4 +104,11 @@ function formatTime (date, fmt) { //author: meizz
   return fmt;
 }
 
-export default { combineObj, formatTime }
+function preventEmpty(data, param = '空') {
+  if(!data){
+    return param
+  }
+  return data
+}
+
+export default { combineObj, formatTime, preventEmpty }

@@ -25,7 +25,7 @@
               <el-table-column
                 prop="jobtitle"
                 label="职位"
-                width="145">
+                width="120">
               </el-table-column>
 
               <el-table-column
@@ -52,39 +52,13 @@
         </el-row>
 
       </el-col>
-      <el-col :span='7' class="sideNav">
-        <side-Person-Search></side-Person-Search>
-        <el-card class="duty">
-          <div slot="header">今日值班
-            <router-link to="#">更多</router-link>
-          </div>
-          <el-menu mode="vertical" default-active="1">
-            <el-menu-item-group>
-              <el-submenu index="1">
-                <template slot="title">IT服务部</template>
-                <el-menu-item index="2-1">莫文 : 138 4564 7841</el-menu-item>
-                <!-- <el-menu-item index="1-1">Doc Searching</el-menu-item> -->
-              </el-submenu>
-              <el-submenu index="2">
-                <template slot="title">地面服务部</template>
-                <el-menu-item index="2-1">莫文耀 : 138 4164 7841</el-menu-item>
-                <el-menu-item index="2-2">刘莉: 133 6415 57871</el-menu-item>
-                <el-menu-item index="2-3">王立伟 : 134 3641 8874</el-menu-item>
-                <el-menu-item index="2-4">王天峰 : 133 1248 4774</el-menu-item>
-              </el-submenu>
-              <el-submenu index="3">
-                <template slot="title">货运部</template>
-                <el-menu-item index="3-1">宋丽萍：135 4887 2561</el-menu-item>
-              </el-submenu>
-            </el-menu-item-group>
-          </el-menu>
-        </el-card>
-      </el-col>
+      <duty></duty>
     </el-row>
   </div>
 </template>
 <script>
   import SidePersonSearch from '../components/sidePersonSearch.component'
+  import Duty from '../components/duty.component'
 
   import { mapGetters } from 'vuex'
   const tableTitle = ['员工姓名', '部门', '职位', '生日', '联系电话']
@@ -94,7 +68,7 @@
   }];
   const statusValue = ['计划', '延误', '起飞', '取消', '备降', '到达'];
   export default {
-    components: { SidePersonSearch },
+    components: { SidePersonSearch, Duty },
     data() {
       return {
         handledBy: '',

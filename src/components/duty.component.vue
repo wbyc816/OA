@@ -99,6 +99,7 @@ $sub:#1465C0;
     padding: 0;
     .el-submenu__title {
       border-bottom: 1px solid #F2F2F2;
+      // transition:all 0.3s;
     }
   }
   .el-submenu.is-opened {
@@ -123,7 +124,7 @@ $sub:#1465C0;
   }
   .el-submenu .el-menu-item {
     padding-left: 18px !important;
-    font-size: 15px;
+    font-size: 14px;
   }
 }
 

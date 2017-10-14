@@ -77,39 +77,23 @@
           <el-row>
             <el-col :span="12" class="shareWith">
               <p> <i class="iconfont icon-renmian"></i> 人事任免
-                <router-link to="#">更多</router-link>
+                <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0301' }}">更多</router-link>
               </p>
               <ul>
-                <li>
-                  <p>关于行政部王莉的人事任命通告 <span class="new">NEW</span></p>
-                  <p>人力资源部<span>2016-12-22</span></p>
-                </li>
-                <li>
-                  <p>关于货运部物流线主任一职的招募公告</p>
-                  <p>人力资源部<span>2016-12-22</span></p>
-                </li>
-                <li>
-                  <p>关于运行部周鹤翔的人事任命通告</p>
-                  <p>人力资源部<span>2016-12-22</span></p>
+                <li v-for="(hr,index) in hr1" v-if="index<3" @click="goTo(hr)">
+                  <p>{{hr.fileNameOld}} <span class="new" v-if="index==0">NEW</span></p>
+                  <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
                 </li>
               </ul>
             </el-col>
             <el-col :span="12" class="shareWith myShare">
               <p> <i class="iconfont icon-hr"></i> HR政策
-                <router-link to="#">更多</router-link>
+                <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0302' }}">更多</router-link>
               </p>
               <ul>
-                <li>
-                  <p>2017年绩效考核年中考核通知</p>
-                  <p>人力资源部<span>2016-12-22</span></p>
-                </li>
-                <li>
-                  <p>2017年飞跃新星奖评审开始公告</p>
-                  <p>行政部<span>2016-12-22</span></p>
-                </li>
-                <li>
-                  <p>年资考评新政策调研通知</p>
-                  <p>人力资源部<span>2016-12-22</span></p>
+                <li v-for="(hr,index) in hr2" v-if="index<3" @click="goTo(hr)">
+                  <p>{{hr.fileNameOld}} <span class="new" v-if="index==0">NEW</span></p>
+                  <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
                 </li>
               </ul>
             </el-col>
@@ -234,11 +218,11 @@
             </p> -->
         <el-card class="Workbench">
           <span slot="header">日常事项</span>
-          <el-menu :router="true">
-            <el-menu-item index="1"><i class="iconfont icon-guizhang"></i>规章制度<i class="el-icon-arrow-right"></i></el-menu-item>
-            <el-menu-item index="2"><i class="iconfont icon-shouce"></i>使用手册<i class="el-icon-arrow-right"></i></el-menu-item>
-            <el-menu-item index="3"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
-            <el-menu-item index="/diningMenu"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
+          <el-menu>
+            <el-menu-item index="1" @click.native="goToOthers('/HR/newsListHr/FIL0303')"><i class="iconfont icon-guizhang"></i>规章制度<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="2" @click.native="goToOthers('/HR/newsListHr/FIL0304')"><i class="iconfont icon-shouce"></i>使用手册<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="3" @click.native="goToOthers('/PresidentMailbox')"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -288,8 +272,9 @@ var msgs = [
   { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
   { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "" },
 ];
+
 const otherLinks = [
-  { "icon": "changyong", "text": "常用办公软件", "link": "#" },
+  { "icon": "changyong", "text": "常用办公软件", "link": "/softDownload" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
   { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080/login.jsp" },
@@ -345,6 +330,9 @@ export default {
       tripTo: { cityName: '' },
       flightStatusType: 'flightNo',
       options,
+      hr1: [],
+      hr2: [],
+      nowDate: "",
       flightNoTitle: '选项1',
       showDrag: [false, false, false, false, false, false, false, false, false, false, false],
       showInfo: [false, false, false, false, false, false, false, false, false, false, false],
@@ -397,10 +385,13 @@ export default {
     if (month < 10) {
       month = '0' + month;
     }
+    this.nowDate = temp.getFullYear() + '/' + month + '/' + temp.getDate();
     this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
     this.getDoneList();
     this.getNews();
     this.getFlightTrends();
+    this.getOtherNews('FIL0301');
+    this.getOtherNews('FIL0302');
   },
   methods: {
     getFlightTrends() {
@@ -550,10 +541,25 @@ export default {
       this.$http.post('/doc/selectFileList', { empId: this.userInfo.empId, classify1: this.activeName })
         .then(res => {
           if (res.status == 0) {
-            var temp=this.newsList.find(t=>t.code==this.activeName);
-            temp.child=res.data.selectDocInfoVolist;
+            var temp = this.newsList.find(t => t.code == this.activeName);
+            temp.child = res.data.selectDocInfoVolist;
           }
         })
+    },
+    getOtherNews(classify) {
+      this.$http.post('/index/selectFileList', { classify2: classify })
+        .then(res1 => {
+          if (res1.status == 0) {
+            if (classify == 'FIL0301') {
+              this.hr1 = res1.data;
+            } else {
+              this.hr2 = res1.data;
+            }
+          }
+        })
+    },
+    goTo(data) {
+      this.$router.push('/HR/newsDetailHr/' + data.fileId);
     }
   }
 }
@@ -967,6 +973,9 @@ $sub:#1465C0;
           p:first-child {
             font-size: 16px;
             line-height: 30px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
             img {
               vertical-align: sub;
               padding-right: 5px;

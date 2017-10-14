@@ -1,8 +1,8 @@
 <template>
-  <a href="javascript:;" class='doc-block' @click="goTo">
+  <a :href="data.link" class='doc-block' :target="target">
     <span class='doc-title'>
       <span class='logo' :style={backgroundColor:data.color}>
-        <i class='iconfont' :style="{'font-size': fontSize,'color': data.fontColor }" :class='data.logo'></i>
+        <i class='iconfont' :style="{'font-size': data.font ? data.font : fontSize }" :class='data.logo'></i>
       </span>
       <span class='doc-text' v-text='data.text'></span>
     </span>
@@ -41,8 +41,7 @@
     .iconfont {
       line-height: 57px;
       text-indent: 0;
-      color: #fff; // color: green;
-      // background-color: white;
+      color: #fff; 
     }
     .doc-text {
       display: inline-block; // max-width: 130px;
@@ -61,7 +60,7 @@
 export default {
   data() {
     return {
-      // target: '_self',
+      target: '_self',
     }
   },
   props: {
@@ -75,20 +74,20 @@ export default {
     }
   },
   created() {
-    // if (/^http/.test(this.data.link)) {
-    //   this.target = '_blank'
-    // } else {
+    if (/^http/.test(this.data.link)) {
+      this.target = '_blank'
+    } else {
 
-    // }
+    }
   },
   methods: {
-    goTo() {
-      if (/^http/.test(this.data.link)) {
-        window.location.href=this.data.link;
-      } else {
-        this.$router.push(this.data.link);
-      }
-    }
+    // goTo() {
+    //   if (/^http/.test(this.data.link)) {
+    //     window.location.href=this.data.link;
+    //   } else {
+    //     this.$router.push(this.data.link);
+    //   }
+    // }
   }
 }
 

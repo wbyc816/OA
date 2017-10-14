@@ -78,6 +78,8 @@ import editResume from '../pages/HR/editResume.page'
 import salary from '../pages/HR/salary.page'
 import salaryHistory from '../pages/HR/salaryHistory.page'
 import newsDetail from '../pages/HR/newsDetail.page'
+import newsDetailHr from '../pages/HR/newsDetailHr.page'
+import newsListHr from '../pages/HR/newsListHr.page'
 
 
 import diningMenu from '../pages/diningMenu.page'
@@ -91,6 +93,8 @@ import FilesHome from 'pages/FilesHome.page'
 
 //总裁邮箱
 import PresidentMailbox from 'pages/PresidentMailbox.page'
+import softDownload from '../pages/softDownload.page'
+
 
 Vue.use(Router)
 
@@ -120,7 +124,6 @@ export default new Router({
             meta: {
                 breadcrumb: "新闻详情",
             }
-
         } , {
             path: '/BirthdayReminder',
             name: 'BirthdayReminder',
@@ -161,6 +164,14 @@ export default new Router({
                 path: '/HR/personalInfo',
                 name: 'personalInfo',
                 component: personalInfo,
+            }, {
+                path: '/HR/newsListHr/:classify',
+                name: 'newsListHr',
+                component: newsListHr
+            }, {
+                path: '/HR/newsDetailHr/:id',
+                name: 'newsDetailHr',
+                component: newsDetailHr,
             }, {
                 path: '/HR/salary/:salaryMonth',
                 name: 'salary',
@@ -678,6 +689,14 @@ export default new Router({
         //  ]
         // }
        operationSystem,
-       duty
+       duty,
+        {
+            path: '/softDownload',
+            component: softDownload,
+            meta: {
+              breadcrumb: '软件下载'
+            }
+        }
+
     ]
 })

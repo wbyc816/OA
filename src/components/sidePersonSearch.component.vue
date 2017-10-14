@@ -27,7 +27,9 @@ export default {
 </script>
 <style lang='scss'>
 .sidePerson{
-
+  .el-card__header{
+    padding: 8px 20px;
+  }
 }
 
 </style>

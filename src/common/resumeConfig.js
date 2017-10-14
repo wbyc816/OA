@@ -1,6 +1,6 @@
 export const postInfo = [{
   head: '职务信息',
-  prop: [{ name: 'companyName', label: '公司', width: '' }, { name: 'isManager', label: '管理干部', width: '' }, { name: 'deptName', label: '职务', width: '' }, { name: 'supervisoryLevel', label: '管理级别', width: '' }, { name: 'deptFatherName', label: '部门', width: '' }, { name: 'joinCompany', label: '首次进入成员公司名称', width: '200' }, { name: 'joinDate', label: '入职时间', width: '', type: 'date' }],
+  prop: [{ name: 'companyName', label: '公司', width: '170px' }, { name: 'deptName', label: '职务', width: '' }, { name: 'deptFatherName', label: '部门', width: '' }, { name: 'joinCompany', label: '首次进入成员公司名称', width: '200' }, { name: 'joinDate', label: '入职时间', width: '', type: 'date' }],
   url: '/resume/getEmpPostInfo'
 }]
 export const contractInfo = [{
@@ -28,7 +28,7 @@ export const eduInfo = [{
 }, {
   head: '培训记录',
   enName:'TrainInfo',
-  prop: [{ name: 'period', label: '培训时间', width: '' }, { name: 'project', label: '培训项目', width: '' }, { name: 'place', label: '培训地点', width: '' }],
+  prop: [{ name: 'period', label: '培训时间', width: '',type: 'date' }, { name: 'project', label: '培训项目', width: '' }, { name: 'place', label: '培训地点', width: '' }],
   url: '/resume/getTrainInfo',
   postUrl:'/resume/updateTrainInfo'
 }, {

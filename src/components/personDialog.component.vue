@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span='18'>
           <div class="topSearch clearfix">
-            <p class="tips">选择收件人<span v-show="dialogType=='radio'">请双击姓名选择</span></p>
+            <p class="tips">选择收件人<span v-show="dialogType=='radio'">请单击姓名选择</span></p>
             <el-input class="search" v-model="name">
               <el-button slot="append" @click="search">搜索</el-button>
             </el-input>
@@ -20,7 +20,7 @@
             <el-table-column prop="jobtitle" label="职务"></el-table-column>
             <el-table-column prop="moblieNumber" label="状态" width="80"></el-table-column>
           </el-table>
-          <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
+          <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
             <el-table-column prop="name" label="姓名" width="110"></el-table-column>
             <el-table-column prop="depts" label="部门" width="250"></el-table-column>
             <el-table-column prop="jobtitle" label="职务"></el-table-column>

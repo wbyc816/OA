@@ -22,7 +22,7 @@
               <el-input v-model="dutyPerson" placeholder="值班人"></el-input>
             </el-col>
             <el-col :span="8">
-              <el-button class="search" @click="console.log(1)" type="primary">搜索</el-button>
+              <el-button class="search" @click="search" type="primary">搜索</el-button>
             </el-col>
           </el-row>
         </el-col>
@@ -39,6 +39,20 @@
           </el-col>
         </el-row>
       </div>
+      <!-- <el-table :data="tableData" highlight-current-row style="width: 100%">
+        <el-table-column type="index" width="50">
+        </el-table-column>
+        <el-table-column property="dutyDate" sortable label="日期" width="120">
+        </el-table-column>
+        <el-table-column property="deptName" label="部门" width="120">
+        </el-table-column>
+        <el-table-column property="empName" label="值班人">
+        </el-table-column>
+        <el-table-column property="mobileNumber" label="手机">
+        </el-table-column>
+        <el-table-column property="phoneNumber" label="电话">
+        </el-table-column>
+      </el-table> -->
       <el-table :data="tableData" highlight-current-row style="width: 100%">
         <el-table-column type="index" width="50">
         </el-table-column>
@@ -58,6 +72,10 @@
 </template>
 
 <script>
+import util from '../../common/util'
+import api from '../../fetch/api'
+import dataTransform from '../../common/dataTransform'
+import { fmts } from '../../common/dutyConfig'
 import deptList from '../../components/deptList.component'
 
 export default {
@@ -73,7 +91,7 @@ export default {
         pageSizes: [5, 10, 12, 36],
         currentSize: 5,
         currentPage: 1,
-        layout: "total, sizes, prev, pager, next, jumper",
+        layout: "total, prev, pager, next, jumper",
         total: 4
       },
       deptName: '',
@@ -89,10 +107,23 @@ export default {
     },
     deptChange(val) {
       this.deptName = val
-      console.log(this.deptName)
     },
     search() {
-      console.log(1)
+      this.tableData = []
+      api.getDutyMessage({
+        startDate: this.startDate,
+        endDate: this.endDate,
+        deptName: this.deptName,
+        empName: this.empName,
+        pageNumber: this.paginate.currentPage,
+        pageSize: 10
+      }).then((data) => {
+        console.log(data)
+        if (data.status == '0' && data.data.totalSize) {
+          this.tableData = dataTransform(data.data.ondutyVolist, fmts)
+          this.paginate.total = data.data.totalSize
+        }
+      })
     }
   },
   components: {
@@ -113,11 +144,10 @@ export default {
         padding-top: 10px;
       }
       .titleRight {
-        // padding: 0;
         font-size: 13px;
-        color: #0460AE;
+        color: #1465C0;
         .el-button {
-          border-radius: 2px;
+          border-radius: 2px; // color: #0460AE;
         }
       }
     }
@@ -140,20 +170,15 @@ export default {
         }
       }
     }
+    .myEditTable {
+      width: 100%;
+    }
     .alignCenter {
       text-align: center!important;
     }
   }
   .paginateWrap {
     margin: 20px auto 50px
-  }
-  .el-table {
-    font-size: 5px !important;
-  }
-  #etable {
-    .el-table-column {
-      font-size: 8px !important;
-    }
   }
 }
 </style>
