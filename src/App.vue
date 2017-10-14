@@ -166,12 +166,12 @@ export default {
     } else {
       this.baseUrl = 'http://192.168.8.92:8082'
     }
-    // if (this.getCookie('userId')) {
-    //   this.$store.commit('setEmpId', this.getCookie('userId'));
-    //   this.$store.dispatch('getUserInfo');
-    // } else {
-    //   location.href = this.baseUrl+"/login.html"
-    // }
+    if (this.getCookie('userId')) {
+      this.$store.commit('setEmpId', this.getCookie('userId'));
+      this.$store.dispatch('getUserInfo');
+    } else {
+      location.href = this.baseUrl+"/login.html"
+    }
   },
   mounted() {
 
