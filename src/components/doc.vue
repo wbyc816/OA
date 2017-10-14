@@ -1,5 +1,5 @@
 <template>
-  <a :href="data.link" :target='target' class='doc-block'>
+  <a href="javascript:;" class='doc-block' @click="goTo">
     <span class='doc-title'>
       <span class='logo' :style={backgroundColor:data.color}>
         <i class='iconfont' :style="{'font-size': fontSize,'color': data.fontColor }" :class='data.logo'></i>
@@ -16,16 +16,12 @@
   cursor: pointer;
   .doc-title {
     position: relative;
-    display: flex;
-    justify-content: left;
-    align-items: center;
     float: right;
     width: 85%;
     height: 100%;
     font-size: 16px;
-    line-height: 18px;
-    text-indent: 14px;
-    text-align: center;
+    line-height: 57px;
+    padding: 0 7px 0 38px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(#000, 0.16);
@@ -40,31 +36,32 @@
       transform: translate(-50%, 0);
       border-radius: 50%;
       background: url('../assets/images/doc-item-shadow1.png') 0 0;
+      text-align: center;
     }
     .iconfont {
       line-height: 57px;
       text-indent: 0;
-      color: #fff;
-      /*color: green;
-      background-color: white;*/
+      color: #fff; // color: green;
+      // background-color: white;
     }
     .doc-text {
-      display: inline-block;
-      max-width: 150px;
-      padding-left: 40px;
+      display: inline-block; // max-width: 130px;
       text-align: left;
       font-size: 14px;
       text-indent: 0;
       color: #393939;
+      line-height: 17px;
+      vertical-align: middle;
     }
   }
 }
+
 </style>
 <script>
 export default {
   data() {
     return {
-      target: '_self',
+      // target: '_self',
     }
   },
   props: {
@@ -78,10 +75,19 @@ export default {
     }
   },
   created() {
-    if (/^http/.test(this.data.link)) {
-      this.target = '_blank'
-    } else {
-      this.data.link = '#' + this.data.link
+    // if (/^http/.test(this.data.link)) {
+    //   this.target = '_blank'
+    // } else {
+
+    // }
+  },
+  methods: {
+    goTo() {
+      if (/^http/.test(this.data.link)) {
+        window.location.href=this.data.link;
+      } else {
+        this.$router.push(this.data.link);
+      }
     }
   }
 }

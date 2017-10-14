@@ -3,14 +3,10 @@
     <div class="topBar" :class="{'active':scrollBanner}">
       <div class="topNavbar">
         <div class="container">
-          <a>
-            <i class="iconfont icon-1"></i> 简体</a>
-          <a>
-            <i class="iconfont icon-shezhi"></i> 设置</a>
-          <router-link to="/HR/personalInfo">
-            <i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
-          <a @click="loginOut">
-            <i class="iconfont icon-guanbi"></i> 登出</a>
+          <a><i class="iconfont icon-1"></i> 简体</a>
+          <a><i class="iconfont icon-shezhi"></i> 设置</a>
+          <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
+          <a @click="loginOut"><i class="iconfont icon-guanbi"></i> 登出</a>
         </div>
       </div>
       <nav class="navbar">
@@ -26,30 +22,30 @@
             <el-col :span="16">
               <el-menu default-active="1" mode="horizontal" :router="true">
                 <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>
-                <el-menu-item :route="{path:'/HR'}" index="5">人力资源</el-menu-item>
                 <el-menu-item :route="{path:'/doc'}" index="2">我的工作</el-menu-item>
-                <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
+                <el-menu-item :route="{path:'/HR'}" index="5">人力资源</el-menu-item>
                 <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
+                <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
               </el-menu>
             </el-col>
           </el-row>
         </div>
         <!-- <div class="sub-menu" v-bind:class="{'open':shouSubMenu}" v-on:mouseleave="dropdownHidden()">
-            <div class="container clearfix">
-              <ul>
-                <li v-for="(sub,index) in subMenu" ref="subMenu" :key="sub.name">
-                  <span v-on:mouseenter="dropdown(sub.child,index)" v-goto="{path:sub.path}" @click="dropdownHidden">{{sub.name}}</span>
-                </li>
-              </ul>
-            </div>
-            <div class="childMenu" v-bind:style="childMenuStyle">
-              <ul ref="childMenu" v-bind:style="childUlStyle">
-                <li v-for="child in childMenu" :key="child.name">
-                  <router-link :to="child.path" @click="dropdownHidden">{{child.name}}</router-link>
-                </li>
-              </ul>
-            </div>
-          </div> -->
+          <div class="container clearfix">
+            <ul>
+              <li v-for="(sub,index) in subMenu" ref="subMenu" :key="sub.name">
+                <span v-on:mouseenter="dropdown(sub.child,index)" v-goto="{path:sub.path}" @click="dropdownHidden">{{sub.name}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="childMenu" v-bind:style="childMenuStyle">
+            <ul ref="childMenu" v-bind:style="childUlStyle">
+              <li v-for="child in childMenu" :key="child.name">
+                <router-link :to="child.path" @click="dropdownHidden">{{child.name}}</router-link>
+              </li>
+            </ul>
+          </div>
+        </div> -->
       </nav>
     </div>
     <el-carousel height="382px" arrow="never" v-if="$route.path=='/home'">
@@ -65,8 +61,7 @@
     </el-carousel>
     <div class="container" :class="{'childCon':!$route.path=='/home'}">
       <el-breadcrumb separator=" " v-show="breadcrumbShow">
-        <el-breadcrumb-item :to="{ path: '/' }">
-          <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/' }"> <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: breadcrumb.path }" v-for="breadcrumb in breadcrumbs">{{breadcrumb.meta.breadcrumb}}</el-breadcrumb-item>
       </el-breadcrumb>
       <router-view></router-view>
@@ -106,46 +101,7 @@ export default {
   name: 'app',
   data: function() {
     return {
-      subMenu: {},
-      shouSubMenu: false,
-      mobieMenu: false,
-      childMenuStyle: {
-        height: 0
-      },
-      childUlStyle: {
-        left: 0
-      },
-      childMenu: [],
-      menu: [{
-        "menus": [{
-          "name": "Organization Structure",
-          "path": "/organizationStructure",
-          "child": []
-        },
-        {
-          "name": "E-personnel",
-          "path": "/E-personnel",
-          "child": [
-            { "name": "Personal Info", "path": "#" },
-            { "name": "Reimbursement", "path": "/E-personnel/reimbursement" },
-            { "name": "Benefits", "path": "#" },
-            { "name": "Nomination List", "path": "#" },
-            { "name": "Travel Record", "path": "#" },
-            { "name": "Leave Record", "path": "#" },
-            { "name": "Personal", "path": "#" },
-            { "name": "Tax Return", "path": "#" }
-          ]
-        }
-        ]
-      },
-      {
-        "menus": [{
-          "name": "CMS",
-          "path": "http://ui.loogk.com/hkairlines/CMS",
-          "child": []
-        }]
-      }
-      ],
+      homePics: [],
       breadcrumbs: [],
       routers: [],
       breadcrumbShow: false,
@@ -170,52 +126,40 @@ export default {
       this.$store.commit('setEmpId', this.getCookie('userId'));
       this.$store.dispatch('getUserInfo');
     } else {
-      location.href = this.baseUrl+"/login.html"
+      location.href = this.baseUrl + "/login.html"
     }
+    this.getHomePics();
   },
   mounted() {
-
+    window.addEventListener('scroll', this.handleScroll);
+    var routes = this.$router.options.routes;
+    for (var a = 0; a < routes.length; a++) {
+      if (!routes[a].redirect) {
+        this.routers.push(routes[a])
+        if (routes[a].children) {
+          var subChildren = routes[a].children;
+          for (var b = 0; b < subChildren.length; b++) {
+            if (!subChildren[b].redirect) {
+              this.routers.push(subChildren[b]);
+              if (subChildren[b].children) {
+                var rootChildren = subChildren[b].children;
+                for (c = 0; c < rootChildren.length; c++) {
+                  if (!rootChildren[c].redirect) {
+                    this.routers.push(rootChildren[c]);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    this.outBreadcrumbs();
   },
   methods: {
     loginOut() {
       this.delCookie('userId');
       location.href = this.baseUrl + "/login.html"
-    },
-    handleSelect(key, keyPath) {
-      this.menuToggle();
-      if (key > 2) {
-        this.subMenu = this.menu[key - 3].menus;
-        if (this.subMenu.length > 0) {
-          this.shouSubMenu = true;
-        }
-      } else {
-        this.shouSubMenu = false;
-      }
-    },
-    dropdown(child, key) {
-      this.childMenu = child;
-      var self = this;
-      setTimeout(function() {
-        self.childUlStyle.left = self.$refs.subMenu[key].getBoundingClientRect().left + "px";
-        if (child.length > 0) {
-          self.childMenuStyle.height = self.$refs.childMenu.getBoundingClientRect().height + "px";
-          self.childMenuStyle['border-top'] = '1px solid #fff';
-        } else {
-          self.childMenuStyle.height = "0px";
-          self.childMenuStyle['border-top'] = 'none';
-          setTimeout(function() {
-            self.childMenuStyle['border-top'] = 'none';
-          }, 450)
-        }
-      }, 10);
-    },
-    dropdownHidden() {
-      var self = this;
-      this.childMenuStyle.height = "0px";
-      self.childMenuStyle['border-top'] = 'none';
-      setTimeout(function() {
-        self.childMenuStyle['border-top'] = 'none';
-      }, 450)
     },
     outBreadcrumbs() {
       this.breadcrumbs = [];
@@ -246,9 +190,6 @@ export default {
         }
       }
     },
-    menuToggle() {
-      this.mobieMenu = !this.mobieMenu;
-    },
     handleScroll() {
       var scrollTop = 0;
       if (document.documentElement && document.documentElement.scrollTop) {
@@ -262,37 +203,25 @@ export default {
       } else {
         this.scrollBanner = false;
       }
-    }
-  },
-  mounted() {
-    window.addEventListener('scroll', this.handleScroll);
-    var routes = this.$router.options.routes;
-    for (var a = 0; a < routes.length; a++) {
-      if (!routes[a].redirect) {
-        this.routers.push(routes[a])
-        if (routes[a].children) {
-          var subChildren = routes[a].children;
-          for (var b = 0; b < subChildren.length; b++) {
-            if (!subChildren[b].redirect) {
-              this.routers.push(subChildren[b]);
-              if (subChildren[b].children) {
-                var rootChildren = subChildren[b].children;
-                for (c = 0; c < rootChildren.length; c++) {
-                  if (!rootChildren[c].redirect) {
-                    this.routers.push(rootChildren[c]);
-                  }
-                }
+    },
+    getHomePics() {
+      if (this.$route.path == 'home') {
+        if (this.homePics.length == 0) {
+          this.$http.post('/index/getBasicImage', { imageType: 'ADM0601' })
+            .then(res => {
+              if (res.status == 0) {
+                this.homePics = res.data;
               }
-            }
-          }
+            })
         }
       }
     }
-    this.outBreadcrumbs();
   },
 
+
   watch: {
-    '$route'(to, from) {
+    '$route' (to, from) {
+      this.getHomePics();
       this.outBreadcrumbs();
       window.scrollTo(0, 0);
     }
@@ -305,11 +234,6 @@ $purple: #1465C0;
 $brown: #985D55;
 @import '../theme/index.css';
 @import './assets/styles/variables.scss';
-
-a {
-  cursor: pointer;
-}
-
 .el-breadcrumb__separator {
   width: 16px;
   display: inline-block;
@@ -606,4 +530,5 @@ footer {
     transform: translateX(-50%);
   }
 }
+
 </style>

@@ -8,12 +8,17 @@
       </p>
       <el-menu mode="vertical" default-active="1">
         <el-menu-item-group>
-          <el-submenu :index="duty.deptName" v-for="duty in dutys.ondutylist">
-            <template slot="title">{{duty.deptName}}</template>
-            <el-menu-item :index="duty.deptName+child.empName" v-for="child in duty.onduty">
-              <span class="name">{{child.empName}}</span>{{child.mobileNumber | phone}}
+          <template v-for="duty in dutys.ondutylist">
+            <el-submenu :index="duty.deptName" v-if="duty.onduty.length>1">
+              <template slot="title">{{duty.deptName}} <span class="titleName">{{duty.onduty[0].empName}}</span>{{duty.onduty[0].mobileNumber | phone}}</template>
+              <el-menu-item :index="duty.deptName+child.empName" v-for="(child,index) in duty.onduty" v-if="index!=0">
+                <span class="name">{{child.empName}}</span>{{child.mobileNumber | phone}}
+              </el-menu-item>
+            </el-submenu>
+            <el-menu-item :index="duty.deptName" v-else>
+              {{duty.deptName}} <span class="titleName">{{duty.onduty[0].empName}}</span>{{duty.onduty[0].mobileNumber | phone}}
             </el-menu-item>
-          </el-submenu>
+          </template>
         </el-menu-item-group>
       </el-menu>
     </el-card>
@@ -43,7 +48,7 @@ export default {
   methods: {
     getData() {
       var date1 = new Date().getTime()
-      this.$http.post('/onduty/getDutyInfo', { dutyDate:"2017-09-30" })
+      this.$http.post('/onduty/getDutyInfo', { dutyDate: "2017-09-30" })
         .then(res => {
           if (res.status == 0) {
             this.dutys = res.data;
@@ -52,7 +57,7 @@ export default {
           }
         })
     }
-    
+
   }
 }
 
@@ -64,6 +69,11 @@ $sub:#1465C0;
   margin-bottom: 20px;
   .name {
     width: 60px;
+    display: inline-block;
+  }
+  .titleName {
+    padding-left: 20px;
+    padding-right: 10px;
     display: inline-block;
   }
   .leader {
@@ -103,6 +113,12 @@ $sub:#1465C0;
       .is-active {
         color: #676767;
       }
+    }
+  }
+  .el-menu-item-group{
+    >ul>.el-menu-item{
+      border-bottom: 1px solid #F2F2F2;
+
     }
   }
   .el-submenu .el-menu-item {

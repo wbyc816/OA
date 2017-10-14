@@ -10,10 +10,10 @@
                 <span style="margin-left:553px;font-size:15px;color:#1465C0;cursor:pointer">发布时间
                 </span> 
 
-                <div style="height:40px;position:absolute;right:-20px;top:27px;width:150px;font-size:3px;color:#1465C0">
+                <div style="height:40px;position:absolute;right:-20px;top:20px;width:150px;font-size:3px;color:#1465C0">
                    <i class="iconfont icon-shangsanjiao" style="font-size:12px;position:absolute;left:0;top:0px;cursor:pointer"></i>
                    <i class="iconfont icon-xiasanjiao-copy" style="font-size:12px;position:absolute;left:0;top:8px;cursor:pointer"></i>
-                   <el-dropdown style="margin-left:20px;color:#1465C0">
+                   <el-dropdown style="margin-left:20px;margin-top:5px;color:#1465C0">
                     <span class="el-dropdown-link">
                       所有部门<i class="el-icon-caret-bottom el-icon--right"></i>
                     </span>
@@ -33,151 +33,23 @@
               </div>
               <div style="position:relative;">
                  <ul style="color:#676767;height:742px" class="file_ul">
-                   <li>
-                     <div class="title_li">关于行政部王莉的人事任命通告</div>
-                        <div class="content_li">人力资源部
-                          <span class="iconfont_color"><i class="iconfont icon-dianzan"></i></span><span>52</span>
-                          <span class="iconfont_color"><i class="iconfont icon-eye"></i></span><span>124</span>
-                          2016-12-22 15:30
+                   <li  v-for="fileData in fileDatas">
+                     <div class="title_li" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:300px">{{fileData.docTitle}}</div>
+                        <div class="content_li">
+                          <span style="width:180px;display:inline-block;margin-left:-2px">{{fileData.taskDeptMajorName }}</span>
+                          <span class="iconfont_color"><i class="iconfont icon-dianzan"></i></span><span>{{fileData.praise}}</span>
+                          <span class="iconfont_color"><i class="iconfont icon-eye"></i></span><span>{{fileData.isRead}}</span>
+                          {{fileData.createTime | time('all')}}
                        </div>
                    </li>
 
-                   <li>
-                      <div>关于行政部王莉的人事任命通告</div>
-                      <div>人力资源部
-                        <span><i class="iconfont icon-dianzan"></i>52</span>
-                        <span><i class="iconfont icon-eye"></i>124</span>
-                        2016-12-22 15:30
-                      </div>
-                   </li>
-                    <li>
-                     <div class="title_li">关于行政部王莉的人事任命通告</div>
-                        <div>人力资源部
-                          <span><i class="iconfont icon-dianzan"></i>52</span>
-                          <span><i class="iconfont icon-eye"></i>124</span>
-                          2016-12-22 15:30
-                       </div>
-                   </li>
-
-                   <li>
-                      <div>关于行政部王莉的人事任命通告</div>
-                      <div>人力资源部
-                        <span><i class="iconfont icon-dianzan"></i>52</span>
-                        <span><i class="iconfont icon-eye"></i>124</span>
-                        2016-12-22 15:30
-                      </div>
-                   </li>
-
-                    <li>
-                     <div class="title_li">关于行政部王莉的人事任命通告</div>
-                        <div>人力资源部
-                          <span><i class="iconfont icon-dianzan"></i>52</span>
-                          <span><i class="iconfont icon-eye"></i>124</span>
-                          2016-12-22 15:30
-                       </div>
-                   </li>
-
-                   <li>
-                      <div>关于行政部王莉的人事任命通告</div>
-                      <div>人力资源部
-                        <span><i class="iconfont icon-dianzan"></i>52</span>
-                        <span><i class="iconfont icon-eye"></i>124</span>
-                        2016-12-22 15:30
-                      </div>
-                   </li>
-                    <li>
-                     <div class="title_li">关于行政部王莉的人事任命通告</div>
-                        <div>人力资源部
-                          <span><i class="iconfont icon-dianzan"></i>52</span>
-                          <span><i class="iconfont icon-eye"></i>124</span>
-                          2016-12-22 15:30
-                       </div>
-                   </li>
-
-                   <li>
-                      <div>关于行政部王莉的人事任命通告</div>
-                      <div>人力资源部
-                        <span><i class="iconfont icon-dianzan"></i>52</span>
-                        <span><i class="iconfont icon-eye"></i>124</span>
-                        2016-12-22 15:30
-                      </div>
-                   </li>
-
-                   <li>
-                     <div class="title_li">关于行政部王莉的人事任命通告</div>
-                        <div>人力资源部
-                          <span><i class="iconfont icon-dianzan"></i>52</span>
-                          <span><i class="iconfont icon-eye"></i>124</span>
-                          2016-12-22 15:30
-                       </div>
-                   </li>
-
-                   <li>
-                      <div>关于行政部王莉的人事任命通告</div>
-                      <div>人力资源部
-                        <span><i class="iconfont icon-dianzan"></i>52</span>
-                        <span><i class="iconfont icon-eye"></i>124</span>
-                        2016-12-22 15:30
-                      </div>
-                   </li>
-                    <li>
-                     <div class="title_li">关于行政部王莉的人事任命通告</div>
-                        <div>人力资源部
-                          <span><i class="iconfont icon-dianzan"></i>52</span>
-                          <span><i class="iconfont icon-eye"></i>124</span>
-                          2016-12-22 15:30
-                       </div>
-                   </li>
-
-                   <li>
-                      <div>关于行政部王莉的人事任命通告</div>
-                      <div>人力资源部
-                        <span><i class="iconfont icon-dianzan"></i>52</span>
-                        <span><i class="iconfont icon-eye"></i>124</span>
-                        2016-12-22 15:30
-                      </div>
-                   </li>
-
-                   <li>
-                     <div class="title_li">关于行政部王莉的人事任命通告</div>
-                        <div>人力资源部
-                          <span><i class="iconfont icon-dianzan"></i>52</span>
-                          <span><i class="iconfont icon-eye"></i>124</span>
-                          2016-12-22 15:30
-                       </div>
-                   </li>
-
-                   <li>
-                      <div>关于行政部王莉的人事任命通告</div>
-                      <div>人力资源部
-                        <span><i class="iconfont icon-dianzan"></i>52</span>
-                        <span><i class="iconfont icon-eye"></i>124</span>
-                        2016-12-22 15:30
-                      </div>
-                   </li>
-                    <li>
-                     <div class="title_li">关于行政部王莉的人事任命通告</div>
-                        <div>人力资源部
-                          <span><i class="iconfont icon-dianzan"></i>52</span>
-                          <span><i class="iconfont icon-eye"></i>124</span>
-                          2016-12-22 15:30
-                       </div>
-                   </li>
-
-                   <li>
-                      <div>关于行政部王莉的人事任命通告</div>
-                      <div>人力资源部
-                        <span><i class="iconfont icon-dianzan"></i>52</span>
-                        <span><i class="iconfont icon-eye"></i>124</span>
-                        2016-12-22 15:30
-                      </div>
-                   </li>
+                 
 
                  </ul>
                   <div class="vertical_line"> </div>
                   
-                  <div class="pageBox" v-show="tableData.length>0" >
-                    <el-pagination @current-change="handleCurrentChange" :current-page="pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="total">
+                  <div class="pageBox" v-show="true" >
+                    <el-pagination @current-change="handleCurrentChange" :current-page="pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
                     </el-pagination>
                   </div>
                   <hr style="position:absolute;top:664px;left:10px;width:790px;border:1px solid #E9E9E9">
@@ -190,23 +62,19 @@
       <el-col :span='7' class="sideNav">
         <el-card class="mailbox">
           <el-menu>
-            <el-menu-item index="1">集团文件<span>4</span></el-menu-item>
-            <el-menu-item index="2">产业文件<span>4</span></el-menu-item>
-            <el-menu-item index="3">公司文件<span>4</span></el-menu-item>
-            <el-menu-item index="5">未读文档<span>4</span></el-menu-item>
-            <el-menu-item index="6">我的收藏<span>4</span></el-menu-item>
+            <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">{{fileType.dictName}}<span>4</span></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="contactList">
-                <el-input class="search" placeholder="">
-                  <el-button slot="append">搜索</el-button>
+                <el-input class="search" v-model="file_title" placeholder="">
+                  <el-button slot="append" @click="click_Search">搜索</el-button>
                 </el-input>
                 <div style="margin-left:250px;margin-top:5px;font-size:12px;color:#1465C0;cursor:pointer" @click="click_highSearch">高级搜索</div>
         </el-card>
 
          <el-card class="highSearch" v-show="ishighSearch==1">
               <span slot="header">高级搜索
-                  <i class="el-icon-close" style="float:right"></i>
+                  <i class="el-icon-close" style="float:right"  @click="close_highSearch"></i>
               </span>
 
                 <span class="title_label">标题</span>
@@ -269,6 +137,11 @@
         total:1,
         tableData:[],
         startDate:1,
+        fileDatas:[],
+        fileTypes:"",
+        fileCode:"",
+        dictCode:"",
+        file_title:"",
         endDate:1,
            pickerOptions2: {
           shortcuts: [{
@@ -303,136 +176,109 @@
     },
     computed: {
       ...mapGetters([
-        'airPortList'
+        'airPortList',
+        "userInfo"
       ])
   },
   created() {
-
-
-
-    // this.getAirPortList();
-    this.getBirthdayData();
-    var routeParam = this.$route.params;
-    console.log(this.$route)
-    if (routeParam.type == 'route') {
-      this.flightStatusType='route';
-      this.searchDate=routeParam.date;
-      this.tripFrom=routeParam.tripFrom;
-      this.tripTo=routeParam.tripTo;
-      this.getToRound();
-    }
-    else if(routeParam.type == 'flightNo'){
-      this.flightStatusType='flightNo';
-      this.searchDate=routeParam.date;
-      this.flightNoTitle=routeParam.flightNoTitle;
-      this.flightNoValue=routeParam.flightNoValue;
-      this.getToFlightNo();
-    }
-    else if(routeParam.type == 'date'){
-      this.searchDate=routeParam.date;
-      this.getData();
-    }
-    else {
-      let temp = new Date();
-      let month = temp.getMonth() + 1;
-      if (month < 10) {
-        month = '0' + month;
-      }
-      this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
-      console.log(this.searchDate);
-      this.getData();
-    }
-
-    this.$store.dispatch('getAirPortList');
+      this.getFileData();
+      this.getFileType();
   },
   methods: {
-
      click_highSearch() {
       this.ishighSearch=1;
      },
-
-    querySearch(queryString, cb) {
-      var airPortList = JSON.parse(JSON.stringify(this.airPortList));
-      var results = queryString ? airPortList.filter(this.createFilter(queryString)) : airPortList;
-      // 调用 callback 返回建议列表的数据
-      results.forEach(e => e.value = e.cityName);
-      console.log(results)
-      cb(results);
-    },
-    createFilter(queryString) {
-      return (airPort) => {
-        return (airPort.cityName.indexOf(queryString.toLowerCase()) === 0);
-      };
-    },
-    handleFrom(item) {
-      this.tripFrom = JSON.parse(JSON.stringify(item));
-    },
-    handleTo(item) {
-      this.tripTo = JSON.parse(JSON.stringify(item));
-    },
-    showDialog() {
-      this.paymentView = true;
-    },
-    show() {
-      console.log(this.$parent);
-    },
-    changDate() {
-      let temp = new Date(this.searchDate);
-      let month = temp.getMonth() + 1;
-      if (month < 10) {
-        month = '0' + month;
-      }
-      this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
-      console.log(this.searchDate);
-    },
-
-    getData() {
-      if (this.searchDate != 'NaN-NaN-NaN') {
-        if (this.flightStatusType == "route") {
-          if (this.tripFrom.city3cody && this.tripTo.city3cody) {
-            if (this.tripFrom.city3cody == this.tripTo.city3cody) {
-              this.$message.warning('出发地与目的地相同，请重新选择路线！')
+     close_highSearch() {
+      this.ishighSearch=0;
+     },
+     search_type(fileType){
+        this.fileCode=fileType.dictCode;
+     },
+     click_Search() {
+         this.$http.post("/doc/selectFileList", {
+              pageNumber: this.pageNumber,
+              docTitle:this.file_title,
+              classify1:this.fileCode,
+              pageSize: "10",
+              empId:this.userInfo.empId,
+            }).then(res => {
+              setTimeout(function() {
+                this.searchLoading = false;
+              }, 200)
+            if (res.status == 0) {
+              this.fileDatas = res.data.selectDocInfoVolist;
+              this.totalSize = res.data.totalSize;
             } else {
-              this.getToRound();
+              this.tableData = [];
+              this.totalSize = 0;
             }
-          } else {
-            this.getToDate();
-          }
-        } else if (this.flightStatusType == "flightNo") {
-          if (this.flightNoValue) {
-            this.getToFlightNo();
-          } else {
-            this.getToDate();
-          }
-        } else {
-          this.getBirthdayData();
-        }
-      } else {
-        this.$message.warning('请选择航班日期!')
-      }
+          }, res => {
 
-    },
-    getBirthdayData(){
-      this.$http.post("/emp/birthdayDetail", {
-        pageNumber: this.pageNumber,
-        pageSize: "10"
-      }).then(res => {
-        setTimeout(function() {
-          this.searchLoading = false;
-        }, 200)
-      if (res.status == 0) {
-        this.tableData = res.data.records;
-        this.total = res.data.total;
-        this.startDate=this.tableData[0].startDate;
-        this.endDate=this.tableData[0].endDate;
-      } else {
-        this.tableData = [];
-        this.total = 0;
-      }
-    }, res => {
+          })
+     },
+     getFileData(){
+          this.$http.post("/doc/selectFileList", {
+            pageNumber: this.pageNumber,
+            pageSize: "10",
+            classify1:"ADM0401",
+            empId:this.userInfo.empId,
+          }).then(res => {
+            setTimeout(function() {
+              this.searchLoading = false;
+            }, 200)
+          if (res.status == 0) {
+            this.fileDatas = res.data.selectDocInfoVolist;
+            this.totalSize = res.data.totalSize;
+          } else {
+            this.tableData = [];
+            this.totalSize = 0;
+          }
+        }, res => {
 
-      })
-    },
+        })
+      },
+       getFileHighSearch(){
+          this.$http.post("/doc/selectFileList", {
+            pageNumber: this.pageNumber,
+            pageSize: "10",
+            classify1:"ADM0401",
+            empId:this.userInfo.empId,
+          }).then(res => {
+            setTimeout(function() {
+              this.searchLoading = false;
+            }, 200)
+          if (res.status == 0) {
+            this.fileDatas = res.data.selectDocInfoVolist;
+            this.totalSize = res.data.totalSize;
+          } else {
+            this.tableData = [];
+            this.totalSize = 0;
+          }
+        }, res => {
+
+        })
+      },
+       getFileType(){
+          this.$http.post("/api/getDict", {
+            dictCode:"ADM04",
+          }).then(res => {
+            setTimeout(function() {
+              this.searchLoading = false;
+            }, 200)
+          if (res.status == 0) {
+            this.fileTypes = res.data;
+          } else {
+            this.tableData = [];
+            this.totalSize = 0;
+          }
+        }, res => {
+
+        })
+      },
+
+
+ 
+   
     handleCurrentChange(page) {
       this.pageNumber = page;
       this.getBirthdayData()

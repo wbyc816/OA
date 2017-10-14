@@ -41,4 +41,14 @@ export const docConfig = [{
     code: 'PXS',
     url:'/doc/trainApplication'
   },
+  {
+    docName: '人员引进申请',
+    code: 'RYY',
+    url:'/doc/empIntroduce'
+  },
+  {
+    docName: '收文登记',
+    code: 'SWD',
+    url:'/doc/docReceiveWordBean'
+  },
 ]

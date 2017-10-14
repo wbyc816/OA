@@ -8,8 +8,8 @@
         </el-select>
       </el-form-item>
       <el-form-item label="发文目录" prop="catalogueName">
-        <el-input v-model="manuscriptForm.catalogueName" :maxlength="10">
-        </el-input>
+        <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="manuscriptForm.catalogueName" style="width:100%" popper-class="myCascader">
+        </el-cascader>
       </el-form-item>
       <el-form-item label="发文日期" prop="issueDate">
         <el-date-picker v-model="manuscriptForm.issueDate" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
@@ -62,7 +62,7 @@ export default {
       fileSendVisible: false,
       manuscriptForm: {
         classify1: '',
-        catalogueName: '',
+        catalogueName: [],
         signName: '',
         signId: '',
         issueDate: '',
@@ -79,7 +79,7 @@ export default {
         classify1: [{ required: true, message: '请选择发文类型', trigger: 'blur' }],
         docFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
         fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
-        catalogueName: [{ required: true, message: '请输入发文目录', trigger: 'blur' }],
+        catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur'  }],
         signName: [{ required: true, message: '请选择签发人', trigger: 'blur' }],
         issueDate: [{ type: 'date', required: true, message: '请选择发文日期', trigger: 'blur' }],
       },
@@ -88,7 +88,14 @@ export default {
           return time.getTime() < Date.now() - 8.64e7;
         }
       },
-      params: ''
+      params: {},
+      sucessFlag: 0,
+      catalogueList:[],
+       defaultProp: {
+        value: 'id',
+        label: 'name',
+        children: 'catalogues'
+      },
     }
   },
   computed: {
@@ -100,6 +107,7 @@ export default {
   created() {
     this.getType();
     this.getSendType();
+    this.getFileCatalogue();
   },
   methods: {
     updateSign(reciver) {
@@ -111,15 +119,20 @@ export default {
       this.manuscriptForm.fileSend = params;
     },
     handleAvatarSuccess(res, file) {
-      console.log(res)
       this.params.docFileId = res.data;
-      this.$emit('submitMiddle', this.params);
+      this.picSuccesss = 1;
+      this.submitMiddle();
     },
     handleAvatarError(res, file) {
       this.$emit('submitMiddle', false);
       this.$message.error('正文上传失败，请重试');
     },
     handleChange(file, fileList) {
+      if (this.picSuccesss == 1) {
+        this.picSuccesss = 2;
+      } else {
+        this.picSuccesss = 0;
+      }
       const isPDF = file.raw.type === 'application/pdf';
       const isLt15M = file.size / 1024 / 1024 < 15;
       if (!isPDF) {
@@ -134,49 +147,54 @@ export default {
         this.manuscriptForm.docFileId = file.url
       }
     },
-    handleRemove(){
-      this.manuscriptForm.docFileId='';
+    handleRemove() {
+      this.manuscriptForm.docFileId = '';
+      this.params.docFileId = '';
+      this.picSuccesss = 0;
+    },
+    submitMiddle() {
+      var that = this;
+      this.params = {
+        "file": {
+          "classify1": this.manuscriptForm.classify1, //发文类型 
+          "issueDate": this.manuscriptForm.issueDate.getTime(), //发文日期
+          "catalogueId": this.manuscriptForm.catalogueName[this.manuscriptForm.catalogueName.length-1], //目录 
+          "signId": this.manuscriptForm.signId //签发人
+        },
+        "fileSend": {
+          "sendTypeAll": {
+            "sendType": this.sendTypes.find(type => type.dictEname == 'all').dictCode, //主送人类型
+            "max": this.manuscriptForm.fileSend.all.max, //最大
+            "min": this.manuscriptForm.fileSend.all.min //最小
+          },
+          "sendTypeDept": [],
+          "sendTypeEmp": {
+            "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
+            "ids": []
+          }
+        },
+      }
+      this.params.fileSend.sendTypeDept = this.manuscriptForm.fileSend.depList.map(function(dep) {
+        return {
+          sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
+          id: dep.id,
+          max: dep.max,
+          min: dep.min
+        }
+      });
+      this.params.fileSend.sendTypeEmp.ids = this.manuscriptForm.fileSend.personList.map(function(person) {
+        return person.empId
+      });
+      this.$emit('submitMiddle', this.params);
     },
     submitForm() {
-      var that=this;
       this.$refs.manuscriptForm.validate((valid) => {
         if (valid) {
-          console.log(this.sendTypes)
-          this.params = {
-            "docFileId": "",
-            "file": {
-              "classify1": this.manuscriptForm.classify1, //发文类型 
-              "issueDate": this.manuscriptForm.issueDate.getTime(), //发文日期
-              "catalogueId": this.manuscriptForm.catalogueName, //目录 
-              "signId": this.manuscriptForm.signId //签发人
-            },
-            "fileSend": {
-              "sendTypeAll": {
-                "sendType": this.sendTypes.find(type => type.dictEname == 'all').dictCode, //主送人类型
-                "max": this.manuscriptForm.fileSend.all.max, //最大
-                "min": this.manuscriptForm.fileSend.all.min //最小
-              },
-              "sendTypeDept": [],
-              "sendTypeEmp": {
-                "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
-                "ids": []
-              }
-            },
+          if (this.picSuccesss == 2) {
+            this.submitMiddle();
+          } else {
+            this.$refs.myUpload.submit();
           }
-          console.log(this.params);
-          this.params.fileSend.sendTypeDept = this.manuscriptForm.fileSend.depList.map(function(dep) {
-            return {
-              sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
-              id: dep.id,
-              max: dep.max,
-              min: dep.min
-            }
-          });
-          console.log(this.params);
-          this.params.fileSend.sendTypeEmp.ids = this.manuscriptForm.fileSend.personList.map(function(person) {
-            return person.empId
-          });
-          this.$refs.myUpload.submit();
         } else {
           this.$message.warning('请检查填写字段')
           this.$emit('submitMiddle', false);
@@ -215,6 +233,28 @@ export default {
             this.sendTypes = res.data;
           } else {
             console.log('获取主送类型失败')
+          }
+        })
+    },
+    getFileCatalogue() {
+      function loopMap(arr) {
+        arr.forEach(function(dep) {
+          if (dep.catalogues) {
+            if (dep.catalogues.length == 0) {
+              dep.catalogues = null
+            } else {
+              loopMap(dep.catalogues)
+            }
+          }
+        })
+      }
+      this.$http.post('/doc/getFileCatalogue')
+        .then(res => {
+          if (res.status == '0') {
+            loopMap(res.data);
+            this.catalogueList = res.data;
+          } else {
+            console.log('获取发文目录失败')
           }
         })
     }
