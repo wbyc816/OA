@@ -55,7 +55,7 @@
             </p> -->
             <el-card class="news">
               <p slot="header"><span>新闻</span>
-                <router-link to="#">更多</router-link>
+                <router-link to="FilesHome">更多</router-link>
               </p>
               <el-tabs v-model="activeName" class="myTab">
                 <el-tab-pane :label="list.name" :name="list.name" v-for="(list,index) in newsList">
