@@ -130,7 +130,7 @@ export default {
     } else {
       var a = document.createElement('a');
       a.setAttribute('href', this.baseUrl + "/login.html");
-      a.setAttribute('target', '_blank');
+      // a.setAttribute('target', '_self');
       a.setAttribute('id', 'payUrl');
       // 防止反复添加
       if(!document.getElementById('payUrl')) document.body.appendChild(a);
