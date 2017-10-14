@@ -174,6 +174,9 @@ export default {
           }
         },
       }
+      // if(!this.manuscriptForm.fileSend.all.max){
+      //   this.params.fileSend.sendTypeAll={};
+      // }
       this.params.fileSend.sendTypeDept = this.manuscriptForm.fileSend.depList.map(function(dep) {
         return {
           sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
