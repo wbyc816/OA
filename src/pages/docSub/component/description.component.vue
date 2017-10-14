@@ -10,16 +10,16 @@
         </div>
       </el-form-item>
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
-        <div class="pathBox clearfix">
-          <template v-for="(node,index) in ruleForm.path">
+        <div class="pathBox clearfix" v-html="pathHtml">
+          <!-- <template v-for="(node,index) in ruleForm.path">
             <div class="nodeBox">
               <span v-if="node.nodeName=='sign'" class="signList">
                 #<span v-for="child in node.children">{{child.typeIdName}}</span>#
               </span>
               <span v-else>{{node.typeIdName}}</span>
             </div>
-            <i class="iconfont icon-jiantouyou" v-if="index!=ruleForm.path.length-1"></i>
-          </template>
+            <i class="iconfont icon-jiantouyou"></i>
+          </template> -->
         </div>
         <el-button size="small" type="text" @click="pathDialogVisible=true"><i class="iconfont icon-edit"></i>编辑</el-button>
       </el-form-item>
@@ -65,7 +65,7 @@
 import SearchOptions from '../../../components/searchOptions.component'
 import PathDialog from '../../../components/pathDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
-
+const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 export default {
   props: {
     options: {
@@ -82,7 +82,7 @@ export default {
         des: [
           { required: true, message: '请输入请示内容', trigger: 'blur,change' }
         ],
-        path: [{type:'array', required: true, message: '请选择建议路径', trigger: 'blur,change' }],
+        path: [{ type: 'array', required: true, message: '请选择建议路径', trigger: 'blur,change' }],
       },
       dialogTableVisible: false,
       pathDialogVisible: false,
@@ -102,6 +102,31 @@ export default {
     }
   },
   computed: {
+    pathHtml: function() {
+      var html = '';
+      if (this.ruleForm.path.length != 0) {
+        this.ruleForm.path.forEach((node, index) => {
+          if (node.nodeName == 'sign') {
+            node.children.forEach((child,childIndex)=>{
+              if(childIndex==0){
+                html +='#'+child.typeIdName+' ';
+              }else if(childIndex==node.children.length-1){
+                html+=child.typeIdName+'# '+arrowHtml;
+              }else{
+                html+=child.typeIdName+' '
+              }
+            })
+          } else {
+            if (index != this.ruleForm.path.length - 1) {
+              html += node.typeIdName + arrowHtml
+            } else {
+              html += node.typeIdName
+            }
+          }
+        })
+      }
+      return html;
+    },
     ...mapGetters([
       'baseURL',
       'docType',
@@ -232,8 +257,8 @@ export default {
           nodeName = 'start';
         } else if (index == arr.length - 1) {
           nodeName = 'end';
-        }else{
-          nodeName='task';
+        } else {
+          nodeName = 'task';
         }
         if (item.nodeName == 'sign') {
           nodeName = 'sign';
@@ -307,7 +332,6 @@ $sub:#1465C0;
         }
       }
       i {
-        float: left;
         padding-right: 10px;
         color: $main;
       }

@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{'padding-top':$route.path=='/home'?'26px':'96px'}">
+  <div id="app" :style="{'padding-top':$route.path=='/home'?'26px':'96px'}" v-if="login">
     <div class="topBar" :class="{'active':scrollBanner}">
       <div class="topNavbar">
         <div class="container">
@@ -106,7 +106,8 @@ export default {
       routers: [],
       breadcrumbShow: false,
       scrollBanner: false,
-      baseUrl: ''
+      baseUrl: '',
+      login:false
     }
   },
   computed: {
@@ -120,11 +121,12 @@ export default {
       // this.$store.dispatch('getUserInfo');
       this.baseUrl = 'http://127.0.0.1:8080'
     } else {
-      this.baseUrl = 'http://192.168.8.92:8082'
+      this.baseUrl = 'http://apitest.donghaiair.com:8082'
     }
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));
       this.$store.dispatch('getUserInfo');
+      this.login=true;
     } else {
       location.href = this.baseUrl + "/login.html"
     }
@@ -347,7 +349,7 @@ $brown: #985D55;
   float: left;
   cursor: pointer;
   img {
-    vertical-align: middle;
+    vertical-align: top;
   }
   .icon {
     height: 47px;

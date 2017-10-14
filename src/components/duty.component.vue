@@ -10,9 +10,9 @@
         <el-menu-item-group>
           <template v-for="duty in dutys.ondutylist">
             <el-submenu :index="duty.deptName" v-if="duty.onduty.length>1">
-              <template slot="title">{{duty.deptName}} <span class="titleName">{{duty.onduty[0].empName}}</span>{{duty.onduty[0].mobileNumber | phone}}</template>
+              <template slot="title"><span>{{duty.deptName}}</span> <span class="titleName">{{duty.onduty[0].empName}}</span><span>{{duty.onduty[0].mobileNumber | phone}}</span></template>
               <el-menu-item :index="duty.deptName+child.empName" v-for="(child,index) in duty.onduty" v-if="index!=0">
-                <span class="name">{{child.empName}}</span>{{child.mobileNumber | phone}}
+                <span class="name">{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
               </el-menu-item>
             </el-submenu>
             <el-menu-item :index="duty.deptName" v-else>
@@ -99,6 +99,7 @@ $sub:#1465C0;
     padding: 0;
     .el-submenu__title {
       border-bottom: 1px solid #F2F2F2;
+      // transition:all 0.3s;
     }
   }
   .el-submenu.is-opened {
@@ -123,7 +124,7 @@ $sub:#1465C0;
   }
   .el-submenu .el-menu-item {
     padding-left: 18px !important;
-    font-size: 15px;
+    font-size: 14px;
   }
 }
 

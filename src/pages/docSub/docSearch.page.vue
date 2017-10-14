@@ -18,7 +18,7 @@
           <td>{{doc.taskUser}}</td>
           <td>{{doc.nodeName | nodeNameFormatter}}</td>
           <td>
-            <router-link :to="'/doc/docDetail/'+doc.id">查看</router-link>
+            <router-link tag="span" :to="'/doc/docDetail/'+doc.id" style="color:#0460AE">查看</router-link>
           </td>
         </tr>
       </tbody>

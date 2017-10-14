@@ -52,7 +52,7 @@ export default {
           path: '/doc/docSub'
         },
         {
-          title: '公文跟踪',
+          title: '公文追踪',
           path: '/doc/docTracking'
         },
         {

@@ -23,7 +23,7 @@
           <td colspan="3">{{doc.docTitle}}</td>
           <td>
             <span>
-              <router-link :to="'/doc/docDetail/'+doc.id">签批</router-link>
+              <router-link tag="span" :to="'/doc/docDetail/'+doc.id" stye="color:#0460AE;">签批</router-link>
               <!-- <span>Withdraw</span>
             <span @click="contractView = true">Delete</span> -->
             </span>
@@ -145,7 +145,7 @@ $purple: #0460AE;
       th {
         padding: 6px 13px;
       }
-      $widths: (1: 15%, 2: 10%, 3: 21%, 4: 22%, 5: 16%, 6: 16%);
+      $widths: (1: 15%, 2: 10%, 3: 18%, 4: 25%, 5: 16%, 6: 16%);
       @each $num,
       $width in $widths {
         th:nth-child(#{$num}) {

@@ -65,40 +65,22 @@
             <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">{{fileType.dictName}}<span>4</span></el-menu-item>
           </el-menu>
         </el-card>
-        <el-card class="contactList">
-                <el-input class="search" v-model="file_title" placeholder="">
-                  <el-button slot="append" @click="click_Search">搜索</el-button>
-                </el-input>
-                <div style="margin-left:250px;margin-top:5px;font-size:12px;color:#1465C0;cursor:pointer" @click="click_highSearch">高级搜索</div>
-        </el-card>
 
-         <el-card class="highSearch" v-show="ishighSearch==1">
-              <span slot="header">高级搜索
-                  <i class="el-icon-close" style="float:right"  @click="close_highSearch"></i>
-              </span>
-
+         <el-card class="highSearch" >
+           
                 <span class="title_label">标题</span>
-                <el-input class="" placeholder="" style="margin:12px 0; ">
-                   
+                <el-input class="" placeholder=""  v-model="file_title" style="margin:12px 0; ">
                 </el-input>
-
-                <span class="title_label">机构</span>
-                <el-input class="search" placeholder="">
-                     <el-button slot="append" style="width:62px">选择</el-button>
-                </el-input>
-
-                <div style="margin:7px 0 13px 43px;font-size:12px;color:#676767;cursor:pointer">本公司<span style="margin-left:20px">本部门</span></div>
-
-                
                 <div class="block">
                  <span class="title_label">日历</span>
                   <el-date-picker
-                    v-model="value6"
+                    v-model="startTime"
                     type="daterange"
-                    placeholder="选择日期范围">
+                    placeholder="选择日期范围"
+                    format="yyyy-MM-dd">
                   </el-date-picker>
                 </div>
-                <el-button type="primary" style="width:101px;height:46px;margin:9px 0px  0px 193px">搜索</el-button>
+                <el-button type="primary" style="width:101px;height:46px;margin:9px 0px  0px 193px"  @click="click_Search">搜索</el-button>
             </el-card>
       </el-col>
     </el-row>
@@ -170,8 +152,8 @@
             }
           }]
         },
-        value6: '',
-        value7: ''
+        startTime: '',
+        endTime: ''
       }
     },
     computed: {
@@ -195,12 +177,23 @@
         this.fileCode=fileType.dictCode;
      },
      click_Search() {
+        var time1 = new Date(Number(this.startTime[0]));
+        var time2 = new Date(Number(this.startTime[1]));
+        var y1 = time1.getFullYear(); //年
+        var m1 = time1.getMonth(); //月
+        var d1 = time1.getDate(); //日
+        var y2 = time2.getFullYear(); //年
+        var m2 = time2.getMonth(); //月
+        var d2 = time2.getDate(); //日
+        var startTime=y1+"-"+m1+"-"+d1;
+        var endTime=y2+"-"+m2+"-"+d2;
          this.$http.post("/doc/selectFileList", {
               pageNumber: this.pageNumber,
               docTitle:this.file_title,
-              classify1:this.fileCode,
               pageSize: "10",
               empId:this.userInfo.empId,
+              startTime:startTime,
+              endTime:endTime,
             }).then(res => {
               setTimeout(function() {
                 this.searchLoading = false;
@@ -237,30 +230,10 @@
 
         })
       },
-       getFileHighSearch(){
-          this.$http.post("/doc/selectFileList", {
-            pageNumber: this.pageNumber,
-            pageSize: "10",
-            classify1:"ADM0401",
-            empId:this.userInfo.empId,
-          }).then(res => {
-            setTimeout(function() {
-              this.searchLoading = false;
-            }, 200)
-          if (res.status == 0) {
-            this.fileDatas = res.data.selectDocInfoVolist;
-            this.totalSize = res.data.totalSize;
-          } else {
-            this.tableData = [];
-            this.totalSize = 0;
-          }
-        }, res => {
 
-        })
-      },
        getFileType(){
-          this.$http.post("/api/getDict", {
-            dictCode:"ADM04",
+          this.$http.post("/doc/getCountFileByClassify", {
+             empId:this.userInfo.empId,
           }).then(res => {
             setTimeout(function() {
               this.searchLoading = false;
@@ -281,7 +254,7 @@
    
     handleCurrentChange(page) {
       this.pageNumber = page;
-      this.getBirthdayData()
+      this.click_Search()
     },
     // getAirPortList() {
     //   this.$http.get('/api/getAirPortList')
