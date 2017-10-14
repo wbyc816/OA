@@ -380,8 +380,8 @@
            this.$http.post("/index/selectPresidentEmailInfo", {
               pageNumber: this.pageNumber,
               pageSize: "10",
-              // empId:this.userInfo.empId,
-              empId:"D3D80B656929A5BC0FA34381BF42FBDD",
+              empId:this.userInfo.empId,
+              // empId:"D3D80B656929A5BC0FA34381BF42FBDD",
             }).then(res => {
               setTimeout(function() {
                 this.searchLoading = false;
