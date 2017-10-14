@@ -18,10 +18,7 @@
           </el-date-picker>
         </el-col>
         <el-col :span="5">
-          <el-select v-model="deptName" clearable placeholder="请选择">
-            <el-option v-for="item in deptList" :key="item.name" :label="item.name" :value="item.name">
-            </el-option>
-          </el-select>
+          <dept-list @deptChange="deptChange"></dept-list>
         </el-col>
         <el-col :span="8">
           <el-row :gutter="0">
@@ -37,12 +34,12 @@
     </el-card>
     <el-card>
       <div slot="header">
-        <el-row>
+        <!-- <el-row>
           <el-col class="titleRight" :offset="20" :span="4">
             <i class="el-icon-edit"></i>
             <a style="color: #0460AE" href="#/duty/dutyEdit">值班信息维护</a>
           </el-col>
-        </el-row>
+        </el-row> -->
       </div>
       <el-table :data="tableData" highlight-current-row style="width: 100%">
         <el-table-column type="index" width="50">
@@ -70,6 +67,7 @@ import util from '../../common/util'
 import api from '../../fetch/api'
 import dataTransform from '../../common/dataTransform'
 import { fmts } from '../../common/dutyConfig'
+import deptList from '../../components/deptList.component'
 
 export default {
   data() {
@@ -99,14 +97,17 @@ export default {
   },
   created() {
     api.getDeptList().then(data => {
-      if(data.status == '0') {
-         this.deptList = data.data.deptList[0].childNode
+      if (data.status == '0') {
+        this.deptList = data.data.deptList[0].childNode
       }
     })
   },
   methods: {
     handleCurrentChange() {
       this.search()
+    },
+    deptChange(val) {
+      this.deptName = val
     },
     search() {
       this.tableData = []
@@ -125,6 +126,9 @@ export default {
         }
       })
     }
+  },
+  components: {
+    deptList
   }
 }
 </script>
