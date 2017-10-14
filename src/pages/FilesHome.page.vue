@@ -414,6 +414,7 @@
       padding-left:15px;
       border-bottom:1px solid #E9E9E9;
       margin-left:10px;
+      cursor: pointer;
    }
   .file_ul li div{
       margin-top:15px

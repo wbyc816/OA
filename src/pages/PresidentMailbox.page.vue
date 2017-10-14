@@ -31,13 +31,13 @@
               <el-table
               :data="MailDatas"
               stripe
-              style="width: 100%">
+              style="width: 100%" @row-click="clickRowOther">
               <el-table-column
                 prop="emailTitle"
                 label="标题"
                 >
                 <template scope="scope">
-                   <div @click="mail_content_detail(scope.row.id)" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px"><i v-show="scope.row.isReply==0" class="iconfont icon-mail" style="margin-right:20px;color:#1465C0"></i><i v-show="scope.row.isReply!=0" class="iconfont icon-mailbox" style="margin-right:20px"></i>{{ scope.row.emailTitle}}</div>
+                   <div @click="mail_content_detail(scope.row.id)" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px;cursor:pointer">{{ scope.row.emailTitle}}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -45,7 +45,7 @@
                 label="发送时间"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.postTime | time("all") }}</span>
+                  <span style="cursor:pointer">{{ scope.row.postTime | time("all") }}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -53,16 +53,17 @@
                 label="回复时间"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.replyTime | time("all") }}</span>
+                  <span  style="cursor:pointer">{{ scope.row.replyTime | time("all") }}</span>
                 </template>
               </el-table-column>
 
               <el-table-column
                 prop="isReply"
                 label="状态"
+                width="100"
                 >
                 <template scope="scope">
-                  <span >{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
+                  <span  style="cursor:pointer">{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -102,13 +103,13 @@
               <el-table
               :data="MailDatas"
               stripe
-              style="width: 100%">
+              style="width: 100%" @row-click="clickRow">
               <el-table-column
                 prop="emailTitle"
                 label="标题"
                 >
                 <template scope="scope">
-                  <div @click="boss_mail_content_detail(scope.row.id,scope.row.isReply)" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px"><i v-show="scope.row.isReply==0" class="iconfont icon-mail" style="margin-right:20px;color:#1465C0"></i><i v-show="scope.row.isReply!=0" class="iconfont icon-mailbox" style="margin-right:20px"></i>{{ scope.row.emailTitle}}</div>
+                  <div style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px;">{{ scope.row.emailTitle}}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -116,7 +117,7 @@
                 label="发送时间"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.postTime | time("all")}}</span>
+                  <span style="" >{{ scope.row.postTime | time("all")}}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -124,16 +125,17 @@
                 label="发送人"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.postName }}</span>
+                  <span style="" >{{ scope.row.postName }} | {{scope.row.postDept}}</span>
                 </template>
               </el-table-column>
 
               <el-table-column
                 prop="isReply"
                 label="状态"
+                width="100"
                 >
                 <template scope="scope">
-                  <span >{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
+                  <span style="" >{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -337,17 +339,14 @@
       });
         this.$refs['baseForm'].validate((valid) => {
           if (valid) {
-            this.$http.post("/index/addEmailInfo", params,{ body: true
-               
-            }).then(res => {
-              setTimeout(function() {
-                this.searchLoading = false;
-
-              }, 200)   
+            this.$http.post("/index/addEmailInfo", params,{ body: true}).then(res => { 
              if (res.status == 0) {
-            
+              this.$message.success("提交成功");
+              this.show_mail_list();
+              this.getMailData();
             } else {
              
+              this.$message.error("提交失败");
             }
           }, res => {
 
@@ -380,8 +379,8 @@
            this.$http.post("/index/selectPresidentEmailInfo", {
               pageNumber: this.pageNumber,
               pageSize: "10",
-              // empId:this.userInfo.empId,
-              empId:"D3D80B656929A5BC0FA34381BF42FBDD",
+              empId:this.userInfo.empId,
+              //empId:"D3D80B656929A5BC0FA34381BF42FBDD",
             }).then(res => {
               setTimeout(function() {
                 this.searchLoading = false;
@@ -551,15 +550,13 @@
       this.pageNumber = page;
       this.getMailData()
     },
-    // getAirPortList() {
-    //   this.$http.get('/api/getAirPortList')
-    //     .then(res => {
-    //       if (res.status == 0) {
-    //         this.airPortList = res.data;
-    //       }
-    //       console.log(this.airPortList)
-    //     })
-    // }
+    clickRow(row, event, column){
+      console.log(row);
+      this.boss_mail_content_detail(row.id,row.isReply)
+    },
+    clickRowOther(row, event, column){
+      this.mail_content_detail(row.id)
+    }
   }
   }
 
@@ -590,9 +587,12 @@
     border:1px solid #F2F2F2;
    
   }
+  .el-table__row{
+    cursor: pointer;
+  }
 
 
- 
+     
 }
 
 
