@@ -12,10 +12,10 @@
 
               <el-form ref="baseForm" :model="baseForm" label-width="80px" style="margin-top:50px;">
                   <el-form-item label="标题">
-                    <el-input v-model="baseForm.EmailTitle" style="width:600px;margin-left:50px;" ></el-input>
+                    <el-input v-model="baseForm.emailTitle" style="width:600px;margin-left:50px;" ></el-input>
                   </el-form-item>
                   <el-form-item label="内容">
-                      <el-input type="textarea" v-model="baseForm.EmailContent" resize="none" style="width:600px;margin-left:50px"></el-input>
+                      <el-input type="textarea" v-model="baseForm.emailContent" resize="none" style="width:600px;margin-left:50px"></el-input>
                   </el-form-item>
                   <el-form-item style="margin-left:50px">
                     <el-button type="primary" @click="onSubmit" style="width:150px;height:47px">提交</el-button>
@@ -45,7 +45,7 @@
                 label="发送时间"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.postTime==null ? "" : scope.row.postTime | time("all") }}</span>
+                  <span >{{ scope.row.postTime | time("all") }}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -53,7 +53,7 @@
                 label="回复时间"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.replyTime==null ? "" : (scope.row.replyTime | time("all")) }}</span>
+                  <span >{{ scope.row.replyTime | time("all")}}</span>
                 </template>
               </el-table-column>
 
@@ -107,7 +107,7 @@
                 label="标题"
                 >
                 <template scope="scope">
-                  <div @click="mail_content_detail(scope.row.id)" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px"><i class="iconfont icon-mail" style="margin-right:20px;color:#1465C0"></i><i class="iconfont icon-mailbox" style="margin-right:20px"></i>{{ scope.row.emailTitle}}</div>
+                  <div @click="mail_content_detail(scope.row.id)" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px"><i v-show="scope.row.isReply==0" class="iconfont icon-mail" style="margin-right:20px;color:#1465C0"></i><i v-show="scope.row.isReply!=0" class="iconfont icon-mailbox" style="margin-right:20px"></i>{{ scope.row.emailTitle}}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -132,7 +132,7 @@
                 label="状态"
                 >
                 <template scope="scope">
-                  <span >{{scope.row.isReply=="1"?"已回复":"未回复"}}</span>
+                  <span >{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -155,7 +155,7 @@
                   <div style="min-height:150px">
                     <div style="width:200px;display:inline-block" >发件人：{{detailDatas.postName}}</div>    时间：{{detailDatas.postTime==null ? "" : (detailDatas.postTime | time("all")) }}
                     <hr style="border:1px dashed #D5DADF">
-                    {{detailDatas.emailContent}}
+                    {{detailDatas.emailContent}} 
                   </div>
                 </div>
             </el-card>
@@ -229,12 +229,32 @@
   },
   methods: {
       onSubmit() {
-       this.$refs['baseForm'].validate((valid) => {
+      var params = Object.assign({ 
+        "id": "",
+        "emailTitle": this.baseForm.emailTitle, 
+        "emailContent":this.baseForm.emailContent,
+        "postEmpId":this.userInfo.empId,
+        "postName": "",
+        "postAddress": "",
+        "postTime": "",
+        "isRead": 0,
+        "readTime": "",
+        "replyEmpId": "",
+        "replyName": "",
+        "replyContent": "",
+        "replyTime": "",
+        "createTime": "",
+        "createUser": "",
+        "updateTime": "",
+        "updateUser": "",
+        "sts": 0,
+        "isReply": 0,
+        "postDept": ""
+      });
+        this.$refs['baseForm'].validate((valid) => {
           if (valid) {
-               this.$http.post("/index/addEmailInfo", {
-              EmailTitle:this.baseForm.EmailTitle,
-              EmailContent:this.baseForm.EmailContent,
-              empId:this.userInfo.empId,
+               this.$http.post("/index/addEmailInfo", params,{ body: true
+              
             }).then(res => {
               setTimeout(function() {
                 this.searchLoading = false;
@@ -268,8 +288,9 @@
            this.$http.post("/index/selectPresidentEmailInfo", {
               pageNumber: this.pageNumber,
               pageSize: "10",
-              // empId:this.userInfo.empId,
-               empId:"D3D80B656929A5BC0FA34381BF42FBDD",
+              empId:this.userInfo.empId,
+
+              // empId:"D3D80B656929A5BC0FA34381BF42FBDD",
             }).then(res => {
               setTimeout(function() {
                 this.searchLoading = false;
@@ -425,23 +446,37 @@
 </script>
 <style lang='scss'>
   $main: #0460AE;
+  $purple: #7C5598;
   #mail{
     .el-row .el-row{
     height:0px;
     background-color:transparent;
   }
   .pageBox{
-    text-align: right;
+    top:530px;
+    right:0;
     margin: 30px 0;
+    position:absolute;
 
   }
   .el-card__body{
     padding:0;
   }
-
+   
+  .purpleColor {
+    color: $main;
+  }
+  .el-menu-item{
+    border:1px solid #F2F2F2;
+   
   }
 
 
+ 
+}
+
+
+  
 
 
 
