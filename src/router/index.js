@@ -90,6 +90,8 @@ import FilesHome from 'pages/FilesHome.page'
 
 //总裁邮箱
 import PresidentMailbox from 'pages/PresidentMailbox.page'
+import softDownload from '../pages/softDownload.page'
+
 
 Vue.use(Router)
 
@@ -677,6 +679,14 @@ export default new Router({
         //  ]
         // }
        operationSystem,
-       duty
+       duty,
+        {
+            path: '/softDownload',
+            component: softDownload,
+            meta: {
+              breadcrumb: '软件下载'
+            }
+        }
+
     ]
 })

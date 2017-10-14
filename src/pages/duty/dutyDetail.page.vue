@@ -54,7 +54,7 @@
         </el-table-column>
         <el-table-column property="phoneNumber" label="电话">
         </el-table-column>
-      </el-table>
+      </el-table> 
     </el-card>
     <div class="paginateWrap" v-if="tableData.length">
       <el-pagination @current-change="handleCurrentChange" :current-page.sync="paginate.currentPage" :page-sizes="paginate.pageSizes" :layout="paginate.layout" :total="paginate.total">

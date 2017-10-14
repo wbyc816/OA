@@ -138,5 +138,8 @@ export default {
   },
   getDutyMessage(information) {
     return fetch('/onduty/getDutyInfoDetail', information)
+  },
+  getSoftList(params) {
+    return fetch('/index/selectSoftwareInfo', params)
   }
 }

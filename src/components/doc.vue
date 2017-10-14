@@ -2,7 +2,7 @@
   <a :href="data.link" class='doc-block' :target="target">
     <span class='doc-title'>
       <span class='logo' :style={backgroundColor:data.color}>
-        <i class='iconfont' :style="{'font-size': fontSize,'color': data.fontColor }" :class='data.logo'></i>
+        <i class='iconfont' :style="{'font-size': data.font ? data.font : fontSize }" :class='data.logo'></i>
       </span>
       <span class='doc-text' v-text='data.text'></span>
     </span>
@@ -41,8 +41,7 @@
     .iconfont {
       line-height: 57px;
       text-indent: 0;
-      color: #fff; // color: green;
-      // background-color: white;
+      color: #fff; 
     }
     .doc-text {
       display: inline-block; // max-width: 130px;
