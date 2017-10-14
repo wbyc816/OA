@@ -25,7 +25,7 @@
               <el-table-column
                 prop="jobtitle"
                 label="职位"
-                width="130">
+                width="120">
               </el-table-column>
 
               <el-table-column

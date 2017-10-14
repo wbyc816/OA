@@ -234,7 +234,7 @@
               <el-menu>
                 <el-menu-item index="1" @click.native="goToOthers('/HR/newsListHr/FIL0303')"><i class="iconfont icon-guizhang"></i>规章制度<i class="el-icon-arrow-right"></i></el-menu-item>
                 <el-menu-item index="2" @click.native="goToOthers('/HR/newsListHr/FIL0304')"><i class="iconfont icon-shouce"></i>使用手册<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="3"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item index="3" @click.native="goToOthers('/PresidentMailbox')"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
                 <el-menu-item index="4"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
               </el-menu>
             </el-card>
