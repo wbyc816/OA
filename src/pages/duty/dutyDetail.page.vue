@@ -21,25 +21,26 @@
           <dept-list @deptChange="deptChange"></dept-list>
         </el-col>
         <el-col :span="8">
-          <el-row :gutter="0">
-            <el-col :span="16">
-              <el-input v-model="empName" placeholder="值班人"></el-input>
-            </el-col>
-            <el-col :span="8">
-              <el-button class="search" @click="search" type="primary">搜索</el-button>
-            </el-col>
-          </el-row>
+          <!-- <el-row :gutter="0">
+              <el-col :span="16">
+                <el-input v-model="empName" placeholder="值班人"></el-input>
+              </el-col>
+              <el-col :span="8">
+                <el-button class="search" @click="search" type="primary">搜索</el-button>
+              </el-col>
+            </el-row> -->
+          <el-button class="search" @click="search" type="primary">搜索</el-button>
         </el-col>
       </el-row>
     </el-card>
     <el-card>
       <div slot="header">
-        <!-- <el-row>
-          <el-col class="titleRight" :offset="20" :span="4">
-            <i class="el-icon-edit"></i>
-            <a style="color: #0460AE" href="#/duty/dutyEdit">值班信息维护</a>
-          </el-col>
-        </el-row> -->
+        <el-row class="title">
+          <!-- <el-col class="titleRight" :offset="20" :span="4">
+              <i class="el-icon-edit"></i>
+              <a style="color: #0460AE" href="#/duty/dutyEdit">值班信息维护</a>
+            </el-col> -->
+        </el-row>
       </div>
       <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
         <el-table-column type="index" width="50">
@@ -54,7 +55,7 @@
         </el-table-column>
         <el-table-column property="phoneNumber" label="电话">
         </el-table-column>
-      </el-table> 
+      </el-table>
     </el-card>
     <div class="paginateWrap" v-if="tableData.length">
       <el-pagination @current-change="handleCurrentChange" :current-page.sync="paginate.currentPage" :page-sizes="paginate.pageSizes" :layout="paginate.layout" :total="paginate.total">
@@ -96,9 +97,23 @@ export default {
     }
   },
   created() {
+    const now = util.formatTime(new Date(), 'yyyyMMdd')
     api.getDeptList().then(data => {
       if (data.status == '0') {
         this.deptList = data.data.deptList[0].childNode
+      }
+    });
+    api.getDutyMessage({
+      startDate: now,
+      endDate: now,
+      deptName: '',
+      empName: '',
+      pageNumber: 1,
+      pageSize: 10
+    }).then(data => {
+      if (data.status == '0' && data.data.totalSize) {
+        this.tableData = dataTransform(data.data.ondutyVolist, fmts)
+        this.paginate.total = data.data.totalSize
       }
     })
   },
@@ -119,7 +134,6 @@ export default {
         pageNumber: this.paginate.currentPage,
         pageSize: 10
       }).then((data) => {
-        console.log(data)
         if (data.status == '0' && data.data.totalSize) {
           this.tableData = dataTransform(data.data.ondutyVolist, fmts)
           this.paginate.total = data.data.totalSize
@@ -166,8 +180,14 @@ export default {
       text-align: center!important;
     }
   }
+  .title {
+    height: 22px;
+  }
   .paginateWrap {
     margin: 20px auto 50px
+  }
+  .search{             // 临时search
+    transform: translateX(-7px)
   }
 }
 </style>

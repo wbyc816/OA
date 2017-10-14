@@ -55,7 +55,7 @@
         <el-table-column fixed="right" width="150">
           <template scope="scope">
             <el-button @click="triggerDelete(scope.row)" type="text" size="small">删除</el-button>
-            <el-button @click="triggerEdit(scope.row)"  type="text" size="small">编辑</el-button>
+            <el-button @click="triggerEdit(scope.row)" type="text" size="small">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -104,7 +104,7 @@ export default {
       empName: '',
       dialogVisible1: false,
       dialogVisible2: false,
-      currentMsg
+      currentIndex
     }
   },
   methods: {
@@ -135,15 +135,26 @@ export default {
       })
     },
     triggerDelete(val) {
-      console.log(val)
+      this.dialogVisible1 = true
+      this.currentIndex = val
     },
-    triggerEdit(){
-     
+    triggerEdit() {
+      this.dialogVisible2 = true
+      this.currentIndex = val
     },
-    deleteConfirm() {
+    deleteConfirm(id) {
+      // 发送请求并刷新页面数据
+      api.deleteDutyInfo(id).then((data) => {
+        if(data.status == 0){
+          this.$message.success('删除成功')
+        } else {
+          this.$message.error('删除失败')
+        }   
+      })
     },
     editConfirm() {
-
+      // 发送请求 将修改后的对象发送到服务器
+      // 修改和 更新共用接口
     }
   },
   components: {

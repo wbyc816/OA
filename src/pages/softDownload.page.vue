@@ -2,16 +2,16 @@
   <div id='softDownload'>
     <el-row :gutter='12'>
       <el-col :span='17' :xs="24">
-        <el-card>
+        <el-card class="softcard">
           <div slot="header">
             <el-row>
               <el-col :span="4">
                 软件下载
               </el-col>
-              <el-col class="titleRight" :offset="16" :span="4">
+              <!-- <el-col class="titleRight" :offset="16" :span="4">
                 <i class="iconfont icon-zhinan"></i>
                 <a style="color: #0460AE" href="#">下载操作说明</a>
-              </el-col>
+              </el-col> -->
             </el-row>
           </div>
           <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
@@ -100,7 +100,7 @@ export default {
 
 <style lang="scss">
 #softDownload {
-  .el-card {
+  .el-card.softcard {
     padding: 0 20px;
     .el-card__header {
       padding-left: 0;
