@@ -14,13 +14,13 @@
             <div class="selArea">
               <p class="header">选择部门</p>
               <ul>
-                <li v-for="dep in list.deptsVos" @dblclick="addNode(dep,1)">{{dep.deptName}}</li>
+                <li v-for="dep in list.deptsVos" @click="addNode(dep,1)">{{dep.deptName}}</li>
               </ul>
             </div>
             <div class="selArea">
               <p class="header">选择公司领导</p>
               <ul>
-                <li v-for="emp in list.empsVos" @dblclick="addNode(emp,2)">{{emp.empName}}</li>
+                <li v-for="emp in list.empsVos" @click="addNode(emp,2)">{{emp.empName}}</li>
               </ul>
             </div>
           </div>

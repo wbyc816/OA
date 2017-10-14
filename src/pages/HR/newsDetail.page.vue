@@ -10,9 +10,8 @@
                 <p class="others"><i class="iconfont icon-eye"></i> <span>{{detail.browse}}</span><span class="time">{{detail.createTime | time('date')}}</span><span class="person">签发人 {{detail.createUser}}</span><span class="person">校对人 {{detail.verifyName}}</span></p>
               </el-col>
               <el-col :span='5' class="downBox">
-                <p>附件</p>
-                <p class="link">集团下发文件.pdf</p>
-                <p class="link">集团下发文件.pdf</p>
+                <p>下载</p>
+                <a :href="detail.url" target="_blank" class="link">{{detail.title}}</a>
               </el-col>
             </el-row>
           </div>

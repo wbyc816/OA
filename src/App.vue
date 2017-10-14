@@ -14,10 +14,10 @@
           <img src="./assets/images/chi.png" alt="" class="navImgBg">
           <el-row>
             <el-col :span="8">
-              <div class="sologo">
+              <router-link to="/home" class="sologo">
                 <img src="./assets/images/logo2.png" alt="" v-if="scrollBanner">
                 <img src="./assets/images/logo1.png" alt="" v-else>
-              </div>
+              </router-link>
             </el-col>
             <el-col :span="16">
               <el-menu default-active="1" mode="horizontal" :router="true">

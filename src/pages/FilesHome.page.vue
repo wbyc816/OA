@@ -319,7 +319,7 @@
     cursor: pointer;
   }
   .el-row{
-    background-color:#fff;
+    // background-color:#fff;
     height: 580px;
     position:relative;
   }

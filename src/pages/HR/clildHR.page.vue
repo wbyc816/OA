@@ -144,6 +144,9 @@ $brown: #985D55;
           p:first-child {
             font-size: 16px;
             line-height: 30px;
+            white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;;
             img {
               vertical-align: sub;
               padding-right: 5px;

@@ -50,7 +50,7 @@
               </template>
             </p>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="24" style="border-bottom:none">
             <h1 class="title">附加公文</h1>
             <p class="attch textContent">
               <p v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</p>
@@ -84,7 +84,7 @@
           <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         </div>
       </div>
-      <div class='myAdvice' v-if="docDetialInfo.doc.isSecretary==1">
+      <div class='myAdvice' v-if="docDetialInfo.doc.isTask==1">
         <h4 class='doc-form_title'>我的审批意见</h4>
         <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="审批意见" class="textarea" prop="state">

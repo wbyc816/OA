@@ -4,7 +4,7 @@
       <div slot="header">今日值班
         <router-link to="/duty/">更多</router-link>
       </div>
-      <p class="leader" v-if="dutys.leader&&dutys.leader.name"><span class="name">01 {{dutys.leader.name}}</span>{{dutys.leader.phone | phone}}</span>
+      <p class="leader" v-if="dutys.leader&&dutys.leader.name"><span class="name">01 {{dutys.leader.name}}</span><span>{{dutys.leader.phone | phone}}</span>
       </p>
       <el-menu mode="vertical" default-active="1">
         <el-menu-item-group>
@@ -15,8 +15,8 @@
                 <span class="name">{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
               </el-menu-item>
             </el-submenu>
-            <el-menu-item :index="duty.deptName" v-else>
-              {{duty.deptName}} <span class="titleName">{{duty.onduty[0].empName}}</span>{{duty.onduty[0].mobileNumber | phone}}
+            <el-menu-item :index="duty.deptName" v-else><span>
+              {{duty.deptName}}</span> <span class="titleName">{{duty.onduty[0].empName}}</span><span>{{duty.onduty[0].mobileNumber | phone}}</span>
             </el-menu-item>
           </template>
         </el-menu-item-group>
@@ -48,7 +48,7 @@ export default {
   methods: {
     getData() {
       var date1 = new Date().getTime()
-      this.$http.post('/onduty/getDutyInfo', { dutyDate: "2017-09-30" })
+      this.$http.post('/onduty/getDutyInfo', { dutyDate: this.timeFilter(new Date().getTime(),'date') })
         .then(res => {
           if (res.status == 0) {
             this.dutys = res.data;
@@ -68,13 +68,12 @@ $sub:#1465C0;
 .duty {
   margin-bottom: 20px;
   .name {
-    width: 60px;
-    display: inline-block;
+    padding-right:20px;
+    // display: inline-block;
   }
   .titleName {
     padding-left: 20px;
     padding-right: 10px;
-    display: inline-block;
   }
   .leader {
     line-height: 56px;
@@ -100,6 +99,9 @@ $sub:#1465C0;
     .el-submenu__title {
       border-bottom: 1px solid #F2F2F2;
       // transition:all 0.3s;
+    }
+    .el-menu-item{
+      cursor:auto;
     }
   }
   .el-submenu.is-opened {

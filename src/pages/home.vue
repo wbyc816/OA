@@ -33,7 +33,7 @@
           <el-carousel height="150px" :autoplay="false" indicator-position="outside" arrow="never">
             <el-carousel-item v-for="(list,index) in doneList" :key="index">
               <el-row :gutter="20">
-                <el-col :span="12" v-for="item in list">
+                <el-col :span="12" v-for="(item,itemIndex) in list" :class="{higher:itemIndex>1}">
                   <router-link :to="'/doc/docDetail/'+item.id">
                     <span class="index">{{item.index}}</span>
                     <p class="title">{{item.docTitle}}</p>
@@ -59,7 +59,7 @@
           </p>
           <el-tabs v-model="activeName" class="myTab" @tab-click="getNew">
             <el-tab-pane :label="list.name" :name="list.code" v-for="(list,index) in newsList" v-if="list.code!='ADM0405'&&list.code!='ADM0407'">
-              <router-link :to="'/newsDetail/'+news.id" class="newBox clearfix" v-for="news in list.child" v-if="index<8">
+              <router-link :to="'/newsDetail/'+news.id" class="newBox clearfix" v-for="(news,newIndex) in list.child" v-if="newIndex<8">
                 <p>{{news.docTitle}}</p>
                 <p><span><i class="iconfont icon-eye"></i><span>{{news.browse}}</span>{{news.createTime | time('xie')}}</span>
                 </p>
@@ -697,8 +697,8 @@ $sub:#1465C0;
       padding: 0;
     }
     .myTab .el-tabs__header .el-tabs__item {
-      line-height: 92px;
-      height: 92px;
+      line-height: 82px;
+      height: 82px;
     }
     .el-tab-pane {
       .newBox {
@@ -1060,10 +1060,20 @@ $sub:#1465C0;
       background: transparent;
     }
     .el-col {
-      line-height: 50px;
+      line-height: 60px;
       font-size: 15px;
       cursor: pointer;
       position: relative;
+      &.higher{
+        line-height: 50px;
+        .timeline{
+          p:first-child{
+            visibility: hidden;
+            padding-top:0;
+            height:14px;
+          }
+        }
+      }
       a {
         color: #676767;
       }
@@ -1099,6 +1109,9 @@ $sub:#1465C0;
         font-size: 12px;
         right: 10px;
         top: 5px;
+        p:first-child{
+          padding-top:10px;
+        }
       }
     }
   }

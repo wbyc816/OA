@@ -253,13 +253,13 @@ $sub:#1465C0;
       .leftDetail {
         .photoBox {
           font-size: 0;
-          padding-top: 19px;
+          padding-top: 14px;
           height: 219px;
           margin-bottom: 10px;
           line-height: 219px;
           img {
-            vertical-align: middle;
             max-height: 180px;
+            max-width: 150px;
           }
         }
         .infoItem {
@@ -277,7 +277,7 @@ $sub:#1465C0;
 }
 
 .infoItem {
-  line-height: 55px;
+  line-height: 45px;
   font-size: 15px;
   .infoTittle {
     display: inline-block;
