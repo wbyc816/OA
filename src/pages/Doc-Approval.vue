@@ -67,10 +67,10 @@ export default {
           title: '公文待阅',
           path: '/doc/docToRead'
         },
-        {
-          title: '公文统计',
-          path: '#'
-        }
+        // {
+        //   title: '公文统计',
+        //   path: '#'
+        // }
       ],
       processDialogView: false
     };

@@ -183,7 +183,7 @@ $sub:#1465C0;
 }
 
 .infoItem {
-  line-height: 55px;
+  line-height: 45px;
   font-size: 15px;
   .infoTittle {
     display: inline-block;

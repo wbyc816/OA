@@ -50,7 +50,7 @@
               </template>
             </p>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="24" style="border-bottom:none">
             <h1 class="title">附加公文</h1>
             <p class="attch textContent">
               <p v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</p>
