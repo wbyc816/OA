@@ -14,7 +14,7 @@
               </el-col>
             </el-row>
           </div>
-          <el-table :data="tableData" highlight-current-row style="width: 100%">
+          <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
             <el-table-column property="name" label="软件名称" width="230">
             </el-table-column>
             <el-table-column property="type1Name" label="分类" width="130">

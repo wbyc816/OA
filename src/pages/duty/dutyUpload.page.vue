@@ -31,7 +31,7 @@
           </el-col>
         </el-row>
       </div>
-      <el-table :data="tableData" highlight-current-row style="width: 100%">
+      <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
         <el-table-column type="index" width="50">
         </el-table-column>
         <el-table-column property="dutyDate" sortable label="日期" width="120">
