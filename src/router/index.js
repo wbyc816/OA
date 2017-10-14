@@ -86,6 +86,9 @@ import BirthdayReminder from 'pages/BirthdayReminder.page'
 //文件首页
 import FilesHome from 'pages/FilesHome.page'
 
+//总裁邮箱
+import PresidentMailbox from 'pages/PresidentMailbox.page'
+
 Vue.use(Router)
 
 import operationSystem from './operationSystem'
@@ -127,6 +130,13 @@ export default new Router({
           component: FilesHome,
           meta: {
             breadcrumb: "文件首页",
+          }
+       } , {
+          path: '/PresidentMailbox',
+          name: 'PresidentMailbox',
+          component: PresidentMailbox,
+          meta: {
+            breadcrumb: "总裁邮箱",
           }
        } , {
             path: '/HR',
