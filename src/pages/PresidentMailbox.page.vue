@@ -37,7 +37,7 @@
                 label="标题"
                 >
                 <template scope="scope">
-                   <div @click="mail_content_detail(scope.row.id)" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px"><i v-show="scope.row.isReply==0" class="iconfont icon-mail" style="margin-right:20px;color:#1465C0"></i><i v-show="scope.row.isReply!=0" class="iconfont icon-mailbox" style="margin-right:20px"></i>{{ scope.row.emailTitle}}</div>
+                   <div @click="mail_content_detail(scope.row.id)" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px;cursor:pointer">{{ scope.row.emailTitle}}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -45,7 +45,7 @@
                 label="发送时间"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.postTime | time("all") }}</span>
+                  <span style="cursor:pointer">{{ scope.row.postTime | time("all") }}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -53,16 +53,17 @@
                 label="回复时间"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.replyTime | time("all") }}</span>
+                  <span  style="cursor:pointer">{{ scope.row.replyTime | time("all") }}</span>
                 </template>
               </el-table-column>
 
               <el-table-column
                 prop="isReply"
                 label="状态"
+                width="100"
                 >
                 <template scope="scope">
-                  <span >{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
+                  <span  style="cursor:pointer">{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -108,7 +109,7 @@
                 label="标题"
                 >
                 <template scope="scope">
-                  <div @click="boss_mail_content_detail(scope.row.id,scope.row.isReply)" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px"><i v-show="scope.row.isReply==0" class="iconfont icon-mail" style="margin-right:20px;color:#1465C0"></i><i v-show="scope.row.isReply!=0" class="iconfont icon-mailbox" style="margin-right:20px"></i>{{ scope.row.emailTitle}}</div>
+                  <div @click="boss_mail_content_detail(scope.row.id,scope.row.isReply)" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:150px;cursor:pointer">{{ scope.row.emailTitle}}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -116,7 +117,7 @@
                 label="发送时间"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.postTime | time("all")}}</span>
+                  <span style="cursor:pointer" @click="boss_mail_content_detail(scope.row.id,scope.row.isReply)" >{{ scope.row.postTime | time("all")}}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -124,16 +125,17 @@
                 label="发送人"
                 >
                 <template scope="scope">
-                  <span >{{ scope.row.postName }}</span>
+                  <span style="cursor:pointer" @click="boss_mail_content_detail(scope.row.id,scope.row.isReply)" >{{ scope.row.postName }} | {{scope.row.postDept}}</span>
                 </template>
               </el-table-column>
 
               <el-table-column
                 prop="isReply"
                 label="状态"
+                width="100"
                 >
                 <template scope="scope">
-                  <span >{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
+                  <span style="cursor:pointer" @click="boss_mail_content_detail(scope.row.id,scope.row.isReply)" >{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
                 </template>
               </el-table-column>
             </el-table>
