@@ -15,36 +15,42 @@
           </el-row>
         </div>
         <div class="alignCenter" v-if="!salaryData.length"><br>暂无数据<br></div>
-        <div class="salaryList" v-for="mouthData in salaryData" :key='salaryData[mouthData]'>
+        <div class="salaryList" v-for="mouthData in salaryData" @click="goSalary(mouthData.salaryMonth)">
           <el-row>
-            <el-col class="el-col" v-for="i in mouthData" :span="24/tableTitle.length" :key="mouthData[i]">{{i}}</el-col>
+            <el-col class="el-col" v-for="i in tableFields" :span="24/tableTitle.length">
+              <span v-if="i=='salaryMonth'">{{mouthData[i] | didDate}}</span>
+              <span v-if="i!='salaryMonth'">{{mouthData[i]}}</span>
+            </el-col>
           </el-row>
         </div>
       </div>
     </el-card>
     <div class="block" v-if="salaryData.length">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="paginate.currentPage" :page-sizes="paginate.pageSizes" :page-size="paginate.currentPage" :layout="paginate.layout" :total="paginate.total">
+      <el-pagination @current-change="handleCurrentChange" :current-page.sync="paginate.currentPage" :page-sizes="paginate.pageSizes" :layout="paginate.layout" :total="paginate.total">
       </el-pagination>
     </div>
+    <salary-dialog @updateSalary="updateSalary" :visible.sync="salaryDialogVisible"></salary-dialog>
   </div>
 </template>
 <script>
-import { tableTitle, tableFields, supportId, aviatorId, groundId } from '../../common/salaryHistoryConfig'
+import { tableTitle, tableFields } from '../../common/salaryHistoryConfig'
+import SalaryDialog from '../../components/salaryDialog.component'
 import { mapGetters } from 'vuex'
 export default {
+  components: { SalaryDialog },
   data() {
     return {
       salaryData: [],
-      supportId,
       tableTitle,
       tableFields,
       startDate: '',
       endDate: '',
+      salaryDialogVisible:false,
       paginate: {
         pageSizes: [5, 10, 12, 36],
-        currentSize: 5,
+        currentSize: 10,
         currentPage: 1,
-        layout: "total, sizes, prev, pager, next, jumper",
+        layout: "total, prev, pager, next, jumper",
         total: 10
       }
     }
@@ -54,6 +60,9 @@ export default {
       'userInfo'
     ])
   },
+  mounted(){
+    this.checkPassword();
+  },
   created() {
     this.getParam()
     this.getData()
@@ -61,18 +70,30 @@ export default {
   beforeRouteUpdate(to, from, next) {
     next()
     this.getParam()
-    this.getData()
+    this.checkPassword()
   },
   methods: {
+    checkPassword(){
+      if(this.getCookie('salaryAccount')==this.userInfo.empId){
+        this.getData();
+      }else{
+        this.salaryDialogVisible=true;
+      }
+    },
     getParam() {
-      if (this.$route.params.param) {
-        let param = this.$route.params.param.split('@')
+      let month=this.$route.params.param;
+      if(month!=1){
+        let param = month.split('@')
         this.startDate = param[0]
         this.endDate = param[1]
+      }else{
+        this.startDate='';
+        this.endDate=''
       }
     },
     getData() {
       this.$http.post("/salary/getHistorySalary", {
+        // empId: '77CDFC1E11E36A23BB030892EE00B8CF',
         empId: this.userInfo.empId,
         pageSize: this.paginate.currentSize,
         pageNumber: this.paginate.currentPage,
@@ -82,24 +103,14 @@ export default {
         if (res.status == 0) {
           const records = res.data.records
           this.paginate.total = records.length       //  给分页器提供数据
-          this.salaryData = records.map((item) => {    // 转换函数 将 data 转换为渲染需要的二维数组格式
-            const data = []
-            this.tableFields.forEach((field) => {
-              if (item[field]) {
-                if (field === 'salaryMonth') {   // 日期字段添加.符号
-                  let x = item[field].slice(0, 4) + '.' + item[field].slice(4, 6)
-                  data.push(x)
-                } else {
-                  data.push(item[field])
-                }
-              }
-            })
-            return data
-          })
+          this.salaryData=records;
         }
       }, res => {
 
       })
+    },
+    goSalary(date){
+      this.$router.push('/HR/salary/'+date);
     },
     handleSizeChange(val) {
       this.paginate.currentSize = val;
@@ -108,6 +119,12 @@ export default {
     handleCurrentChange(val) {
       this.paginate.currentPage = val;
       this.getData()
+    },
+    updateSalary(val){
+      console.log(val);
+      if(val){
+        this.getData();
+      }
     }
   }
 }

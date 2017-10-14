@@ -219,6 +219,7 @@ export default {
       return temp;
     },
     blurInput(event){
+      console.log(event)
       var temp=event.target.value.split('.');
       if(temp.length==2&&(temp[1]==undefined||temp[1]==''||temp[1]==null)){
         this.travelForm.budgetMoney = temp[0];

@@ -181,7 +181,8 @@ $sub:#1465C0;
     }
     .el-menu {
       background-color: #fff;
-    } // &>.el-submenu {
+    } 
+    // &>.el-submenu {
     //   border-bottom: 1px solid #F2F2F2;
     //   .el-menu-item{
     //     background-color:#fff;

@@ -132,12 +132,12 @@
                     <span>到达: 0</span>
                     <span>延误: 0</span>
                   </div>
-                  <div class="bottom">
+                  <!-- <div class="bottom">
                     <div>
                       <i class="iconfont icon-plane"></i>
                       <p class="myLink">飞行报告</p>
                     </div>
-                  </div>
+                  </div> -->
                 </el-col>
                 <el-col :span="9" :xs="24" class="daily">
                   <p class="head header">每日报告</p>
@@ -147,12 +147,12 @@
                     <span>安全原因强制性延误: 0</span>
                     <span>总延误航班: 0</span>
                   </div>
-                  <div class="bottom">
+                  <!-- <div class="bottom">
                     <div>
                       <i class="iconfont icon-head"></i>
                       <p class="myLink">服务评价报告</p>
                     </div>
-                  </div>
+                  </div> -->
                 </el-col>
                 <el-col :span="7" :xs="24" class="crew">
                   <p class="head header">机组自评报告</p>
@@ -256,12 +256,7 @@
             </el-card>
             <el-card class="mailbox">
               <el-menu>
-                <el-menu-item index="1"><i class="iconfont icon-changyong"></i>常用办公软件<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="2"><i class="iconfont icon-youhui"></i>优惠机票<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="3"><i class="iconfont icon-icon"></i>飞行准备网<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="5"><i class="iconfont icon-sms"></i>SMS管理系统<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="6"><i class="iconfont icon-rizhi"></i>航后日志系统<i class="el-icon-arrow-right"></i></el-menu-item>
-                <el-menu-item index="7"><i class="iconfont icon-weixiu"></i>ME维修信息管理系统<i class="el-icon-arrow-right"></i></el-menu-item>
+                <el-menu-item :index="link.text" v-for="link in otherLinks" @click.native="goToOthers(link.link)"><i class="iconfont" :class="'icon-'+link.icon"></i>{{link.text}}<i class="el-icon-arrow-right"></i></el-menu-item>
               </el-menu>
             </el-card>
           <!-- </li> -->
@@ -306,6 +301,14 @@ var msgs = [
   { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
   { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "" },
 ];
+const otherLinks=[
+{"icon":"changyong","text":"常用办公软件","link":"#"},
+// {"icon":"youhui","text":"优惠机票","link":"#"},
+{"icon":"icon","text":"飞行准备网","link":"http://foc.donghaiair.cn:8011/SignIn.aspx"},
+{"icon":"sms","text":"SMS管理系统","link":"http://sms.donghaiair.cn:8080/login.jsp"},
+{"icon":"rizhi","text":"航后日志系统","link":"http://192.168.8.79:8016/Login.aspx"},
+{"icon":"weixiu","text":"ME维修信息管理系统","link":"http://192.168.8.154/mis2"},
+]
 const piedata = {
   labels: ['Airport Services', 'Cockpit', 'Cabin', 'HQ Staff', 'Outport Others', 'Outport China', 'MRO'],
   datasets: [{
@@ -380,6 +383,7 @@ export default {
       pieoption,
       polarAreaData,
       polarAreaOption,
+      otherLinks,
       tripType: 'date',
       tripFrom: { cityName: '' },
       tripTo: { cityName: '' },
@@ -432,6 +436,13 @@ export default {
     this.getNews();
   },
   methods: {
+    goToOthers(link){
+      if (/^http/.test(link)) {
+        window.open(link);
+      } else {
+        this.$router.push(link);
+      }
+    },
     dragShow(index) {
       this.showDrag.splice(index, 1, true);
     },
@@ -447,6 +458,7 @@ export default {
             msgs[2].value = res.data.toReadNum; //待阅
             msgs[3].value = res.data.overTimeNum; //超时
             msgs[0].value = res.data.pendingNum; //待批
+            msgs[4].value = res.data.birthdayNum; //生日
           }
         }, res => {
 

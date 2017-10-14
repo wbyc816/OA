@@ -28,7 +28,7 @@ export default {
     return {
       docTitle: '材料申请',
       middleParams: '',
-      options: { suggestPath: suggestPath }
+      options: { docType: 'CLS' }
     }
   },
   computed: {

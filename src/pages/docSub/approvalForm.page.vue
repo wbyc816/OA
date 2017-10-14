@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       docTitle: '呈批单',
-      options: { suggestPath: suggestPath }
+      options: { docType: 'CPD' }
     }
   },
   computed: {

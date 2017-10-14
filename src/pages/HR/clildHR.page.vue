@@ -8,7 +8,9 @@
     <el-card class="shareBox">
       <el-row>
         <el-col :span="12" class="shareWith">
-          <p> <i class="iconfont icon-renmian"></i> 人事任免 <router-link to="#">更多</router-link> </p>
+          <p> <i class="iconfont icon-renmian"></i> 人事任免
+            <router-link to="#">更多</router-link>
+          </p>
           <ul>
             <li>
               <p>关于行政部王莉的人事任命通告 <span class="new">NEW</span></p>
@@ -25,7 +27,9 @@
           </ul>
         </el-col>
         <el-col :span="12" class="shareWith myShare">
-          <p> <i class="iconfont icon-hr"></i> HR政策  <router-link to="#">更多</router-link> </p>
+          <p> <i class="iconfont icon-hr"></i> HR政策
+            <router-link to="#">更多</router-link>
+          </p>
           <ul>
             <li>
               <p>2017年绩效考核年中考核通知</p>
@@ -47,7 +51,9 @@
       <img src="../../assets/images/Image88.jpg" alt="">
     </div>
     <el-card class="borderCard highLight">
-      <p slot="header"><i class="iconfont icon-zhinan"></i>办事指南<router-link to="#" class="headRight">更多</router-link></p>
+      <p slot="header"><i class="iconfont icon-zhinan"></i>办事指南
+        <router-link to="#" class="headRight">更多</router-link>
+      </p>
       <el-row>
         <template>
           <el-col :span="12">
@@ -74,7 +80,7 @@
               <p>行政部<span>2016-12-22</span></p>
             </div>
           </el-col>
-           <el-col :span="12">
+          <el-col :span="12">
             <div>
               <p>职位晋升申请流程</p>
               <p>人力资源部<span>2016-12-22</span></p>
@@ -95,7 +101,32 @@
 export default {
   components: {},
   data() {
-    return {}
+    return {
+      pics: [],
+      childPic:''
+    }
+  },
+  created() {
+    this.getPics();
+    this.getChildPic();
+  },
+  methods: {
+    getPics() {
+      this.$http.post('/index/getBasicImage', { imageType: 'ADM0602' })
+        .then(res => {
+          if (res.status == 0) {
+            this.pics = res.data;
+          }
+        })
+    },
+    getChildPic(){
+      this.$http.post('/index/getBasicImage', { imageType: 'ADM0603' })
+        .then(res => {
+          if (res.status == 0) {
+            this.childPic = res.data[0];
+          }
+        })
+    }
   }
 }
 
@@ -111,12 +142,12 @@ $brown: #985D55;
   .highLight {
     .el-card__header {
       margin: 0 12px;
-      padding:0;
-      line-height:45px;
-      color:$main;
-      i{
-      	margin-right:10px;
-      	font-size:20px;
+      padding: 0;
+      line-height: 45px;
+      color: $main;
+      i {
+        margin-right: 10px;
+        font-size: 20px;
       }
       .headRight {
         font-size: 14px;
@@ -167,9 +198,9 @@ $brown: #985D55;
     }
   }
   .shareBox {
-  	.el-card__body{
-  		padding:0 12px;
-  	}
+    .el-card__body {
+      padding: 0 12px;
+    }
     .shareWith {
       border-right: 1px solid #E9E9E9;
       padding-right: 14px;

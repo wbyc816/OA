@@ -1,5 +1,5 @@
 <template>
-  <div id="paymentSearch">
+  <div id="flightStatus">
     <el-row :gutter='12'>
       <el-col :span='17'>
         <el-card class="borderCard searchOptions">
@@ -294,7 +294,7 @@ export default {
 </script>
 <style lang='scss'>
 $main: #0460AE;
-#paymentSearch {
+#flightStatus {
   .pageBox {
     text-align: right;
     margin: 20px 0;
@@ -404,6 +404,7 @@ $main: #0460AE;
           font-size: 14px;
         }
         tbody {
+          background:#fff;
           tr:first-child {
             td {
               border-bottom: 1px dashed #D5DADF;

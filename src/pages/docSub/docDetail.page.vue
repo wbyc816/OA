@@ -152,9 +152,11 @@ import CLV from './component/travelDetail.component' //差旅详情
 import GSS from './component/injuryDetail.component' //工伤详情
 import QJS from './component/vacationDetail.component' //休假详情
 import RSB from './component/empChangeDetail.component' //人事变动详情
-import JSS from './component/empUpgradeDetail.component' //晋升详情
 import ZZS from './component/empBecomeDetail.component' //转正详情
 import JJS from './component/empUpgradeDetail.component' //晋升详情
+import PXS from './component/empTrainingDetail.component' //培训详情
+import RYY from './component/empIntroduceDetail.component' //引进详情
+import SWD from './component/docCheckInDetail.component' //引进详情
 import { mapGetters } from 'vuex'
 
 export default {
@@ -167,9 +169,11 @@ export default {
     GSS,
     QJS,
     RSB,
-    JSS,
     ZZS,
-    JJS
+    JJS,
+    PXS,
+    RYY,
+    SWD
   },
   data() {
     return {

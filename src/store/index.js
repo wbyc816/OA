@@ -13,7 +13,7 @@ Vue.use(Vuex);
 
 const state = {
   searchLoading: false,
-  baseURL:'http://192.168.8.92:8080/DonghaiAirAPI',
+  baseURL:'http://apitest.donghaiair.com:8080/DonghaiAirAPI',
   editStatus:false,
   sumitLoading:false,
   DHId:'CFCD208495D565EF66E7DFF9F98764DA'
