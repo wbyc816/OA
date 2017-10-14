@@ -6,26 +6,30 @@
           <el-col :span='24'>
             <el-card class="mailbox">
               <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">公司文件</span>
-                <span style="margin-left:553px;font-size:15px;color:#1465C0;cursor:pointer">发布时间
+                <span style="line-height: 36px;">{{title}}</span>
+                <span style="margin-left:423px;font-size:15px;color:#1465C0;cursor:pointer">发布时间
                 </span> 
 
-                <div style="height:40px;position:absolute;right:-20px;top:20px;width:150px;font-size:3px;color:#1465C0">
+                <div style="height:40px;position:absolute;right:60px;top:20px;width:200px;font-size:3px;color:#1465C0">
                    <i class="iconfont icon-shangsanjiao" style="font-size:12px;position:absolute;left:0;top:0px;cursor:pointer"></i>
                    <i class="iconfont icon-xiasanjiao-copy" style="font-size:12px;position:absolute;left:0;top:8px;cursor:pointer"></i>
-                   <el-dropdown style="margin-left:20px;margin-top:5px;color:#1465C0">
+                   <el-dropdown style="margin-left:20px;margin-top:5px;color:#1465C0" @command="handleCommand_dept">
                     <span class="el-dropdown-link">
                       所有部门<i class="el-icon-caret-bottom el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown" style="margin-top:50px">
-                      <el-dropdown-item>黄金糕</el-dropdown-item>
-                      <el-dropdown-item>狮子头</el-dropdown-item>
-                      <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                      <el-dropdown-item disabled>双皮奶</el-dropdown-item>
-                      <el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+                      <el-dropdown-item v-for="Dept in Depts" :command="Dept.id">{{Dept.name}}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-
+                  
+                   <el-dropdown style="margin-left:20px;margin-top:5px;color:#1465C0" @command="handleCommand">
+                    <span class="el-dropdown-link">
+                      文件类型<i class="el-icon-caret-bottom el-icon--right"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown" style="margin-top:50px">
+                      <el-dropdown-item  v-for="leftFileType in leftFileTypes" :command="leftFileType.dictCode">{{leftFileType.dictName}}</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
                 </div>
                 
 
@@ -33,7 +37,7 @@
               </div>
               <div style="position:relative;">
                  <ul style="color:#676767;height:742px" class="file_ul">
-                   <li  v-for="fileData in fileDatas">
+                   <li  v-for="fileData in fileDatas" @click="goTo(fileData)">
                      <div class="title_li" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:300px">{{fileData.docTitle}}</div>
                         <div class="content_li">
                           <span style="width:180px;display:inline-block;margin-left:-2px">{{fileData.taskDeptMajorName }}</span>
@@ -62,7 +66,10 @@
       <el-col :span='7' class="sideNav">
         <el-card class="mailbox">
           <el-menu>
-            <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">{{fileType.dictName}}<span>4</span></el-menu-item>
+            <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">
+            <span style="margin-left:0;width:200px;display:inline-block">{{fileType[0]}}</span>
+            <span>{{fileType[1]}}</span>
+            </el-menu-item>
           </el-menu>
         </el-card>
 
@@ -88,7 +95,7 @@
 </template>
 <script>
   import SidePersonSearch from '../components/sidePersonSearch.component'
-
+  import util from '../common/util'
   import { mapGetters } from 'vuex'
   const tableTitle = ['员工姓名', '部门', '职位', '生日', '联系电话']
   const options = [{
@@ -124,6 +131,9 @@
         fileCode:"",
         dictCode:"",
         file_title:"",
+        Depts:[],
+        title:"公司发文",
+        leftFileTypes:[],
         endDate:1,
            pickerOptions2: {
           shortcuts: [{
@@ -163,8 +173,10 @@
       ])
   },
   created() {
-      this.getFileData();
       this.getFileType();
+      this.getleftFileType();
+      this.getDept();
+      this.left_search_type("ADM0401");
   },
   methods: {
      click_highSearch() {
@@ -174,19 +186,54 @@
       this.ishighSearch=0;
      },
      search_type(fileType){
-        this.fileCode=fileType.dictCode;
+        this.title=fileType[0];
+        this.fileCode=fileType[3];
+        console.log(fileType[3]);
+        this.$http.post("/doc/selectFileList", {
+            pageNumber: this.pageNumber,
+            pageSize: "10",
+            classify1:this.fileCode,
+            empId:this.userInfo.empId,
+          }).then(res => {
+            setTimeout(function() {
+              this.searchLoading = false;
+            }, 200)
+          if (res.status == 0) {
+            this.fileDatas = res.data.selectDocInfoVolist;
+            this.totalSize = res.data.totalSize;
+          } else {
+            this.tableData = [];
+            this.totalSize = 0;
+          }
+        }, res => {
+
+        })
+     },
+      left_search_type(fileType){
+        this.fileCode=fileType;
+        this.$http.post("/doc/selectFileList", {
+            pageNumber: this.pageNumber,
+            pageSize: "10",
+            classify1:this.fileCode,
+            empId:this.userInfo.empId,
+          }).then(res => {
+            setTimeout(function() {
+              this.searchLoading = false;
+            }, 200)
+          if (res.status == 0) {
+            this.fileDatas = res.data.selectDocInfoVolist;
+            this.totalSize = res.data.totalSize;
+          } else {
+            this.tableData = [];
+            this.totalSize = 0;
+          }
+        }, res => {
+
+        })
      },
      click_Search() {
-        var time1 = new Date(Number(this.startTime[0]));
-        var time2 = new Date(Number(this.startTime[1]));
-        var y1 = time1.getFullYear(); //年
-        var m1 = time1.getMonth(); //月
-        var d1 = time1.getDate(); //日
-        var y2 = time2.getFullYear(); //年
-        var m2 = time2.getMonth(); //月
-        var d2 = time2.getDate(); //日
-        var startTime=y1+"-"+m1+"-"+d1;
-        var endTime=y2+"-"+m2+"-"+d2;
+        let startTime = util.formatTime(this.startTime[0], 'yyyy-MM-dd')
+        let endTime = util.formatTime(this.startTime[1], 'yyyy-MM-dd')
          this.$http.post("/doc/selectFileList", {
               pageNumber: this.pageNumber,
               docTitle:this.file_title,
@@ -209,12 +256,70 @@
 
           })
      },
-     getFileData(){
-          this.$http.post("/doc/selectFileList", {
+
+       getFileType(){
+          this.$http.post("/doc/getCountFileByClassify", {
+             empId:this.userInfo.empId,
+          }).then(res => {
+            setTimeout(function() {
+              this.searchLoading = false;
+            }, 200)
+          if (res.status == 0) {
+            this.fileTypes = res.data;
+            
+          } else {
+            this.fileTypes = [];
+            this.totalSize = 0;
+          }
+        }, res => {
+
+        })
+      },
+      getleftFileType(){
+          this.$http.post("/api/getDict", {
+             dictCode:"ADM04",
+          }).then(res => {
+            setTimeout(function() {
+              this.searchLoading = false;
+            }, 200)
+          if (res.status == 0) {
+            this.leftFileTypes = res.data;
+            
+          } else {
+            this.leftFileTypes = [];
+          }
+        }, res => {
+
+        })
+      },
+      getDept(){
+          this.$http.post("/index/selectDeptList", {
+          }).then(res => {
+            setTimeout(function() {
+              this.searchLoading = false;
+            }, 200)
+          if (res.status == 0) {
+            this.Depts = res.data;
+            
+          } else {
+            this.Depts = [];
+          }
+        }, res => {
+
+        })
+      },
+
+      handleCommand(command){
+         this.left_search_type(command);
+
+       },
+    handleCommand_dept(command){
+        this.$http.post("/doc/selectFileList", {
             pageNumber: this.pageNumber,
             pageSize: "10",
-            classify1:"ADM0401",
             empId:this.userInfo.empId,
+            deptId:command,
+            levelNum:30,
           }).then(res => {
             setTimeout(function() {
               this.searchLoading = false;
@@ -229,33 +334,16 @@
         }, res => {
 
         })
-      },
-
-       getFileType(){
-          this.$http.post("/doc/getCountFileByClassify", {
-             empId:this.userInfo.empId,
-          }).then(res => {
-            setTimeout(function() {
-              this.searchLoading = false;
-            }, 200)
-          if (res.status == 0) {
-            this.fileTypes = res.data;
-          } else {
-            this.tableData = [];
-            this.totalSize = 0;
-          }
-        }, res => {
-
-        })
-      },
-
-
- 
+    },
    
     handleCurrentChange(page) {
       this.pageNumber = page;
       this.click_Search()
     },
+    goTo(data){
+      console.log(data);
+      this.$router.push('/newsDetail/'+data.id)
+    }
     // getAirPortList() {
     //   this.$http.get('/api/getAirPortList')
     //     .then(res => {
@@ -328,7 +416,7 @@
     @include linkList(#BE3B7F);
   }
   .el-menu-item span{
-    margin-left:218px
+    margin-left:80px
   }
   .contactList {
     .el-card__header {
@@ -426,7 +514,7 @@
   .pageBox {
     position: absolute;
     right:30px;
-    bottom:0;
+    bottom:20px;
   }
   .purpleColor {
     color: $main;
