@@ -303,7 +303,7 @@ $main: #0460AE;
             }
           }
           dd {
-            line-height: 60px;
+            line-height: 45px;
 
             font-size: 15px;
             color: #676767;

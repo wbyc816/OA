@@ -10,7 +10,7 @@
                 <span style="margin-left:423px;font-size:15px;color:#1465C0;cursor:pointer" @click="changeSort">发布时间
                 </span> 
 
-                <div style="height:40px;position:absolute;right:60px;top:20px;width:200px;font-size:3px;color:#1465C0">
+                <div style="height:40px;position:absolute;right:60px;top:12px;width:200px;font-size:3px;color:#1465C0">
                    <i class="iconfont icon-shangsanjiao" style="font-size:12px;position:absolute;left:0;top:8px;cursor:pointer" v-if="params.sort==0"></i>
                    <i class="iconfont icon-xiasanjiao-copy" style="font-size:12px;position:absolute;left:0;top:8px;cursor:pointer" v-if="params.sort==1"></i>
                    <el-dropdown trigger="click" style="margin-left:20px;margin-top:5px;color:#1465C0" @command="handleCommand_dept" >

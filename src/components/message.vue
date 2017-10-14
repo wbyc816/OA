@@ -54,6 +54,7 @@
     padding-top: 21px;
     font-size: 17px;
     line-height: 21px;
+    color:#575757;
   }
   .text-type {
     font-size: 14px;

@@ -8,7 +8,7 @@
         <el-col class="formInfo" :span='18'>
           <p>Ticket Refund Application Form</p>
           <div>
-            <p><i class="iconfont icon-eye"></i><span>215</span></p>
+            <p><i class="iconfont icon-eye"></i> <span>215</span></p>
             <p>2017-01-18 15:19:57</p>           
             <p>Company News</p>
             <p><span class="divider">HKA</span>General</p>

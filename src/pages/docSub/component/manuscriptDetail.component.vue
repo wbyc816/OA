@@ -15,14 +15,8 @@
     <el-col :span="24">
       <h1 class="title">主送</h1>
       <p v-if="info" class="textContent">
-        <el-tag key="all" type="primary" >
-            {{'所有人('+0+'-'+90+')'}}
-          </el-tag>
-          <el-tag :key="dep.name"  type="primary" v-for="(dep,index) in depList">
-            {{dep.name+'('+dep.min+'-'+dep.max+')'}}
-          </el-tag>
-          <el-tag :key="person.name"  type="primary" v-for="(person,index) in personList">
-            {{person.name}}
+        <el-tag :key="send" type="primary" v-for="send in info[0].sendIds">
+            {{send}}
           </el-tag>
       </p>
     </el-col>
