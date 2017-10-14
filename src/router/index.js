@@ -80,6 +80,9 @@ import salaryHistory from '../pages/HR/salaryHistory.page'
 import newsDetail from '../pages/HR/newsDetail.page'
 
 
+import diningMenu from '../pages/diningMenu.page'
+
+
 //生日提醒
 import BirthdayReminder from 'pages/BirthdayReminder.page'
 
@@ -124,6 +127,13 @@ export default new Router({
             component: BirthdayReminder,
             meta: {
               breadcrumb: "生日提醒",
+            }
+       }, {
+            path: '/diningMenu',
+            name: 'diningMenu',
+            component: diningMenu,
+            meta: {
+              breadcrumb: "食堂菜谱",
             }
        } , {
           path: '/FilesHome',

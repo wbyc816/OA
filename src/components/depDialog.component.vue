@@ -15,10 +15,8 @@
           <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
             <el-table-column type="selection" width="55" :reserve-selection="true">
             </el-table-column>
-            <el-table-column prop="name" label="姓名" width="110"></el-table-column>
-            <el-table-column prop="depts" label="部门" width="250"></el-table-column>
-            <el-table-column prop="jobtitle" label="职务"></el-table-column>
-            <el-table-column prop="moblieNumber" label="状态" width="80"></el-table-column>
+            <el-table-column prop="name" label="部门"></el-table-column>
+            <el-table-column prop="companyName" label="所属公司"></el-table-column>
           </el-table>
           <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
             <el-table-column prop="name" label="部门"></el-table-column>
@@ -32,7 +30,7 @@
             <p>{{ dialogType=='radio'?'已选中的部门':' '}}</p>
             <div class="clearfix selInfo">
               <span v-if="selDep&&dialogType=='radio'">{{selDep.name}}</span>
-              <span v-for="person in multipleSelection" class="nameBox">{{person.name}}</span>
+              <span v-for="dep in multipleSelection" class="nameBox">{{dep.name}}</span>
               <el-button type="primary" size="large" @click="submitPerson">选中</el-button>
             </div>
           </div>
@@ -81,8 +79,8 @@ export default {
       this.depVisible = this.dialogVisible
       if (newVal) {
         this.$store.dispatch('getDeptList');
-        this.params.deptId = "DAFFED346E29C5654F54133D1FC65CCB";
         this.params.pageNumber = 1;
+        this.params.deptId=this.DHId;
         this.getData();
       }
     }
@@ -92,7 +90,8 @@ export default {
       'userInfo',
       'depPageNumber',
       'isAdmin',
-      'queryDepId'
+      'queryDepId',
+      'DHId'
     ])
   },
   created() {
@@ -131,7 +130,7 @@ export default {
       }
     },
     rowKey(row) {
-      return row.empId
+      return row.id
     },
     submitPerson() {
       if (this.dialogType == 'radio') {
@@ -141,7 +140,7 @@ export default {
           this.selDep = '';
         } else {
           this.$message({
-            message: '请先选择收件人！',
+            message: '请先选择部门！',
             type: 'warning'
           })
         }
@@ -151,7 +150,7 @@ export default {
           this.$emit('updateDep', this.multipleSelection);
         } else {
           this.$message({
-            message: '请先选择收件人！',
+            message: '请先选择部门！',
             type: 'warning'
           })
         }
@@ -248,7 +247,7 @@ $main:#0460AE;
       }
       .nameBox {}
       button {
-        height: 50px;
+            height: 100%;
         width: 100px;
         position: absolute;
         right: 0;

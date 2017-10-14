@@ -1,13 +1,13 @@
 <template>
-  <div id='newsDetail'>
+  <div id='diningMenu'>
     <el-row :gutter="20">
-      <el-col :span='17'>
+      <el-col :span='24'>
         <el-card class="pdfBox">
-          <div class="formDown" slot="header">
+          <!-- <div class="formDown" slot="header">
             <el-row :gutter="20">
               <el-col class="formInfo" :span='19'>
                 <p class="title">{{detail.title}}<i class=""></i></p>
-                <p class="others"><i class="iconfont icon-eye"></i> <span>{{detail.browse}}</span><span class="time">{{detail.createTime | time('date')}}</span><span class="person">签发人 {{detail.createUser}}</span><span class="person">校对人 {{detail.verifyName}}</span></p>
+                <p class="others"><i class="iconfont icon-eye"></i><span>{{detail.browse}}</span><span class="time">{{detail.createTime | time}}</span><span class="person">签发人 {{detail.createUser}}</span><span class="person">校对人 {{detail.verifyName}}</span></p>
               </el-col>
               <el-col :span='5' class="downBox">
                 <p>附件</p>
@@ -15,13 +15,13 @@
                 <p class="link">集团下发文件.pdf</p>
               </el-col>
             </el-row>
-          </div>
+          </div> -->
           <canvas id="newsCanvas"></canvas>
           <el-pagination :current-page="pafParam.pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="pafParam.total" v-on:current-change="changePage">
           </el-pagination>
         </el-card>
       </el-col>
-      <el-col :span='7'>
+<!--       <el-col :span='7'>
         <el-card class="borderCard searchBox">
           <div slot="header">新闻查询</div>
           <el-input class="search">
@@ -29,18 +29,15 @@
           </el-input>
         </el-card>
         <duty></duty>
-      </el-col>
+      </el-col> -->
     </el-row>
   </div>
 </template>
 <script>
-import pdf from '../../assets/pdf/test.pdf'
 import pdfjsLib from 'pdfjs-dist'
-import SidePersonSearch from '../../components/sidePersonSearch.component'
-import Duty from '../../components/duty.component'
 
 export default {
-  components: { SidePersonSearch, Duty },
+  components: {  },
   data() {
     return {
       checked: false,
@@ -63,7 +60,7 @@ export default {
     initPdf() {
       pdfjsLib.PDFJS.workerSrc = '../pdf.worker.js';
       console.log(this.detail)
-      var loadingTask = pdfjsLib.getDocument(decodeURI(this.detail.url));
+      var loadingTask = pdfjsLib.getDocument(decodeURI(this.detail));
       var that = this;
       loadingTask.promise.then(function(pdfDoc_) {
         that.pdfDoc = pdfDoc_;
@@ -134,7 +131,7 @@ export default {
       this.pafParam.pageNum = newPage;
     },
     getDetail() {
-      this.$http.post('/doc/selectFileDetail', { Id: this.$route.params.id })
+      this.$http.post('/index/getDiningMenu',)
         .then(res => {
           if (res.status == 0) {
             this.detail = res.data;
@@ -150,7 +147,7 @@ export default {
 <style lang='scss'>
 $main: #0460AE;
 $sub:#1465C0;
-#newsDetail {
+#diningMenu {
   .divider {
     position: relative;
     margin-right: 7px;
@@ -210,20 +207,17 @@ $sub:#1465C0;
     box-shadow: none;
     .el-card__body {
       padding: 0;
-      height: 1150px;
       position: relative;
       text-align: center;
       padding-top: 10px;
       #newsCanvas {
-        height: 1070px;
-        max-width: 800px;
+        
       }
       .el-pagination {
-        position: absolute;
         margin: 0 auto;
         left: 0;
         right: 0;
-        bottom: 10px;
+        margin-bottom:20px;
       }
     }
   }

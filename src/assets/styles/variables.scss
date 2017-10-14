@@ -949,10 +949,14 @@ ul {
 
 .el-tag {
   margin-right: 5px;
+  margin-bottom:5px;
 }
 
 .myCascader {
   .el-cascader-menu {
     height: 300px;
   }
+}
+.el-card__header{
+  border-color:#f2f2f2;
 }

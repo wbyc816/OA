@@ -3,6 +3,7 @@ Vue.filter('time', timeFilter);
 Vue.filter('sex', sexFilter);
 Vue.filter('phone', phone);
 Vue.filter('didDate', didDate);
+Vue.filter('percent', percent);
 Vue.filter('nodeNameFormatter', nodeNameFormatter);
 
 function timeFilter(value, type) { //value为13位的时间戳
@@ -61,7 +62,9 @@ function didDate(val) {
     return val
   }
 }
-
+function percent(val){
+  return Math.round(val * 10000) / 100.00 + "%"
+}
 function nodeNameFormatter(cellValue) {
   switch (cellValue) {
     case "start":

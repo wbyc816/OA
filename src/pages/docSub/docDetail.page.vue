@@ -84,7 +84,7 @@
           <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         </div>
       </div>
-      <div class='myAdvice' v-if="docDetialInfo.doc.isTask==1">
+      <div class='myAdvice' v-if="docDetialInfo.doc.isSecretary==1">
         <h4 class='doc-form_title'>我的审批意见</h4>
         <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="审批意见" class="textarea" prop="state">
@@ -95,16 +95,34 @@
               </el-radio-group>
             </el-col>
           </el-form-item>
+          <el-form-item label="审批类型" class="textarea" v-if="ableSign==1">
+            <el-col :span='18'>
+              <el-radio-group class="myRadio" v-model="signType" @change="signTypeChange">
+                <el-radio-button label="0">审批<i></i></el-radio-button>
+                <el-radio-button label="1">部门会签<i></i></el-radio-button>
+                <el-radio-button label="2">人员会签<i></i></el-radio-button>
+              </el-radio-group>
+            </el-col>
+          </el-form-item>
+          <el-form-item class="textarea signWrap" label="接收人" prop="sign">
+            <el-col :span='18' class="clearfix">
+              <el-input class="search" :value="ruleForm.sign[0]?ruleForm.sign[0].signUserName:''" :readonly="true" v-show="signType==0">
+                <el-button slot="append" @click="selSignPerson">选择</el-button>
+              </el-input>
+              <div class="signList" v-show="signType!=0">
+                <el-tag :key="person.id" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==1">
+                  {{person.signDeptMajorName}}
+                </el-tag>
+                <el-tag :key="person.empId" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==2">
+                  {{person.signUserName}}
+                </el-tag>
+              </div>
+              <el-button class="addButton" @click="selSignPerson" v-show="signType==1||signType==2"><i class="el-icon-plus"></i></el-button>
+            </el-col>
+          </el-form-item>
           <el-form-item label="审批内容" class="textarea">
             <el-col :span='18'>
               <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item class="textarea" label="收件人" prop="rec">
-            <el-col :span='18'>
-              <el-input class="search" v-model="ruleForm.rec" :readonly="true">
-                <el-button slot="append" @click="selectPerson('radio')">选择</el-button>
-              </el-input>
             </el-col>
           </el-form-item>
           <el-form-item>
@@ -141,9 +159,12 @@
       </el-form>
     </el-dialog>
     <person-dialog @updatePerson="updatePerson" :visible.sync="dialogTableVisible" :dialogType="personDialogType"></person-dialog>
+    <person-dialog @updatePerson="updateSignPerson" :visible.sync="signPersonVisible" dialogType="multi"></person-dialog>
+    <dep-dialog :dialogVisible.sync="signDepVisible" dialogType="multi" @updateDep="updateSignDep"></dep-dialog>
   </div>
 </template>
 <script>
+import DepDialog from '../../components/depDialog.component'
 import PersonDialog from '../../components/personDialog.component'
 import YCS from './component/vehicleDetail.component' //用车详情
 import CLS from './component/materialDetail.component' //材料详情
@@ -162,6 +183,7 @@ import { mapGetters } from 'vuex'
 export default {
   components: {
     PersonDialog,
+    DepDialog,
     YCS,
     CLS,
     FWG,
@@ -176,33 +198,45 @@ export default {
     SWD
   },
   data() {
+    var checkSign = (rule, value, callback) => {
+      if(this.signType==1||this.signType==2){
+        if(value.length>1){
+          callback();
+        }else{
+          callback(new Error('请选择至少两个会签接收人'))
+        }
+      }else{
+        if(value.length!=0){
+          callback();
+        }else{
+          callback(new Error('请选择接收人'))
+        }
+      }
+    };
     return {
       dialogTableVisible: false,
       DialogArchiveVisible: false,
       DialogSubmitVisible: false,
+      signPersonVisible: false,
+      signDepVisible: false,
       currentView: '',
       ruleForm: {
         taskContent: '',
         state: '',
-        rec: ''
+        rec: '',
+        sign: []
       },
+      signType: '0',
       archiveForm: {
         res: '',
         persons: []
       },
       docDetialInfo: { doc: {}, task: [], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [] },
       rules: {
-        rec: [
-          { required: true, message: '请选择收件人' }
-
-        ],
-        state: [{
-          required: true,
-          message: '请选择审批意见'
-        }]
-
+        sign: [{type:'array',validator: checkSign, required: true }],
+        state: [{required: true,message: '请选择审批意见'}]
       },
-      reciver:'',
+      reciver: '',
       archiveFormRule: {
 
       },
@@ -210,7 +244,9 @@ export default {
       activeNames: [],
       topDistData: [],
       distData: [],
-      isSuccessSubmit: false
+      isSuccessSubmit: false,
+      ableSignDoc:['CPD','SWD'],
+      ableSign:false,
     }
   },
   created() {
@@ -222,6 +258,7 @@ export default {
           if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
             this.getDistInfo();
           }
+          // this.ableSign=this.docDetialInfo.doc.isSecretary=='1'&&(this.ableSignDoc.find(code=>code==this.docDetialInfo.doc.pageCode)!=undefined);
         }
       }, res => {
 
@@ -241,19 +278,71 @@ export default {
         this.ruleForm.taskContent = "不同意。"
       }
     },
-    selectPerson: function(val) {
+    signTypeChange(val) {
+      this.ruleForm.sign=[]
+    },
+    selSignPerson() {
+      console.log(this.signType)
+      if (this.signType == 0) {
+        this.selectPerson('radio');
+      } else if (this.signType == 1) {
+        this.signDepVisible = true;
+      } else {
+        this.signPersonVisible = true;
+      }
+    },
+    selectPerson(val) {
       this.dialogTableVisible = true;
       this.personDialogType = val;
+    },
+    updateSignDep(payLoad) {
+      this.signDepVisible = false;
+      this.ruleForm.sign=[];
+      payLoad.forEach(p => {
+        this.ruleForm.sign.push({
+          "signDeptMajorName": p.name,
+          "signDeptMajorId": p.id,
+        })
+      })
+    },
+    updateSignPerson(payLoad) {
+      this.signPersonVisible = false;
+      this.ruleForm.sign = [];
+      payLoad.forEach(p => {
+        this.ruleForm.sign.push({
+          "signDeptMajorName": p.deptName,
+          "signDeptMajorId": p.deptParentId,
+          "signDeptName": p.depts,
+          "signDeptId": p.deptId,
+          "signUserName": p.name,
+          "signUserId": p.empId,
+        })
+      })
     },
     updatePerson(payLoad) {
       this.dialogTableVisible = false;
       if (this.personDialogType == 'radio') {
-        this.ruleForm.rec = payLoad.reciUserName;
-        this.reciver=payLoad;
+        var person = {
+          "signDeptMajorName": payLoad.reciDeptMajorName,
+          "signDeptMajorId": payLoad.reciDeptMajorId,
+          "signDeptName": payLoad.reciDeptName,
+          "signDeptId": payLoad.reciDeptId,
+          "signUserName": payLoad.reciUserName,
+          "signUserId": payLoad.reciUserId,
+        }
+        if (this.ruleForm.sign.length != 0) {
+          this.ruleForm.sign.splice(0, 1, person)
+        } else {
+          this.ruleForm.sign.push(person);
+        }
+        this.reciver = payLoad;
       } else {
         this.archiveForm.persons = payLoad;
       }
       console.log(this.archiveForm.persons)
+    },
+    closeSign(index) {
+      this.ruleForm.sign.splice(index, 1);
     },
     submit() {
       this.$refs.ruleForm.validate((valid) => {
@@ -265,6 +354,7 @@ export default {
       });
     },
     docTask() {
+
       var params = {
         docId: this.docDetialInfo.doc.id,
         "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
@@ -273,11 +363,16 @@ export default {
         "taskDeptId": this.userInfo.deptVo.deptId,
         "taskUserName": this.userInfo.name,
         "taskUserId": this.userInfo.empId,
-        nextUserId: this.reciver.reciUserId,
-        nextUserName: this.reciver.reciUserName,
         taskContent: this.ruleForm.taskContent,
         state: this.ruleForm.state,
+        submitType:this.signType,
         operateType: '1'
+      }
+      if(this.signType=='0'){
+        params.nextUserId=this.reciver.reciUserId;
+        params.nextUserName=this.reciver.reciUserName;        
+      }else{
+        params.signs=this.ruleForm.sign;
       }
       this.$http.post('/doc/docTask', params, { body: true })
         .then(res => {
@@ -385,6 +480,16 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docDetail {
+  .signWrap {
+    .signList {
+      width: 88%;
+      float: left;
+      min-height: 48px; // padding-top: 10px;
+    }
+    .addButton {
+      float: right;
+    }
+  }
 
   .el-card__header {
     margin-bottom: 10px;
@@ -433,8 +538,8 @@ $sub:#1465C0;
     .rightBorder {
       border-right: 1px solid #D5DADF;
     }
-    .blank{
-      height:51px;
+    .blank {
+      height: 51px;
     }
     .title {
       width: 150px;
@@ -468,7 +573,7 @@ $sub:#1465C0;
       line-height: 45px;
       .el-radio-button .el-radio-button__inner {
         height: 45px;
-        width: 90px;
+        width: 100px;
         line-height: 45px;
         padding: 0;
       }

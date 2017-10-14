@@ -244,7 +244,7 @@ $main:#0460AE;
       }
       .nameBox {}
       button {
-        height: 50px;
+            height: 100%;
         width: 100px;
         position: absolute;
         right: 0;
