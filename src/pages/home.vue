@@ -302,7 +302,7 @@ var msgs = [
   { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "" },
 ];
 const otherLinks=[
-{"icon":"changyong","text":"常用办公软件","link":"#"},
+{"icon":"changyong","text":"常用办公软件","link":"/softDownload"},
 // {"icon":"youhui","text":"优惠机票","link":"#"},
 {"icon":"icon","text":"飞行准备网","link":"http://foc.donghaiair.cn:8011/SignIn.aspx"},
 {"icon":"sms","text":"SMS管理系统","link":"http://sms.donghaiair.cn:8080/login.jsp"},
