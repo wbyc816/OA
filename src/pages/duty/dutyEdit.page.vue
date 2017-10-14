@@ -39,35 +39,41 @@
           </el-col>
         </el-row>
       </div>
-      <!-- <el-table :data="tableData" highlight-current-row style="width: 100%">
+      <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
         <el-table-column type="index" width="50">
         </el-table-column>
         <el-table-column property="dutyDate" sortable label="日期" width="120">
         </el-table-column>
-        <el-table-column property="deptName" label="部门" width="120">
+        <el-table-column property="deptName" label="部门" width="110">
         </el-table-column>
-        <el-table-column property="empName" label="值班人">
+        <el-table-column property="empName" label="值班人" width="80">
         </el-table-column>
         <el-table-column property="mobileNumber" label="手机">
         </el-table-column>
         <el-table-column property="phoneNumber" label="电话">
         </el-table-column>
-      </el-table> -->
-      <el-table :data="tableData" highlight-current-row style="width: 100%">
-        <el-table-column type="index" width="50">
-        </el-table-column>
-        <el-table-column property="dutyDate" sortable label="日期" width="120">
-        </el-table-column>
-        <el-table-column property="deptName" label="部门" width="120">
-        </el-table-column>
-        <el-table-column property="empName" label="值班人">
-        </el-table-column>
-        <el-table-column property="mobileNumber" label="手机">
-        </el-table-column>
-        <el-table-column property="phoneNumber" label="电话">
+        <el-table-column fixed="right" width="150">
+          <template scope="scope">
+            <el-button @click="triggerDelete(scope.row)" type="text" size="small">删除</el-button>
+            <el-button @click="triggerEdit(scope.row)"  type="text" size="small">编辑</el-button>
+          </template>
         </el-table-column>
       </el-table>
     </el-card>
+    <el-dialog title="提示" :visible.sync="dialogVisible1" size="tiny" :before-close="deleteConfirm">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible1 = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="提示" :visible.sync="dialogVisible2" size="tiny" :before-close="editConfirm">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible2 = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible2 = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -95,7 +101,10 @@ export default {
         total: 4
       },
       deptName: '',
-      empName: ''
+      empName: '',
+      dialogVisible1: false,
+      dialogVisible2: false,
+      currentMsg
     }
   },
   methods: {
@@ -124,6 +133,17 @@ export default {
           this.paginate.total = data.data.totalSize
         }
       })
+    },
+    triggerDelete(val) {
+      console.log(val)
+    },
+    triggerEdit(){
+     
+    },
+    deleteConfirm() {
+    },
+    editConfirm() {
+
     }
   },
   components: {
@@ -153,6 +173,11 @@ export default {
     }
     .el-card__body {
       padding: 20px 0;
+    }
+    .el-table {
+      .cell {
+        font-size: 13px;
+      }
     }
     .search {
       height: 46px;

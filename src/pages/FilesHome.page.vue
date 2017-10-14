@@ -315,12 +315,13 @@
   .file_ul{
     overflow: hidden;
   }
-  .el-row{
+  .el-dropdown{
+    cursor: pointer;
+  }
   .el-row{
     background-color:#fff;
     height: 580px;
     position:relative;
-  }
   }
   @mixin linkList($color) {
     .el-card__header {
