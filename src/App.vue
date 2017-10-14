@@ -128,7 +128,13 @@ export default {
       this.$store.dispatch('getUserInfo');
       this.login=true;
     } else {
-      location.href = this.baseUrl + "/login.html"
+      var a = document.createElement('a');
+      a.setAttribute('href', this.baseUrl + "/login.html");
+      a.setAttribute('target', '_blank');
+      a.setAttribute('id', 'payUrl');
+      // 防止反复添加
+      if(!document.getElementById('payUrl')) document.body.appendChild(a);
+      a.click();
     }
     this.getHomePics();
   },
