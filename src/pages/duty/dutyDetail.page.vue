@@ -36,10 +36,10 @@
     <el-card>
       <div slot="header">
         <el-row class="title">
-          <!-- <el-col class="titleRight" :offset="20" :span="4">
+          <el-col class="titleRight" :offset="20" :span="4">
               <i class="el-icon-edit"></i>
               <a style="color: #0460AE" href="#/duty/dutyEdit">值班信息维护</a>
-            </el-col> -->
+            </el-col>
         </el-row>
       </div>
       <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
