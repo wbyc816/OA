@@ -5,76 +5,71 @@
         <el-row >
           <el-col :span='24'>
             <div v-show="isPresident!=1">
-            <el-card class="mailbox" v-show="new_mail==1">
-              <div slot="header" class="clearfix">
-                <span>发送新邮件</span>
-              </div>
+              <el-card class="mailbox" v-show="new_mail==1">
+                <div slot="header" class="clearfix">
+                  <span>发送新邮件</span>
+                </div>
+                <el-form ref="baseForm" :model="baseForm" label-width="80px" class="baseForm" >
+                    <el-form-item label="标题">
+                       <el-input v-model="baseForm.emailTitle" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="内容">
+                        <el-input type="textarea" v-model="baseForm.emailContent" class="textarea" resize="none"></el-input>
+                    </el-form-item>
+                    <el-form-item >
+                      <el-button type="primary" @click="onSubmit">提交</el-button>
+                    </el-form-item>
+                  </el-form>
+              </el-card>
+              <el-card class="mailbox_second"  v-show="mail_list==1">
+                <div slot="header" class="clearfix">
+                  <span>邮件列表</span>
+                </div>
+                <el-table
+                :data="MailDatas"
+                stripe
+                style="width: 100%" @row-click="clickRowOther">
+                <el-table-column
+                  prop="emailTitle"
+                  label="标题"
 
-              <el-form ref="baseForm" :model="baseForm" label-width="80px" class="baseForm" >
-                  <el-form-item label="标题">
-                     <el-input v-model="baseForm.emailTitle" ></el-input>
-                  </el-form-item>
-                  <el-form-item label="内容">
-                      <el-input type="textarea" v-model="baseForm.emailContent" class="textarea" resize="none"></el-input>
-                  </el-form-item>
-                  <el-form-item >
-                    <el-button type="primary" @click="onSubmit">提交</el-button>
-                  </el-form-item>
-                </el-form>
-            </el-card>
-
-            <el-card class="mailbox_second"  v-show="mail_list==1">
-              <div slot="header" class="clearfix">
-                <span>邮件列表</span>
-              </div>
-
-              <el-table
-              :data="MailDatas"
-              stripe
-              style="width: 100%" @row-click="clickRowOther">
-              <el-table-column
-                prop="emailTitle"
-                label="标题"
-
-                >
-                <template scope="scope">
-                   <div @click="mail_content_detail(scope.row.id)" class="emailTitle"><i v-show="scope.row.isRead==0" class="iconfont icon-mail Nread" ></i><i v-show="scope.row.isRead!=0" class="iconfont icon-mailbox "></i>{{ scope.row.emailTitle}}</div>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="postTime"
-                label="发送时间"
-                >
-                <template scope="scope">
-                  <span >{{ scope.row.postTime | time("all") }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="replyTime"
-                label="回复时间"
-                >
-                <template scope="scope">
-                  <span >{{ scope.row.replyTime | time("all") }}</span>
-                </template>
-              </el-table-column>
-
-              <el-table-column
-                prop="isReply"
-                label="状态"
-                width="100"
-                >
-                <template scope="scope">
-                  <span  >{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
-                </template>
-              </el-table-column>
-            </el-table>
-           
-            </el-card>
-              <div class="pageBox" v-show="totalSize>0" >
-                <el-pagination @current-change="handleCurrentChange" :current-page="pageNumber" :page-size="10" layout="total, prev, pager,  next, jumper" :total="totalSize">
-                </el-pagination>
-              </div>
-             <el-card class="mailbox_third"  v-show="mail_detail==1">
+                  >
+                  <template scope="scope">
+                     <div @click="mail_content_detail(scope.row.id)" class="emailTitle"><i v-show="scope.row.isRead==0" class="iconfont icon-mail Nread" ></i><i v-show="scope.row.isRead!=0" class="iconfont icon-mailbox "></i>{{ scope.row.emailTitle}}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="postTime"
+                  label="发送时间"
+                  >
+                  <template scope="scope">
+                    <span >{{ scope.row.postTime | time("all") }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="replyTime"
+                  label="回复时间"
+                  >
+                  <template scope="scope">
+                    <span >{{ scope.row.replyTime | time("all") }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="isReply"
+                  label="状态"
+                  width="100"
+                  >
+                  <template scope="scope">
+                    <span  >{{scope.row.isReply=="0"?"未回复":"已回复"}}</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+              </el-card>
+                <div class="pageBox" v-show="totalSize>0" >
+                  <el-pagination @current-change="handleCurrentChange" :current-page="pageNumber" :page-size="10" layout="total, prev, pager,  next, jumper" :total="totalSize">
+                  </el-pagination>
+                </div>
+              <el-card class="mailbox_third"  v-show="mail_detail==1">
                 <div slot="header" class="clearfix">
                   <span>邮件详情</span>
                 </div>
@@ -83,25 +78,21 @@
                     <div class="name">回复人：{{detailDatas.replyName}}</div>   时间：{{detailDatas.replyTime | time("all")}}
                     <hr>
                     {{detailDatas.replyContent}}
-                  </div>
-
-                  <div class="postName">
-                    <div class="name">发件人：{{detailDatas.postName}} | {{detailDatas.postDept}}</div>    时间：{{detailDatas.postTime | time("all")}}
-                    <hr>
-                    <div class="title">标题：{{detailDatas.emailTitle}}</div>
-                    {{detailDatas.emailContent}}
-                  </div>
                 </div>
+                <div class="postName">
+                  <div class="name">发件人：{{detailDatas.postName}} | {{detailDatas.postDept}}</div>    时间：{{detailDatas.postTime | time("all")}}
+                  <hr>
+                  <div class="title">标题：{{detailDatas.emailTitle}}</div>
+                  {{detailDatas.emailContent}}
+                </div>
+              </div>
             </el-card>
         </div>
-
          <div v-show="isPresident==1">
-
             <el-card class="boss_mailbox" v-show="boss_mail_list==1">
               <div slot="header" class="clearfix">
                 <span>邮件列表</span>
               </div>
-
               <el-table
               :data="MailDatas"
               stripe
@@ -130,7 +121,6 @@
                   <span style="" >{{ scope.row.postName }} | {{scope.row.postDept}}</span>
                 </template>
               </el-table-column>
-
               <el-table-column
                 prop="isReply"
                 label="状态"
@@ -141,13 +131,11 @@
                 </template>
               </el-table-column>
             </el-table>
-             
             </el-card>
               <div class="pageBox" v-show="totalSize>0&&pageBox==1" >
                 <el-pagination @current-change="handleCurrentChange" :current-page="pageNumber" :page-size="10" layout="total, prev, pager,  next, jumper" :total="totalSize">
                 </el-pagination>
               </div>
-
               <div  v-show="boss_mail_detail==1">
                <div v-show="bossReply==0">
               <el-card class="boss_mailbox_one"  >
@@ -161,7 +149,6 @@
                     {{detailDatas.emailContent}}
                   <div>
                     <hr class="replyContent">
-                     
                       <el-form ref="baseForm" :model="bossForm" label-width="80px" class="baseForm">
                         <el-form-item label="回复内容">
                             <el-input type="textarea" v-model="bossForm.bossEmailContent" resize="none" class="textarea"></el-input>
@@ -173,53 +160,47 @@
                   </div>
                 </div>
                 </el-card>
-
                 </div>
-
                 <div v-show="bossReply==1">
                   <el-card class="boss_mailbox_two" >
-                      <div slot="header" class="clearfix">
-                        <span>邮件详情</span>
+                    <div slot="header" class="clearfix">
+                      <span>邮件详情</span>
+                    </div>
+                    <div class="content">
+                      <div  v-show="isReply==1">
+                        <div class="name" >回复人：{{detailDatas.replyName}}</div>   时间：{{detailDatas.replyTime | time("all")}}
+                        <hr>
+                        {{detailDatas.replyContent}}
                       </div>
-                      <div class="content">
-                        <div  v-show="isReply==1">
-                          <div class="name" >回复人：{{detailDatas.replyName}}</div>   时间：{{detailDatas.replyTime | time("all")}}
-                          <hr>
-                          {{detailDatas.replyContent}}
-                        </div>
-                        <div class="post">
-                          <div class="name" >发件人：{{detailDatas.postName}} | {{detailDatas.postDept}}</div>    时间：{{detailDatas.postTime | time("all")}}
-                          <hr>
-                          <div class="title">标题：{{detailDatas.emailTitle}}</div>
-                          {{detailDatas.emailContent}}
-                        </div>
+                      <div class="post">
+                        <div class="name" >发件人：{{detailDatas.postName}} | {{detailDatas.postDept}}</div>    时间：{{detailDatas.postTime | time("all")}}
+                        <hr>
+                        <div class="title">标题：{{detailDatas.emailTitle}}</div>
+                        {{detailDatas.emailContent}}
                       </div>
+                    </div>
                   </el-card>
                 </div>
             </div>
         </div>
-        </el-col>
-
-        </el-row>
-
       </el-col>
-      <el-col :span='7' class="sideNav" >
-        <el-card class="right_mailbox" v-show="isPresident!=1">
-          <el-menu>
-            <el-menu-item index="1">总裁邮箱</el-menu-item>
-            <el-menu-item index="2" @click="show_new_mail">发送新邮件</el-menu-item>
-            <el-menu-item index="3" @click="show_mail_list">邮件列表</el-menu-item>
-          </el-menu>
-        </el-card>
-
-        <el-card class="mailbox" v-show="isPresident==1">
-          <el-menu>
-            <el-menu-item index="1">总裁邮箱</el-menu-item>
-            <el-menu-item index="2" @click="show_not_reply">待回复<span style="margin-left:240px;color:#0460AE">{{emailNotReplyCount}}</span></el-menu-item>
-            <el-menu-item index="3" @click="show_boss_mail_list">邮件列表</el-menu-item>
-          </el-menu>
-        </el-card>
-       
+    </el-row>
+      </el-col>
+        <el-col :span='7' class="sideNav" >
+          <el-card class="right_mailbox" v-show="isPresident!=1">
+            <el-menu>
+              <el-menu-item index="1">总裁邮箱</el-menu-item>
+              <el-menu-item index="2" @click="show_new_mail">发送新邮件</el-menu-item>
+              <el-menu-item index="3" @click="show_mail_list">邮件列表</el-menu-item>
+            </el-menu>
+          </el-card>
+          <el-card class="mailbox" v-show="isPresident==1">
+            <el-menu>
+              <el-menu-item index="1">总裁邮箱</el-menu-item>
+              <el-menu-item index="2" @click="show_not_reply">待回复<span style="margin-left:240px;color:#0460AE">{{emailNotReplyCount}}</span></el-menu-item>
+              <el-menu-item index="3" @click="show_boss_mail_list">邮件列表</el-menu-item>
+            </el-menu>
+          </el-card>
       </el-col>
     </el-row>
   </div>
@@ -622,7 +603,7 @@
     color: $main;
   }
   .el-menu-item{
-    border:1px solid #F2F2F2;
+    border-bottom:1px solid #F2F2F2;
    
   }
   .el-table__row{

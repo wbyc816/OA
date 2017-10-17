@@ -7,29 +7,24 @@
             <el-card class="filebox">
               <div slot="header" class="clearfix">
                 <span class="title">{{title}}</span>
-               
-
-                <span class="three_btn">
-
+                  <span class="three_btn">
                     <el-button type="primary"  @click="changeSort">
                       发布时间
                       <i class="iconfont icon-shangsanjiao"  v-if="params.sort==0"></i>
                       <i class="iconfont icon-xiasanjiao-copy"  v-if="params.sort==1"></i>
                     </el-button>
-                   
-                   <el-dropdown menu-align="start" trigger="click" class="choose_dropdown" @command="handleCommand_dept" >
-                    <el-button type="primary">
-                      {{choose_dept}}<i class="el-icon-caret-bottom el-icon--right"></i>
-                    </el-button>
-                    <el-dropdown-menu slot="dropdown" class="choose_menu" >
-                     <el-dropdown-item  :command="['','选择部门']">全部部门</el-dropdown-item>
-                      <el-dropdown-item v-for="Dept in Depts" :command="[Dept.id,Dept.name]">{{Dept.name}}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                  
-                   <el-dropdown menu-align="start" trigger="click" class="choose_dropdown"  @command="handleCommand">
+                    <el-dropdown menu-align="start" trigger="click" class="choose_dropdown" @command="handleCommand_dept" >
+                      <el-button type="primary">
+                        {{choose_dept}}<i class="iconfont icon-xiasanjiao-copy"></i>
+                      </el-button>
+                      <el-dropdown-menu slot="dropdown" class="choose_menu">
+                        <el-dropdown-item  :command="['','选择部门']">全部部门</el-dropdown-item>
+                        <el-dropdown-item v-for="Dept in Depts" :command="[Dept.id,Dept.name]">{{Dept.name}}</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                    <el-dropdown menu-align="start" trigger="click" class="choose_dropdown"  @command="handleCommand">
                      <el-button type="primary">
-                      {{choose_type}}<i class="el-icon-caret-bottom el-icon--right"></i>
+                      {{choose_type}}<i class="iconfont icon-xiasanjiao-copy"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown"class="choose_menu">
                       <el-dropdown-item  :command="['','选择类型']">全部类型</el-dropdown-item>
@@ -37,42 +32,31 @@
                     </el-dropdown-menu>
                   </el-dropdown>
                 </span>
-                
-
-                 
               </div>
               <div >
-                 <ul  class="file_ul">
-                 <div class="verticalLine"> </div>
-                   <li  v-for="fileData in fileDatas" @click="goTo(fileData)" >
-                     <div class="title_li">{{fileData.docTitle}}</div>
-                        <div class="content_li" >
-                          <span>{{fileData.taskDeptMajorName }}</span>
-                          <span class="content_right">
-                            <span class="iconfontColor"><i class="iconfont icon-dianzan"></i></span><span>{{fileData.praise}}</span>
-                            <span class="iconfontColor"><i class="iconfont icon-eye"></i></span><span>{{fileData.browse}}</span>
-                            {{fileData.createTime | time('all')}}
-                          </span>
-                       </div>
-                   </li>
-
-                 
-                   
+                <ul  class="file_ul">
+                  <div class="verticalLine"> </div>
+                    <li  v-for="fileData in fileDatas" @click="goTo(fileData)" >
+                      <div class="title_li" >{{fileData.docTitle}}</div>
+                        <div class="content_li">
+                        <span>{{fileData.taskDeptMajorName }}</span>
+                        <span class="content_right">
+                          <span class="iconfontColor"><i class="iconfont icon-dianzan"></i></span><span>{{fileData.praise}}</span>
+                          <span class="iconfontColor"><i class="iconfont icon-eye"></i></span><span>{{fileData.browse}}</span>
+                          <span>{{fileData.createTime | time('nosecond')}}</span>
+                        </span>
+                     </div>
+                    </li>
                  </ul>
-                  
-                  
-
               </div>
-
-        </el-card>
-                <div class="pageBox" v-if="fileDatas.length>0">
-                    <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
-                    </el-pagination>
-                  </div>
+            </el-card>
+            <div class="pageBox" v-if="fileDatas.length>0">
+              <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
+              </el-pagination>
+            </div>
         </el-col>
-        </el-row>
-
-      </el-col>
+      </el-row>
+    </el-col>
       <el-col :span='7' class="sideNav">
         <el-card class="filebox_second">
           <el-menu>
@@ -144,7 +128,7 @@
         file_title:"",
         choose_dept:"选择部门",
         Depts:[],
-        title:"公司发文",
+        title:"公司新闻",
         leftFileTypes:[],
         endDate:1,
            pickerOptions2: {
@@ -227,6 +211,7 @@
       })
     },
      search_type(fileType){
+        this.params.pageNumber = 1;
         this.params.classify1=fileType[1];
         this.params.startTime='';
         this.params.endTime='';
@@ -246,9 +231,11 @@
        
      },
      click_Search() {
-        this.params.startTime = util.formatTime(this.startTime[0], 'yyyy-MM-dd')
-        this.params.endTime = util.formatTime(this.startTime[1], 'yyyy-MM-dd')
-        this.params.deptId=''
+        if(this.startTime[0]&&this.startTime[1]){
+        this.params.startTime = util.formatTime(this.startTime[0], 'yyyy-MM-dd');
+        this.params.endTime = util.formatTime(this.startTime[1], 'yyyy-MM-dd');
+      }
+       this.params.deptId=''
         this.params.deptId=''
         this.getData();
      },
@@ -306,12 +293,14 @@
       },
 
     handleCommand(command){
+       this.params.pageNumber = 1;
        this.params.classify1=command[0];
        this.choose_type=command[1];
        this.getData();
      },
     handleCommand_dept(command){
       console.log(command);
+      this.params.pageNumber = 1;
       this.params.deptId=command[0];
       this.choose_dept=command[1];
       this.getData();
@@ -319,8 +308,10 @@
     changeSort(){
       if(this.params.sort==0){
         this.params.sort=1;
+        this.params.pageNumber = 1;
       }else{
         this.params.sort=0;
+        this.params.pageNumber = 1;
       }
       this.getData();
     },
@@ -354,8 +345,13 @@
 </script>
 <style lang='scss'>
   $main: #0460AE;
-
+    .choose_menu{ 
+        margin-top:45px;
+        height:200px;
+        overflow:auto;
+     }
   #filesHome {
+
   .iconfontColor{
      color:#1465C0;
   }
@@ -366,15 +362,19 @@
     & .content_right{
       float:right;
     }
-    &  li{
-      width:391px;
+    &  li {
+      width:390px;
       height:84px;
       float:left;
-      padding-left:15px;
       border-bottom:1px solid #E9E9E9;
-      margin-left:10px;
       cursor: pointer;
-   }
+    }
+     &  li:nth-of-type(even) {
+      margin-left:45px;
+    }
+     &  li:nth-of-type(odd) {
+      margin-left:10px;
+    }
     & li .title_li{
     font-size:16px;
     white-space: nowrap;
@@ -397,21 +397,10 @@
       height:40px;
       color:#1465C0;
       float:right;
-      & .choose_dropdown{
-        margin-left:10px;
-        margin-top:5px;
-        color:#1465C0;
-      }
-      & .choose_menu{
-        margin-top:43px;
-        height:200px;
-        overflow:auto;
-      }
     }
+    
   } 
 
-
-  
   .el-dropdown{
     cursor: pointer;
   }
@@ -510,16 +499,21 @@
       font-size:12px;
   }
   .content_li span{
-
+      margin-left:10px
+  }
+  .content_li span:first-child{
+      margin-left:0px;
   }
   
   .verticalLine{
-    width:1px;
-    height:95%;
-    border:1px solid #E9E9E9;
+   
+    border-left:1px solid #E9E9E9;
     position:absolute;
-    left:405px;
-    top:20px;
+    left:425px;
+    top:15px;
+    height:calc(100% - 25px);
+   
+
   }
   .filebox_second{
     padding:0px;
