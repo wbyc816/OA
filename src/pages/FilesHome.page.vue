@@ -1,74 +1,84 @@
 <template>
-  <div id="filesHome">
+  <div id="filesHome" >
     <el-row :gutter='12'>
       <el-col :span='17'>
         <el-row >
           <el-col :span='24'>
-            <el-card class="mailbox">
+            <el-card class="filebox">
               <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">{{title}}</span>
-                <span style="margin-left:423px;font-size:15px;color:#1465C0;cursor:pointer" @click="changeSort">发布时间
-                </span> 
+                <span class="title">{{title}}</span>
+               
 
-                <div style="height:40px;position:absolute;right:60px;top:12px;width:200px;font-size:3px;color:#1465C0">
-                   <i class="iconfont icon-shangsanjiao" style="font-size:12px;position:absolute;left:0;top:8px;cursor:pointer" v-if="params.sort==0"></i>
-                   <i class="iconfont icon-xiasanjiao-copy" style="font-size:12px;position:absolute;left:0;top:8px;cursor:pointer" v-if="params.sort==1"></i>
-                   <el-dropdown trigger="click" style="margin-left:20px;margin-top:5px;color:#1465C0" @command="handleCommand_dept" >
-                    <span class="el-dropdown-link">
-                      所有部门<i class="el-icon-caret-bottom el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown" style="margin-top:50px">
-                      <el-dropdown-item v-for="Dept in Depts" :command="Dept.id">{{Dept.name}}</el-dropdown-item>
+                <span class="three_btn">
+
+                    <el-button type="primary"  @click="changeSort">
+                      发布时间
+                      <i class="iconfont icon-shangsanjiao"  v-if="params.sort==0"></i>
+                      <i class="iconfont icon-xiasanjiao-copy"  v-if="params.sort==1"></i>
+                    </el-button>
+                   
+                   <el-dropdown menu-align="start" trigger="click" class="choose_dropdown" @command="handleCommand_dept" >
+                    <el-button type="primary">
+                      {{choose_dept}}<i class="el-icon-caret-bottom el-icon--right"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown" class="choose_menu" >
+                     <el-dropdown-item  :command="['','选择部门']">全部部门</el-dropdown-item>
+                      <el-dropdown-item v-for="Dept in Depts" :command="[Dept.id,Dept.name]">{{Dept.name}}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                   
-                   <el-dropdown trigger="click" style="margin-left:20px;margin-top:5px;color:#1465C0" @command="handleCommand">
-                    <span class="el-dropdown-link">
-                      文件类型<i class="el-icon-caret-bottom el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown" style="margin-top:50px">
-                      <el-dropdown-item  v-for="leftFileType in leftFileTypes" :command="leftFileType.dictCode">{{leftFileType.dictName}}</el-dropdown-item>
+                   <el-dropdown menu-align="start" trigger="click" class="choose_dropdown"  @command="handleCommand">
+                     <el-button type="primary">
+                      {{choose_type}}<i class="el-icon-caret-bottom el-icon--right"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown"class="choose_menu">
+                      <el-dropdown-item  :command="['','选择类型']">全部类型</el-dropdown-item>
+                      <el-dropdown-item  v-for="leftFileType in leftFileTypes" :command="[leftFileType.dictCode,leftFileType.dictName]">{{leftFileType.dictName}}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                </div>
+                </span>
                 
 
                  
               </div>
-              <div style="position:relative;">
-                 <ul style="color:#676767;" class="file_ul">
-                   <li  v-for="fileData in fileDatas" @click="goTo(fileData)">
-                     <div class="title_li" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;height:20px;width:300px">{{fileData.docTitle}}</div>
-                        <div class="content_li">
-                          <span style="width:180px;display:inline-block;margin-left:-2px">{{fileData.taskDeptMajorName }}</span>
-                          <span class="iconfont_color"><i class="iconfont icon-dianzan"></i></span><span>{{fileData.praise}}</span>
-                          <span class="iconfont_color"><i class="iconfont icon-eye"></i></span><span>{{fileData.isRead}}</span>
-                          {{fileData.createTime | time('all')}}
+              <div >
+                 <ul  class="file_ul">
+                 <div class="verticalLine"> </div>
+                   <li  v-for="fileData in fileDatas" @click="goTo(fileData)" >
+                     <div class="title_li">{{fileData.docTitle}}</div>
+                        <div class="content_li" >
+                          <span>{{fileData.taskDeptMajorName }}</span>
+                          <span class="content_right">
+                            <span class="iconfontColor"><i class="iconfont icon-dianzan"></i></span><span>{{fileData.praise}}</span>
+                            <span class="iconfontColor"><i class="iconfont icon-eye"></i></span><span>{{fileData.browse}}</span>
+                            {{fileData.createTime | time('all')}}
+                          </span>
                        </div>
                    </li>
 
                  
-
+                   
                  </ul>
-                  <div class="vertical_line"> </div>
                   
-                  <div class="pageBox" v-if="fileDatas.length>0">
+                  
+
+              </div>
+
+        </el-card>
+                <div class="pageBox" v-if="fileDatas.length>0">
                     <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
                     </el-pagination>
                   </div>
-                  <hr style="position:absolute;top:664px;left:10px;width:790px;border:1px solid #E9E9E9">
-              </div>
-        </el-card>
         </el-col>
         </el-row>
 
       </el-col>
       <el-col :span='7' class="sideNav">
-        <el-card class="mailbox">
+        <el-card class="filebox_second">
           <el-menu>
             <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">
-            <span style="margin-left:0;width:200px;display:inline-block">{{fileType[0]}}</span>
-            <span>{{fileType[2]}}</span>
+            <span class="title">{{fileType[0]}}</span>
+            <span class="num">{{fileType[2]}}</span>
             </el-menu-item>
           </el-menu>
         </el-card>
@@ -76,7 +86,7 @@
          <el-card class="highSearch" >
            
                 <span class="title_label">标题</span>
-                <el-input class="" placeholder=""  v-model="params.docTitle" style="margin:12px 0; ">
+                <el-input class="" placeholder=""  v-model="params.docTitle">
                 </el-input>
                 <div class="block">
                  <span class="title_label">日历</span>
@@ -87,7 +97,7 @@
                     format="yyyy-MM-dd">
                   </el-date-picker>
                 </div>
-                <el-button type="primary" style="width:101px;height:46px;margin:9px 0px  0px 193px"  @click="click_Search">搜索</el-button>
+                <el-button type="primary" class="click_Search" @click="click_Search">搜索</el-button>
             </el-card>
       </el-col>
     </el-row>
@@ -126,11 +136,13 @@
         total:1,
         tableData:[],
         startDate:1,
+        choose_type:"选择类型",
         fileDatas:[],
         fileTypes:"",
         fileCode:"",
         dictCode:"",
         file_title:"",
+        choose_dept:"选择部门",
         Depts:[],
         title:"公司发文",
         leftFileTypes:[],
@@ -168,7 +180,7 @@
           empId:'',
           classify1:'',
           pageNumber:1,
-          pageSize:20,
+          pageSize:10,
           startTime:'',
           endTime:'',
           deptId:'',
@@ -218,7 +230,20 @@
         this.params.classify1=fileType[1];
         this.params.startTime='';
         this.params.endTime='';
-        this.getData();
+        this.title=fileType[0];
+        if(fileType[0]=="未读文档"){
+          this.params.isRead=0;
+          this.params.classify1="";
+          this.getData();
+        }else if(fileType[0]=="我的收藏"){
+          this.params.collect=1;
+          this.params.classify1="";
+          this.getData();
+        }
+        else{
+           this.getData();
+         } 
+       
      },
      click_Search() {
         this.params.startTime = util.formatTime(this.startTime[0], 'yyyy-MM-dd')
@@ -281,11 +306,14 @@
       },
 
     handleCommand(command){
-       this.params.classify1=command;
+       this.params.classify1=command[0];
+       this.choose_type=command[1];
        this.getData();
      },
     handleCommand_dept(command){
-      this.params.deptId=command;
+      console.log(command);
+      this.params.deptId=command[0];
+      this.choose_dept=command[1];
       this.getData();
     },
     changeSort(){
@@ -297,12 +325,28 @@
       this.getData();
     },
     handleCurrentChange(page) {
-      this.pageNumber = page;
+      this.params.pageNumber = page;
       this.getData()
     },
     goTo(data){
       console.log(data);
-      this.$router.push('/newsDetail/'+data.id)
+      this.$router.push('/newsDetail/'+data.id);
+      this.$http.post("/doc/updateBrowse", {
+           empId:this.userInfo.empId,
+           fileId:data.fileId
+          }).then(res => {
+            setTimeout(function() {
+              this.searchLoading = false;
+            }, 200)
+          if (res.status == 0) {
+            this.leftFileTypes = res.data;
+            
+          } else {
+            this.leftFileTypes = [];
+          }
+        }, res => {
+
+        })
     }
   }
   }
@@ -312,15 +356,67 @@
   $main: #0460AE;
 
   #filesHome {
-  .file_ul{
-    overflow: hidden;
+  .iconfontColor{
+     color:#1465C0;
   }
+  & .file_ul{
+    overflow: hidden;
+    color:#676767;
+    position:relative;
+    & .content_right{
+      float:right;
+    }
+    &  li{
+      width:391px;
+      height:84px;
+      float:left;
+      padding-left:15px;
+      border-bottom:1px solid #E9E9E9;
+      margin-left:10px;
+      cursor: pointer;
+   }
+    & li .title_li{
+    font-size:16px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height:20px;
+  }
+  & li div{
+      margin-top:15px
+  }
+  }
+
+  & .filebox{
+    & .title{
+        line-height: 36px;
+        width:72px;
+        display:inline-block;
+    }
+    & .three_btn{
+      height:40px;
+      color:#1465C0;
+      float:right;
+      & .choose_dropdown{
+        margin-left:10px;
+        margin-top:5px;
+        color:#1465C0;
+      }
+      & .choose_menu{
+        margin-top:43px;
+        height:200px;
+        overflow:auto;
+      }
+    }
+  } 
+
+
+  
   .el-dropdown{
     cursor: pointer;
   }
   .el-row{
     // background-color:#fff;
-    height: 580px;
     position:relative;
   }
   @mixin linkList($color) {
@@ -365,7 +461,7 @@
   color:#676767;
   }
   }
-  .mailbox {
+  .filebox {
       padding: 0;
     @include linkList(#BE3B7F);
   }
@@ -393,7 +489,7 @@
       border-bottom: 1px solid #f2f2f2;
     }
     .el-card__body {
-      // height:280px;
+      height:190px;
       padding-top: 0px;
       color:#676767;
     }
@@ -407,288 +503,53 @@
         width:255px;
      }
   }
-  .file_ul li{
-      width:391px;
-      height:84px;
-      float:left;
-      padding-left:15px;
-      border-bottom:1px solid #E9E9E9;
-      margin-left:10px;
-      cursor: pointer;
-   }
-  .file_ul li div{
-      margin-top:15px
-  }
-  .file_ul li title_li{
-    font-size:16px;
-  }
-  .iconfont_color{
-     color:#1465C0;
-  }
-  .iconfont_color:first-child{
-    margin-left:120px;
-  }
+ 
+
+
   .content_li{
       font-size:12px;
   }
   .content_li span{
-    margin-left:5px;
-  }
-  .vertical_line{
-     width: 1px;
-     height: 640px;
-     background: #E9E9E9;
-     position:absolute;
-     top:5px;
-     left:406px;
-  }
 
-
-
-
-
-  .reminder_title{
-    height:40px;
-    line-height:40px;
-    padding: 0 15px
   }
-  .title_font{
-    font-size:18px
+  
+  .verticalLine{
+    width:1px;
+    height:95%;
+    border:1px solid #E9E9E9;
+    position:absolute;
+    left:405px;
+    top:20px;
   }
-  .birthday_date{
-    color:#1465C0;
-    font-size:14px;
-    float:right;
+  .filebox_second{
+    padding:0px;
+    @include linkList(#BE3B7F);
+    & .title{
+      margin-left:0;
+      display:inline-block;
+    }
+    & .num{
+      height:20px;
+      float:right
+    }
+    
   }
-  .el-table th{
-    height:26px;
-  }
-  .el-table td{
-    height:44px;
-  }
-  .pageBox {
-    text-align: right;
-    margin:20px;
-  }
-  .purpleColor {
-    color: $main;
-  }
-  .greenColor {
-    color: #0F6E0B;
-  }
-  .headRight {
-  i:first-child {
-    font-size: 24px;
-    position: relative;
-    top: 3px;
-  }
-  }
-  .searchOptions {
-    padding-bottom: 10px;
-  .el-card__body {
-  .el-col {
-    margin-top: 13px;
-  }
-  .showDate {
-    border-right: 1px solid #b7b7b7;
-  }
-  .myRadio {
-    width: 100%;
-  .el-radio-button {
-    width: 45%;
-    margin-right: 0;
-  .el-radio-button__inner {
-    width: 100%;
-    padding: 15px;
-  }
-  &:first-child {
-     margin-right: 15px;
-   }
-  }
-  }
-  .flightNo {
-    float: right;
-    height: 46px;
-  .el-input {
-    width: 60%;
-    float: right;
-  }
-  .el-select {
-    width: 30%;
-    margin-right: 15px;
-  .el-input {
-    width: 100%
-  }
-  }
-  }
-  .route {
-    float: right;
-  .el-autocomplete {
-    width: 50%;
-    float: left;
-  &:first-child {
-     padding-right: 5px;
-   }
-  &:last-child {
-     padding-left: 5px;
-   }
-  } // .el-input {
-       //   // width: 45%;
-       //   display: inline-block; // &:first-child {
-                                       //   //   margin-right: 15px;
-                                       //   // }
-  // }
-  button {
-    float: right;
-    font-size: 18px;
-    width: 103px;
-    height: 46px;
-    color: #fff;
-    background: $main;
-    border-color: $main;
-  }
-  }
-  }
-  }
-
-  .searchResult {
-    padding-bottom: 0;
-  .el-card__body {
-  &>table {
-  thead {
-    background: $main;
-    color: #fff;
-    font-size: 13px;
-  th {
-    padding: 6px 13px;
-  }
-  $widths: (1: 10%, 2: 10%, 3: 10%, 4: 15%, 5: 15%, 6: 15%, 7:15%, 8:10%);
-  @each $num,
-  $width in $widths {
-    th:nth-child(#{$num}) {
-      width: $width;
+  .highSearch{
+      & .el-input{
+        margin:12px 0; 
+      }
+      & .click_Search{
+      width:101px;
+      height:46px;
+      float:right;
     }
   }
-  }
-  td {
-    padding: 4px 13px;
-    font-size: 14px;
-  }
-  tbody {
-  tr:first-child {
-  td {
-    border-bottom: 1px dashed #D5DADF;
-  }
-  }
-  tr:last-child {
-  td {
-    border-bottom: 1px solid #D5DADF;
-    vertical-align: middle;
-  }
-  height: 76px;
-  td {
-    font-size: 15px;
-  }
-  td:nth-child(3),
-  td:nth-child(2) {
-    color: $main;
-  span {
 
-    cursor: pointer;
+  .pageBox{
+    text-align:right;
   }
-  }
-  td:last-child {
-    cursor: pointer;
-  }
-  }
-  }
-  tbody:nth-child(even) {
-    background: #F7F7F7;
-  }
-  tfoot {
-  td {
-    color: #95989A;
-  }
-  }
-  }
-  padding: 0;
-  .tableHearder {
-    background: $main;
-    display: table;
-    width: 100%;
-  li {
-    display: table-cell;
-    padding-left: 15px;
-    box-sizing: border-box;
-    color: #fff;
-    font-size: 13px;
-    height: 44px;
-    vertical-align: middle;
-  }
-  }
-  .el-table {
-  .cell {
-    padding-left: 15px;
-  }
-  td {
-    height: 70px;
-  }
-  td.clickItem {
-    color: $main;
-    cursor: pointer;
-  }
-  td.timeItem {
-    padding-right: 25px;
-  }
-  }
-  }
-  .total {
-    height: 33px;
-    line-height: 33px;
-    padding-left: 15px;
-    font-size: 14px;
-    color: #95989A;
-  }
-  }
-  .duty {
-    margin-bottom: 20px;
-  .el-card__header {
-  a {
-    float: right;
-    color: #676767;
-    font-size: 14px;
-    line-height: 24px;
-  }
-  }
-  .el-menu-item-group__title {
-    display: none;
-  }
-  .el-card__body {
-    padding: 0;
-  .el-submenu__title {
-    border-bottom: 1px solid #F2F2F2;
-  }
-  }
-  .el-submenu.is-opened {
-  .el-submenu__title {
-    color: $main;
-  }
-  .el-menu {
-    border-bottom: 1px solid #F2F2F2;
-  li:hover {
-    cursor: auto;
-  }
-  .is-active {
-    color: #676767;
-  }
-  }
-  }
-  .el-submenu .el-menu-item {
-    padding-left: 18px !important;
-    font-size: 15px;
-  }
- 
-  }
+
+
   }
 
 </style>
