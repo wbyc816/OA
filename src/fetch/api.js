@@ -152,4 +152,7 @@ export default {
     return fetch('/conference/getConferenceType')
   },
 
+  updateSalaryAccount(param) {
+    return fetch('/salary/updateSalaryAccount', param)
+  }
 }

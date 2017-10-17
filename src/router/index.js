@@ -101,6 +101,8 @@ Vue.use(Router)
 
 import operationSystem from './operationSystem'
 import duty from './duty'
+import set from './set'
+
 
 export default new Router({
 
@@ -702,6 +704,7 @@ export default new Router({
         // }
        operationSystem,
        duty,
+        set,
         {
             path: '/softDownload',
             component: softDownload,
