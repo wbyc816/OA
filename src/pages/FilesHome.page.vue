@@ -216,6 +216,8 @@
         this.params.startTime='';
         this.params.endTime='';
         this.title=fileType[0];
+        this.params.collect="";
+        this.params.isRead="";
         if(fileType[0]=="未读文档"){
           this.params.isRead=0;
           this.params.classify1="";
