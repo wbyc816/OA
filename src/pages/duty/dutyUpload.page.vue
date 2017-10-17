@@ -9,10 +9,10 @@
         </el-row>
       </div>
       <div class="rlt">
-        <el-upload ref="upload" :multiple="false" :on-success="uploadSuccess" :on-error="uploadError" action="http://apitest.donghaiair.com:8899/DonghaiAirAPI//onduty/excelInsert" :file-list="fileList" :auto-upload="false">
+        <el-upload ref="upload" :multiple="false" :on-success="uploadSuccess" :on-error="uploadError" :action="baseURL+'/onduty/excelInsert'" :file-list="fileList" :auto-upload="false" :on-change="handleChange" :on-remove="handleRemove">
           <span class="accessory">附件</span>
           <span class="underline"></span>
-          <el-button slot="trigger" size="large">选择文件 <i class="iconfont icon-jiantou"></i></el-button>
+          <el-button slot="trigger" size="large"  :disabled="noMore">选择文件 <i class="iconfont icon-jiantou"></i></el-button>
           <el-button type="primary" size="large" class="uploadbtn" @click="submitUpload">上传</el-button>
         </el-upload>
       </div>
@@ -32,7 +32,7 @@
         </el-row>
       </div>
       <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
-        <el-table-column type="index" width="50">
+        <el-table-column label="序号" type="index" width="60">
         </el-table-column>
         <el-table-column property="dutyDate" sortable label="日期" width="120">
         </el-table-column>
@@ -53,10 +53,8 @@
         </el-table-column>
       </el-table>
     </el-card>
-
   </div>
 </template>
-
 <script>
 import util from '../../common/util'
 import api from '../../fetch/api'
@@ -78,12 +76,14 @@ export default {
         layout: "total, sizes, prev, pager, next, jumper",
         total: 4
       },
-      editAble: false
+      editAble: false,
+      noMore: false
     };
   },
   computed: {
     ...mapGetters([
-      'userInfo'
+      'userInfo',
+      'baseURL'
     ])
   },
   methods: {
@@ -93,13 +93,37 @@ export default {
     edit() {
       this.editAble = !this.editAble
     },
+    handleRemove(){
+      this.noMore = false;
+    },
+    handleChange(file, fileList) {
+      const isEXCEL = file.raw.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.raw.type === "application/vnd.ms-excel";
+      const isLt15M = file.size / 1024 / 1024 < 15;
+      if (!isEXCEL) {
+        this.$message.error('上传文件只能是 EXCEL 格式!');
+        this.$refs.upload.clearFiles();
+      }
+      if (!isLt15M) {
+        this.$refs.upload.clearFiles();
+        this.$message.error('上传文件大小不能超过 15MB!');
+      }
+      if (isEXCEL && isLt15M) {
+        this.noMore = true;
+      }
+
+    },
     uploadSuccess(data) {
+      console.log(this.fileList);
       if (data.status == '0') {
-        if (data.data.ondutylist.length) {
+        if (data.data.ondutylist.length != 0) {
           this.originData = data.data.ondutylist
           this.tableData = dataTransform(this.originData, fmts)
+
+          this.$message.success('上传成功')
+        } else {
+          this.$refs.upload.clearFiles();
+          this.$message.error('上传失败,请检查上传文件')
         }
-        this.$message.success('上传成功')
       } else {
         this.$message.error('上传失败')
       }
@@ -108,13 +132,15 @@ export default {
       this.$message.error('上传失败')
     },
     saveAndSubmit() {
-      if (this.originData) {
+      console.log(this.originData)
+      if (this.originData.length != 0) {
         this.$http.post('/onduty/addOrUpdateDutyInfo', { ondutylist: this.originData, userId: this.userInfo.empId }, { body: true }).then((data) => {
           if (data.status == '0') {
             this.$message({
               message: '提交成功',
               type: 'success',
             })
+            this.$router.push('/duty/dutyDetail');
           } else {
             this.$message.error('提交失败')
           }
@@ -127,8 +153,8 @@ export default {
     }
   }
 }
-</script>
 
+</script>
 <style scope lang="scss">
 #dutyUpload {
   .el-card {
@@ -172,7 +198,7 @@ export default {
           .el-button {
             margin-left: 120px;
             padding: 11px;
-            span{
+            span {
               font-size: 13px;
             }
           }
@@ -196,4 +222,5 @@ export default {
     }
   }
 }
+
 </style>

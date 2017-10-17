@@ -53,7 +53,7 @@ const adminData = [
   { 'logo': 'icon-biaodan', 'color': '#5BB5FC', 'text': '收文登记', 'link': '#/doc/docCommonApp/SWD' }
 ];
 const financeData = [
-  { 'logo': 'icon-fukuan', 'color': '#5BB5FC', 'text': '预算申请', 'link': '#' },
+  { 'logo': 'icon-fukuan', 'color': '#5BB5FC', 'text': '预算申请', 'link': '#/doc/docCommonApp/YSS' },
   { 'logo': 'icon-fukuan2', 'color': '#FF754F', 'text': '付款申请', 'link': '#' },
   { 'logo': 'icon-fukuan1', 'color': '#A5A3FF', 'text': '报销申请', 'link': '#' },
   { 'logo': 'icon-yusuankongzhi', 'color': '#FF5F88', 'text': '借款申请', 'link': '#' },

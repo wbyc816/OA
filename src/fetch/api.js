@@ -144,5 +144,12 @@ export default {
   },
   deleteDutyInfo(id) {
     return fetch('/onduty/deleteDutyInfo', id)
-  }
+  },
+  getRoomPosition(){
+    return fetch('/conference/getRoomPosition')
+  },
+  getConferenceType(){
+    return fetch('/conference/getConferenceType')
+  },
+
 }

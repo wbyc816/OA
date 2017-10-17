@@ -9,7 +9,7 @@
           <el-col :span="12" v-for="(news,index) in newList">
             <router-link :to="'/HR/newsDetailHr/'+news.fileId">
               <p>{{news.fileNameOld}} </p>
-              <p>{{news.majorName}}<span>{{news.createTime | time('date')}}</span></p>
+              <p class="clearfix">{{news.majorName}}<span>{{news.createTime | time('date')}}</span></p>
             </router-link>
           </el-col>
         </template>
@@ -128,6 +128,7 @@ $brown: #985D55;
           p:last-child {
             margin-top: 10px;
             font-size: 12px;
+                height: 14px;
             span {
               float: right;
             }

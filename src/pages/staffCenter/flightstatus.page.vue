@@ -8,7 +8,7 @@
           </div>
           <el-row :gutter="12">
             <el-col :span="6">
-              <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate"  :editable="false" :clearable="false"></el-date-picker>
+              <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate"  :editable="false" :clearable="false" :picker-options="pickerOptions0"></el-date-picker>
             </el-col>
             <el-col :span="7">
               <el-radio-group v-model="flightStatusType" class="myRadio">
@@ -103,6 +103,13 @@ export default {
       flightList: [],
       pageNumber: 1,
       totalSize: 0,
+      pickerOptions0: {
+        disabledDate(time) {
+          var td=new Date();
+          var d=new Date(td.getFullYear()+'-'+(td.getMonth()+1)+'-'+td.getDate()+' 00:00:00').getTime();
+          return time.getTime()<(d-24*60*60*1000)||time.getTime()>(d+24*60*60*1000);
+        }
+      },
     }
   },
   computed: {

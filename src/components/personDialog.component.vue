@@ -80,6 +80,7 @@ export default {
           this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
           this.$store.dispatch('getDepById');
         }
+        this.name="";
         this.$store.dispatch('setQueryPage', 1);
         this.$store.dispatch('queryEmpList', {});
       }
@@ -113,7 +114,7 @@ export default {
     },
     search() {
       this.searchButton = true;
-      this.$store.dispatch('setQueryDepId', '')
+      // this.$store.dispatch('setQueryDepId', '')
       this.$store.dispatch('setQueryPage', 1);
       this.$store.dispatch('queryEmpList', { name: this.name })
     },

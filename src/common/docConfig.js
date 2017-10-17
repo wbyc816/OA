@@ -51,4 +51,9 @@ export const docConfig = [{
     code: 'SWD',
     url:'/doc/docReceiveWordBean'
   },
+  {
+    docName: '预算申请',
+    code: 'YSS',
+    url:'/doc/docReceiveWordBean'
+  },
 ]

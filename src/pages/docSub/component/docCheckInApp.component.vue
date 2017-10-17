@@ -22,7 +22,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
-        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove">
+        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove"  :disabled="noMore">
           <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -59,12 +59,13 @@ export default {
         children: 'catalogues'
       },
       wordFileId: '',
-      sucessFlag: 0
+      sucessFlag: 0,
+      noMore:false
     }
   },
   computed: {
     ...mapGetters([
-      'sumitLoading',
+      'submitLoading',
       'baseURL'
     ])
   },
@@ -100,6 +101,7 @@ export default {
         this.$message.error('上传正文大小不能超过 15MB!');
       }
       if (isPDF && isLt15M) {
+        this.noMore=true;
         this.checkInForm.wordFileId = file.url
       }
     },
@@ -107,6 +109,7 @@ export default {
       this.checkInForm.wordFileId = '';
       this.wordFileId = '';
       this.picSuccesss = 0;
+      this.noMore=false;
     },
     submitMiddle() {
       var params = {

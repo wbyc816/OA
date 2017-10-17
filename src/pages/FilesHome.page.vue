@@ -393,7 +393,7 @@
       border-bottom: 1px solid #f2f2f2;
     }
     .el-card__body {
-      height:280px;
+      // height:280px;
       padding-top: 0px;
       color:#676767;
     }

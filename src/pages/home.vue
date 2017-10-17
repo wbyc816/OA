@@ -191,7 +191,7 @@
             </p> -->
         <el-card class="flightStatus">
           <span slot="header">航班动态</span>
-          <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate" class="searchDate" :editable="false" :clearable="false"></el-date-picker>
+          <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate" class="searchDate" :editable="false" :clearable="false" :picker-options="pickerOptions0"></el-date-picker>
           <el-radio-group v-model="flightStatusType" class="myRadio">
             <el-radio-button label="flightNo">航班号<i></i></el-radio-button>
             <el-radio-button label="route">航段<i></i></el-radio-button>
@@ -260,7 +260,6 @@ import MyPie from '../components/myPie'
 import MyPolarArea from '../components/myPolarArea'
 import SearchDate from '../components/searchDate'
 import MessageCenter from '../components/message'
-import Weibo from '../components/weibo'
 import SidePersonSearch from '../components/sidePersonSearch.component'
 import DocList from '../components/doc'
 import Duty from '../components/duty.component'
@@ -270,7 +269,7 @@ var msgs = [
   { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
   { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": "#" },
   { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
-  { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "" },
+  { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "/meeting" },
 ];
 
 const otherLinks = [
@@ -309,7 +308,7 @@ const options = [{
 }, ];
 const pieBg = ['#97BBCD', '#F7464A', '#DCDCDC', '#7ED0CF']
 export default {
-  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, Weibo, SidePersonSearch, Duty },
+  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, SidePersonSearch, Duty },
 
   data() {
     return {
@@ -361,7 +360,14 @@ export default {
         "busyAirportDelay": 0,
         "securityDelay": 0,
         "sumDelay": 0
-      }
+      },
+       pickerOptions0: {
+        disabledDate(time) {
+          var td=new Date();
+          var d=new Date(td.getFullYear()+'-'+(td.getMonth()+1)+'-'+td.getDate()+' 00:00:00').getTime();
+          return time.getTime()<(d-24*60*60*1000)||time.getTime()>(d+24*60*60*1000);
+        }
+      },
     }
   },
   computed: {

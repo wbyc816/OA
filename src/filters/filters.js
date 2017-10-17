@@ -30,7 +30,7 @@ function timeFilter(value, type) { //value为13位的时间戳
     }else if (type == 'xie') {
       return y + '/' + t(m + 1) + '/' + t(d);
     }else if (type == 'day') {
-      return t(d);
+      return d;
     } else if (type == 'week') {
       return weeks[w];
     } else if (type == 'month') {
@@ -41,6 +41,8 @@ function timeFilter(value, type) { //value为13位的时间戳
       return y + '-' + t(m + 1) + '-' + t(d) + ' ' + t(h) + ':' + t(min) + ':' + t(s)
     }else if (type == 'birthday') {
       return  t(m + 1) + '月' + t(d) + '日'
+    }else if (type == 'hours') {
+      return  t(h)+":"+t(min);
     }
 
   } else {

@@ -35,7 +35,7 @@
       </el-form-item>
       <el-form-item label="正文" prop="docFileId">
         <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove">
-          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="noMore">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -96,11 +96,12 @@ export default {
         label: 'name',
         children: 'catalogues'
       },
+      noMore:false,
     }
   },
   computed: {
     ...mapGetters([
-      'sumitLoading',
+      'submitLoading',
       'baseURL'
     ])
   },
@@ -144,6 +145,7 @@ export default {
         this.$message.error('上传正文大小不能超过 15MB!');
       }
       if (isPDF && isLt15M) {
+        this.noMore=true;
         this.manuscriptForm.docFileId = file.url
       }
     },
@@ -151,6 +153,7 @@ export default {
       this.manuscriptForm.docFileId = '';
       this.params.docFileId = '';
       this.picSuccesss = 0;
+      this.noMore=false;
     },
     submitMiddle() {
       var that = this;

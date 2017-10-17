@@ -76,7 +76,7 @@ export default {
       }
     },
     ...mapGetters([
-      'sumitLoading'
+      'submitLoading'
     ])
   },
   methods: {

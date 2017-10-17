@@ -49,11 +49,12 @@ import docCommonApp from 'pages/docSub/docCommonApp.page'
 // import myBenefit from 'pages/generalInfo/myBenefit.page'
 // import myBenefitList from 'pages/generalInfo/myBenefit/myBenefitList.page'
 // import myBenefitDetail from 'pages/generalInfo/myBenefit/myBenefitDetail.page'
-// import MeetingReservation from 'pages/generalInfo/MeetingReservation.page'
-// import ReservationAllRoom from 'pages/generalInfo/meetingReservation/reservationAllRoom.page'
-// import ReservationByRoom from 'pages/generalInfo/meetingReservation/reservationByRoom.page'
-// import ReservationBooking from 'pages/generalInfo/meetingReservation/reservationBooking.page'
-// import MyBooking from 'pages/generalInfo/meetingReservation/myBooking.page'
+import meetingHome from 'pages/meeting/meetingHome.page'
+import ReservationAllRoom from 'pages/meeting/reservationAllRoom.page'
+import ReservationByRoom from 'pages/meeting/reservationByRoom.page'
+import ReservationBooking from 'pages/meeting/reservationBooking.page'
+import MyBooking from 'pages/meeting/myBooking.page'
+import meetingApp from 'pages/meeting/meetingApp.page'
 
 import staffCenter from 'pages/StaffCenter'
 import myRequest from 'pages/StaffCenter/myRequest.page'
@@ -195,7 +196,64 @@ export default new Router({
         }, {
             path: '',
             redirect: '/home'
-        }, {
+        },
+        {
+         path:'/meeting',
+         name:'meetingHome',
+         component:meetingHome,
+         meta:{
+             breadcrumb:"会议室预定",
+         },
+         children:[
+         {
+             path:'/meeting/ReservationAllRoom',
+             name:'ReservationAllRoom',
+             component:ReservationAllRoom,
+             meta:{
+                 // breadcrumb:"会议室预定",
+             },
+
+         },
+         {
+             path:'/meeting/meetingApp',
+             name:'meetingApp',
+             component:meetingApp,
+             meta:{
+                 // breadcrumb:"会议室预定",
+             },
+
+         },
+         {
+             path:'/meeting/ReservationByRoom',
+             name:'ReservationByRoom',
+             component:ReservationByRoom,
+             meta:{
+                 // breadcrumb:"Reservation ByRoom",
+             }
+         },
+         {
+             path:'/meeting/ReservationBooking',
+             name:'ReservationBooking',
+             component:ReservationBooking,
+             meta:{
+                 // breadcrumb:"Reservation Booking",
+             }
+         },
+         {
+             path:'/meeting/MyBooking',
+             name:'MyBooking',
+             component:MyBooking,
+             meta:{
+                 breadcrumb:"我的预订",
+             }
+         },
+         {
+             path:'/meeting',
+             redirect: '/meeting/ReservationAllRoom'
+         },
+         ]
+        },
+         {
             path: '/flightStatus',
             name: 'flightStatus',
             component: flightStatus,
@@ -501,53 +559,7 @@ export default new Router({
         //  }
         // },
 
-        // {
-        //  path:'/generalInfo/MeetingReservation',
-        //  name:'MeetingReservation',
-        //  component:MeetingReservation,
-        //  meta:{
-        //      breadcrumb:"Meeting Reservation",
-        //  },
-        //  children:[
-        //  {
-        //      path:'/generalInfo/MeetingReservation/ReservationAllRoom',
-        //      name:'ReservationAllRoom',
-        //      component:ReservationAllRoom,
-        //      meta:{
-        //          breadcrumb:"Reservation AllRoom",
-        //      },
-
-        //  },
-        //  {
-        //      path:'/generalInfo/MeetingReservation/ReservationByRoom',
-        //      name:'ReservationByRoom',
-        //      component:ReservationByRoom,
-        //      meta:{
-        //          breadcrumb:"Reservation ByRoom",
-        //      }
-        //  },
-        //  {
-        //      path:'/generalInfo/MeetingReservation/ReservationBooking',
-        //      name:'ReservationBooking',
-        //      component:ReservationBooking,
-        //      meta:{
-        //          breadcrumb:"Reservation Booking",
-        //      }
-        //  },
-        //  {
-        //      path:'/generalInfo/MeetingReservation/MyBooking',
-        //      name:'MyBooking',
-        //      component:MyBooking,
-        //      meta:{
-        //          breadcrumb:"My Booking",
-        //      }
-        //  },
-        //  {
-        //      path:'/generalInfo/MeetingReservation',
-        //      redirect: '/generalInfo/MeetingReservation/ReservationAllRoom'
-        //  },
-        //  ]
-        // },
+        
         // {
         //  path:'/generalInfo/myBenefit',
         //  name:'myBenefit',
