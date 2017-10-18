@@ -19,12 +19,18 @@ export default {
     {
       path: '/duty/dutyUpload',
       name: 'dutyUpload',
-      component: dutyUpload
+      component: dutyUpload,
+      meta: {
+        breadcrumb: "新增值班信息",
+      },
     },
     {
       path: '/duty/dutyEdit',
       name: 'dutyEdit',
-      component: dutyEdit 
+      component: dutyEdit,
+      meta: {
+        breadcrumb: "值班信息维护",
+      },
     },
     {
       path: '/duty/',

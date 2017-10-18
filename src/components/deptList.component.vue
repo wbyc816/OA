@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="deptName"  @change="deptChange" clearable placeholder="请选择">
+  <el-select v-model="name" @change="deptChange" clearable placeholder="请选择">
     <el-option v-for="item in deptList" :key="item.name" :label="item.name" :value="item.name">
     </el-option>
   </el-select>
@@ -12,12 +12,13 @@ export default {
   data() {
     return {
       deptList: [],
-      deptName: ''
+      name: ''
     }
   },
+  props: ['deptName'],
   methods: {
-    deptChange(){
-      this.$emit('deptChange', this.deptName)
+    deptChange() {
+      this.$emit('deptChange', this.name)
     }
   },
   created() {
@@ -26,12 +27,13 @@ export default {
         this.deptList = data.data.deptList[0].childNode
       }
     })
+    this.name = this.deptName
   },
-  // watch: {
-  //   deptName() {
-  //     console.log(3)
-  //   }
-  // }
+  watch: {
+    'deptName': function(newVal) {
+      this.name = newVal
+    }
+  }
 }
 </script>
 
