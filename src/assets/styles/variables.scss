@@ -87,6 +87,9 @@ video {
   vertical-align: baseline;
   box-sizing: border-box;
 }
+html,body{
+  height:100%;
+}
 
 body {
   font-size: 14px;
@@ -218,7 +221,7 @@ ul {
     border-bottom: 1px solid #D5DADF;
     float: left;
     overflow: hidden;
-    .el-upload-list__item-name{
+    .el-upload-list__item-name {
       white-space: normal;
     }
     .el-upload__file:last-child {
@@ -369,7 +372,7 @@ ul {
     &>div>i {
       float: right;
       color: #777777;
-      cursor:pointer;
+      cursor: pointer;
     }
     .headRight {
       float: right;
@@ -490,11 +493,16 @@ ul {
       }
     }
     tr:hover>td {
-      background: #fff;
+      // background: #fff;
     }
     tr:nth-child(even) {
       td {
         background: #F7F7F7;
+      }
+      &:hover {
+        td {
+          background-color: rgb(238, 241, 246);
+        }
       }
     }
   }
@@ -913,10 +921,12 @@ ul {
   position: relative;
   left: -5px;
 }
-.fixR5{
+
+.fixR5 {
   position: relative;
   right: -5px;
 }
+
 .el-input {
   &.hasUnit {
     input {

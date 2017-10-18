@@ -18,7 +18,7 @@
             <el-table-column prop="name" label="部门"></el-table-column>
             <el-table-column prop="companyName" label="所属公司"></el-table-column>
           </el-table>
-          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-dblclick="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
+          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
             <el-table-column prop="name" label="部门"></el-table-column>
             <el-table-column prop="companyName" label="所属公司"></el-table-column>
           </el-table>

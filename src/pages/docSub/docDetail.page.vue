@@ -95,7 +95,7 @@
               </el-radio-group>
             </el-col>
           </el-form-item>
-          <el-form-item label="审批类型" class="textarea" v-if="ableSign==1">
+          <el-form-item label="审批类型" class="textarea" v-if="ableSign&&userInfo.isManage==1">
             <el-col :span='18'>
               <el-radio-group class="myRadio" v-model="signType" @change="signTypeChange">
                 <el-radio-button label="0">审批<i></i></el-radio-button>
@@ -258,7 +258,7 @@ export default {
           if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
             this.getDistInfo();
           }
-          // this.ableSign=this.docDetialInfo.doc.isSecretary=='1'&&(this.ableSignDoc.find(code=>code==this.docDetialInfo.doc.pageCode)!=undefined);
+          this.ableSign=(this.ableSignDoc.find(code=>code==this.docDetialInfo.doc.pageCode)!=undefined);
         }
       }, res => {
 

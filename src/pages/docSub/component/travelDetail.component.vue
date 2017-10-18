@@ -23,7 +23,7 @@
       <div v-if="info" class="textContent">
         <p v-if="info[0].isBookFlight==1" class="bookFlight">
           <span class="iconfont">预定机票</span>
-          <span class="iconfont">{{type}}</span>
+          <span class="iconfont">{{info[0].bookType}}</span>
         </p>
         <p v-else>否</p>
       </div>
@@ -61,19 +61,20 @@ export default {
     ])
   },
   created(){
-    if(this.info[0].isBookFlight==1){
-      this.getType();
-    }
+    // if(this.info[0].isBookFlight==1){
+    //   this.getType();
+    // }
   },
   methods: {
-    getType(){
-      this.$http.post('/api/getDict',{dictCode:'ADM05'})
-      .then(res=>{
-        if(res.status==0){
-          this.type=res.data.find(i=>i.dictCode==this.info[0].bookType).dictName;
-        }
-      })
-    }
+    // getType(){
+    //   this.$http.post('/api/getDict',{dictCode:'ADM05'})
+    //   .then(res=>{
+    //     if(res.status==0){
+    //       console.log(this.info[0].bookType)
+    //       this.type=res.data.find(i=>i.dictCode==this.info[0].bookType).dictName;
+    //     }
+    //   })
+    // }
   }
 }
 
@@ -95,7 +96,7 @@ $main:#0460AE;
         position: absolute;
         font-size: 27px;
         right: -30px;
-        top:-2px;
+        top: -5px;
       }
     }
   }

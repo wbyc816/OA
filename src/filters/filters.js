@@ -23,8 +23,10 @@ function timeFilter(value, type) { //value为13位的时间戳
     var h = time.getHours(); //时
     var min = time.getMinutes(); //分
     var s = time.getSeconds(); //秒
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const weeks = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    // const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    const weeks = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    // const weeks = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     if (type == 'date') {
       return y + '-' + t(m + 1) + '-' + t(d);
     }else if (type == 'xie') {

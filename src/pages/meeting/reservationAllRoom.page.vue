@@ -1,128 +1,83 @@
 <template>
   <div id='ReservationAllRoom'>
     <el-card class="borderCard">
-      <span slot="header">All Room</span>
-      <el-row class="calendar" :gutter='18'>
-        <el-col :span="8" v-for="dayArray in days">
-          <p>{{dayArray[10] | time('month')}}</p>
-          <table class="dayList">
-            <tr>
-              <td>一</td>
-              <td>二</td>
-              <td>三</td>
-              <td>四</td>
-              <td>五</td>
-              <td>六</td>
-              <td>天</td>
-            </tr>
-          </table>
-          <ul class="dateBox clearfix">
-            <li v-for="day in dayArray" :class="{'today':today==day,'Invalid':today>day,'selected':selectDay==day}" @click="select(day)">
-              {{day | time('day')}}</li>
-          </ul>
+      <span slot="header">{{roomId==''?'所有房间':'按房间查看'}}</span>
+      <el-row class="calendar" :gutter='28'>
+        <el-col :span="8" v-for="(dayArray,index) in days">
+          <div class="dayWrap">
+            <p>{{dayArray[10] | time('month')}}</p>
+            <table class="dayList">
+              <tr>
+                <td>一</td>
+                <td>二</td>
+                <td>三</td>
+                <td>四</td>
+                <td>五</td>
+                <td>六</td>
+                <td>天</td>
+              </tr>
+            </table>
+            <ul class="dateBox clearfix">
+              <li v-for="day in dayArray" :class="{'today':today==day,'Invalid':today>day,'selected':selectDay==day}" @click="select(day)">
+                {{day | time('day')}}</li>
+            </ul>
+          </div>
         </el-col>
       </el-row>
       <div class="operation">
         <div class="select">
           <i class="el-icon-arrow-left flLeft" :class="{'Invalid':selectDay<=today}" @click="changeDay(-1)"></i>
-          <span>{{selectDay | time}}</span><span>{{selectDay | time('week')}}</span>
+          <span>{{selectDay | time('date')}}</span><span>{{selectDay | time('week')}}</span>
           <i class="el-icon-arrow-right flRight" :class="{'Invalid':selectDay>=lastDay}" @click="changeDay(1)"></i>
         </div>
-        <div class="flRight note"><span>Internal</span><span>External</span></div>
+        <div class="flRight note"><span>内部会议</span><span>外部会议</span></div>
       </div>
+      <el-row class="roomIntro" v-show="roomId!=''">
+        <el-col :span="4">{{roomInfo.roomPlace}}{{roomInfo.roomName}}</el-col>
+        <el-col :span="4">面积:{{roomInfo.roomArea}}平米</el-col>
+        <el-col :span="4">容纳人数:{{roomInfo.galleryful}}</el-col>
+        <el-col :span="12">描述:{{roomInfo.remark}}</el-col>
+      </el-row>
       <ul class="timeLine">
         <li v-for="time in times">{{time}}</li>
         <li></li>
       </ul>
-      <el-row class="roomDetail" v-for="row in timeList">
+      <el-row class="roomDetail" v-for="row in timeList" v-show="timeList.length>0">
         <el-col :span='4'>{{row.roomName}}</el-col>
         <el-col :span='20'>
           <div class="lineBOX">
             <div class="borderDiv" v-for="o in 7"></div>
             <div class="line" v-for="plan in row.plan" :style="calPosition(plan)">
-              <p>{{plan.timePeriod}}</p>
-              <p :style="calColor(plan)"></p>
-              <p>{{plan.dep}}</p>
+              <el-tooltip class="item" effect="dark" :content="timeFilter(plan.beginTime,'hours')+'-'+timeFilter(plan.endTime,'hours')" placement="top">
+                <p>{{plan.beginTime | time('hours')}}-{{plan.endTime | time('hours')}}</p>
+              </el-tooltip>
+              <p :style="{background:plan.isInside==1?'#1465C0':'#BE3B7F'}"></p>
+              <el-tooltip class="item" effect="dark" :content="plan.dep" placement="bottom">
+                <p>{{plan.dep}}</p>
+              </el-tooltip>
             </div>
           </div>
         </el-col>
       </el-row>
-      <div class="operation borderTop">
+      <div class="emptyText" v-show="timeList.length==0">暂无预定信息</div>
+      <div class="operation borderTop" v-show="roomId==''">
         <div class="select">
           <i class="el-icon-arrow-left flLeft" :class="{'Invalid':selectDay<=today}" @click="changeDay(-1)"></i>
-          <span>{{selectDay | time}}</span><span>{{selectDay | time('week')}}</span>
+          <span>{{selectDay | time('date')}}</span><span>{{selectDay | time('week')}}</span>
           <i class="el-icon-arrow-right flRight" :class="{'Invalid':selectDay>=lastDay}" @click="changeDay(1)"></i>
         </div>
-        <div class="flRight note"><span>Internal</span><span>External</span></div>
+        <div class="flRight note"><span>内部会议</span><span>外部会议</span></div>
       </div>
     </el-card>
   </div>
 </template>
 <script>
-const times = ['21:00', '19:00', '17:00', '15:00', '13:00', '11:00', '09:00', '07:00'];
-const timeList = [{
-    roomName: 'Training Room A',
-    plan: [{
-      timePeriod: '09:00-11:00',
-      start: 4,
-      width: 4,
-      dep: 'CRM-R',
-      type: 'Internal'
-    }]
-  },
-  {
-    roomName: 'Training Room B',
-    plan: [{
-      timePeriod: '10:00-11:00',
-      start: 6,
-      width: 2,
-      dep: 'HR-NEO',
-      type: 'Internal'
-    }, {
-      timePeriod: '13:00-15:30',
-      start: 12,
-      width: 5,
-      dep: 'ENG-ELT',
-      type: 'Internal'
-    }]
-  },
-  {
-    roomName: 'Training Room C',
-    plan: [{
-      timePeriod: '9:00-12:00',
-      start: 4,
-      width: 6,
-      dep: 'CRM-R',
-      type: 'External'
-    }, {
-      timePeriod: '16:00-21:00',
-      start: 18,
-      width: 10,
-      dep: 'ENG-ELT',
-      type: 'Internal'
-    }]
-  },
-  {
-    roomName: 'Training Room D',
-    plan: [{
-      timePeriod: '9:00-12:00',
-      start: 4,
-      width: 6,
-      dep: 'CRM-R',
-      type: 'External'
-    }, {
-      timePeriod: '16:00-21:00',
-      start: 18,
-      width: 10,
-      dep: 'ENG-ELT',
-      type: 'Internal'
-    }]
-  }
-]
+const times = ['22:00', '20:00', '18:00', '16:00', '14:00', '12:00', '10:00', '08:00'];
+
 export default {
 
   mounted() {
-    this.init();
+
   },
   data() {
     return {
@@ -131,20 +86,73 @@ export default {
       selectDay: 0,
       lastDay: 0,
       times,
-      timeList,
+      // timeList,
+      reserveList: [],
+      roomId: '',
+      roomInfo:{}
     };
   },
-
+  computed: {
+    timeList() {
+      var list = [];
+      if (this.reserveList.length != 0) {
+        this.reserveList.forEach(r => {
+          var temp = {
+            roomName: r.roomPlace + r.roomName,
+            plan: []
+          }
+          if (r.roomVos.length != 0) {
+            r.roomVos.forEach(p => {
+              if (this.selectDay < p.beginTime) {
+                temp.plan.push({
+                  beginTime: p.beginTime,
+                  endTime: p.endTime,
+                  start: this.calWidth(p.beginTime),
+                  width: this.calWidth(p.endTime) - this.calWidth(p.beginTime),
+                  isInside: p.isInside,
+                  dep: p.deptName + '-' + p.reserveName
+                })
+              }
+            })
+          }
+          list.push(temp);
+        })
+      }
+      return list;
+    }
+  },
+  created() {
+    if (this.$route.params.id == 'all') {
+      this.roomId = ''
+    } else {
+      this.roomId = this.$route.params.id;
+      this.getRoomInfo();
+    }
+    this.init();
+  },
+  beforeRouteUpdate(to, from, next) {
+    if (to.params.id == 'all') {
+      this.roomId = ''
+    } else {
+      this.roomId = to.params.id;
+      this.getRoomInfo();
+    }
+    this.init();
+    next();
+  },
   methods: {
     init() {
       var today = new Date();
       var yearNow = today.getFullYear();
       var monthNow = today.getMonth();
-      for (var i = 0; i < 3; i++) {
-        this.days.push(this.getDays(yearNow, monthNow + i));
+      if (this.days.length == 0) {
+        for (var i = 0; i < 3; i++) {
+          this.days.push(this.getDays(yearNow, monthNow + i));
+        }
       }
       this.today = this.selectDay = new Date(today.toDateString()).getTime();
       this.lastDay = new Date(yearNow, monthNow + 3, 0).getTime();
+      this.getReserveList();
     },
     getDays(year, month) {
       var days = []
@@ -162,17 +170,19 @@ export default {
     select(day) {
       if (day >= this.today) {
         this.selectDay = day;
+        this.getReserveList();
       }
     },
     changeDay(sign) {
       if ((this.selectDay != this.today && sign != 1) || (this.selectDay != this.lastDay && sign != -1)) {
         this.selectDay = this.selectDay + 86400000 * sign;
+        this.getReserveList();
       }
     },
     calPosition(plan) {
       var styleObj = {
-        width: plan.width / 28 * 100 + '%',
-        left: plan.start / 28 * 100 + '%',
+        width: plan.width + '%',
+        left: plan.start + '%',
       }
       return styleObj;
     },
@@ -186,12 +196,35 @@ export default {
         styleObj.background = "#BE3B7F";
       }
       return styleObj;
+    },
+    getReserveList() {
+      this.$http.post('/conference/reserveRoomDetails', { roomId: this.roomId, reserveDate: this.timeFilter(this.selectDay, 'xie') })
+        .then(res => {
+          if (res.status == 0) {
+            this.reserveList = res.data;
+          } else {
+
+          }
+        })
+    },
+    calWidth(time) {
+      var width = 0;
+      var tempTime = time - this.selectDay - (8 * 60 * 60 * 1000);
+      width = parseInt(tempTime) / (14 * 60 * 60 * 1000);
+      return width * 100;
+    },
+    getRoomInfo(){
+      this.$http.post('conference/findByid',{roomId:this.roomId})
+      .then(res=>{
+        if(res.status==0){
+          this.roomInfo=res.data;
+        }else{
+
+        }
+      })
     }
-
   },
-  computed: {
 
-  }
 }
 
 </script>
@@ -212,27 +245,35 @@ $brown: #BE3B7F;
   }
 
   .calendar {
-    padding-right: 10px;
+    // padding-right: 10px;
+    padding: 20px 0;
     border-bottom: 1px solid #F2F2F2;
     .el-col {
-      padding: 20px 0 0;
+      &:nth-child(2) {
+        border-left: 1px solid #F2F2F2;
+        border-right: 1px solid #F2F2F2;
+      }
+      .dayWrap {
+        width: 200px;
+        margin: 0 auto;
+      }
       p {
-        font-size: 25px;
-        text-align: right;
-        font-weight: bold;
-        color: $main;
-        padding-right: 10px;
+        font-size: 22px;
+        text-align: center;
+        color: $sub;
+        padding-bottom: 15px;
+        padding-top: 15px;
       }
       $man: 100%;
       .dayList {
         width: 100%;
         td {
-          width:$man /7 ;
+          width: $man /7;
           font-size: 12px;
           text-align: center;
           height: 30px;
           vertical-align: middle;
-          color: $main;
+          color: $sub;
           font-weight: bold;
         }
         td:nth-child(6),
@@ -243,23 +284,22 @@ $brown: #BE3B7F;
       .dateBox {
         // display: flex;
         // flex-wrap: wrap;
-        
         li {
           // flex: 0 0 $man / 7;
-          width:$man /7;
-          float:left;
+          width: $man /7;
+          float: left;
           position: relative;
-          color: $main;
+          color: $sub;
           text-align: center;
           line-height: 28px;
           font-weight: bold;
           font-size: 16px;
           cursor: pointer;
-          height:28px;
+          height: 28px;
         }
         li:nth-child(7n),
         li:nth-child(7n+6) {
-          color: #D71718;
+          color: #E74C3C;
         }
         .today:before {
           content: '';
@@ -334,14 +374,20 @@ $brown: #BE3B7F;
       }
     }
   }
+  .roomIntro{
+    background:$main;
+    line-height:70px;
+    color:#fff;
+    padding-left:20px;
+  }
   .timeLine {
-    padding-left: 16px;
+    padding-left: 21px;
     padding-right: 5px;
     line-height: 40px;
     $widthLi: 100%/6*5/7;
     height: 40px;
     clear: both;
-    right: -19px;
+    right: -14px;
     position: relative;
     li {
       float: right;
@@ -397,10 +443,13 @@ $brown: #BE3B7F;
             text-align: center;
             margin: 5px 0;
             white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
           }
           p:first-child {
             margin-top: 0;
           }
+          p:last-child {}
           p:nth-child(2) {
             width: 100%;
             height: 5px;
@@ -435,6 +484,12 @@ $brown: #BE3B7F;
     .el-col-4 {
       font-size: 15px;
     }
+  }
+  .emptyText {
+    color: rgb(94, 113, 130);
+    line-height: 50px;
+    text-align: center;
+    font-size: 14px;
   }
 }
 

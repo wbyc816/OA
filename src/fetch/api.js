@@ -151,8 +151,7 @@ export default {
   getConferenceType(){
     return fetch('/conference/getConferenceType')
   },
-
-  updateSalaryAccount(param) {
-    return fetch('/salary/updateSalaryAccount', param)
-  }
+  getConferenceNum(id){
+    return fetch('/conference/conferenceNumTips',{empId:id})
+  },
 }

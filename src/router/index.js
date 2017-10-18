@@ -52,8 +52,9 @@ import docCommonApp from 'pages/docSub/docCommonApp.page'
 import meetingHome from 'pages/meeting/meetingHome.page'
 import ReservationAllRoom from 'pages/meeting/reservationAllRoom.page'
 import ReservationByRoom from 'pages/meeting/reservationByRoom.page'
-import ReservationBooking from 'pages/meeting/reservationBooking.page'
+import bookingDetail from 'pages/meeting/bookingDetail.page'
 import MyBooking from 'pages/meeting/myBooking.page'
+import meetingSearch from 'pages/meeting/meetingSearch.page'
 import meetingApp from 'pages/meeting/meetingApp.page'
 
 import staffCenter from 'pages/StaffCenter'
@@ -204,11 +205,11 @@ export default new Router({
          name:'meetingHome',
          component:meetingHome,
          meta:{
-             breadcrumb:"会议室预定",
+             // breadcrumb:"会议室预",
          },
          children:[
          {
-             path:'/meeting/ReservationAllRoom',
+             path:'/meeting/ReservationAllRoom/:id',
              name:'ReservationAllRoom',
              component:ReservationAllRoom,
              meta:{
@@ -234,9 +235,9 @@ export default new Router({
              }
          },
          {
-             path:'/meeting/ReservationBooking',
-             name:'ReservationBooking',
-             component:ReservationBooking,
+             path:'/meeting/bookingDetail/:id',
+             name:'bookingDetail',
+             component:bookingDetail,
              meta:{
                  // breadcrumb:"Reservation Booking",
              }
@@ -247,6 +248,14 @@ export default new Router({
              component:MyBooking,
              meta:{
                  breadcrumb:"我的预订",
+             }
+         },
+         {
+             path:'/meeting/meetingSearch/:type',
+             name:'meetingSearch',
+             component:meetingSearch,
+             meta:{
+                 breadcrumb:"会议通知",
              }
          },
          {

@@ -1,8 +1,8 @@
 <template>
-  <div id="myBooking">
+  <div id="meetingSearch">
     <el-card class="borderCard searchOptions">
       <div slot="header">
-        <span>我的预定</span>
+        <span>会议通知</span>
         <i class="iconfont icon-shuaxin" @click="reset"></i>
       </div>
       <el-row :gutter="12">
@@ -12,16 +12,15 @@
         <el-col :span="5">
           <el-date-picker v-model="searchParams.reserveDate" type="date" :editable="false" style="width:100%" placeholder="日期"></el-date-picker>
         </el-col>
-        <el-col :span="4">
-          <el-select v-model="searchParams.roomPlace" style="width:100%" @change="changeRoomPlace" placeholder="位置">
-            <el-option v-for="item in roomList" :key="item.roomPosition" :label="item.roomPosition" :value="item.roomPosition">
-            </el-option>
-          </el-select>
+        <el-col :span="5">
+          <el-input v-model="searchParams.convenerName" placeholder="发起人"></el-input>
         </el-col>
-        <el-col :span="4">
-          <el-select v-model="searchParams.roomId" placeholder="房间">
-            <el-option v-for="item in rooms" :key="item.id" :label="item.roomName" :value="item.id">
-            </el-option>
+        <el-col :span="3">
+          <el-select v-model="status" placeholder="状态">
+            <el-option key="0" label="全部" value="0"></el-option>
+            <el-option key="1" label="正常" value="1"></el-option>
+            <el-option key="2" label="已取消" value="2"></el-option>
+            <el-option key="3" label="已结束" value="3"></el-option>
           </el-select>
         </el-col>
         <el-col :span="3">
@@ -31,8 +30,8 @@
     </el-card>
     <el-card class="borderCard searchResult" v-loading="searchLoading">
       <el-table :data="searchData" class="myTable" @row-click="goDetail">
-        <el-table-column prop="conferenceNumber" label="预定编号" width="130"></el-table-column>
         <el-table-column prop="conferenceTitle" label="会议名称"></el-table-column>
+        <el-table-column prop="convenerName" label="发起人" width="100"></el-table-column>
         <el-table-column prop="reserveDate" label="会议日期" width="100">
           <template scope="scope">
             {{scope.row.reserveDate | time('date')}}
@@ -50,10 +49,15 @@
         </el-table-column>
         <el-table-column prop="roomName" label="房间" width="70"></el-table-column>
         <el-table-column prop="roomPlace" label="位置" width="100"></el-table-column>
-        <el-table-column label="操作" class-name="clickItem" width="90">
+        <el-table-column label="状态" class-name="clickItem" width="90">
           <template scope="scope">
-            <span v-if="scope.row.isCancel==1">已取消</span>
-            <span class="cancelButton" v-else @click.stop="cancel(scope.row)">取消</span>
+            <template v-if="scope.row.isEnd!=1">
+              <span v-if="scope.row.isCancel==1">已取消</span>
+              <span class="cancelButton" v-else>正常</span>
+            </template>
+            <template v-else>
+              <span>已结束</span>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -76,39 +80,47 @@ export default {
       searchParams: {
         "conferenceTitle": "",
         "reserveDate": "",
-        "isMyLaunched": 1,
+        "isMyLaunched": "2",
         "pageSize": 10,
         "pageNumber": 1,
-        "roomPlace": '',
-        "roomId": '',
-        // 'shortType':1
+        "convenerName": "",
+        "shortType": 2,
+        "isCancel": "",
+        "isEnd": ""
       },
       totalSize: 0,
+      status: '',
       searchLoading: false
     }
   },
   computed: {
-    rooms() {
-      var temp = [];
-      if (this.searchParams.roomPlace) {
-        temp = this.roomList.find(r => r.roomPosition == this.searchParams.roomPlace).rooms;
-      }
-      return temp;
-    },
     ...mapGetters([
       'userInfo',
       'roomList',
     ])
   },
   created() {
-    this.getData();
+    this.initPage(this.$route.params);
   },
-  components: {
-
+  beforeRouteUpdate (to, from, next) {
+    this.initPage(to.params);
+    next();
   },
   methods: {
-    changeRoomPlace() {
-      this.searchParams.roomId = '';
+    initPage(params) {
+      if (params.type) {
+        var type = params.type
+        // console.log(type)
+
+        if (type == 2) {
+          this.status = '2'
+        } else if (type == 3) {
+          this.status = '3'
+        }else{
+          this.status=''
+        }
+      }
+      this.getData();
     },
     getData() {
       var that = this;
@@ -116,6 +128,30 @@ export default {
       var params = Object.assign({ empId: this.userInfo.empId }, this.clone(this.searchParams))
       if (this.searchParams.reserveDate) {
         params.reserveDate = this.searchParams.reserveDate.getTime();
+      }
+      switch (this.status) {
+        case "0": //全部
+          params.isEnd = '';
+          params.isCancel = '';
+          params.isMyLaunched = '2'
+          break;
+        case '1': //正常
+          params.isEnd = '0';
+          params.isCancel = '0';
+          params.isMyLaunched = '2'
+          break;
+        case '2': //已取消
+          params.isEnd = '0';
+          params.isCancel = '1';
+          params.isMyLaunched = '';
+          break;
+        case '3': //已结束
+          params.isEnd = '1';
+          params.isCancel = '';
+          params.isMyLaunched = '';
+          break;
+        default:
+          ;
       }
       this.$http.post("/conference/conferReserveList", params, { body: true }).then(res => {
         setTimeout(function() {
@@ -143,32 +179,11 @@ export default {
     reset() {
       this.searchParams.conferenceTitle = '';
       this.searchParams.reserveDate = '';
-      this.searchParams.roomPlace = '';
-      this.searchParams.roomId = '';
+      this.searchParams.convenerName = '';
+      this.searchParams.status = '';
     },
-    cancel(row) {
-      this.$confirm('确定取消此次会议预定?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$http.post('/conference/cancalConference', { id: row.id,cancelEmpId:this.userInfo.empId,cancelName:this.userInfo.name },{body:true})
-          .then(res => {
-            if (res.status == 0) {
-              this.$message.success('取消成功');
-              this.searchParams.pageNumber=1;
-              this.getData();
-              this.$store.dispatch('getConferenceNum');
-            } else {
-              this.$message.warning('取消失败')
-            }
-          })
-      }).catch(() => {
-
-      });
-    },
-    goDetail(row){
-      this.$router.push('/meeting/bookingDetail/'+row.id)
+    goDetail(row) {
+      this.$router.push('/meeting/bookingDetail/' + row.id)
     }
   }
 }
@@ -177,7 +192,7 @@ export default {
 <style lang='scss'>
 $main: #0460AE;
 $sub:#1465C0;
-#myBooking {
+#meetingSearch {
   .searchOptions {
     .el-card__body {
       .el-col {
@@ -221,7 +236,6 @@ $sub:#1465C0;
         td.clickItem {
           .cancelButton {
             color: $main;
-            cursor: pointer;
           }
         }
         td.timeItem {
@@ -237,8 +251,8 @@ $sub:#1465C0;
       color: #95989A;
     }
   }
-  .pageBox{
-    padding:20px;
+  .pageBox {
+    padding: 20px;
     text-align: right;
   }
 }
