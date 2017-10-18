@@ -145,6 +145,9 @@ export default {
   deleteDutyInfo(id) {
     return fetch('/onduty/deleteDutyInfo', id)
   },
+  updateSalaryAccount(param) {
+    return fetch('/salary/updateSalaryAccount', param)
+  },
   getRoomPosition(){
     return fetch('/conference/getRoomPosition')
   },

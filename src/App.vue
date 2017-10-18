@@ -4,7 +4,7 @@
       <div class="topNavbar">
         <div class="container">
           <a><i class="iconfont icon-1"></i> 简体</a>
-          <a><i class="iconfont icon-shezhi"></i> 设置</a>
+          <a href="#/set"><i class="iconfont icon-shezhi"></i> 设置</a>
           <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
           <a @click="loginOut"><i class="iconfont icon-guanbi"></i> 登出</a>
         </div>

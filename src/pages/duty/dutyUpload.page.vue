@@ -9,10 +9,12 @@
         </el-row>
       </div>
       <div class="rlt">
-        <el-upload ref="upload" :multiple="false" :on-success="uploadSuccess" :on-error="uploadError" :action="baseURL+'/onduty/excelInsert'" :file-list="fileList" :auto-upload="false" :on-change="handleChange" :on-remove="handleRemove">
+        <el-upload ref="upload" accept=".xlsx" :multiple="false" :on-success="uploadSuccess" :on-error="uploadError" :action="actionUrl" :file-list="fileList" :auto-upload="false">
           <span class="accessory">附件</span>
           <span class="underline"></span>
-          <el-button slot="trigger" size="large"  :disabled="noMore">选择文件 <i class="iconfont icon-jiantou"></i></el-button>
+          <el-button @click="fileList = []" slot="trigger" size="large">选择文件
+            <i class="iconfont icon-jiantou"></i>
+          </el-button>
           <el-button type="primary" size="large" class="uploadbtn" @click="submitUpload">上传</el-button>
         </el-upload>
       </div>
@@ -23,35 +25,47 @@
           <el-col class="titleLeft" :span="5">
             <span>值班信息上传结果</span>
           </el-col>
-          <!-- <el-col :offset="12" :span="2" class="titleRight">
-            <el-button icon="edit" size="large" @click="edit">编辑</el-button>
-          </el-col> -->
-          <el-col :offset="15" :span="2" class="titleRight">
+          <el-col :offset="12" :span="2" class="titleRight">
+
+            <el-button size="large" @click="edit">
+              <i class="iconfont icon-xie"></i>
+              {{msg}}</el-button>
+          </el-col>
+          <el-col :offset="1" :span="2" class="titleRight">
             <el-button type="primary" size="large" @click="saveAndSubmit" class="save">提交并发布</el-button>
           </el-col>
         </el-row>
       </div>
-      <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
-        <el-table-column label="序号" type="index" width="60">
-        </el-table-column>
-        <el-table-column property="dutyDate" sortable label="日期" width="120">
-        </el-table-column>
-        <el-table-column property="deptName" label="部门" width="120">
-        </el-table-column>
-        <el-table-column property="empName" label="值班人">
-        </el-table-column>
-        <el-table-column property="mobileNumber" label="手机">
-        </el-table-column>
-        <el-table-column property="phoneNumber" label="电话">
-        </el-table-column>
-        <el-table-column v-if="editAble" fixed="right">
-          <template scope="scope">
-            <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small">
-              移除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <table cellspacing="0" class="editTable">
+        <tr class="head">
+          <td>日期</td>
+          <td>部门</td>
+          <td>值班人</td>
+          <td>手机</td>
+          <td>电话</td>
+          <td v-if="editAble">操作</td>
+        </tr>
+        <tr v-for="(item, index) in tableData" :key="item.toString()">
+          <td>
+            <input :readonly="readonly" class="dutyDate" ref="dutyDate" v-model="item.dutyDate"></input>
+          </td>
+          <td>
+            <input :readonly="readonly" v-model="item.deptName"></input>
+          </td>
+          <td>
+            <input :readonly="readonly" v-model="item.empName"></input>
+          </td>
+          <td>
+            <input :readonly="readonly" v-model="item.mobileNumber"></input>
+          </td>
+          <td>
+            <input :readonly="readonly" v-model="item.phoneNumber"></input>
+          </td>
+          <td v-if="editAble">
+            <el-button style="font-size: 13px" @click="deleteRow(index)" type="text" size="small">删除</el-button>
+          </td>
+        </tr>
+      </table>
     </el-card>
   </div>
 </template>
@@ -67,7 +81,7 @@ export default {
     return {
       fileList: [],
       tableData: [],
-      originData: [],
+      sendData: [],
       currentRow: null,
       paginate: {
         pageSizes: [5, 10, 12, 36],
@@ -84,16 +98,45 @@ export default {
     ...mapGetters([
       'userInfo',
       'baseURL'
-    ])
+    ]),
+    actionUrl() {  // 临时变量 解决两地开发 Url地址不同
+      // return 'http://apitest.donghaiair.com:8899/DonghaiAirAPI/onduty/excelInsert'
+      return this.baseURL+'/onduty/excelInsert'
+    },
+    readonly() {
+      if (this.editAble) {
+        return null
+      }
+      return 'readonly'
+    },
+    msg() {
+      if (this.editAble) {
+        return '取消'
+      }
+      return '编辑'
+    }
+  },
+  filters: {
+    one() {
+      return 1
+    }
   },
   methods: {
     submitUpload() {
       this.$refs.upload.submit();
     },
     edit() {
-      this.editAble = !this.editAble
+      if (this.tableData.length && !this.editAble) {
+        this.editAble = true;
+        let dom = document.querySelectorAll('.dutyDate')[0];
+        setTimeout(function() {
+          dom.focus();
+        }, 100);
+      } else {
+        this.editAble = false;
+      }
     },
-    handleRemove(){
+    handleRemove() {
       this.noMore = false;
     },
     handleChange(file, fileList) {
@@ -113,15 +156,12 @@ export default {
 
     },
     uploadSuccess(data) {
-      console.log(this.fileList);
       if (data.status == '0') {
-        if (data.data.ondutylist.length != 0) {
-          this.originData = data.data.ondutylist
-          this.tableData = dataTransform(this.originData, fmts)
-
+        if (data.data.ondutylist.length) {
+          this.tableData = dataTransform(data.data.ondutylist, fmts)
           this.$message.success('上传成功')
         } else {
-          this.$refs.upload.clearFiles();
+          this.fileList = []
           this.$message.error('上传失败,请检查上传文件')
         }
       } else {
@@ -132,32 +172,56 @@ export default {
       this.$message.error('上传失败')
     },
     saveAndSubmit() {
-      console.log(this.originData)
-      if (this.originData.length != 0) {
-        this.$http.post('/onduty/addOrUpdateDutyInfo', { ondutylist: this.originData, userId: this.userInfo.empId }, { body: true }).then((data) => {
+
+      this.formatTableData()
+      if (this.sendData.length) {
+        this.$http.post('/onduty/addOrUpdateDutyInfo', { ondutylist: this.sendData, useId: this.userInfo.empId }, { body: true }).then((data) => {
           if (data.status == '0') {
+            this.fileList = [];
+            this.tableData = [];
+            this.sendData = [];
             this.$message({
               message: '提交成功',
               type: 'success',
             })
-            this.$router.push('/duty/dutyDetail');
+            // this.$router.push('/duty/dutyDetail');
           } else {
             this.$message.error('提交失败')
           }
         })
       }
     },
+    formatTableData() {
+      for (let item of this.tableData) {
+        let obj = {}
+        Object.keys(item).forEach(function(key) {
+          if (key === 'dutyDate') {
+            obj[key] = new Date(item[key]).getTime()
+          } else {
+            if (item[key] === '空' || item[key] === '无') {
+              obj[key] = ""
+            } else {
+              obj[key] = item[key]
+            }
+          }
+        })
+        this.sendData.push(obj)
+      }
+    },
     deleteRow(row) {
       this.tableData.splice(row, 1)
-      this.originData.splice(row, 1)
     }
   }
 }
 
 </script>
 <style scope lang="scss">
+@import '../../assets/scss/color.scss';
+
 #dutyUpload {
+  transition: all .5s;
   .el-card {
+    overflow: hidden;
     padding: 0 20px;
     .el-card__header {
       padding-left: 0;
@@ -176,7 +240,7 @@ export default {
     .el-card__body {
       padding: 20px 0;
       .el-table .cell {
-        font-size: 12px;
+        font-size: 13px;
       }
       .rlt {
         position: relative;
@@ -221,6 +285,46 @@ export default {
       }
     }
   }
+  .editTable {
+    margin: 0 auto;
+    width: 800px;
+    tr {
+      text-indent: 20px;
+      background-color: #fff;
+      color: $main;
+      height: 45px;
+      font-size: 13px;
+      border-bottom: 1px solid #D5DADF;
+      &.head {
+        background-color: $main;
+        color: white;
+        td {
+          color: #fff;
+        }
+      }
+      td {
+        border-bottom: 1px solid #D5DADF;
+        font-size: 13px;
+        color: #000; // position: relative;
+        height: 30px;
+        width: 18%;
+        vertical-align: middle;
+        padding: 0;
+        input {
+          text-indent: 20px;
+          font-size: 13px;
+          border: none;
+          outline: none;
+          height: 100%;
+          line-height: 30px;
+          transform: translateX(-20px);
+          width: 100%;
+          &:focus {
+            border-bottom: 1px solid $main;
+          }
+        }
+      }
+    }
+  }
 }
-
 </style>
