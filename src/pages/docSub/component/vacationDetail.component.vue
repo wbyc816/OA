@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'sumitLoading'
+      'submitLoading'
     ])
   },
   methods: {

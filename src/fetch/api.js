@@ -148,4 +148,13 @@ export default {
   updateSalaryAccount(param) {
     return fetch('/salary/updateSalaryAccount', param)
   },
+  getRoomPosition(){
+    return fetch('/conference/getRoomPosition')
+  },
+  getConferenceType(){
+    return fetch('/conference/getConferenceType')
+  },
+  getConferenceNum(id){
+    return fetch('/conference/conferenceNumTips',{empId:id})
+  },
 }

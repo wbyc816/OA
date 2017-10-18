@@ -1,5 +1,5 @@
 <template>
-  <div class='commonApp' v-loading.fullscreen="sumitLoading">
+  <div class='commonApp' v-loading.fullscreen="submitLoading">
     <el-card>
       <div slot="header" class='doc_title'>
         <span v-text='doc.docName'></span>
@@ -21,7 +21,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import {docConfig} from '../../common/docConfig'
+import { docConfig } from '../../common/docConfig'
 import Subject from './component/subject.component.vue'
 import Description from './component/description.component.vue'
 import CLV from './component/travelApp.component.vue'
@@ -33,6 +33,7 @@ import ZZS from './component/empBecomeApp.component.vue'
 import PXS from './component/empTrainingApp.component.vue'
 import RYY from './component/empIntroduceApp.component.vue'
 import SWD from './component/docCheckInApp.component.vue'
+import YSS from './component/budgetApp.component.vue'
 
 export default {
   data() {
@@ -40,12 +41,12 @@ export default {
       docConfig,
       middleParams: '',
       options: { docType: '' },
-      doc:''
+      doc: ''
     }
   },
   computed: {
     ...mapGetters([
-      'sumitLoading'
+      'submitLoading'
     ])
   },
   beforeRouteLeave(to, from, next) {
@@ -63,16 +64,17 @@ export default {
     ZZS,
     PXS,
     RYY,
-    SWD
+    SWD,
+    YSS
   },
-  created(){
+  created() {
     this.initDoc();
   },
   methods: {
-    initDoc(){
-      this.doc=this.docConfig.find(doc=>doc.code==this.$route.params.code);
-      this.options.docType=this.doc.code;
-    },  
+    initDoc() {
+      this.doc = this.docConfig.find(doc => doc.code == this.$route.params.code);
+      this.options.docType = this.doc.code;
+    },
     submitDoc() {
       this.$store.commit('SET_SUBMIT_LOADING', true)
       this.$refs.subject.submitForm();
@@ -117,6 +119,21 @@ $main:#0460AE;
   .arrArea {
     .el-form-item__label {
       padding-left: 18px;
+    }
+  }
+  .reciverWrap {
+    clear: both;
+    .el-form-item__content {
+      display: flex;
+    }
+    .reciverList {
+      flex: 1;
+      .el-tag {
+        margin-right: 5px;
+      }
+    }
+    .addButton {
+      right: 0;
     }
   }
 }

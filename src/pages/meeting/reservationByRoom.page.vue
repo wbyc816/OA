@@ -3,10 +3,7 @@
     <el-card class="borderCard">
       <span slot="header">By Room</span>
       <el-row class="calendar" :gutter='18'>
-        <el-col :span="6">
-          <img src="../../../assets/images/roomMap.png">
-        </el-col>
-        <el-col :span="6" v-for="dayArray in days">
+        <el-col :span="8" v-for="dayArray in days">
           <p>{{dayArray[10] | time('month')}}</p>
           <table class="dayList">
             <tr>
@@ -24,8 +21,6 @@
               {{day | time('day')}}</li>
             </ul>
           </el-col>
-          <el-col :span="6"></el-col>
-          <el-col :span="6"></el-col>
         </el-row>
         <div class="operation">
           <div class="buttonGroup">

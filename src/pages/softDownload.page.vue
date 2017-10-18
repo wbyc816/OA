@@ -23,7 +23,8 @@
             </el-table-column>
             <el-table-column property="url" label="下载地址">
               <template scope="scope">
-                <a :href="formatUrl(scope.row.url)" target="_blank">{{scope.row.url}}</a>
+                <!-- <a :href="formatUrl(scope.row.url)" target="_blank">{{scope.row.url}}</a> -->
+                <span :href="formatUrl(scope.row.url)" target="_blank">{{scope.row.url}}</span>
               </template>
             </el-table-column>
           </el-table>

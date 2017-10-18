@@ -49,11 +49,13 @@ import docCommonApp from 'pages/docSub/docCommonApp.page'
 // import myBenefit from 'pages/generalInfo/myBenefit.page'
 // import myBenefitList from 'pages/generalInfo/myBenefit/myBenefitList.page'
 // import myBenefitDetail from 'pages/generalInfo/myBenefit/myBenefitDetail.page'
-// import MeetingReservation from 'pages/generalInfo/MeetingReservation.page'
-// import ReservationAllRoom from 'pages/generalInfo/meetingReservation/reservationAllRoom.page'
-// import ReservationByRoom from 'pages/generalInfo/meetingReservation/reservationByRoom.page'
-// import ReservationBooking from 'pages/generalInfo/meetingReservation/reservationBooking.page'
-// import MyBooking from 'pages/generalInfo/meetingReservation/myBooking.page'
+import meetingHome from 'pages/meeting/meetingHome.page'
+import ReservationAllRoom from 'pages/meeting/reservationAllRoom.page'
+import ReservationByRoom from 'pages/meeting/reservationByRoom.page'
+import bookingDetail from 'pages/meeting/bookingDetail.page'
+import MyBooking from 'pages/meeting/myBooking.page'
+import meetingSearch from 'pages/meeting/meetingSearch.page'
+import meetingApp from 'pages/meeting/meetingApp.page'
 
 import staffCenter from 'pages/StaffCenter'
 import myRequest from 'pages/StaffCenter/myRequest.page'
@@ -104,419 +106,488 @@ import set from './set'
 
 export default new Router({
 
-  // mode: 'history',
-  // history: false,
-  // hashbang: true,
-  routes: [{
-    path: '/home',
-    name: 'home',
-    component: home
-  }, {
-    path: '/contactList',
-    name: 'contactList',
-    component: contactList,
-    meta: {
-      breadcrumb: "公司同仁",
-    }
-  }, {
-    path: '/newsDetail/:id',
-    name: 'newsDetail',
-    component: newsDetail,
-    meta: {
-      breadcrumb: "新闻详情",
-    }
-  }, {
-    path: '/BirthdayReminder',
-    name: 'BirthdayReminder',
-    component: BirthdayReminder,
-    meta: {
-      breadcrumb: "生日提醒",
-    }
-  }, {
-    path: '/diningMenu',
-    name: 'diningMenu',
-    component: diningMenu,
-    meta: {
-      breadcrumb: "食堂菜谱",
-    }
-  }, {
-    path: '/FilesHome',
-    name: 'FilesHome',
-    component: FilesHome,
-    meta: {
-      breadcrumb: "文件首页",
-    }
-  }, {
-    path: '/PresidentMailbox',
-    name: 'PresidentMailbox',
-    component: PresidentMailbox,
-    meta: {
-      breadcrumb: "总裁邮箱",
-    }
-  }, {
-    path: '/HR',
-    name: 'HR',
-    component: HR,
-    children: [{
-      path: '/HR/clildHR',
-      name: 'clildHR',
-      component: clildHR,
-    }, {
-      path: '/HR/personalInfo',
-      name: 'personalInfo',
-      component: personalInfo,
-    }, {
-      path: '/HR/newsListHr/:classify',
-      name: 'newsListHr',
-      component: newsListHr
-    }, {
-      path: '/HR/newsDetailHr/:id',
-      name: 'newsDetailHr',
-      component: newsDetailHr,
-    }, {
-      path: '/HR/salary/:salaryMonth',
-      name: 'salary',
-      component: salary,
-    }, {
-      path: '/HR/salaryHistory/:param',
-      name: 'salaryHistory',
-      component: salaryHistory
-    }, {
-      path: '/HR/resume',
-      name: 'resume',
-      component: resume,
-    }, {
-      path: '/HR/editResume',
-      name: 'editResume',
-      component: editResume,
-    }, {
-      path: '/HR/',
-      redirect: '/HR/clildHR'
-    },]
-  }, {
-    path: '',
-    redirect: '/home'
-  }, {
-    path: '/flightStatus',
-    name: 'flightStatus',
-    component: flightStatus,
-    meta: {
-      breadcrumb: "航班动态",
-    }
-  }, {
-    path: '/doc',
-    name: 'doc',
-    component: doc,
-    meta: {
-      breadcrumb: "公文流转",
-    },
-    children: [{
-      path: '/doc/docSub',
-      name: 'DocSub',
-      component: docSub,
-      meta: {
-        breadcrumb: "公文呈报",
-      },
-    }, {
-      path: '/doc/approvalForm',
-      name: 'ApprovalForm',
-      component: approvalForm,
-      meta: {
-        breadcrumb: "公文呈报",
-      }
-    }, {
-      path: '/doc/materialApp',
-      name: 'materialApp',
-      component: materialApp,
-      meta: {
-        breadcrumb: "公文呈报",
-      }
-    }, {
-      path: '/doc/vehicleApp',
-      name: 'vehicleApp',
-      component: vehicleApp,
-      meta: {
-        breadcrumb: "公文呈报",
-      }
-    }, {
-      path: '/doc/manuscriptApp',
-      name: 'manuscriptApp',
-      component: manuscriptApp,
-      meta: {
-        breadcrumb: "公文呈报",
-      }
-    }, {
-      path: '/doc/docCommonApp/:code',
-      name: 'docCommonApp',
-      component: docCommonApp,
-      meta: {
-        breadcrumb: "公文呈报",
-      }
-    },
-    // {
-    //  path:'/doc/leisureTravel',
-    //  name:'leisureTravel',
-    //  component:leisureTravel,
-    //  meta:{
-    //      breadcrumb:"Leisure Travel",
-    //  }
-    // },
-    // {
-    //  path:'/doc/manuscriptPaper',
-    //  name:'manuscriptPaper',
-    //  component:manuscriptPaper,
-    //  meta:{
-    //      breadcrumb:"File Manuscript Paper",
-    //  }
-    // },
-    // {
-    //  path:'/doc/businessTrip',
-    //  name:'businessTrip',
-    //  component:business,
-    //  meta:{
-    //      breadcrumb:"Business Trip",
-    //  }
-    // },
-    // {
-    //  path:'/doc/mobSerReq',
-    //  name:'mobSerReq',
-    //  component:mobSerReq,
-    //  meta:{
-    //      breadcrumb:"Mobile Phone Services Request",
-    //  }
-    // },
-    // {
-    //  path:'/doc/businessCardReq',
-    //  name:'businessCardReq',
-    //  component:businessCardReq,
-    //  meta:{
-    //      breadcrumb:"Business Card Request Form",
-    //  }
-    // },
-    // {
-    //  path:'/doc/conVoucher',
-    //  name:'ConVoucher',
-    //  component:conVoucher,
-    //  meta:{
-    //      breadcrumb:"Concession Voucher Form",
-    //  }
-    // },
-    // {
-    //  path:'/doc/procureReq',
-    //  name:'ProcureReq',
-    //  component:procureReq,
-    //  meta:{
-    //      breadcrumb:"Procurement Requisition Form",
-    //  }
-    // },
-    // {
-    //  path:'/doc/reimburse',
-    //  name:'Reimburse',
-    //  component:reimburse,
-    //  meta:{
-    //      breadcrumb:"Reimbursement Form",
-    //  }
-    // },
-    //  {
-    //      path:'/doc/payment',
-    //      name:'Payment',
-    //      component:payment,
-    //      meta:{
-    //          breadcrumb:"Payment Form",
-    //      }
-    //  },
-    //  {
-    //      path:'/doc/budget',
-    //      name:'Budget',
-    //      component:budget,
-    //      meta:{
-    //          breadcrumb:"Budget Form",
-    //      }
-    //  },
-    //  {
-    //      path:'/doc/contractBudget',
-    //      name:'ContractBudget',
-    //      component:contractBudget,
-    //      meta:{
-    //          breadcrumb:"Contract Budget Change",
-    //      }
-    //  },
-    //  {
-    //      path:'/doc/conChange',
-    //      name:'ContractChange',
-    //      component:conChange,
-    //      meta:{
-    //          breadcrumb:"Contract Budget Change ",
-    //      },
-    //  },
-    //  {
-    //      path:'/doc/conApprovalNew',
-    //      name:'ConApprovalNew',
-    //      component:conApprovalNew,
-    //      meta:{
-    //          breadcrumb:"Contract Approval New",
-    //      }
-    //  },
-    //  {
-    //      path:'/doc/conApproval',
-    //      name:'ConApproval',
-    //      component:conApproval,
-    //      meta:{
-    //          breadcrumb:"Contract Approval",
-    //      }
-    //  },
-    {
-      path: '/doc/docTracking',
-      name: 'docTracking',
-      component: docTracking,
-      meta: {
-        breadcrumb: "公文追踪",
-      }
-    }, {
-      path: '/doc/docPending',
-      name: 'docPending',
-      component: docPending,
-      meta: {
-        breadcrumb: "公文签批",
-      }
-    }, {
-      path: '/doc/docDetail/:id',
-      name: 'docDetail',
-      component: docDetail,
-      meta: {
-        breadcrumb: "公文详情",
-      }
-    }, {
-      path: '/doc/docSearch',
-      name: 'docSearch',
-      component: docSearch,
-      meta: {
-        breadcrumb: "公文查询",
-      }
-    }, {
-      path: '/doc/docToRead',
-      name: 'docToRead',
-      component: docToRead,
-      meta: {
-        breadcrumb: "公文待阅",
-      }
-    },
-    //  {
-    //      path:'/doc/paymentSearch',
-    //      name:'paymentSearch',
-    //      component:paymentSearch,
-    //      meta:{
-    //          breadcrumb:"Payment Search",
-    //      }
-    //  },
-    {
-      path: '/doc/',
-      redirect: '/doc/docSub'
-    },
-    ]
-  },
-  // {
-  //  path:'/organizationStructure',
-  //  name:'organizationStructure',
-  //  component:organizationStructure,
-  //  meta:{
-  //      breadcrumb:"Organization Structure",
-  //  }
-  // },
-  // {
-  //  path:'/generalInfo',
-  //  name:'generalInfo',
-  //  component:generalInfo,
-  //  meta:{
-  //      breadcrumb:"General Info",
-  //  },
-  //  children:[
-  //  {
-  //      path:'/generalInfo/forms',
-  //      name:'forms',
-  //      component:forms,
-  //      meta:{
-  //          breadcrumb:"Forms",
-  //      }
-  //  },
-  //  {
-  //      path:'/generalInfo/news',
-  //      name:'news',
-  //      component:news,
-  //      meta:{
-  //          breadcrumb:"News",
-  //      }
-  //  },
-  //  {
-  //      path:'/generalInfo/taskAssignment',
-  //      name:'taskAssignment',
-  //      component:taskAssignment,
-  //      meta:{
-  //          breadcrumb:"TaskAssignment",
-  //      }
-  //  },
-  //  {
-  //      path:'/generalInfo/createTask',
-  //      name:'createTask',
-  //      component:createTask,
-  //      meta:{
-  //          breadcrumb:"Create Task",
-  //      }
-  //  },
-  //  {
-  //      path:'/generalInfo/taskList',
-  //      name:'taskList',
-  //      component:taskList,
-  //      meta:{
-  //          breadcrumb:"TaskList",
-  //      }
-  //  },
-  //  {
-  //      path:'/generalInfo/leaveDutyTrip',
-  //      name:'leaveDutyTrip',
-  //      component:leaveDutyTrip,
-  //      meta:{
-  //          breadcrumb:"Leave&Duty Trip",
-  //      }
-  //  },
-  //  {
-  //      path:'/generalInfo',
-  //      redirect: '/generalInfo/forms'
-  //  }
-  //  ]
-  // },
-  // {
-  //  path:'/generalInfo/formDetail',
-  //  name:'formDetail',
-  //  component:formDetail,
-  //  meta:{
-  //      breadcrumb:"Form Detail",
-  //  }
-  // },
-  // {
-  //  path:'/generalInfo/newsDetail',
-  //  name:'newsDetail',
-  //  component:newsDetail,
-  //  meta:{
-  //      breadcrumb:"News Detail",
-  //  }
-  // },
+    // mode: 'history',
+    // history: false,
+    // hashbang: true,
+    routes: [{
+            path: '/home',
+            name: 'home',
+            component: home
+        }, {
+            path: '/contactList',
+            name: 'contactList',
+            component: contactList,
+            meta: {
+                breadcrumb: "公司同仁",
+            }
+        }, {
+            path: '/newsDetail/:id',
+            name: 'newsDetail',
+            component: newsDetail,
+            meta: {
+                breadcrumb: "新闻详情",
+            }
+        } , {
+            path: '/BirthdayReminder',
+            name: 'BirthdayReminder',
+            component: BirthdayReminder,
+            meta: {
+              breadcrumb: "生日提醒",
+            }
+       }, {
+            path: '/diningMenu',
+            name: 'diningMenu',
+            component: diningMenu,
+            meta: {
+              breadcrumb: "食堂菜谱",
+            }
+       } , {
+          path: '/FilesHome',
+          name: 'FilesHome',
+          component: FilesHome,
+          meta: {
+            breadcrumb: "文件首页",
+          }
+       } , {
+          path: '/PresidentMailbox',
+          name: 'PresidentMailbox',
+          component: PresidentMailbox,
+          meta: {
+            breadcrumb: "总裁邮箱",
+          }
+       } , {
+            path: '/HR',
+            name: 'HR',
+            component: HR,
+            children: [{
+                path: '/HR/clildHR',
+                name: 'clildHR',
+                component: clildHR,
+            }, {
+                path: '/HR/personalInfo',
+                name: 'personalInfo',
+                component: personalInfo,
+            }, {
+                path: '/HR/newsListHr/:classify',
+                name: 'newsListHr',
+                component: newsListHr
+            }, {
+                path: '/HR/newsDetailHr/:id',
+                name: 'newsDetailHr',
+                component: newsDetailHr,
+            }, {
+                path: '/HR/salary/:salaryMonth',
+                name: 'salary',
+                component: salary,
+            }, {
+              path: '/HR/salaryHistory/:param',
+              name: 'salaryHistory',
+              component: salaryHistory
+            },{
+                path: '/HR/resume',
+                name: 'resume',
+                component: resume,
+            }, {
+                path: '/HR/editResume',
+                name: 'editResume',
+                component: editResume,
+            }, {
+                path: '/HR/',
+                redirect: '/HR/clildHR'
+            }, ]
+        }, {
+            path: '',
+            redirect: '/home'
+        },
+        {
+         path:'/meeting',
+         name:'meetingHome',
+         component:meetingHome,
+         meta:{
+             // breadcrumb:"会议室预",
+         },
+         children:[
+         {
+             path:'/meeting/ReservationAllRoom/:id',
+             name:'ReservationAllRoom',
+             component:ReservationAllRoom,
+             meta:{
+                 // breadcrumb:"会议室预定",
+             },
 
-  // {
-  //  path:'/generalInfo/MeetingReservation',
-  //  name:'MeetingReservation',
-  //  component:MeetingReservation,
-  //  meta:{
-  //      breadcrumb:"Meeting Reservation",
-  //  },
-  //  children:[
-  //  {
-  //      path:'/generalInfo/MeetingReservation/ReservationAllRoom',
-  //      name:'ReservationAllRoom',
-  //      component:ReservationAllRoom,
-  //      meta:{
-  //          breadcrumb:"Reservation AllRoom",
-  //      },
+         },
+         {
+             path:'/meeting/meetingApp',
+             name:'meetingApp',
+             component:meetingApp,
+             meta:{
+                 // breadcrumb:"会议室预定",
+             },
+
+         },
+         {
+             path:'/meeting/ReservationByRoom',
+             name:'ReservationByRoom',
+             component:ReservationByRoom,
+             meta:{
+                 // breadcrumb:"Reservation ByRoom",
+             }
+         },
+         {
+             path:'/meeting/bookingDetail/:id',
+             name:'bookingDetail',
+             component:bookingDetail,
+             meta:{
+                 // breadcrumb:"Reservation Booking",
+             }
+         },
+         {
+             path:'/meeting/MyBooking',
+             name:'MyBooking',
+             component:MyBooking,
+             meta:{
+                 breadcrumb:"我的预订",
+             }
+         },
+         {
+             path:'/meeting/meetingSearch/:type',
+             name:'meetingSearch',
+             component:meetingSearch,
+             meta:{
+                 breadcrumb:"会议通知",
+             }
+         },
+         {
+             path:'/meeting',
+             redirect: '/meeting/ReservationAllRoom'
+         },
+         ]
+        },
+         {
+            path: '/flightStatus',
+            name: 'flightStatus',
+            component: flightStatus,
+            meta: {
+                breadcrumb: "航班动态",
+            }
+        },{
+            path: '/doc',
+            name: 'doc',
+            component: doc,
+            meta: {
+                breadcrumb: "公文流转",
+            },
+            children: [{
+                    path: '/doc/docSub',
+                    name: 'DocSub',
+                    component: docSub,
+                    meta: {
+                        breadcrumb: "公文呈报",
+                    },
+                }, {
+                    path: '/doc/approvalForm',
+                    name: 'ApprovalForm',
+                    component: approvalForm,
+                    meta: {
+                        breadcrumb: "公文呈报",
+                    }
+                }, {
+                    path: '/doc/materialApp',
+                    name: 'materialApp',
+                    component: materialApp,
+                    meta: {
+                        breadcrumb: "公文呈报",
+                    }
+                }, {
+                    path: '/doc/vehicleApp',
+                    name: 'vehicleApp',
+                    component: vehicleApp,
+                    meta: {
+                        breadcrumb: "公文呈报",
+                    }
+                }, {
+                    path: '/doc/manuscriptApp',
+                    name: 'manuscriptApp',
+                    component: manuscriptApp,
+                    meta: {
+                        breadcrumb: "公文呈报",
+                    }
+                }, {
+                    path: '/doc/docCommonApp/:code',
+                    name: 'docCommonApp',
+                    component: docCommonApp,
+                    meta: {
+                        breadcrumb: "公文呈报",
+                    }
+                },
+                // {
+                //  path:'/doc/leisureTravel',
+                //  name:'leisureTravel',
+                //  component:leisureTravel,
+                //  meta:{
+                //      breadcrumb:"Leisure Travel",
+                //  }
+                // },
+                // {
+                //  path:'/doc/manuscriptPaper',
+                //  name:'manuscriptPaper',
+                //  component:manuscriptPaper,
+                //  meta:{
+                //      breadcrumb:"File Manuscript Paper",
+                //  }
+                // },
+                // {
+                //  path:'/doc/businessTrip',
+                //  name:'businessTrip',
+                //  component:business,
+                //  meta:{
+                //      breadcrumb:"Business Trip",
+                //  }
+                // },
+                // {
+                //  path:'/doc/mobSerReq',
+                //  name:'mobSerReq',
+                //  component:mobSerReq,
+                //  meta:{
+                //      breadcrumb:"Mobile Phone Services Request",
+                //  }
+                // },
+                // {
+                //  path:'/doc/businessCardReq',
+                //  name:'businessCardReq',
+                //  component:businessCardReq,
+                //  meta:{
+                //      breadcrumb:"Business Card Request Form",
+                //  }
+                // },
+                // {
+                //  path:'/doc/conVoucher',
+                //  name:'ConVoucher',
+                //  component:conVoucher,
+                //  meta:{
+                //      breadcrumb:"Concession Voucher Form",
+                //  }
+                // },
+                // {
+                //  path:'/doc/procureReq',
+                //  name:'ProcureReq',
+                //  component:procureReq,
+                //  meta:{
+                //      breadcrumb:"Procurement Requisition Form",
+                //  }
+                // },
+                // {
+                //  path:'/doc/reimburse',
+                //  name:'Reimburse',
+                //  component:reimburse,
+                //  meta:{
+                //      breadcrumb:"Reimbursement Form",
+                //  }
+                // },
+                //  {
+                //      path:'/doc/payment',
+                //      name:'Payment',
+                //      component:payment,
+                //      meta:{
+                //          breadcrumb:"Payment Form",
+                //      }
+                //  },
+                //  {
+                //      path:'/doc/budget',
+                //      name:'Budget',
+                //      component:budget,
+                //      meta:{
+                //          breadcrumb:"Budget Form",
+                //      }
+                //  },
+                //  {
+                //      path:'/doc/contractBudget',
+                //      name:'ContractBudget',
+                //      component:contractBudget,
+                //      meta:{
+                //          breadcrumb:"Contract Budget Change",
+                //      }
+                //  },
+                //  {
+                //      path:'/doc/conChange',
+                //      name:'ContractChange',
+                //      component:conChange,
+                //      meta:{
+                //          breadcrumb:"Contract Budget Change ",
+                //      },
+                //  },
+                //  {
+                //      path:'/doc/conApprovalNew',
+                //      name:'ConApprovalNew',
+                //      component:conApprovalNew,
+                //      meta:{
+                //          breadcrumb:"Contract Approval New",
+                //      }
+                //  },
+                //  {
+                //      path:'/doc/conApproval',
+                //      name:'ConApproval',
+                //      component:conApproval,
+                //      meta:{
+                //          breadcrumb:"Contract Approval",
+                //      }
+                //  },
+                {
+                    path: '/doc/docTracking',
+                    name: 'docTracking',
+                    component: docTracking,
+                    meta: {
+                        breadcrumb: "公文追踪",
+                    }
+                }, {
+                    path: '/doc/docPending',
+                    name: 'docPending',
+                    component: docPending,
+                    meta: {
+                        breadcrumb: "公文签批",
+                    }
+                }, {
+                    path: '/doc/docDetail/:id',
+                    name: 'docDetail',
+                    component: docDetail,
+                    meta: {
+                        breadcrumb: "公文详情",
+                    }
+                }, {
+                    path: '/doc/docSearch',
+                    name: 'docSearch',
+                    component: docSearch,
+                    meta: {
+                        breadcrumb: "公文查询",
+                    }
+                }, {
+                    path: '/doc/docToRead',
+                    name: 'docToRead',
+                    component: docToRead,
+                    meta: {
+                        breadcrumb: "公文待阅",
+                    }
+                },
+                //  {
+                //      path:'/doc/paymentSearch',
+                //      name:'paymentSearch',
+                //      component:paymentSearch,
+                //      meta:{
+                //          breadcrumb:"Payment Search",
+                //      }
+                //  },
+                {
+                    path: '/doc/',
+                    redirect: '/doc/docSub'
+                },
+            ]
+        },
+        // {
+        //  path:'/organizationStructure',
+        //  name:'organizationStructure',
+        //  component:organizationStructure,
+        //  meta:{
+        //      breadcrumb:"Organization Structure",
+        //  }
+        // },
+        // {
+        //  path:'/generalInfo',
+        //  name:'generalInfo',
+        //  component:generalInfo,
+        //  meta:{
+        //      breadcrumb:"General Info",
+        //  },
+        //  children:[
+        //  {
+        //      path:'/generalInfo/forms',
+        //      name:'forms',
+        //      component:forms,
+        //      meta:{
+        //          breadcrumb:"Forms",
+        //      }
+        //  },
+        //  {
+        //      path:'/generalInfo/news',
+        //      name:'news',
+        //      component:news,
+        //      meta:{
+        //          breadcrumb:"News",
+        //      }
+        //  },
+        //  {
+        //      path:'/generalInfo/taskAssignment',
+        //      name:'taskAssignment',
+        //      component:taskAssignment,
+        //      meta:{
+        //          breadcrumb:"TaskAssignment",
+        //      }
+        //  },
+        //  {
+        //      path:'/generalInfo/createTask',
+        //      name:'createTask',
+        //      component:createTask,
+        //      meta:{
+        //          breadcrumb:"Create Task",
+        //      }
+        //  },
+        //  {
+        //      path:'/generalInfo/taskList',
+        //      name:'taskList',
+        //      component:taskList,
+        //      meta:{
+        //          breadcrumb:"TaskList",
+        //      }
+        //  },
+        //  {
+        //      path:'/generalInfo/leaveDutyTrip',
+        //      name:'leaveDutyTrip',
+        //      component:leaveDutyTrip,
+        //      meta:{
+        //          breadcrumb:"Leave&Duty Trip",
+        //      }
+        //  },
+        //  {
+        //      path:'/generalInfo',
+        //      redirect: '/generalInfo/forms'
+        //  }
+        //  ]
+        // },
+        // {
+        //  path:'/generalInfo/formDetail',
+        //  name:'formDetail',
+        //  component:formDetail,
+        //  meta:{
+        //      breadcrumb:"Form Detail",
+        //  }
+        // },
+        // {
+        //  path:'/generalInfo/newsDetail',
+        //  name:'newsDetail',
+        //  component:newsDetail,
+        //  meta:{
+        //      breadcrumb:"News Detail",
+        //  }
+        // },
+
+        
+        // {
+        //  path:'/generalInfo/myBenefit',
+        //  name:'myBenefit',
+        //  component:myBenefit,
+        //  meta:{
+        //      breadcrumb:"My Benefit List",
+        //  },
+        //  children:[
+        //  {
+        //      path:'/generalInfo/myBenefit/myBenefitList',
+        //      name:'myBenefitList',
+        //      component:myBenefitList
+        //  },
+        //  {
+        //      path:'/generalInfo/myBenefit',
+        //      redirect: '/generalInfo/myBenefit/myBenefitList'
+        //  }
+        //  ]
 
   //  },
   //  {

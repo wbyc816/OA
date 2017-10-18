@@ -1,5 +1,5 @@
 <template>
-  <div id='materialApp' v-loading.fullscreen="sumitLoading">
+  <div id='materialApp' v-loading.fullscreen="submitLoading">
     <el-card>
       <div slot="header" class='doc_title'>
         <span v-text='docTitle'></span>
@@ -21,7 +21,7 @@ import { mapGetters } from 'vuex'
 import Subject from './component/subject.component.vue'
 import Description from './component/description.component.vue'
 import MaterialApp from './component/materialApp.component.vue'
-import suggestPath from '../../assets/images/suggestPath1.png'
+// import suggestPath from '../../assets/images/suggestPath1.png'
 
 export default {
   data() {
@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'sumitLoading'
+      'submitLoading'
     ])
   },
   beforeRouteLeave(to, from, next) {

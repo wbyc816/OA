@@ -1,42 +1,42 @@
 <template>
-  <div class="travelApp">
-    <el-form label-position="left" :model="travelForm" :rules="rules" ref="travelForm" label-width="128px">
+  <div class="budgetApp">
+    <el-form label-position="left" :model="budgetForm" :rules="rules" ref="budgetForm" label-width="128px">
       <el-form-item label="出差时间" prop="timeRange">
-        <el-date-picker v-model="travelForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+        <el-date-picker v-model="budgetForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
       <el-form-item label="出发地" prop="deptArea" class="deptArea">
-        <el-input v-model="travelForm.deptArea" :maxlength="10">
+        <el-input v-model="budgetForm.deptArea" :maxlength="10">
         </el-input>
       </el-form-item>
       <el-form-item label="目的地" prop="arrArea" class="arrArea">
-        <el-input v-model="travelForm.arrArea" :maxlength="10">
+        <el-input v-model="budgetForm.arrArea" :maxlength="10">
         </el-input>
       </el-form-item>
       <el-form-item label="出差人列表" prop="person" class="reciverWrap">
         <div class="reciverList">
-          <el-tag :key="person.id" :closable="true" type="primary" @close="closePerson(index)" v-for="(person,index) in travelForm.person">
+          <el-tag :key="person.id" :closable="true" type="primary" @close="closePerson(index)" v-for="(person,index) in budgetForm.person">
             {{person.name}}
           </el-tag>
         </div>
         <el-button class="addButton" @click="signDialogVisible=true"><i class="el-icon-plus"></i></el-button>
       </el-form-item>
       <el-form-item label="是否预订机票" prop="isBookFlight">
-        <el-radio-group v-model="travelForm.isBookFlight" class="myRadio">
+        <el-radio-group v-model="budgetForm.isBookFlight" class="myRadio">
           <el-radio-button label="1">是<i></i></el-radio-button>
           <el-radio-button label="0">否<i></i></el-radio-button>
         </el-radio-group>
-        <el-radio-group v-model="travelForm.bookType" class="myRadio bookType" v-show="travelForm.isBookFlight==1">
+        <el-radio-group v-model="budgetForm.bookType" class="myRadio bookType" v-show="budgetForm.isBookFlight==1">
           <el-radio-button :label="bookType.dictCode" v-for="bookType in bookTypes">{{bookType.dictName}}<i></i></el-radio-button>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="报销归口" prop="budgetDept">
-        <!-- <el-input class="search" :readonly="true" :value="travelForm.signName">
+        <!-- <el-input class="search" :readonly="true" :value="budgetForm.signName">
           <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
         </el-input> -->
-        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" popper-class="myCascader" style="width:100%"></el-cascader>
+        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" popper-class="myCascader" style="width:100%"></el-cascader>
       </el-form-item>
       <el-form-item label="出差总预算" prop="budgetMoney" class="budgetMoney">
-        <el-input v-model="travelForm.budgetMoney" ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
+        <el-input v-model="budgetForm.budgetMoney" ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
           <template slot="append">元</template>
         </el-input>
         <span class="usge">預算已使用率 75%</span>
@@ -68,7 +68,7 @@ export default {
     return {
       signDialogVisible: false,
       bookTypes:[],
-      travelForm: {
+      budgetForm: {
         isBookFlight: '1',
         deptArea: '',
         arrArea: '',
@@ -114,28 +114,28 @@ export default {
   methods: {
     updatePerson(list) {
       // console.log(list)
-      this.travelForm.person = list
+      this.budgetForm.person = list
       this.signDialogVisible = false;
     },
     submitForm() {
       var that = this;
-      this.$refs.travelForm.validate((valid) => {
+      this.$refs.budgetForm.validate((valid) => {
         if (valid) {
           var dep=this.getBudgetDep();
           this.params = {
             app: {
-              "startTime": this.travelForm.timeRange[0].getTime(), //出差开始时间
-              "endTime": this.travelForm.timeRange[1].getTime(), //出差结束时间
-              "deptArea": this.travelForm.deptArea, //出发地
-              "arrArea": this.travelForm.arrArea, //目的地
-              "isBookFlight": this.travelForm.isBookFlight, //是否预订机票 0否 1是
-              "bookType": this.travelForm.bookType, //预定类型
-              "budgetMoney": this.travelForm.budgetMoney, //预算
+              "startTime": this.budgetForm.timeRange[0].getTime(), //出差开始时间
+              "endTime": this.budgetForm.timeRange[1].getTime(), //出差结束时间
+              "deptArea": this.budgetForm.deptArea, //出发地
+              "arrArea": this.budgetForm.arrArea, //目的地
+              "isBookFlight": this.budgetForm.isBookFlight, //是否预订机票 0否 1是
+              "bookType": this.budgetForm.bookType, //预定类型
+              "budgetMoney": this.budgetForm.budgetMoney, //预算
               "budgetItemCode": dep.budgetItemCode, //报销科目code
               "budgetItemName": dep.budgetItemName, //报销科目名称
               "budgetDeptCode": dep.budgetDeptCode, //报销部门
               "budgetDeptName": dep.budgetDeptName, //报销部门名称
-              "appPerson": this.travelForm.person.map(function(person) {
+              "appPerson": this.budgetForm.person.map(function(person) {
                 return {
                   "travelUserName": person.name, //随行人员姓名
                   "travelDeptId": person.deptId, //部门id
@@ -155,15 +155,15 @@ export default {
       });
     },
     closePerson(index) {
-      this.travelForm.person.splice(index, 1);
+      this.budgetForm.person.splice(index, 1);
     },
     fomatMoney(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
       if (val) {
-        this.travelForm.budgetMoney = val[0];
+        this.budgetForm.budgetMoney = val[0];
         this.$refs.budgetMoney.setCurrentValue(val[0]);
       } else {
-        this.travelForm.budgetMoney = ''
+        this.budgetForm.budgetMoney = ''
         this.$refs.budgetMoney.setCurrentValue('')
       }
     },
@@ -204,15 +204,15 @@ export default {
       .then(res=>{
         if(res.status==0){
           this.bookTypes=res.data;
-          this.travelForm.bookType=this.bookTypes[0].dictCode
+          this.budgetForm.bookType=this.bookTypes[0].dictCode
         }
       })
     },
     getBudgetDep(){
-      var len=this.travelForm.budgetDept.length;
+      var len=this.budgetForm.budgetDept.length;
       var temp=this.budgetDeptList;
       for(var i=0;i<len;i++){
-        temp=temp.find(dep=>dep.budgetItemCode==this.travelForm.budgetDept[i]);
+        temp=temp.find(dep=>dep.budgetItemCode==this.budgetForm.budgetDept[i]);
         if(temp.items&&temp.items.length!=0){
           temp=temp.items;
         }
@@ -223,7 +223,7 @@ export default {
       console.log(event)
       var temp=event.target.value.split('.');
       if(temp.length==2&&(temp[1]==undefined||temp[1]==''||temp[1]==null)){
-        this.travelForm.budgetMoney = temp[0];
+        this.budgetForm.budgetMoney = temp[0];
         this.$refs.budgetMoney.setCurrentValue(temp[0]);
       }
     }
@@ -233,7 +233,7 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.travelApp {
+.budgetApp {
   .el-input {
     width: 100%;
   }

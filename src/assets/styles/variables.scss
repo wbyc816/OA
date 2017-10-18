@@ -87,6 +87,9 @@ video {
   vertical-align: baseline;
   box-sizing: border-box;
 }
+html,body{
+  height:100%;
+}
 
 body {
   font-size: 14px;
@@ -203,6 +206,13 @@ ul {
       background: #fff;
       color: $main;
       border-color: $main;
+      &.is-disabled {
+        color: rgb(191, 202, 217);
+        cursor: not-allowed;
+        background-image: none;
+        background-color: rgb(238, 241, 246);
+        border-color: rgb(209, 218, 229);
+      }
     }
   }
   .el-upload-list {
@@ -211,6 +221,9 @@ ul {
     border-bottom: 1px solid #D5DADF;
     float: left;
     overflow: hidden;
+    .el-upload-list__item-name {
+      white-space: normal;
+    }
     .el-upload__file:last-child {
       border-bottom: none;
     }
@@ -256,7 +269,7 @@ ul {
       color: #fff;
       font-size: 12px;
       font-family: 'element-icons' !important;
-          line-height: 12px;
+      line-height: 12px;
       &:before {
         content: "\E608";
         position: absolute;
@@ -269,13 +282,12 @@ ul {
 
 .myTab {
   display: flex;
-  overflow:hidden;
+  overflow: hidden;
   margin: 0;
   .el-tabs__header {
     width: 30%;
-    float:left;
-    border-bottom: none;
-    // width: 236px;
+    float: left;
+    border-bottom: none; // width: 236px;
     margin-bottom: 0;
     .el-tabs__active-bar {
       display: none;
@@ -322,7 +334,7 @@ ul {
   }
   .el-tabs__content {
     width: 70%;
-    float:right;
+    float: right;
     padding: 0 15px;
   }
 }
@@ -360,6 +372,7 @@ ul {
     &>div>i {
       float: right;
       color: #777777;
+      cursor: pointer;
     }
     .headRight {
       float: right;
@@ -480,11 +493,16 @@ ul {
       }
     }
     tr:hover>td {
-      background: #fff;
+      // background: #fff;
     }
     tr:nth-child(even) {
       td {
         background: #F7F7F7;
+      }
+      &:hover {
+        td {
+          background-color: rgb(238, 241, 246);
+        }
       }
     }
   }
@@ -897,12 +915,16 @@ ul {
   float: right;
   width: 100%;
   position: relative;
-  right: -5px;
 }
 
 .fixF5 {
   position: relative;
   left: -5px;
+}
+
+.fixR5 {
+  position: relative;
+  right: -5px;
 }
 
 .el-input {
@@ -949,7 +971,7 @@ ul {
 
 .el-tag {
   margin-right: 5px;
-  margin-bottom:5px;
+  margin-bottom: 5px;
 }
 
 .myCascader {
@@ -957,7 +979,8 @@ ul {
     height: 300px;
   }
 }
-.el-card__header{
-  border-color:#f2f2f2;
+
+.el-card__header {
+  border-color: #f2f2f2;
   padding: 8px 20px;
 }

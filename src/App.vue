@@ -67,7 +67,18 @@
       <router-view></router-view>
     </div>
     <footer>
-      <img src="./assets/images/footBg.png" alt="">
+      <div class="container">
+        <div class="links clearfix">
+          <a href="javascript:;"><img src="./assets/images/foot1.png" alt=""></a>
+          <div class="flRight">
+            <a href="javascript:;"><img src="./assets/images/foot2.png" alt=""></a>
+            <a href="javascript:;"><img src="./assets/images/foot3.png" alt=""></a>
+            <a href="javascript:;"><img src="./assets/images/foot4.png" alt=""></a>
+            <a href="javascript:;"><img src="./assets/images/foot5.png" alt=""></a>
+          </div>
+        </div>
+        <p class="copyRight">COPYRIGHT @2017 东海航空有限公司 ALLRIGHTS RESERVED 粤ICP备11082739号</p>
+      </div>
     </footer>
   </div>
 </template>
@@ -107,7 +118,7 @@ export default {
       breadcrumbShow: false,
       scrollBanner: false,
       baseUrl: '',
-      login:false
+      login: false
     }
   },
   computed: {
@@ -126,14 +137,14 @@ export default {
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));
       this.$store.dispatch('getUserInfo');
-      this.login=true;
+      this.login = true;
     } else {
       var a = document.createElement('a');
       a.setAttribute('href', this.baseUrl + "/login.html");
       // a.setAttribute('target', '_self');
       a.setAttribute('id', 'payUrl');
       // 防止反复添加
-      if(!document.getElementById('payUrl')) document.body.appendChild(a);
+      if (!document.getElementById('payUrl')) document.body.appendChild(a);
       a.click();
     }
     this.getHomePics();
@@ -263,6 +274,9 @@ $brown: #985D55;
 
 #app {
   padding-top: 26px;
+  min-height:100%;
+  padding-bottom: 140px;
+  position:relative;
 }
 
 .topBar {
@@ -521,13 +535,41 @@ $brown: #985D55;
 }
 
 footer {
-  line-height: 190px;
-  text-align: center;
-  font-size: 0;
-
+  position:absolute;
+  width:100%;
+  bottom:0;
+  left:0;
   background: #fff;
-  img {
-    vertical-align: middle;
+  .container {
+    .links {
+      font-size: 0;
+
+      border-bottom: 1px solid #D5D5D5;
+
+      a {
+        line-height: 90px;
+        // float: right;
+        img {
+          vertical-align: middle;
+        }
+        &:first-child {
+          float: left;
+        }
+      }
+      .flRight{
+        a{
+          margin-right:10px;
+          &:first-child{
+            margin-right:35px;
+          }
+        }
+      }
+    }
+    .copyRight {
+      text-align: right;
+      font-size: 14px;
+      line-height: 50px;
+    }
   }
 }
 

@@ -42,7 +42,7 @@ const actions = {
   getAdminStatus({ commit, state, rootState, rootGetters }) {
     api.getAdminStatus(rootGetters.userInfo.empId)
       .then(res => {
-        if (res.data != null) {
+        if (res.data != null&&res.data != ''&&res.data != undefined) {
           commit(types.GET_ADMIN_STATUS, true)
         }
       }, res => {

@@ -6,6 +6,7 @@ import center from './modules/center';
 import resume from './modules/resume';
 import user from './modules/user';
 import doc from './modules/doc';
+import meeting from './modules/meeting';
 import * as types from './types'
 
 Vue.use(Vuex);
@@ -15,14 +16,14 @@ const state = {
   searchLoading: false,
   baseURL:'http://apitest.donghaiair.com:8080/DonghaiAirAPI',
   editStatus:false,
-  sumitLoading:false,
+  submitLoading:false,
   DHId:'CFCD208495D565EF66E7DFF9F98764DA'
 }
 const getters ={
 	searchLoading: state => state.searchLoading,
   editStatus: state => state.editStatus,
   baseURL: state => state.baseURL,
-  sumitLoading: state => state.sumitLoading,
+  submitLoading: state => state.submitLoading,
   DHId: state => state.DHId,
 }
 const actions={
@@ -35,7 +36,7 @@ const mutations={
 		state.searchLoading=palyload;
 	},
   [types.SET_SUBMIT_LOADING](state, palyload) {
-    state.sumitLoading=palyload;
+    state.submitLoading=palyload;
   },
   [types.SET_EDIT_STATUS](state, palyload) {
     state.editStatus=palyload;
@@ -51,6 +52,7 @@ export default new Vuex.Store({
     center,
     user,
     resume,
-    doc
+    doc,
+    meeting
   }
 });

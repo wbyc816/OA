@@ -8,8 +8,8 @@
           </el-col>
         </el-row>
       </div>
-      <div class="rlt" >
-        <el-upload ref="upload" accept=".xlsx" :multiple="false" :on-success="uploadSuccess" :on-error="uploadError" action="http://apitest.donghaiair.com:8899/DonghaiAirAPI//onduty/excelInsert" :file-list="fileList" :auto-upload="false">
+      <div class="rlt">
+        <el-upload ref="upload" accept=".xlsx" :multiple="false" :on-success="uploadSuccess" :on-error="uploadError" :action="actionUrl" :file-list="fileList" :auto-upload="false">
           <span class="accessory">附件</span>
           <span class="underline"></span>
           <el-button @click="fileList = []" slot="trigger" size="large">选择文件
@@ -62,7 +62,7 @@
             <input :readonly="readonly" v-model="item.phoneNumber"></input>
           </td>
           <td v-if="editAble">
-             <el-button  style="font-size: 13px" @click="deleteRow(index)" type="text" size="small">删除</el-button>
+            <el-button style="font-size: 13px" @click="deleteRow(index)" type="text" size="small">删除</el-button>
           </td>
         </tr>
       </table>
@@ -79,11 +79,9 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      msg: '编辑',
       fileList: [],
       tableData: [],
       sendData: [],
-      readonly: 'readonly',
       currentRow: null,
       paginate: {
         pageSizes: [5, 10, 12, 36],
@@ -92,13 +90,31 @@ export default {
         layout: "total, sizes, prev, pager, next, jumper",
         total: 4
       },
-      editAble: false
+      editAble: false,
+      noMore: false
     };
   },
   computed: {
     ...mapGetters([
-      'userInfo'
-    ])
+      'userInfo',
+      'baseURL'
+    ]),
+    actionUrl() {  // 临时变量 解决两地开发 Url地址不同
+      // return 'http://apitest.donghaiair.com:8899/DonghaiAirAPI/onduty/excelInsert'
+      return this.baseURL+'/onduty/excelInsert'
+    },
+    readonly() {
+      if (this.editAble) {
+        return null
+      }
+      return 'readonly'
+    },
+    msg() {
+      if (this.editAble) {
+        return '取消'
+      }
+      return '编辑'
+    }
   },
   filters: {
     one() {
@@ -110,24 +126,44 @@ export default {
       this.$refs.upload.submit();
     },
     edit() {
-      if (this.tableData.length) {
-        this.editAble === false ? this.editAble =true : this.editAble = false
-        this.msg === '编辑' ? this.msg = '取消' : this.msg = '编辑'
-        this.readonly === 'readonly' ? this.readonly = null : this.readonly = 'readonly'
-        if (!this.readonly) {
-          let dom = document.querySelectorAll('.dutyDate')[0];
-          setTimeout(function() {
-            dom.focus();
-          }, 100);
-        }
+      if (this.tableData.length && !this.editAble) {
+        this.editAble = true;
+        let dom = document.querySelectorAll('.dutyDate')[0];
+        setTimeout(function() {
+          dom.focus();
+        }, 100);
+      } else {
+        this.editAble = false;
       }
+    },
+    handleRemove() {
+      this.noMore = false;
+    },
+    handleChange(file, fileList) {
+      const isEXCEL = file.raw.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.raw.type === "application/vnd.ms-excel";
+      const isLt15M = file.size / 1024 / 1024 < 15;
+      if (!isEXCEL) {
+        this.$message.error('上传文件只能是 EXCEL 格式!');
+        this.$refs.upload.clearFiles();
+      }
+      if (!isLt15M) {
+        this.$refs.upload.clearFiles();
+        this.$message.error('上传文件大小不能超过 15MB!');
+      }
+      if (isEXCEL && isLt15M) {
+        this.noMore = true;
+      }
+
     },
     uploadSuccess(data) {
       if (data.status == '0') {
         if (data.data.ondutylist.length) {
           this.tableData = dataTransform(data.data.ondutylist, fmts)
+          this.$message.success('上传成功')
+        } else {
+          this.fileList = []
+          this.$message.error('上传失败,请检查上传文件')
         }
-        this.$message.success('上传成功')
       } else {
         this.$message.error('上传失败')
       }
@@ -136,6 +172,7 @@ export default {
       this.$message.error('上传失败')
     },
     saveAndSubmit() {
+
       this.formatTableData()
       if (this.sendData.length) {
         this.$http.post('/onduty/addOrUpdateDutyInfo', { ondutylist: this.sendData, useId: this.userInfo.empId }, { body: true }).then((data) => {
@@ -147,6 +184,7 @@ export default {
               message: '提交成功',
               type: 'success',
             })
+            // this.$router.push('/duty/dutyDetail');
           } else {
             this.$message.error('提交失败')
           }
@@ -175,8 +213,8 @@ export default {
     }
   }
 }
-</script>
 
+</script>
 <style scope lang="scss">
 @import '../../assets/scss/color.scss';
 
