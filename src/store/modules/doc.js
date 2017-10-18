@@ -21,10 +21,31 @@ const state = {
   },
   extraDocs: [],
   processView: false,
-  processData: []
+  processData: [],
+  docTips:{
+     "trackingNum": 0,
+    "toReadNum": 0,
+    "overTimeNum": 0,
+    "birthdayNum": 0,
+    "conferenceNum": 0,
+    "pendingNum": 0
+  }
 }
 
 const actions = {
+  getDocTips({ commit, state, rootState, rootGetters }){
+    api.getDocTips(rootGetters.userInfo.empId)
+      .then(res => {
+        if (res.status==0) {
+          commit(types.GET_DOC_TIPS, res)
+        }
+      }, res => {
+        Notification({
+          message: '获取密级程度信息失败！',
+          type: 'error'
+        });
+      })
+  },
   //重置
   clear({ commit, state }) {
     commit('setConfident', {
@@ -220,6 +241,7 @@ const getters = {
   isAdmin: state => state.isAdmin,
   processView: state => state.processView,
   processData: state => state.processData,
+  docTips: state => state.docTips,
 }
 
 const mutations = {
@@ -238,6 +260,9 @@ const mutations = {
   },
   [types.GET_DOC_FORM](state, res) {
     state.docType = res.data
+  },
+  [types.GET_DOC_TIPS](state, res) {
+    state.docTips = res.data
   },
   [types.SELECT_DOC](state, res) {
     state.extraDocs = res.data.records;
