@@ -14,4 +14,4 @@ const phoneFmt = function(num) {
    return num * 1
 }
 
-export const fmts = [['dutyDate', dutyFmt],['deptName'],['empName'],['mobileNumber', phoneFmt],['phoneNumber', phoneFmt]]
+export const fmts = [['dutyDate', dutyFmt],['deptName'],['empName'],['mobileNumber', phoneFmt],['phoneNumber', phoneFmt],['id']]

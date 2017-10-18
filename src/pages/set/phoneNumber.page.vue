@@ -163,5 +163,8 @@ export default {
     height: 45px;
     border-radius: 2px
   }
+  .el-form-item__label:before {
+    content: ''
+  }
 }
 </style>

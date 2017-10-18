@@ -1,5 +1,5 @@
 <template>
-  <div id="dutyEdit">
+  <div id="dutyEdit" :class="{'scrollDisappear': scrollDisappear}">
     <el-card>
       <div slot="header">
         <el-row>
@@ -10,7 +10,7 @@
       </div>
       <el-row :gutter="10">
         <el-col :span="11">
-          <el-date-picker v-model="date" type="daterange" placeholder="起始及截止日期栏">
+          <el-date-picker v-model="searchMsg.date" type="daterange" placeholder="起始及截止日期栏">
           </el-date-picker>
         </el-col>
         <el-col :span="5">
@@ -19,7 +19,7 @@
         <el-col :span="8">
           <el-row :gutter="0">
             <el-col :span="16">
-              <el-input v-model="empName" placeholder="值班人"></el-input>
+              <el-input v-model="searchMsg.empName" placeholder="值班人"></el-input>
             </el-col>
             <el-col :span="8">
               <el-button class="search" @click="search" type="primary">搜索</el-button>
@@ -34,65 +34,62 @@
           <el-col :span="3" class="titleLeft">
             <span>编辑值班信息</span>
           </el-col>
-          <el-col class="titleRight" :offset="17" :span="4">
-            <el-button type="primary">提交并发布</el-button>
-          </el-col>
         </el-row>
       </div>
       <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
         <el-table-column type="index" width="50">
         </el-table-column>
-        <el-table-column property="dutyDate" sortable label="日期" width="120">
+        <el-table-column property="dutyDate" sortable label="日期" width="140">
         </el-table-column>
-        <el-table-column property="deptName" label="部门" width="110">
+        <el-table-column property="deptName" label="部门" width="120">
         </el-table-column>
-        <el-table-column property="empName" label="值班人" width="80">
+        <el-table-column property="empName" label="值班人" width="110">
         </el-table-column>
         <el-table-column property="mobileNumber" label="手机">
         </el-table-column>
         <el-table-column property="phoneNumber" label="电话">
         </el-table-column>
-        <el-table-column fixed="right" width="150">
-          <template scope="scope">
-            <el-button @click="triggerDelete(scope.row)" type="text" size="small">删除</el-button>
-            <el-button @click="triggerEdit(scope.row)" type="text" size="small">编辑</el-button>
+        <el-table-column label="操作" width="130">
+          <template style="font-size: 13px" scope="scope">
+            <el-button style="font-size: 13px" @click="triggerDelete(scope.$index, scope.row)" type="text" size="small">删除</el-button>
+            <el-button style="font-size: 13px" @click="triggerEdit(scope.$index,scope.row)" type="text" size="small">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="paginateWrap" v-if="tableData.length">
-        <el-pagination @current-change="handleCurrentChange" :current-page.sync="paginate.currentPage" :page-sizes="paginate.pageSizes" :layout="paginate.layout" :total="paginate.total">
+        <el-pagination @current-change="handleCurrentChange" :current-page.sync="paginate.Record" :page-sizes="paginate.pageSizes" :layout="paginate.layout" :total="paginate.total">
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog title="" :visible.sync="dialogVisible1" size="tiny" :before-close="deleteConfirm">
+    <el-dialog title="" :visible.sync="dialogVisible1" :show-close="false" size="tiny">
       <span>删除值班信息?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible1 = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
+        <el-button @click="cancel('dialogVisible1')">取 消</el-button>
+        <el-button type="primary" @click="deleteConfirm">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="编辑值班信息" :visible.sync="dialogVisible2" size="tiny" :before-close="editConfirm">
-      <el-form :model="currentRecord">
-        <el-form-item label="日期" :label-width="formLabelWidth">
-          <el-date-picker v-model="date" type="daterange" placeholder="起始及截止日期栏">
+    <el-dialog title="编辑值班信息" :visible.sync="dialogVisible2" :show-close="false" top="10%" size="tiny">
+      <el-form :model="currentRecord" :rules="rules">
+        <el-form-item label="日期" prop="date" :label-width="formLabelWidth">
+          <el-date-picker v-model="editDate" type="date" placeholder="选择日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="部门" :label-width="formLabelWidth">
-          <dept-list @deptChange="deptChange"></dept-list>
+        <el-form-item label="部门" prop="dept" :label-width="formLabelWidth">
+          <dept-list :deptName="currentRecord.deptName" @deptChange="deptTwoChange"></dept-list>
         </el-form-item>
-        <el-form-item label="值班人"  :label-width="formLabelWidth">
+        <el-form-item label="值班人" prop="emp" :label-width="formLabelWidth">
           <el-input v-model="currentRecord.empName"></el-input>
         </el-form-item>
-        <el-form-item label="手机" :label-width="formLabelWidth">
+        <el-form-item label="手机" prop="mobile" :label-width="formLabelWidth">
           <el-input v-model="currentRecord.mobileNumber"></el-input>
         </el-form-item>
-        <el-form-item label="电话" :label-width="formLabelWidth">
-           <el-input v-model="currentRecord.phoneNumber"></el-input>
+        <el-form-item label="电话" prop="phone" :label-width="formLabelWidth">
+          <el-input v-model="currentRecord.phoneNumber"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible2 = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible2 = false">确 定</el-button>
+        <el-button @click="cancel('dialogVisible2')">取 消</el-button>
+        <el-button type="primary" @click="editConfirm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -104,110 +101,144 @@ import api from '../../fetch/api'
 import dataTransform from '../../common/dataTransform'
 import { fmts } from '../../common/dutyConfig'
 import deptList from '../../components/deptList.component'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
-      date: '',
-      deptList: [],
+      editDate: '',
       tableData: [],
-      currentRow: null,
+      sendData: {},
+      searchMsg: {
+        date: '',
+        deptName: '',
+        empName: '',
+      },
       paginate: {
         pageSizes: [10, 12, 36],
         currentSize: 10,
-        currentPage: 1,
+        Record: 1,
         layout: "total,prev, pager, next, jumper",
-        total: 0,
+        total: 0
       },
-      deptName: '',
-      empName: '',
-      dialogVisible1: false,
-      dialogVisible2: false,
-      currentIndex: '',
       currentRecord: {
-        dutyDate: '',
         empName: '',
         deptName: '',
         mobileNumber: '',
         phoneNumber: '',
+        id: ''
       },
+      rules: {},
+      currentIndex: '',
+      dialogVisible1: false,
+      dialogVisible2: false,
+      scrollDisappear: true,
       formLabelWidth: '100px'
     }
   },
   computed: {
+    ...mapGetters([
+      'userInfo'
+    ]),
     startDate() {
-      return this.date.length ? util.formatTime(this.date[0], 'yyyyMMdd') : ''
+      return this.searchMsg.date.length ? util.formatTime(this.searchMsg.date[0], 'yyyyMMdd') : ''
     },
     endDate() {
-      return this.date.length ? util.formatTime(this.date[1], 'yyyyMMdd') : ''
+      return this.searchMsg.date.length ? util.formatTime(this.searchMsg.date[1], 'yyyyMMdd') : ''
     }
   },
   created() {
-    const now = util.formatTime(new Date(), 'yyyyMMdd')
-    api.getDutyMessage({
-      startDate: now,
-      endDate: now,
-      deptName: '',
-      empName: '',
-      pageNumber: 1,
-      pageSize: 10
-    }).then(data => {
-      if (data.status == '0' && data.data.totalSize) {
-        this.tableData = dataTransform(data.data.ondutyVolist, fmts)
-        this.paginate.total = data.data.totalSize
-      }
-    })
+    this.searchMsg.date = [new Date(), new Date()]
+    this.search()
   },
   methods: {
-    handleSizeChange() {
-
-    },
     handleCurrentChange() {
-
+      this.search()
     },
     deptChange(val) {
-      this.deptName = val
+      this.searchMsg.deptName = val
+    },
+    deptTwoChange(val) {
+      this.currentRecord.deptName = val
     },
     search() {
-      this.tableData = []
       api.getDutyMessage({
-        startDate: this.startDate,
-        endDate: this.endDate,
-        deptName: this.deptName,
-        empName: this.empName,
-        pageNumber: this.paginate.currentPage,
+        startDate: this.startDate || '',
+        endDate: this.endDate || '',
+        deptName: this.searchMsg.deptName || '',
+        empName: this.searchMsg.empName || '',
+        pageNumber: this.paginaRecord || 1,
         pageSize: 10
       }).then((data) => {
-        console.log(data)
         if (data.status == '0' && data.data.totalSize) {
           this.tableData = dataTransform(data.data.ondutyVolist, fmts)
-          this.paginate.total = data.data.totalSize
+          this.paginate.total = Number(data.data.totalSize)
         }
       })
     },
-    triggerDelete(val) {
+    triggerDelete(index, row) {
       this.dialogVisible1 = true
-      this.currentIndex = val
+      this.currentIndex = index
+      Object.assign(this.currentRecord, row)
+      console.log(this.currentRecord.id)
     },
-    triggerEdit(val) {
+    triggerEdit(index, row) {
       this.dialogVisible2 = true
-      this.currentRecord = val
-      console.log(val)
-      console.log(this.currentRecord)
+      this.currentIndex = index
+      Object.assign(this.currentRecord, row)
+      this.editDate = new Date(this.currentRecord.dutyDate)
+      // console.log('currentRecord.deptName:' + this.currentRecord.deptName)
     },
-    deleteConfirm(id) {
-      // 发送请求并刷新页面数据
-      api.deleteDutyInfo(id).then((data) => {
+    deleteConfirm() {
+      this.$http.post('/onduty/deleteDutyInfo', { 'id': this.currentRecord.id }).then((data) => {
         if (data.status == 0) {
+          this.tableData.splice(this.currentIndex, 1)
           this.$message.success('删除成功')
         } else {
           this.$message.error('删除失败')
         }
       })
+      this.cancel('dialogVisible1')
     },
     editConfirm() {
-      // 发送请求 将修改后的对象发送到服务器
-      // 修改和 更新共用接口
+      this.formatTableData()
+      console.log(this.sendData)
+      this.$http.post('/onduty/addOrUpdateDutyInfo', { ondutylist: [this.sendData], useId: this.userInfo.empId }, { body: true }).then((data) => {
+        if (data.status == '0') {
+          this.$message({
+            message: '提交成功',
+            type: 'success',
+          })
+          this.tableData.splice(this.currentIndex, 1, this.currentRecord)
+          this.cancel('dialogVisible2')
+        } else {
+          this.cancel('dialogVisible2')
+          this.$message.error('提交失败')
+        }
+      })
+    },
+    formatTableData() {
+      Object.keys(this.currentRecord).forEach(key => {
+        if (key === 'dutyDate') {
+          if (this.editDate) {
+            this.sendData[key] = this.editDate.getTime()
+          } else {
+            this.sendData[key] = new Date(this.currentRecord[key]).getTime()
+          }
+        } else {
+          if (this.currentRecord[key] === '空' || this.currentRecord[key] === '无') {
+            this.sendData[key] = ''
+          } else {
+            this.sendData[key] = this.currentRecord[key]
+          }
+        }
+      })
+    },
+    cancel(val) {
+      this[val] = false
+      this.currentRecord = {}
+      this.editDate = ''
+      this.scrollDisappear = false
     }
   },
   components: {
@@ -217,7 +248,13 @@ export default {
 </script>
 
 <style scope lang="scss">
+@import '../../assets/scss/color.scss';
+
 #dutyEdit {
+  &.scrollDisappear {
+    margin-right: 17px;
+  }
+  ;
   .el-card {
     padding: 0 20px;
     .el-card__header {
@@ -240,7 +277,23 @@ export default {
     }
     .el-table {
       .cell {
-        font-size: 13px;
+        font-size: 13px !important;
+        .el-button {
+          font-size: 13px;
+          text-align: center;
+        }
+      }
+      thead {
+        th:nth-last-child(2) {
+          .cell {
+            text-align: center
+          }
+        }
+      }
+      tr {
+        td:last-child {
+          text-align: center
+        }
       }
     }
     .search {
@@ -269,8 +322,11 @@ export default {
   .paginateWrap {
     margin: 20px auto 50px
   }
-  .el-form-item__label{
+  .el-form-item__label {
     text-align: left
+  }
+  .el-form-item__label:before {
+    content: ''
   }
 }
 </style>
