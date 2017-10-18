@@ -269,7 +269,7 @@ var msgs = [
   { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
   { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": "#" },
   { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
-  { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "/meeting" },
+  { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "/meeting/meetingSearch/1" },
 ];
 
 const otherLinks = [
@@ -361,11 +361,11 @@ export default {
         "securityDelay": 0,
         "sumDelay": 0
       },
-       pickerOptions0: {
+      pickerOptions0: {
         disabledDate(time) {
-          var td=new Date();
-          var d=new Date(td.getFullYear()+'-'+(td.getMonth()+1)+'-'+td.getDate()+' 00:00:00').getTime();
-          return time.getTime()<(d-24*60*60*1000)||time.getTime()>(d+24*60*60*1000);
+          var td = new Date();
+          var d = new Date(td.getFullYear() + '-' + (td.getMonth() + 1) + '-' + td.getDate() + ' 00:00:00').getTime();
+          return time.getTime() < (d - 24 * 60 * 60 * 1000) || time.getTime() > (d + 24 * 60 * 60 * 1000);
         }
       },
     }
@@ -428,12 +428,13 @@ export default {
       this.$http.post('/doc/docTips', { empId: this.userInfo.empId })
         .then(res => {
           if (res.status == 0) {
-            console.log(res.data);
+            // console.log(res.data);
             msgs[1].value = res.data.trackingNum;
             msgs[2].value = res.data.toReadNum; //待阅
             msgs[3].value = res.data.overTimeNum; //超时
             msgs[0].value = res.data.pendingNum; //待批
             msgs[4].value = res.data.birthdayNum; //生日
+            msgs[5].value= res.data.conferenceNum;//会议
           }
         }, res => {
 
@@ -718,8 +719,8 @@ $sub:#1465C0;
           white-space: nowrap;
           text-overflow: ellipsis;
           overflow: hidden;
-          padding-right: 20px;
-          width: 400px;
+          padding-right: 15px;
+          width: 370px;
           color: #393939;
           float: left;
         }
@@ -1070,13 +1071,13 @@ $sub:#1465C0;
       font-size: 15px;
       cursor: pointer;
       position: relative;
-      &.higher{
+      &.higher {
         line-height: 50px;
-        .timeline{
-          p:first-child{
+        .timeline {
+          p:first-child {
             visibility: hidden;
-            padding-top:0;
-            height:14px;
+            padding-top: 0;
+            height: 14px;
           }
         }
       }
@@ -1115,8 +1116,8 @@ $sub:#1465C0;
         font-size: 12px;
         right: 10px;
         top: 5px;
-        p:first-child{
-          padding-top:10px;
+        p:first-child {
+          padding-top: 10px;
         }
       }
     }

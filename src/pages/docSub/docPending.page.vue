@@ -33,7 +33,7 @@
       </tbody>
     </table>
     <div class="pageBox" v-show="docData.length>0">
-      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="5" layout="total, prev, pager, next, jumper" :total="totalSize">
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
   </div>
@@ -51,7 +51,7 @@ export default {
       contractView: false,
       params: {
         "pageNumber": 1,
-        "pageSize": 5
+        "pageSize": 10
       },
       docData: [],
       totalSize: 0,

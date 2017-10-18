@@ -274,6 +274,9 @@ $brown: #985D55;
 
 #app {
   padding-top: 26px;
+  min-height:100%;
+  padding-bottom: 140px;
+  position:relative;
 }
 
 .topBar {
@@ -532,7 +535,10 @@ $brown: #985D55;
 }
 
 footer {
-
+  position:absolute;
+  width:100%;
+  bottom:0;
+  left:0;
   background: #fff;
   .container {
     .links {

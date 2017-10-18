@@ -27,7 +27,7 @@
             </el-time-picker>
           </el-form-item>
           <el-form-item label="结束时间" prop="endTime" class="arrArea">
-            <el-time-picker v-model="appForm.endTime" :picker-options="{format:'HH:mm',selectableRange:endOption+' - 19:00:00'}" placeholder="选择时间" @change="endTimeChange" :editable="false">
+            <el-time-picker v-model="appForm.endTime" :picker-options="{format:'HH:mm',selectableRange:endOption+' - 22:00:00'}" placeholder="选择时间" @change="endTimeChange" :editable="false">
             </el-time-picker>
           </el-form-item>
           <el-form-item label="会议名称" prop="conferenceTitle" class="clearBoth">
@@ -108,7 +108,7 @@ export default {
       },
       timeOption: {
         format: 'HH:mm',
-        selectableRange: '08:00:00 - 19:00:00'
+        selectableRange: '08:00:00 - 22:00:00'
       },
       endOption: '08:00:00',
       submitLoading: false
@@ -145,9 +145,9 @@ export default {
         this.$refs.appForm.validateField('floor');
       }
     },
-    beginTimeChange(val) {
+    beginTimeChange(val) {      
       if (this.appForm.beginTime) {
-        this.appForm.beginTime = new Date(this.appForm.beginTime.setSeconds(0));
+        this.appForm.beginTime =new Date(this.appForm.beginTime.setSeconds(0));
         this.endOption = val;
       }
       this.appForm.endTime = '';
@@ -171,9 +171,11 @@ export default {
       });
     },
     checkApp() {
+      var m=this.appForm.reserveDate.getMonth();
+      var d=this.appForm.reserveDate.getDate();
       var params = {
-        "beginTime": this.appForm.beginTime.getTime(), //开始时间
-        "endTime": this.appForm.endTime.getTime(), //结束时间
+        "beginTime": new Date(new Date(this.appForm.beginTime.setMonth(m))).setDate(d), //开始时间
+        "endTime": new Date(new Date(this.appForm.endTime.setMonth(m))).setDate(d), //结束时间
         "roomId": this.appForm.roomId, //房间ID
         "reserveDate": this.appForm.reserveDate.getTime() //预定日期
       }
@@ -221,6 +223,7 @@ export default {
           this.submitLoading = false;
           if (res.status == 0) {
             this.$message.success('预定成功！');
+            this.$router.push('/meeting/myBooking');
           } else {
             this.$message.warning('预定失败，请稍后重试');
 

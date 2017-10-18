@@ -80,7 +80,7 @@ export default {
           this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
           this.$store.dispatch('getDepById');
         }
-        this.name="";
+        this.name = "";
         this.$store.dispatch('setQueryPage', 1);
         this.$store.dispatch('queryEmpList', {});
       }
@@ -114,7 +114,11 @@ export default {
     },
     search() {
       this.searchButton = true;
-      // this.$store.dispatch('setQueryDepId', '')
+      if (this.isAdmin) {
+        this.$store.dispatch('setQueryDepId', '')
+      } else {
+        this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+      }
       this.$store.dispatch('setQueryPage', 1);
       this.$store.dispatch('queryEmpList', { name: this.name })
     },
@@ -147,6 +151,7 @@ export default {
             "reciUserName": this.selPerson.name,
             "reciUserId": this.selPerson.empId,
           }
+          console.log(this.selPerson);
           this.$emit('updatePerson', reciver);
           this.$emit('update:visible', false)
           this.selPerson = '';
@@ -245,7 +250,7 @@ $main:#0460AE;
       }
       .nameBox {}
       button {
-            height: 100%;
+        height: 100%;
         width: 100px;
         position: absolute;
         right: 0;

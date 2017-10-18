@@ -5,7 +5,12 @@ import { Message } from 'element-ui';
 
 const state = {
   roomList:[],
-  conferenceType:[]
+  conferenceType:[],
+  conferenceNum:{
+    "launchNum": 0,
+    "partakeNum": 0,
+    "cancelNum": 0
+  }
 }
 
 const actions = {
@@ -36,13 +41,25 @@ const actions = {
         });
       })
   },
-
-
+  //获取会议数量
+  getConferenceNum({commit,rootState,rootGetters}){
+    api.getConferenceNum(rootGetters.userInfo.empId)
+      .then(res => {
+        commit(types.GET_CONFERENCE_NUM, res)
+      }, res => {
+        // commit(types.GET_EMP_DATAIL, '')
+        Message({
+          message: '获取会议数量失败！',
+          type: 'error'
+        });
+      })
+  }
 }
 
 const getters = {
   roomList: state => state.roomList,
   conferenceType: state => state.conferenceType,
+  conferenceNum: state => state.conferenceNum,
 }
 
 const mutations = {
@@ -51,6 +68,9 @@ const mutations = {
   },
   [types.GET_CONFERENCE_TYPE](state, res) {
     state.conferenceType = res.data
+  },
+  [types.GET_CONFERENCE_NUM](state, res) {
+    state.conferenceNum = res.data
   },
 
 }

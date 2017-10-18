@@ -151,5 +151,7 @@ export default {
   getConferenceType(){
     return fetch('/conference/getConferenceType')
   },
-
+  getConferenceNum(id){
+    return fetch('/conference/conferenceNumTips',{empId:id})
+  },
 }
