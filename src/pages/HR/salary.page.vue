@@ -224,13 +224,13 @@ export default {
         salaryMonth:this.paramsMonth,
       }).then(res => {
         if (res.status == 0) {
-          if(res.data.crewSalary!=null){
+          if(res.data.crewSalary!=''){
             this.salaryData=res.data.crewSalary;
             this.salaryType=1;
-          }else if(res.data.filghtSalary!=null){
+          }else if(res.data.filghtSalary!=''){
             this.salaryData=res.data.filghtSalary;
             this.salaryType=2;
-          }else if(res.data.groundSalary!=null){
+          }else if(res.data.groundSalary!=''){
             this.salaryData=res.data.groundSalary;
             this.salaryType=3;
           }else{
@@ -239,7 +239,7 @@ export default {
           if(this.salaryType>0){
             let month=this.salaryData.salaryMonth;
             this.salaryMonth=month.slice(0,4)+"年"+month.slice(4,6)+"月";
-            console.log(this.salaryMonth);
+            
           }
           console.log(this.salaryData);
         }
