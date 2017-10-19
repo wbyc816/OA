@@ -56,4 +56,9 @@ export const docConfig = [{
     code: 'YSS',
     url:'/doc/docReceiveWordBean'
   },
+  {
+    docName: '合同申请',
+    code: 'HTS',
+    url:'/doc/docFinContract'
+  },
 ]

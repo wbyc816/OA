@@ -63,7 +63,7 @@
         </div>
       </div>
     </el-card>
-    <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" dialogType="multi" admin="1"  :visible.sync="signDialogVisible"></person-dialog>
   </div>
 </template>
 <script>

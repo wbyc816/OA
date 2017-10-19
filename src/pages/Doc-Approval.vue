@@ -23,54 +23,58 @@
       </el-col>
     </el-row>
     <el-dialog title="流转详情" :visible.sync="processDialogView" size="large" class="myDialog processDialog" @close="close">
-      <div class="stepswrap">
-        <el-steps direction="vertical" :active="processData.length-1" finish-status="process" process-status="finish" :center="true">
-          <el-step v-for="step in processData"></el-step>
-        </el-steps>
-      </div>
       <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0">
-        <caption>
-        </caption>
         <thead align="left">
           <tr>
             <th v-for="title in tableTitle">{{title}}</th>
           </tr>
         </thead>
-        <tbody v-for="doc in processData" ref="task">
-          <tr>
-            <td></td>
-            <td>{{doc.taskUserName}}</td>
-            <td>{{doc.readTime}}</td>
-            <td>{{doc.taskTime}}</td>
-            <td>{{doc.isOvertime}}</td>
-            <td>{{doc.isOvertime==0?'未超时':'超时'}}</td>
-            <td>{{doc.nodeName | nodeNameFormatter}}</td>
-            <td>{{doc.taskDeptMajorName}}</td>
-          </tr>
-          <template v-if="doc.signInfo.length!=0">
-            <tr class="tips start">
-              <td></td>
-              <td><i class="el-icon-caret-right"></i>公文会签开始</td>
-              <td v-for="o in 6"></td>
-            </tr>
-            <tr class="signTr" v-for="sign in doc.signInfo[0].deptSigns">
-              <td></td>
-              <td>{{sign.signUserName}}</td>
-              <td>{{sign.readTime}}</td>
-              <td>{{sign.signTime}}</td>
-              <td>{{sign.isOvertime}}</td>
-              <td>{{sign.isOverTime==0?'未超时':'超时'}}</td>
-              <td>{{sign.state | nodeNameFormatter}}</td>
-              <td>{{sign.signDeptMajorName}}</td>
-            </tr>
-            <tr class="tips">
-              <td></td>
-              <td><i class="el-icon-caret-right"></i>公文会签结束</td>
-              <td v-for="o in 6"></td>
-            </tr>
-          </template>
-        </tbody>
       </table>
+      <div class="tableWrap">
+        <div class="stepswrap">
+          <el-steps direction="vertical" :active="processData.length-1" finish-status="process" process-status="finish">
+            <el-step v-for="(step,index) in processData" :style="{height:stepHeight[index]+'px'}"></el-step>
+          </el-steps>
+        </div>
+        <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0">
+          <tbody v-for="doc in processData" ref="task" :class="{signBox:doc.signInfo.length!=0}">
+            <tr>
+              <td></td>
+              <td>{{doc.taskUserName}}</td>
+              <td>{{doc.readTime}}</td>
+              <td>{{doc.taskTime}}</td>
+              <td>{{doc.isOvertime}}</td>
+              <td>{{doc.isOvertime==0?'未超时':'超时'}}</td>
+              <td>{{doc.nodeName | nodeNameFormatter}}</td>
+              <td>{{doc.taskDeptMajorName}}</td>
+            </tr>
+            <template v-if="doc.signInfo.length!=0">
+              <tr class="tips start">
+                <td></td>
+                <td><i class="el-icon-caret-right"></i>公文会签开始</td>
+                <td v-for="o in 6"></td>
+              </tr>
+              <template v-for="depBox in doc.signInfo">
+                <tr class="signTr" v-for="sign in depBox.deptSigns">
+                  <td></td>
+                  <td>{{sign.signUserName}}</td>
+                  <td>{{sign.readTime}}</td>
+                  <td>{{sign.signTime}}</td>
+                  <td>{{sign.isOvertime}}</td>
+                  <td>{{sign.isOverTime==0?'未超时':'超时'}}</td>
+                  <td>{{sign.state | nodeNameFormatter}}</td>
+                  <td>{{sign.signDeptMajorName}}</td>
+                </tr>
+              </template>
+              <tr class="tips">
+                <td></td>
+                <td><i class="el-icon-caret-right"></i>公文会签结束</td>
+                <td v-for="o in 6"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -108,10 +112,12 @@ export default {
       ],
       processDialogView: false,
       tips: [],
-      tableTitle: ['', '审批人', '审阅时间', '审批时间', '截至时间', '时限', '状态', '部门']
+      tableTitle: ['', '审批人', '审阅时间', '审批时间', '截至时间', '时限', '状态', '部门'],
+      stepHeight: []
     };
   },
   computed: {
+
     ...mapGetters([
       'reciver',
       'userInfo',
@@ -129,7 +135,6 @@ export default {
   },
   mounted: function() {
     this.breadcrumbItem = this.$route.meta.breadcrumb;
-
   },
   methods: {
     formatter(row, column, cellValue) {
@@ -156,6 +161,19 @@ export default {
     },
     close() {
       this.$store.commit('SET_PROCESS_VIEW', false)
+    },
+    getStepH() {
+      this.stepHeight = [];
+      for (var i = 0; i < this.processData.length; i++) {
+        var h = 0;
+        if (i != this.processData.length - 1) {
+          h = this.$refs.task[i].clientHeight / 2 + this.$refs.task[i + 1].clientHeight / 2;
+        } else {
+          h = 28;
+        }
+        this.stepHeight.push(h)
+      }
+      console.log(this.stepHeight)
     }
   },
   watch: {
@@ -167,7 +185,7 @@ export default {
     },
     'processView' (newValue) {
       this.processDialogView = newValue;
-       console.log(this.$refs.task[0].clientHeight)
+
     },
     docTips(newVal) {
       this.tips = [];
@@ -176,6 +194,12 @@ export default {
       this.tips.push(newVal.pendingNum);
       this.tips.push(0);
       this.tips.push(newVal.toReadNum);
+    },
+    'processData' (newValue) {
+      console.log(newValue);
+      this.$nextTick(() => {
+        this.getStepH();
+      })
     }
   },
 }
@@ -194,9 +218,14 @@ $main: #0460AE;
   }
 
   .processDialog {
-
+    .tableWrap {
+      max-height: 500px;
+      overflow: auto;
+      position: relative;
+    }
     .el-dialog__body {
-      &>table {
+      .myTableList {
+        $widths: (1: 5%, 2: 10%, 3: 15%, 4: 15%, 5: 15%, 6: 15%, 7:6%, 8:13%);
         thead {
           background: $main;
           color: #fff;
@@ -204,7 +233,6 @@ $main: #0460AE;
           th {
             padding: 6px 13px;
           }
-          $widths: (1: 5%, 2: 10%, 3: 15%, 4: 15%, 5: 15%, 6: 15%, 7:6%, 8:13%);
           @each $num,
           $width in $widths {
             th:nth-child(#{$num}) {
@@ -215,8 +243,12 @@ $main: #0460AE;
             font-size: 14px;
           }
         }
-        td {
-          padding: 4px 13px;
+        @each $num,
+        $width in $widths {
+          td:nth-child(#{$num}) {
+            width: $width;
+            padding: 4px 13px;
+          }
         }
         tbody {
           background: #fff;
@@ -234,18 +266,35 @@ $main: #0460AE;
           &:nth-child(even) {
             background: #F7F7F7;
           }
+          &.signBox {
+            tr:first-child {
+              td {
+                border-bottom: none;
+              }
+            }
+            td {
+              background: #EAECF7;
+            }
+            tr:nth-last-child(2) {
+              td {
+                border-bottom: none;
+              }
+            }
+          }
+          .signTr {
+            height: 40px;
+          }
           .tips {
             height: 28px;
-
             td {
-              border-bottom: 1px dashed #D5DADF;
+              border-bottom: 2px dashed #D5DADF;
               color: $main;
             }
           }
           .start {
             td {
-              border-top: 1px dashed #D5DADF;
-              border-bottom: 1px solid #D5DADF;
+              border-top: 2px dashed #D5DADF;
+              border-bottom: none;
             }
           }
         }
@@ -259,13 +308,12 @@ $main: #0460AE;
         position: absolute;
         height: 100%;
         z-index: 1;
-        padding-top: 28px;
         width: 45px;
         .el-steps {
           height: 100%;
           width: 32px;
           margin: 0 auto;
-          padding: 18px 0 50px;
+          padding: 13px 0 50px;
           box-sizing: border-box;
           .el-step__head.is-text.is-process {
             background-color: #777777;
