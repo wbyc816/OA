@@ -104,6 +104,7 @@ import operationSystem from './operationSystem'
 import duty from './duty'
 import set from './set'
 
+
 export default new Router({
 
     // mode: 'history',
@@ -589,186 +590,137 @@ export default new Router({
         //  }
         //  ]
 
-  //  },
-  //  {
-  //      path:'/generalInfo/MeetingReservation/ReservationByRoom',
-  //      name:'ReservationByRoom',
-  //      component:ReservationByRoom,
-  //      meta:{
-  //          breadcrumb:"Reservation ByRoom",
-  //      }
-  //  },
-  //  {
-  //      path:'/generalInfo/MeetingReservation/ReservationBooking',
-  //      name:'ReservationBooking',
-  //      component:ReservationBooking,
-  //      meta:{
-  //          breadcrumb:"Reservation Booking",
-  //      }
-  //  },
-  //  {
-  //      path:'/generalInfo/MeetingReservation/MyBooking',
-  //      name:'MyBooking',
-  //      component:MyBooking,
-  //      meta:{
-  //          breadcrumb:"My Booking",
-  //      }
-  //  },
-  //  {
-  //      path:'/generalInfo/MeetingReservation',
-  //      redirect: '/generalInfo/MeetingReservation/ReservationAllRoom'
-  //  },
-  //  ]
-  // },
-  // {
-  //  path:'/generalInfo/myBenefit',
-  //  name:'myBenefit',
-  //  component:myBenefit,
-  //  meta:{
-  //      breadcrumb:"My Benefit List",
-  //  },
-  //  children:[
-  //  {
-  //      path:'/generalInfo/myBenefit/myBenefitList',
-  //      name:'myBenefitList',
-  //      component:myBenefitList
-  //  },
-  //  {
-  //      path:'/generalInfo/myBenefit',
-  //      redirect: '/generalInfo/myBenefit/myBenefitList'
-  //  }
-  //  ]
+        // },
+        // {
+        //  path:'/generalInfo/myBenefit/myBenefitDetail',
+        //  name:'myBenefitDetail',
+        //  component:myBenefitDetail,
+        //  meta:{
+        //      breadcrumb:"My Benefit Detail",
+        //  }
+        // },   
+        // {
+        //  path:'/E-personnel',
+        //  name:'E-personnel',
+        //  component:Epersonnel,
+        //  meta:{
+        //      breadcrumb:"Epersonnel",
+        //  },
+        //  children:[
+        //  {
+        //      path:'/E-personnel/reimbursement',
+        //      name:'reimbursement',
+        //      component:reimbursement,
+        //      meta:{
+        //          breadcrumb:"Reimbursement",
+        //      }
+        //  },
+        //  {
+        //      path:'/E-personnel',
+        //      redirect: '/E-personnel/reimbursement'
+        //  }
+        //  ]
+        // },
+        {
+            path: '/staffCenter',
+            name: 'staffCenter',
+            component: staffCenter,
+            meta: {
+                breadcrumb: "员工中心",
+            },
+            children: [{
+                    path: '/staffCenter/myRequest',
+                    name: 'myRequest',
+                    component: myRequest,
+                    meta: {
+                        breadcrumb: "My Request",
+                    }
+                }, {
+                    path: '/staffCenter/jobRequest',
+                    name: 'jobRequest',
+                    component: jobRequest,
+                    meta: {
+                        breadcrumb: "Job Request & Problem",
+                    }
+                }, {
+                    path: '/staffCenter/flightSearch',
+                    name: 'flightSearch',
+                    component: flightSearch,
+                    meta: {
+                        breadcrumb: "Flight Search",
+                    }
+                },
 
-  // },
-  // {
-  //  path:'/generalInfo/myBenefit/myBenefitDetail',
-  //  name:'myBenefitDetail',
-  //  component:myBenefitDetail,
-  //  meta:{
-  //      breadcrumb:"My Benefit Detail",
-  //  }
-  // },   
-  // {
-  //  path:'/E-personnel',
-  //  name:'E-personnel',
-  //  component:Epersonnel,
-  //  meta:{
-  //      breadcrumb:"Epersonnel",
-  //  },
-  //  children:[
-  //  {
-  //      path:'/E-personnel/reimbursement',
-  //      name:'reimbursement',
-  //      component:reimbursement,
-  //      meta:{
-  //          breadcrumb:"Reimbursement",
-  //      }
-  //  },
-  //  {
-  //      path:'/E-personnel',
-  //      redirect: '/E-personnel/reimbursement'
-  //  }
-  //  ]
-  // },
-  {
-    path: '/staffCenter',
-    name: 'staffCenter',
-    component: staffCenter,
-    meta: {
-      breadcrumb: "员工中心",
-    },
-    children: [{
-      path: '/staffCenter/myRequest',
-      name: 'myRequest',
-      component: myRequest,
-      meta: {
-        breadcrumb: "My Request",
-      }
-    }, {
-      path: '/staffCenter/jobRequest',
-      name: 'jobRequest',
-      component: jobRequest,
-      meta: {
-        breadcrumb: "Job Request & Problem",
-      }
-    }, {
-      path: '/staffCenter/flightSearch',
-      name: 'flightSearch',
-      component: flightSearch,
-      meta: {
-        breadcrumb: "Flight Search",
-      }
-    },
+                {
+                    path: '/staffCenter',
+                    redirect: '/staffCenter/myRequest'
+                }
+            ]
+        },
+        // {
+        //  path:'/weibo',
+        //  name:'weibo',
+        //  component:weibo,
+        //  meta:{
+        //      breadcrumb:"WeiBo",
+        //  },
+        //  children:[
+        //  {
+        //      path:'/weibo/myWeiBo',
+        //      name:'myWeiBo',
+        //      component:myWeiBo
+        //  },
+        //  {
+        //      path:'/weibo/addFocus',
+        //      name:'addFocus',
+        //      component:addFocus,
+        //      meta:{
+        //          breadcrumb:"Add Focus",
+        //      }
+        //  },
+        //  {
+        //      path:'/weibo/',
+        //      redirect: '/weibo/myWeiBo'
+        //  }
+        //  ]
+        // },
+        // {
+        //  path:'/othersWeibo',
+        //  name:'othersWeibo',
+        //  component:othersWeibo,
+        //  children:[
+        //  {
+        //      path:'/othersWeibo/hisWeiBo',
+        //      name:'hisWeiBo',
+        //      component:hisWeiBo,
+        //      meta:{
+        //          breadcrumb:"HisWeiBo",
+        //      }
+        //  },
+        //  {
+        //      path:'/othersWeibo/hisFocus',
+        //      name:'hisFocus',
+        //      component:hisFocus,
+        //      meta:{
+        //          breadcrumb:"His Focus",
+        //      }
+        //  },
+        //  {
+        //      path:'/othersWeibo/',
+        //      redirect: '/othersWeibo/hisWeiBo'
+        //  }
+        //  ]
+        // }
+       operationSystem,
+       duty,
+        set,
+        {
+            path: '/softDownload',
+            component: softDownload,
+            meta: {
+              breadcrumb: '软件下载'
+            }
+        }
 
-    {
-      path: '/staffCenter',
-      redirect: '/staffCenter/myRequest'
-    }
     ]
-  },
-    // {
-    //  path:'/weibo',
-    //  name:'weibo',
-    //  component:weibo,
-    //  meta:{
-    //      breadcrumb:"WeiBo",
-    //  },
-    //  children:[
-    //  {
-    //      path:'/weibo/myWeiBo',
-    //      name:'myWeiBo',
-    //      component:myWeiBo
-    //  },
-    //  {
-    //      path:'/weibo/addFocus',
-    //      name:'addFocus',
-    //      component:addFocus,
-    //      meta:{
-    //          breadcrumb:"Add Focus",
-    //      }
-    //  },
-    //  {
-    //      path:'/weibo/',
-    //      redirect: '/weibo/myWeiBo'
-    //  }
-    //  ]
-    // },
-    // {
-    //  path:'/othersWeibo',
-    //  name:'othersWeibo',
-    //  component:othersWeibo,
-    //  children:[
-    //  {
-    //      path:'/othersWeibo/hisWeiBo',
-    //      name:'hisWeiBo',
-    //      component:hisWeiBo,
-    //      meta:{
-    //          breadcrumb:"HisWeiBo",
-    //      }
-    //  },
-    //  {
-    //      path:'/othersWeibo/hisFocus',
-    //      name:'hisFocus',
-    //      component:hisFocus,
-    //      meta:{
-    //          breadcrumb:"His Focus",
-    //      }
-    //  },
-    //  {
-    //      path:'/othersWeibo/',
-    //      redirect: '/othersWeibo/hisWeiBo'
-    //  }
-    //  ]
-    // }
-    operationSystem,
-    duty,
-  {
-    path: '/softDownload',
-    component: softDownload,
-    meta: {
-      breadcrumb: '软件下载'
-    }
-  },
-    set
-  ]
 })

@@ -68,18 +68,24 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    },
+    admin: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
     'visible': function(newVal) {
       this.personVisible = newVal;
       if (newVal) {
-        if (this.isAdmin) {
-          this.$store.dispatch('getDeptList');
-        } else {
+        if (this.admin||!this.isAdmin) {
           this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
           this.$store.dispatch('getDepById');
+        } else {
+            this.$store.dispatch('setQueryDepId', '');
+            this.$store.dispatch('getDeptList');
         }
+
         this.name = "";
         this.$store.dispatch('setQueryPage', 1);
         this.$store.dispatch('queryEmpList', {});
@@ -114,10 +120,10 @@ export default {
     },
     search() {
       this.searchButton = true;
-      if (this.isAdmin) {
-        this.$store.dispatch('setQueryDepId', '')
+      if (this.admin||!this.isAdmin) {
+        this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId);
       } else {
-        this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          this.$store.dispatch('setQueryDepId', '')
       }
       this.$store.dispatch('setQueryPage', 1);
       this.$store.dispatch('queryEmpList', { name: this.name })
@@ -151,7 +157,6 @@ export default {
             "reciUserName": this.selPerson.name,
             "reciUserId": this.selPerson.empId,
           }
-          console.log(this.selPerson);
           this.$emit('updatePerson', reciver);
           this.$emit('update:visible', false)
           this.selPerson = '';

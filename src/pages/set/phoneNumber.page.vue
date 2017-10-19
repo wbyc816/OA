@@ -54,7 +54,8 @@ export default {
           { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
         ],
         mobile: [
-          { validator: validateMobile, trigger: 'blur' }
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { validator: validateMobile, trigger: 'blur', }
         ],
         authCode: [
           { type: 'number', required: true, message: '请输入验证码', trigger: 'blur' }
@@ -142,10 +143,12 @@ export default {
       margin-right: 0;
     }
     .authBtn {
-      width: 90px;
+      width: 110px;
+      height: 47px;
       font-size: 14px;
-      transform: translateX(-94px); // padding-right: 30px;
-      text-align: center;
+      right:113px;
+      position: relative;
+      top: -2px;
       span {
         text-indent: 20px;
       }

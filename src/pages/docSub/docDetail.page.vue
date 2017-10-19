@@ -95,12 +95,12 @@
               </el-radio-group>
             </el-col>
           </el-form-item>
-          <el-form-item label="审批类型" class="textarea" v-if="ableSign&&userInfo.isManage==1">
+          <el-form-item label="审批类型" class="textarea" v-if="ableSign&&isAdmin">
             <el-col :span='18'>
               <el-radio-group class="myRadio" v-model="signType" @change="signTypeChange">
                 <el-radio-button label="0">审批<i></i></el-radio-button>
-                <el-radio-button label="1">部门会签<i></i></el-radio-button>
-                <el-radio-button label="2">人员会签<i></i></el-radio-button>
+                <el-radio-button label="1" v-if="docDetialInfo.doc.pageCode!='SWD'">部门会签<i></i></el-radio-button>
+                <el-radio-button label="2" v-else>人员会签<i></i></el-radio-button>
               </el-radio-group>
             </el-col>
           </el-form-item>
@@ -129,6 +129,29 @@
             <el-col :span='18'>
               <el-button type="primary" size="large" class="submitButton" @click="submit">提交</el-button>
               <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="isAdmin"><i class="iconfont icon-archive"></i>归档</el-button>
+            </el-col>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="myAdvice" v-if="docDetialInfo.doc.isSign==1">
+        <h4 class='doc-form_title'>我的会签意见</h4>
+        <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
+          <el-form-item label="会签意见" class="textarea" prop="state">
+            <el-col :span='18'>
+              <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
+                <el-radio-button label="1">同意<i></i></el-radio-button>
+                <el-radio-button label="2">不同意<i></i></el-radio-button>
+              </el-radio-group>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="会签内容" class="textarea">
+            <el-col :span='18'>
+              <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8"></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item>
+            <el-col :span='18'>
+              <el-button type="primary" size="large" class="submitButton" @click="submitSign">提交</el-button>
             </el-col>
           </el-form-item>
         </el-form>
@@ -199,16 +222,16 @@ export default {
   },
   data() {
     var checkSign = (rule, value, callback) => {
-      if(this.signType==1||this.signType==2){
-        if(value.length>1){
+      if (this.signType == 1 || this.signType == 2) {
+        if (value.length > 1) {
           callback();
-        }else{
+        } else {
           callback(new Error('请选择至少两个会签接收人'))
         }
-      }else{
-        if(value.length!=0){
+      } else {
+        if (value.length != 0) {
           callback();
-        }else{
+        } else {
           callback(new Error('请选择接收人'))
         }
       }
@@ -233,8 +256,8 @@ export default {
       },
       docDetialInfo: { doc: {}, task: [], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [] },
       rules: {
-        sign: [{type:'array',validator: checkSign, required: true }],
-        state: [{required: true,message: '请选择审批意见'}]
+        sign: [{ type: 'array', validator: checkSign, required: true }],
+        state: [{ required: true, message: '请选择审批意见' }]
       },
       reciver: '',
       archiveFormRule: {
@@ -245,8 +268,8 @@ export default {
       topDistData: [],
       distData: [],
       isSuccessSubmit: false,
-      ableSignDoc:['CPD','SWD'],
-      ableSign:false,
+      ableSignDoc: ['CPD', 'SWD','LZS','HTS'],
+      ableSign: false,
     }
   },
   created() {
@@ -258,7 +281,7 @@ export default {
           if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
             this.getDistInfo();
           }
-          this.ableSign=(this.ableSignDoc.find(code=>code==this.docDetialInfo.doc.pageCode)!=undefined);
+          this.ableSign = (this.ableSignDoc.find(code => code == this.docDetialInfo.doc.pageCode) != undefined);
         }
       }, res => {
 
@@ -279,7 +302,7 @@ export default {
       }
     },
     signTypeChange(val) {
-      this.ruleForm.sign=[]
+      this.ruleForm.sign = []
     },
     selSignPerson() {
       console.log(this.signType)
@@ -297,7 +320,7 @@ export default {
     },
     updateSignDep(payLoad) {
       this.signDepVisible = false;
-      this.ruleForm.sign=[];
+      this.ruleForm.sign = [];
       payLoad.forEach(p => {
         this.ruleForm.sign.push({
           "signDeptMajorName": p.name,
@@ -353,6 +376,32 @@ export default {
         }
       });
     },
+    submitSign() {
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          var params = {
+            "state": this.ruleForm.state,
+            "signContent": this.ruleForm.taskContent,
+            "signUserId": this.userInfo.empId,
+            "docId": this.docDetialInfo.doc.id,
+            "operateType": 1,
+          }
+          this.$http.post('/doc/empSignTask', params, { body: true })
+            .then(res => {
+              if (res.status == '0') {
+                this.$message.success('会签成功');
+                this.$router.push('/doc/docPending');
+              } else {
+                this.$message.error('会签失败，请重试');
+              }
+            }, res => {
+
+            })
+        } else {
+          return false;
+        }
+      });
+    },
     docTask() {
 
       var params = {
@@ -365,14 +414,14 @@ export default {
         "taskUserId": this.userInfo.empId,
         taskContent: this.ruleForm.taskContent,
         state: this.ruleForm.state,
-        submitType:this.signType,
+        submitType: this.signType,
         operateType: '1'
       }
-      if(this.signType=='0'){
-        params.nextUserId=this.reciver.reciUserId;
-        params.nextUserName=this.reciver.reciUserName;        
-      }else{
-        params.signs=this.ruleForm.sign;
+      if (this.signType == '0') {
+        params.nextUserId = this.reciver.reciUserId;
+        params.nextUserName = this.reciver.reciUserName;
+      } else {
+        params.signs = this.ruleForm.sign;
       }
       this.$http.post('/doc/docTask', params, { body: true })
         .then(res => {
