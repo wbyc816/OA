@@ -2,7 +2,7 @@
   <div id='meetingApp' class="commonApp" v-loading.fullscreen="submitLoading">
     <el-card>
       <div slot="header" class='doc_title'>
-        <span>预定会议室</span>
+        <span>预订会议室</span>
       </div>
       <div class="docBaseBox doc-section">
         <h4 class='doc-form_title'>预订信息填写</h4>
@@ -222,10 +222,10 @@ export default {
         .then(res => {
           this.submitLoading = false;
           if (res.status == 0) {
-            this.$message.success('预定成功！');
+            this.$message.success('预订成功！');
             this.$router.push('/meeting/myBooking');
           } else {
-            this.$message.warning('预定失败，请稍后重试');
+            this.$message.warning('预订失败，请稍后重试');
 
           }
         })

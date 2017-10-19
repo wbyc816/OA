@@ -36,7 +36,7 @@
             <th v-for="title in tableTitle">{{title}}</th>
           </tr>
         </thead>
-        <tbody v-for="doc in processData">
+        <tbody v-for="doc in processData" ref="task">
           <tr>
             <td></td>
             <td>{{doc.taskUserName}}</td>
@@ -129,6 +129,7 @@ export default {
   },
   mounted: function() {
     this.breadcrumbItem = this.$route.meta.breadcrumb;
+
   },
   methods: {
     formatter(row, column, cellValue) {
@@ -166,6 +167,7 @@ export default {
     },
     'processView' (newValue) {
       this.processDialogView = newValue;
+       console.log(this.$refs.task[0].clientHeight)
     },
     docTips(newVal) {
       this.tips = [];
