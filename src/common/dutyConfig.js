@@ -11,7 +11,7 @@ const phoneFmt = function(num) {
    if(!num){
      return '空'
    }
-   return num * 1
+   return num
 }
 
 export const fmts = [['dutyDate', dutyFmt],['deptName'],['empName'],['mobileNumber', phoneFmt],['phoneNumber', phoneFmt],['id']]
