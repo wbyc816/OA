@@ -20,7 +20,7 @@
               历史记录
             </el-menu-item>
             <el-menu-item index='5' :route="{path:'/meeting/meetingApp'}">
-              预定会议室
+              预订会议室
             </el-menu-item>
             <el-menu-item index='6' :route="{path:'/meeting/ReservationAllRoom/all'}">
               会议室预订状态

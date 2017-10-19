@@ -223,6 +223,7 @@
             <el-menu-item index="2" @click.native="goToOthers('/HR/newsListHr/FIL0304')"><i class="iconfont icon-shouce"></i>使用手册<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="3" @click.native="goToOthers('/PresidentMailbox')"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -376,7 +377,8 @@ export default {
       'searchLoading',
       'searchRes',
       'depPageNumber',
-      'airPortList'
+      'airPortList',
+      'docTips'
     ])
   },
   beforeRouteEnter(to, from, next) {
@@ -398,6 +400,16 @@ export default {
     this.getFlightTrends();
     this.getOtherNews('FIL0301');
     this.getOtherNews('FIL0302');
+  },
+  watch:{
+    docTips (newVal){
+      msgs[1].value = newVal.trackingNum; //追踪
+      msgs[2].value = newVal.toReadNum; //待阅
+      msgs[3].value = newVal.overTimeNum; //超时
+      msgs[0].value = newVal.pendingNum; //待批
+      msgs[4].value = newVal.birthdayNum; //生日
+      msgs[5].value = newVal.conferenceNum; //会议
+    }
   },
   methods: {
     getFlightTrends() {
@@ -425,20 +437,7 @@ export default {
       this.showDrag.splice(index, 1, false);
     },
     getTips() {
-      this.$http.post('/doc/docTips', { empId: this.userInfo.empId })
-        .then(res => {
-          if (res.status == 0) {
-            // console.log(res.data);
-            msgs[1].value = res.data.trackingNum;
-            msgs[2].value = res.data.toReadNum; //待阅
-            msgs[3].value = res.data.overTimeNum; //超时
-            msgs[0].value = res.data.pendingNum; //待批
-            msgs[4].value = res.data.birthdayNum; //生日
-            msgs[5].value= res.data.conferenceNum;//会议
-          }
-        }, res => {
-
-        })
+      this.$store.dispatch('getDocTips');      
     },
     querySearch(queryString, cb) {
       var airPortList = JSON.parse(JSON.stringify(this.airPortList));
@@ -469,7 +468,6 @@ export default {
     },
     searchFlight() {
       if (this.searchDate != 'NaN-NaN-NaN') {
-        console.log(1110)
         if (this.flightStatusType == "route") {
           if (this.tripFrom.city3cody && this.tripTo.city3cody) {
             if (this.tripFrom.city3cody == this.tripTo.city3cody) {

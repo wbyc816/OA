@@ -15,28 +15,10 @@
                 <i class="el-icon-arrow-right"></i>
               </el-menu-item>
             </template>
-            </el-badge>
           </el-menu-item-group>
         </el-menu>
       </el-col>
     </el-row>
-    <el-dialog title="流转详情" :visible.sync="processDialogView" size="large" class="myDialog processDialog" @close="close">
-      <div class="stepswrap">
-        <el-steps direction="vertical" :active="processData.length-1" finish-status="process" process-status="finish" :center="true">
-          <el-step v-for="step in processData" :key="step.toString()"></el-step>
-        </el-steps>
-      </div>
-      <el-table :data="processData" class="myTable">
-        <el-table-column width="44"></el-table-column>s
-        <el-table-column prop="taskUserName" label="审批人" width="155"></el-table-column>
-        <el-table-column prop="isBack" label="审阅时间" width="155"></el-table-column>
-        <el-table-column prop="startTime" label="审批时间" width="155"></el-table-column>
-        <el-table-column prop="isBack" label="截至时间" width="150"></el-table-column>
-        <el-table-column prop="isOvertime" label="时限" width="155"></el-table-column>
-        <el-table-column prop="nodeName" label="状态" width="155" :formatter="formatter"></el-table-column>
-        <el-table-column prop="taskDeptMajorName" label="部门"></el-table-column>
-      </el-table>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -47,42 +29,38 @@ export default {
     return {
       breadcrumbItem: '',
       navMenu: [{
-        title: '待批公文',
-        path: '/doc/docPending'
-      },
-      {
-        title: '跟踪公文',
-        path: '/doc/docTracking'
-      },
-      {
-        title: '邮件通知',
-        path: '#'
-      },
-      {
-        title: '公文超时',
-        path: '/doc/docPending'
-      },
-      {
-        title: '生日提醒',
-        path: '/BirthdayReminder'
-      },
-      {
-        title: '会议通知',
-        path: '#'
-      }
+          title: '待批公文',
+          path: '/doc/docPending'
+        },
+        {
+          title: '跟踪公文',
+          path: '/doc/docTracking'
+        },
+        {
+          title: '邮件通知',
+          path: '#'
+        },
+        {
+          title: '公文超时',
+          path: '/doc/docPending'
+        },
+        {
+          title: '生日提醒',
+          path: '/BirthdayReminder'
+        },
+        {
+          title: '会议通知',
+          path: '/meeting/meetingSearch/1'
+        }
       ],
       menuHeight: 0,
-      processDialogView: false,
       message: []
     };
   },
   computed: {
     ...mapGetters([
-      'reciver',
       'userInfo',
-      'isAdmin',
-      'processView',
-      'processData'
+      'docTips'
     ]),
     menuItemHeight() {
       return this.menuHeight / (this.navMenu.length + 1)
@@ -92,64 +70,31 @@ export default {
   created() {
     this.$store.dispatch('getAdminStatus');
     this.$store.dispatch('getDocForm');
-    this.$http.post("/doc/docTips", {
-      empId: this.userInfo.empId
-    }).then((res) => {
-      if (res.status == 0) {
-        this.message.push(res.data.pendingNum);
-        this.message.push(res.data.trackingNum);
-        this.message.push(res.data.toReadNum);
-        this.message.push(res.data.overTimeNum);
-        this.message.push(res.data.birthdayNum);
-        this.message.push(0);
-
-      }
-    })
   },
   mounted: function() {
-    this.breadcrumbItem = this.$route.meta.breadcrumb;
     this.menuHeight = document.querySelector('.el-menu.mySideLink').clientHeight
   },
   methods: {
-    formatter(row, column, cellValue) {
-      switch (cellValue) {
-        case "start":
-          return "发起";
-          break;
-        case 'task':
-          return "批核";
-          break;
-        case 'trans':
-          return "转发";
-          break;
-        case 'end':
-          return "归档";
-          break;
-
-        default:
-          return cellValue;
-      }
-    },
     getTop(index) {
       let h = this.menuItemHeight
       let top = h * (index + 1) + 20
       return top + 'px'
     },
-    changeProceesView(val) {
-
-    },
-    close() {
-      this.$store.commit('SET_PROCESS_VIEW', false)
-    }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.$store.dispatch('getDocTips');
+    })
   },
   watch: {
-    '$route'(to, from) {
-      if (to.meta) {
-        this.breadcrumbItem = to.meta.breadcrumb;
-      }
-    },
-    'processView'(newValue) {
-      this.processDialogView = newValue;
+    docTips(newVal) {
+      this.message = [];
+      this.message.push(newVal.pendingNum);
+      this.message.push(newVal.trackingNum);
+      this.message.push(newVal.toReadNum);
+      this.message.push(newVal.overTimeNum);
+      this.message.push(newVal.birthdayNum);
+      this.message.push(newVal.conferenceNum);
     }
   },
 }
@@ -166,7 +111,7 @@ export default {
       padding-top: .6px;
       left: 95px;
       background-color: #BE3B7F;
-      color:#fff;
+      color: #fff;
       border-radius: 50%;
       text-align: center;
       width: 19px;
@@ -211,4 +156,5 @@ export default {
     }
   }
 }
+
 </style>

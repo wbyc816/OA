@@ -10,6 +10,7 @@
           <el-menu-item-group title="公文流转">
             <template v-for='(item,index) in navMenu'>
               <el-menu-item v-if='item.path' :index='index.toString()' :route="{path:item.path}">{{item.title}}
+                <el-badge class="mark" :value="tips[index]" />
                 <i class="el-icon-arrow-right"></i>
               </el-menu-item>
               <!-- <el-submenu v-if='item.child' :index='index.toString()' >
@@ -27,16 +28,49 @@
           <el-step v-for="step in processData"></el-step>
         </el-steps>
       </div>
-      <el-table :data="processData" class="myTable">
-        <el-table-column width="44"></el-table-column>s
-        <el-table-column prop="taskUserName" label="审批人" width="155"></el-table-column>
-        <el-table-column prop="isBack" label="审阅时间" width="155"></el-table-column>
-        <el-table-column prop="startTime" label="审批时间" width="155"></el-table-column>
-        <el-table-column prop="isBack" label="截至时间" width="150"></el-table-column>
-        <el-table-column prop="isOvertime" label="时限" width="155"></el-table-column>
-        <el-table-column prop="nodeName" label="状态" width="155" :formatter="formatter"></el-table-column>
-        <el-table-column prop="taskDeptMajorName" label="部门"></el-table-column>
-      </el-table>
+      <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0">
+        <caption>
+        </caption>
+        <thead align="left">
+          <tr>
+            <th v-for="title in tableTitle">{{title}}</th>
+          </tr>
+        </thead>
+        <tbody v-for="doc in processData" ref="task">
+          <tr>
+            <td></td>
+            <td>{{doc.taskUserName}}</td>
+            <td>{{doc.readTime}}</td>
+            <td>{{doc.taskTime}}</td>
+            <td>{{doc.isOvertime}}</td>
+            <td>{{doc.isOvertime==0?'未超时':'超时'}}</td>
+            <td>{{doc.nodeName | nodeNameFormatter}}</td>
+            <td>{{doc.taskDeptMajorName}}</td>
+          </tr>
+          <template v-if="doc.signInfo.length!=0">
+            <tr class="tips start">
+              <td></td>
+              <td><i class="el-icon-caret-right"></i>公文会签开始</td>
+              <td v-for="o in 6"></td>
+            </tr>
+            <tr class="signTr" v-for="sign in doc.signInfo[0].deptSigns">
+              <td></td>
+              <td>{{sign.signUserName}}</td>
+              <td>{{sign.readTime}}</td>
+              <td>{{sign.signTime}}</td>
+              <td>{{sign.isOvertime}}</td>
+              <td>{{sign.isOverTime==0?'未超时':'超时'}}</td>
+              <td>{{sign.state | nodeNameFormatter}}</td>
+              <td>{{sign.signDeptMajorName}}</td>
+            </tr>
+            <tr class="tips">
+              <td></td>
+              <td><i class="el-icon-caret-right"></i>公文会签结束</td>
+              <td v-for="o in 6"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
     </el-dialog>
   </div>
 </template>
@@ -72,7 +106,9 @@ export default {
         //   path: '#'
         // }
       ],
-      processDialogView: false
+      processDialogView: false,
+      tips: [],
+      tableTitle: ['', '审批人', '审阅时间', '审批时间', '截至时间', '时限', '状态', '部门']
     };
   },
   computed: {
@@ -81,16 +117,19 @@ export default {
       'userInfo',
       'isAdmin',
       'processView',
-      'processData'
+      'processData',
+      'docTips'
     ])
   },
   components: { SidePersonSearch },
   created() {
     this.$store.dispatch('getAdminStatus');
+    this.$store.dispatch('getDocTips');
     this.$store.dispatch('getDocForm');
   },
   mounted: function() {
     this.breadcrumbItem = this.$route.meta.breadcrumb;
+
   },
   methods: {
     formatter(row, column, cellValue) {
@@ -102,7 +141,7 @@ export default {
           return "批核";
           break;
         case 'trans':
-          return "转发";
+          return "会签";
           break;
         case 'end':
           return "归档";
@@ -121,28 +160,99 @@ export default {
   },
   watch: {
     '$route' (to, from) {
+      this.$store.dispatch('getDocTips');
       if (to.meta) {
         this.breadcrumbItem = to.meta.breadcrumb;
       }
     },
     'processView' (newValue) {
       this.processDialogView = newValue;
+       console.log(this.$refs.task[0].clientHeight)
+    },
+    docTips(newVal) {
+      this.tips = [];
+      this.tips.push(0);
+      this.tips.push(newVal.trackingNum);
+      this.tips.push(newVal.pendingNum);
+      this.tips.push(0);
+      this.tips.push(newVal.toReadNum);
     }
   },
 }
 
 </script>
 <style lang='scss'>
+$main: #0460AE;
 #doc-approval {
   .mySideLink {
     margin-bottom: 20px;
+    .el-badge__content {
+      margin-bottom: 5px;
+      background: #BE3B7F;
+      margin-left: 5px;
+    }
   }
+
   .processDialog {
 
     .el-dialog__body {
-      .el-table {
+      &>table {
+        thead {
+          background: $main;
+          color: #fff;
+          font-size: 13px;
+          th {
+            padding: 6px 13px;
+          }
+          $widths: (1: 5%, 2: 10%, 3: 15%, 4: 15%, 5: 15%, 6: 15%, 7:6%, 8:13%);
+          @each $num,
+          $width in $widths {
+            th:nth-child(#{$num}) {
+              width: $width;
+            }
+          }
+          td {
+            font-size: 14px;
+          }
+        }
         td {
-          height: 68px;
+          padding: 4px 13px;
+        }
+        tbody {
+          background: #fff;
+          border-bottom: 1px solid #D5DADF;
+          tr {
+            height: 55px;
+            td {
+              vertical-align: middle;
+              border-bottom: 1px solid #D5DADF;
+            }
+            &:first-child {
+              td {}
+            }
+          }
+          &:nth-child(even) {
+            background: #F7F7F7;
+          }
+          .tips {
+            height: 28px;
+
+            td {
+              border-bottom: 1px dashed #D5DADF;
+              color: $main;
+            }
+          }
+          .start {
+            td {
+              border-top: 1px dashed #D5DADF;
+              border-bottom: 1px solid #D5DADF;
+            }
+          }
+        }
+        tfoot {
+          td {
+            color: #95989A;
+          }
         }
       }
       .stepswrap {

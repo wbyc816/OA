@@ -157,4 +157,7 @@ export default {
   getConferenceNum(id){
     return fetch('/conference/conferenceNumTips',{empId:id})
   },
+  getDocTips(id){
+    return fetch('/doc/docTips',{empId:id})
+  }
 }
