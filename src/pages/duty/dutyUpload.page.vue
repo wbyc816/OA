@@ -141,16 +141,16 @@ export default {
     },
     handleChange(file, fileList) {
       const isEXCEL = file.raw.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.raw.type === "application/vnd.ms-excel";
-      const isLt15M = file.size / 1024 / 1024 < 15;
+      const isLt20M = file.size / 1024 / 1024 < 20;
       if (!isEXCEL) {
         this.$message.error('上传文件只能是 EXCEL 格式!');
         this.$refs.upload.clearFiles();
       }
-      if (!isLt15M) {
+      if (!isLt20M) {
         this.$refs.upload.clearFiles();
-        this.$message.error('上传文件大小不能超过 15MB!');
+        this.$message.error('上传文件大小不能超过 20MB!');
       }
-      if (isEXCEL && isLt15M) {
+      if (isEXCEL && isLt20M) {
         this.noMore = true;
       }
 

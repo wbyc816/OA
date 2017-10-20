@@ -61,4 +61,9 @@ export const docConfig = [{
     code: 'HTS',
     url:'/doc/docFinContract'
   },
+  {
+    docName: '付款申请',
+    code: 'FKS',
+    url:'/doc/docFinPayment'
+  },
 ]

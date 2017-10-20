@@ -69,7 +69,7 @@
     <footer>
       <div class="container">
         <div class="links clearfix">
-          <a href="http://donghaiair.com" target="_blank"><img src="./assets/images/foot1.png" alt=""></a>
+          <a href="http://www.donghaiair.com" target="_blank"><img src="./assets/images/foot1.png" alt=""></a>
           <div class="flRight">
             <a href="http://www.eastpacific.com.cn" target="_blank"><img src="./assets/images/foot2.png" alt=""></a>
             <a href="http://www.donghaijet.com/" target="_blank"><img src="./assets/images/foot3.png" alt=""></a>
@@ -77,7 +77,7 @@
             <a href="http://www.szanbao.com.cn/Cn/" target="_blank"><img src="./assets/images/foot5.png" alt=""></a>
           </div>
         </div>
-        <p class="copyRight">COPYRIGHT @2017 东海航空有限公司 ALLRIGHTS RESERVED 粤ICP备11082739号</p>
+        <p class="copyRight">COPYRIGHT @2017 东海航空有限公司 ALLRIGHTS RESERVED</p>
       </div>
     </footer>
   </div>

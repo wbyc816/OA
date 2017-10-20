@@ -44,8 +44,8 @@
               <td>{{doc.readTime}}</td>
               <td>{{doc.taskTime}}</td>
               <td>{{doc.isOvertime}}</td>
-              <td>{{doc.isOvertime==0?'未超时':'超时'}}</td>
-              <td>{{doc.nodeName | nodeNameFormatter}}</td>
+              <td :class="{overTime:doc.isOvertime==1}">{{doc.isOvertime==0?'准时':'超时'}}</td>
+              <td>{{doc.nodeName}}</td>
               <td>{{doc.taskDeptMajorName}}</td>
             </tr>
             <template v-if="doc.signInfo.length!=0">
@@ -60,9 +60,9 @@
                   <td>{{sign.signUserName}}</td>
                   <td>{{sign.readTime}}</td>
                   <td>{{sign.signTime}}</td>
-                  <td>{{sign.isOvertime}}</td>
-                  <td>{{sign.isOverTime==0?'未超时':'超时'}}</td>
-                  <td>{{sign.state | nodeNameFormatter}}</td>
+                  <td>{{sign.isOverTime}}</td>
+                  <td :class="{overTime:sign.isOverTime==1}">{{sign.isOverTime==0?'准时':'超时'}}</td>
+                  <td>{{sign.docState}}</td>
                   <td>{{sign.signDeptMajorName}}</td>
                 </tr>
               </template>
@@ -225,7 +225,7 @@ $main: #0460AE;
     }
     .el-dialog__body {
       .myTableList {
-        $widths: (1: 5%, 2: 10%, 3: 15%, 4: 15%, 5: 15%, 6: 15%, 7:6%, 8:13%);
+        $widths: (1: 5%, 2: 12%, 3: 15%, 4: 15%, 5: 15%, 6: 6%, 7:10%, 8:18%);
         thead {
           background: $main;
           color: #fff;
@@ -249,6 +249,9 @@ $main: #0460AE;
             width: $width;
             padding: 4px 13px;
           }
+        }
+        .overTime{
+          color:#BE3B7F;
         }
         tbody {
           background: #fff;

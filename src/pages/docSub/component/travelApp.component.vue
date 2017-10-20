@@ -33,7 +33,7 @@
         <!-- <el-input class="search" :readonly="true" :value="travelForm.signName">
           <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
         </el-input> -->
-        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" popper-class="myCascader" style="width:100%"></el-cascader>
+        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" popper-class="myCascader" ref="budgetDep" style="width:100%"></el-cascader>
       </el-form-item>
       <el-form-item label="出差总预算" prop="budgetMoney" class="budgetMoney">
         <el-input v-model="travelForm.budgetMoney" ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
@@ -220,7 +220,6 @@ export default {
       return temp;
     },
     blurInput(event){
-      console.log(event)
       var temp=event.target.value.split('.');
       if(temp.length==2&&(temp[1]==undefined||temp[1]==''||temp[1]==null)){
         this.travelForm.budgetMoney = temp[0];

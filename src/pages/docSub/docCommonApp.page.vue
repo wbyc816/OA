@@ -35,6 +35,7 @@ import RYY from './component/empIntroduceApp.component.vue'
 import SWD from './component/docCheckInApp.component.vue'
 import YSS from './component/budgetApp.component.vue'
 import HTS from './component/contractApp.component.vue'
+import FKS from './component/paymentApp.component.vue'
 
 export default {
   data() {
@@ -67,7 +68,8 @@ export default {
     RYY,
     SWD,
     YSS,
-    HTS
+    HTS,
+    FKS
   },
   created() {
     this.initDoc();

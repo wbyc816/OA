@@ -135,16 +135,16 @@ export default {
         this.picSuccesss = 0;
       }
       const isPDF = file.raw.type === 'application/pdf';
-      const isLt15M = file.size / 1024 / 1024 < 15;
+      const isLt20M = file.size / 1024 / 1024 < 20;
       if (!isPDF) {
         this.$message.error('上传正文只能是 PDF 格式!');
         this.$refs.myUpload.clearFiles();
       }
-      if (!isLt15M) {
+      if (!isLt20M) {
         this.$refs.myUpload.clearFiles();
-        this.$message.error('上传正文大小不能超过 15MB!');
+        this.$message.error('上传正文大小不能超过 20MB!');
       }
-      if (isPDF && isLt15M) {
+      if (isPDF && isLt20M) {
         this.noMore=true;
         this.manuscriptForm.docFileId = file.url
       }

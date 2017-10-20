@@ -13,7 +13,7 @@
         <tr>
           <td>{{doc.docDenseType}}</td>
           <td>{{doc.docImprotType}}</td>
-          <td>{{doc.docTypeCode}}</td>
+          <td>{{doc.docTypeName}}</td>
           <td>{{doc.taskTime}}</td>
           <td>{{doc.taskUser}}</td>
           <td>{{doc.currentUser}}</td>
