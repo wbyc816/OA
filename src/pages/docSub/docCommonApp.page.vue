@@ -36,6 +36,7 @@ import SWD from './component/docCheckInApp.component.vue'
 import YSS from './component/budgetApp.component.vue'
 import HTS from './component/contractApp.component.vue'
 import FKS from './component/paymentApp.component.vue'
+import JKS from './component/loanApp.component.vue'
 
 export default {
   data() {
@@ -68,8 +69,12 @@ export default {
     RYY,
     SWD,
     YSS,
+<<<<<<< HEAD
     HTS,
     FKS
+=======
+    JKS
+>>>>>>> origin/wangchen
   },
   created() {
     this.initDoc();

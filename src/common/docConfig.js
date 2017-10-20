@@ -54,7 +54,12 @@ export const docConfig = [{
   {
     docName: '预算申请',
     code: 'YSS',
-    url:'/doc/docReceiveWordBean'
+    url:'/doc/docBudget'
+  },
+   {
+    docName: '借款申请',
+    code: 'JKS',
+    url:'/doc/docFinBorrow'
   },
   {
     docName: '合同申请',

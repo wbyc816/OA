@@ -1,92 +1,107 @@
 <template>
   <div class="budgetApp">
     <el-form label-position="left" :model="budgetForm" :rules="rules" ref="budgetForm" label-width="128px">
-      <el-form-item label="出差时间" prop="timeRange">
-        <el-date-picker v-model="budgetForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+
+      <el-form-item label="预算年份" prop="year">
+        <el-input v-model="budgetForm.year" class="budgetYear" :readonly="true"></el-input>
       </el-form-item>
-      <el-form-item label="出发地" prop="deptArea" class="deptArea">
-        <el-input v-model="budgetForm.deptArea" :maxlength="10">
-        </el-input>
-      </el-form-item>
-      <el-form-item label="目的地" prop="arrArea" class="arrArea">
-        <el-input v-model="budgetForm.arrArea" :maxlength="10">
-        </el-input>
-      </el-form-item>
-      <el-form-item label="出差人列表" prop="person" class="reciverWrap">
-        <div class="reciverList">
-          <el-tag :key="person.id" :closable="true" type="primary" @close="closePerson(index)" v-for="(person,index) in budgetForm.person">
-            {{person.name}}
-          </el-tag>
+
+      <el-form-item label="预算机构/科目" prop="budgetDept">
+        <div >
+           <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept"  @active-item-change="handleItemChange" @change="changeDept"  popper-class="myCascader" class="budgetDept" ref="budgetDept"></el-cascader>
         </div>
-        <el-button class="addButton" @click="signDialogVisible=true"><i class="el-icon-plus"></i></el-button>
       </el-form-item>
-      <el-form-item label="是否预订机票" prop="isBookFlight">
-        <el-radio-group v-model="budgetForm.isBookFlight" class="myRadio">
-          <el-radio-button label="1">是<i></i></el-radio-button>
-          <el-radio-button label="0">否<i></i></el-radio-button>
-        </el-radio-group>
-        <el-radio-group v-model="budgetForm.bookType" class="myRadio bookType" v-show="budgetForm.isBookFlight==1">
-          <el-radio-button :label="bookType.dictCode" v-for="bookType in bookTypes">{{bookType.dictName}}<i></i></el-radio-button>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="报销归口" prop="budgetDept">
-        <!-- <el-input class="search" :readonly="true" :value="budgetForm.signName">
-          <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
-        </el-input> -->
-        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" popper-class="myCascader" style="width:100%"></el-cascader>
-      </el-form-item>
-      <el-form-item label="出差总预算" prop="budgetMoney" class="budgetMoney">
-        <el-input v-model="budgetForm.budgetMoney" ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
-          <template slot="append">元</template>
-        </el-input>
-        <span class="usge">預算已使用率 75%</span>
+
+       <div class="change_data" v-show="showData==1">
+         <ul>
+           <li>年度预算{{yearBudget}}元</li>
+           <li>可用预算{{useBudget}}元</li>
+           <li>预算执行比例{{cExecRate}}</li>
+         </ul>
+        </div>
+       </el-form-item>
+     
+      <el-form-item label="申报金额" prop="budgetMoney" class="budgetMoney">
+        <el-col :span="12" class="clearPadding input">
+           <el-input  ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
+           <template slot="append">元</template>
+           </el-input>
+        </el-col>
+        <el-col :span="5" class="clearPadding btn">
+          <el-button @click='addBudget' type="primary" class="addbutton1"><i class="el-icon-plus"></i> 添加</el-button>
+        </el-col>
       </el-form-item>
     </el-form>
+
+    <el-table :data="budgetTable" :stripe="true" highlight-current-row   class="appTable">
+      <el-table-column type="index" label=" " width="40"></el-table-column>
+      <el-table-column property="budgetDept" label="预算机构" ></el-table-column>
+      <el-table-column property="useBudget" label="可用额度（元）" ></el-table-column>
+      <el-table-column property="cExecRate" label="执行比例" width="100"></el-table-column>
+      <el-table-column property="budgetMoney" label="申报额度（元）" ></el-table-column>
+      <el-table-column label="操作" width="55">
+        <template scope="scope">
+          <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
     <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import PersonDialog from '../../../components/personDialog.component'
+  import util from '../../../common/util'
 export default {
   components: { PersonDialog },
   data() {
     var checkDate = (rule, value, callback) => {
-      if (value.every(val => val != null)) {
+      if (value) {
         callback();
       } else {
-        callback(new Error('请选择出差时间'))
+        callback(new Error('请选择预算年份'))
       }
     };
     var checkDept = (rule, value, callback) => {
       if (value[0]) {
         callback();
       } else {
-        callback(new Error('请选择报销归口'))
+        callback(new Error('请选择预算机构/科目'))
       }
     };
     return {
       signDialogVisible: false,
       bookTypes:[],
+      budgetDate:{},
+      showData:0,
+      yearBudget:0,
+      useBudget:0,
+      cExecRate:"0%",
       budgetForm: {
         isBookFlight: '1',
         deptArea: '',
         arrArea: '',
         bookType: '',
-        timeRange: [],
+        timeRange: "",
+        year:new Date(),
         budgetMoney: '',
         person: [],
         budgetDept: [],
+        budgetDate:{},
+      
       },
       rules: {
-        isBookFlight: [{ required: true, trigger: 'blur' }],
-        person: [{ type: 'array', required: true, message: '请选择出差人', trigger: 'blur' }],
-        deptArea: [{ required: true, message: '请输入出发地', trigger: 'blur' }],
-        arrArea: [{ required: true, message: '请输入目的地', trigger: 'blur' }],
-        budgetMoney: [{ required: true, message: '请输入出差总预算', trigger: 'blur' }],
-        timeRange: [{ type: 'array', required: true, validator: checkDate, trigger: 'blur' }],
-        budgetDept: [{ type: 'array', required: true, validator: checkDept, trigger: 'blur' }],
+        // isBookFlight: [{ required: true, trigger: 'blur' }],
+        // person: [{ type: 'array', required: true, message: '请选择出差人', trigger: 'blur' }],
+        // deptArea: [{ required: true, message: '请输入出发地', trigger: 'blur' }],
+        // arrArea: [{ required: true, message: '请输入目的地', trigger: 'blur' }],
+        budgetMoney: [{ required: true, message: '请输入申报金额', trigger: 'blur' }],
+        // year: [{  required: true, validator: checkDate, trigger: 'blur' }],
+        budgetDept: [{ type: 'array', required: true, message: '请输入预算机构/科目',  trigger: 'blur' }],
       },
+      budgetTable: [],
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7;
@@ -99,6 +114,7 @@ export default {
         value: 'budgetItemCode',
         children: 'items'
       },
+
     }
   },
   computed: {
@@ -108,43 +124,85 @@ export default {
     ])
   },
   created() {
-    this.getBudgetDeptList();
     this.getBookType();
+    this.getBudgetDeptList();
   },
   methods: {
+    addBudget() {
+      this.$refs.budgetForm.validate((valid) => {
+        if (valid) {
+          var temp={};
+          temp.budgetDept=this.$refs.budgetDept.currentLabels[0]+"/"+this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length-1];
+          temp.budgetMoney=this.budgetForm.budgetMoney;
+          temp.useBudget=this.useBudget;
+          temp.cExecRate=this.cExecRate;
+          temp.budgetDeptId=this.budgetForm.budgetDept[0];
+          temp.budgetDeptName=this.$refs.budgetDept.currentLabels[0];
+          temp.budgetItemId=this.budgetForm.budgetDept[this.budgetForm.budgetDept.length-1];
+          temp.budgetItemName=this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length-1];
+          temp.budgetYear=this.budgetForm.year;
+         
+          this.budgetTable.push(temp);
+
+          this.isDisable=true;
+          // this.budgetForm.year="";
+          this.$refs.budgetMoney.currentValue="";
+          this.$refs.budgetForm.resetFields();
+          this.showData=0;
+        } else {
+          return false;
+        }
+      });
+    },
+      deleteRow(index) {
+      this.budgetTable.splice(index,1)
+    },
+    // fomatFloat(src, pos) {
+    //   return Math.round(src * Math.pow(10, pos)) / Math.pow(10, pos);
+    // },
+    checkEmpty(){
+      // console.log(this.budgetTable.length);
+      if(this.budgetTable.length!=0){
+        this.$emit('submitMiddle',{budgetTable:this.budgetTable});
+      }else{
+        this.$message.warning('请添加预算')
+        this.$emit('submitMiddle',false);
+      }
+    },
     updatePerson(list) {
       // console.log(list)
       this.budgetForm.person = list
+      console.log(list);
       this.signDialogVisible = false;
     },
     submitForm() {
-      var that = this;
-      this.$refs.budgetForm.validate((valid) => {
-        if (valid) {
+        console.log(this.budgetTable);
+        if (this.budgetTable.length!=0) {
           var dep=this.getBudgetDep();
           this.params = {
-            app: {
-              "startTime": this.budgetForm.timeRange[0].getTime(), //出差开始时间
-              "endTime": this.budgetForm.timeRange[1].getTime(), //出差结束时间
-              "deptArea": this.budgetForm.deptArea, //出发地
-              "arrArea": this.budgetForm.arrArea, //目的地
-              "isBookFlight": this.budgetForm.isBookFlight, //是否预订机票 0否 1是
-              "bookType": this.budgetForm.bookType, //预定类型
-              "budgetMoney": this.budgetForm.budgetMoney, //预算
-              "budgetItemCode": dep.budgetItemCode, //报销科目code
-              "budgetItemName": dep.budgetItemName, //报销科目名称
-              "budgetDeptCode": dep.budgetDeptCode, //报销部门
-              "budgetDeptName": dep.budgetDeptName, //报销部门名称
-              "appPerson": this.budgetForm.person.map(function(person) {
-                return {
-                  "travelUserName": person.name, //随行人员姓名
-                  "travelDeptId": person.deptId, //部门id
-                  "travelDeptName": person.depts, //部门名称
-                  "travelDeptMajorId": person.deptId, //主部门id
-                  "travelDeptMajorName": person.deptName, //主部门名称
-                }
-              })
-            }
+              // "year":this.budgetForm.year,//预算年份
+              // "deptArea": this.budgetForm.budgetDept, //预算科目
+              // "budgetMoney": this.budgetForm.budgetMoney, //申报金额
+              
+              // "budgetItemCode": dep.budgetItemCode, //报销科目code
+              // "budgetItemName": dep.budgetItemName, //报销科目名称
+              // "budgetDeptCode": dep.budgetDeptCode, //报销部门
+              // "budgetDeptName": dep.budgetDeptName, //报销部门名称
+              "finBudget":{
+                "finBudgetItems": this.budgetTable.map(function(tabel) {
+                  return {
+                    "budgetDeptId": tabel.budgetDeptId, //预算部门id
+                    "budgetDeptName": tabel.budgetDeptName, //预算部门名字
+                    "budgetItemName": tabel.budgetItemName, //-预算科目名字
+                    "budgetItemId": tabel.budgetItemId, //预算科目id
+                    "money":tabel.budgetMoney,//预算钱数
+                    "budgetYear": tabel.budgetYear, //预算年数
+                  }
+                })
+              }
+
+              
+            
           }
           this.$emit('submitMiddle', this.params);
         } else {
@@ -152,7 +210,7 @@ export default {
           this.$emit('submitMiddle', false);
           return false;
         }
-      });
+      
     },
     closePerson(index) {
       this.budgetForm.person.splice(index, 1);
@@ -168,7 +226,12 @@ export default {
       }
     },
     getBudgetDeptList() {
-      this.$http.post('/doc/getBudItemTreeList')
+      if(this.budgetForm.year){
+      this.budgetForm.year=util.formatTime(this.budgetForm.year.getTime(), 'yyyy');
+      this.showData="0";
+      this.$http.post('/doc/getItemTreeListofYear',{
+        year:this.budgetForm.year,
+      })
         .then(res => {
           if (res.status == 0) {
             res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
@@ -177,6 +240,7 @@ export default {
             console.log(res)
           }
         }, res => {})
+      }
     },
     handleItemChange(val) {
       var len = val.length;
@@ -186,7 +250,7 @@ export default {
         temp = temp.find(dep => dep.budgetItemCode == val[i]).items;
         i++
       }
-      console.log(temp);
+      // console.log(temp);
       if (temp.length == 0) {
         this.$http.post('/doc/getBudItemTreeList', { parentId: val[val.length - 1] })
           .then(res => {
@@ -226,17 +290,86 @@ export default {
         this.budgetForm.budgetMoney = temp[0];
         this.$refs.budgetMoney.setCurrentValue(temp[0]);
       }
-    }
+    },
+
+    changeDept(){
+      this.$http.post('/doc/getExecStatisofItemId', { 
+        budgetItemCode:this.budgetForm.budgetDept[this.budgetForm.budgetDept.length-1],
+        budgetYear:this.budgetForm.year,
+         })
+        .then(res => {
+          if (res.status == 0) {
+          this.showData=1;
+          this.cExecRate=res.data.budgetRate*100+"%";
+          this.yearBudget=res.data.budgetTotal;
+          this.useBudget=res.data.budgetRemain;
+          }
+        })
+    },
   }
 }
 
 </script>
 <style lang='scss'>
 $main:#0460AE;
+ .change_data{
+    width:calc(100% - 18px);
+    height:54px;
+    margin:0px 0 20px 18px;
+    background:#F7F7F7;
+    color:#0460AE;
+
+    ul li{
+      font-size:15px;
+      border:1px solid transparent;
+      width:33.3%;
+      float:left;
+      height:54px;
+      line-height:54px;
+      text-align:center;
+    }
+    ul li:first-child{
+       border-right:1px solid #D5DADF;
+    }
+     ul li:last-child{
+       border-left:1px solid #D5DADF;
+    }
+  }
+  .clearPadding{
+      padding:0 !important;
+    }
+
 .budgetApp {
   .el-input {
     width: 100%;
   }
+
+  .budgetMoney{
+    .input{
+      width:252px
+    }
+    .btn{
+      margin-left:5px;
+    }
+    
+  }
+  .budgetYear .el-input__inner{
+    border:0px solid red;
+  }
+  
+
+
+  .appTable{
+    width: calc(100% - 18px);
+    margin:0 0 20px 18px;
+  }
+  .year{
+    width:252px;
+  }
+  .budgetDept{
+     width:100%;
+  }
+
   .reciverWrap {
     clear: both;
     .el-form-item__content {
@@ -255,7 +388,7 @@ $main:#0460AE;
   .deptArea,
   .arrArea {
     float: left;
-    width: 50%;
+    width: 100%;
   }
   .arrArea {
     .el-form-item__label {
@@ -285,11 +418,7 @@ $main:#0460AE;
       }
     }
   }
-  .budgetMoney {
-    .el-input {
-      width: 40%;
-    }
-  }
+
 }
 
 </style>

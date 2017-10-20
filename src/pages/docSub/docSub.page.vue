@@ -57,7 +57,7 @@ const financeData = [
   { 'logo': 'icon-fukuan', 'color': '#5BB5FC', 'text': '预算申请', 'link': '#/doc/docCommonApp/YSS' },
   { 'logo': 'icon-fukuan2', 'color': '#FF754F', 'text': '付款申请', 'link': '#/doc/docCommonApp/FKS' },
   { 'logo': 'icon-fukuan1', 'color': '#A5A3FF', 'text': '报销申请', 'link': '#' },
-  { 'logo': 'icon-yusuankongzhi', 'color': '#FF5F88', 'text': '借款申请', 'link': '#' },
+  { 'logo': 'icon-yusuankongzhi', 'color': '#FF5F88', 'text': '借款申请', 'link': '#/doc/docCommonApp/JKS' },
   { 'logo': 'icon-imgtag', 'color': '#5BB5FC', 'text': '差旅报销申请', 'link': '#' },
   { 'logo': 'icon-manage', 'color': '#9FD867', 'text': '预付款核销申请', 'link': '#' },
 ];
