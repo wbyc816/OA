@@ -23,7 +23,7 @@
         <el-col :span="8">
           <!-- <el-row :gutter="0">
               <el-col :span="16">
-                <el-input v-model="empName" placeholder="值班人"></el-input>
+                <el-input v-model="params.empName" placeholder="值班人"></el-input>
               </el-col>
               <el-col :span="8">
                 <el-button class="search" @click="search" type="primary">搜索</el-button>
@@ -84,56 +84,39 @@ export default {
         layout: "total,prev, pager, next, jumper",
         total: 0,
       },
-      deptName: '',
-      empName: ''
-    }
-  },
-  computed: {
-    startDate() {
-      return this.date.length ? util.formatTime(this.date[0], 'yyyyMMdd') : ''
-    },
-    endDate() {
-      return this.date.length ? util.formatTime(this.date[1], 'yyyyMMdd') : ''
+      params: {
+        startDate: '',
+        endDate: '',
+        deptName: '',
+        empName: '',
+        pageNumber: '',
+        pageSize: 10
+      },
     }
   },
   created() {
-    const now = util.formatTime(new Date(), 'yyyyMMdd')
+    this.date= [new Date(), new Date()]
     api.getDeptList().then(data => {
       if (data.status == '0') {
         this.deptList = data.data.deptList[0].childNode
       }
     });
-    api.getDutyMessage({
-      startDate: now,
-      endDate: now,
-      deptName: '',
-      empName: '',
-      pageNumber: 1,
-      pageSize: 10
-    }).then(data => {
-      if (data.status == '0' && data.data.totalSize) {
-        this.tableData = dataTransform(data.data.ondutyVolist, fmts)
-        this.paginate.total = data.data.totalSize
-      }
-    })
+    this.search()
   },
   methods: {
     handleCurrentChange() {
       this.search()
     },
     deptChange(val) {
-      this.deptName = val
+      this.params.deptName = val
     },
     search() {
+      this.params.startDate = this.date[0] ? util.formatTime(this.date[0], 'yyyyMMdd') : ''
+      this.params.endDate = this.date[1] ? util.formatTime(this.date[1], 'yyyyMMdd') : ''
+      this.params.pageNumber = this.paginate.currentPage
       this.tableData = []
-      api.getDutyMessage({
-        startDate: this.startDate,
-        endDate: this.endDate,
-        deptName: this.deptName,
-        empName: this.empName,
-        pageNumber: this.paginate.currentPage,
-        pageSize: 10
-      }).then((data) => {
+
+      api.getDutyMessage(this.params).then((data) => {
         if (data.status == '0' && data.data.totalSize) {
           this.tableData = dataTransform(data.data.ondutyVolist, fmts)
           this.paginate.total = data.data.totalSize

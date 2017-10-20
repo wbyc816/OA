@@ -10,7 +10,7 @@
       </div>
       <el-row :gutter="10">
         <el-col :span="11">
-          <el-date-picker v-model="searchMsg.date" type="daterange" placeholder="起始及截止日期栏">
+          <el-date-picker v-model="date" type="daterange" placeholder="起始及截止日期栏">
           </el-date-picker>
         </el-col>
         <el-col :span="5">
@@ -57,7 +57,7 @@
         </el-table-column>
       </el-table>
       <div class="paginateWrap" v-if="tableData.length">
-        <el-pagination @current-change="handleCurrentChange" :current-page.sync="paginate.Record" :page-sizes="paginate.pageSizes" :layout="paginate.layout" :total="paginate.total">
+        <el-pagination @current-change="handleCurrentChange" :current-page.sync="paginate.currentPage" :page-sizes="paginate.pageSizes" :layout="paginate.layout" :total="paginate.total">
         </el-pagination>
       </div>
     </el-card>
@@ -106,18 +106,22 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
+      date: '',
       editDate: '',
       tableData: [],
       sendData: {},
       searchMsg: {
-        date: '',
+        startDate: '',
+        endDate: '',
         deptName: '',
         empName: '',
+        pageNumber:  1,
+        pageSize: 10
       },
       paginate: {
         pageSizes: [10, 12, 36],
         currentSize: 10,
-        Record: 1,
+        currentPage: 1,
         layout: "total,prev, pager, next, jumper",
         total: 0
       },
@@ -139,16 +143,10 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo'
-    ]),
-    startDate() {
-      return this.searchMsg.date.length ? util.formatTime(this.searchMsg.date[0], 'yyyyMMdd') : ''
-    },
-    endDate() {
-      return this.searchMsg.date.length ? util.formatTime(this.searchMsg.date[1], 'yyyyMMdd') : ''
-    }
+    ])
   },
   created() {
-    this.searchMsg.date = [new Date(), new Date()]
+    this.date = [new Date(), new Date()]
     this.search()
   },
   methods: {
@@ -162,14 +160,12 @@ export default {
       this.currentRecord.deptName = val
     },
     search() {
-      api.getDutyMessage({
-        startDate: this.startDate || '',
-        endDate: this.endDate || '',
-        deptName: this.searchMsg.deptName || '',
-        empName: this.searchMsg.empName || '',
-        pageNumber: this.paginaRecord || 1,
-        pageSize: 10
-      }).then((data) => {
+      this.searchMsg.startDate = this.date[0] ? util.formatTime(this.date[0], 'yyyyMMdd') : ''
+      this.searchMsg.endDate = this.date[1] ? util.formatTime(this.date[1], 'yyyyMMdd') : ''
+      this.searchMsg.pageNumber = this.paginate.currentPage
+      this.tableData = []
+
+      api.getDutyMessage(this.searchMsg).then((data) => {
         if (data.status == '0' && data.data.totalSize) {
           this.tableData = dataTransform(data.data.ondutyVolist, fmts)
           this.paginate.total = Number(data.data.totalSize)
@@ -187,7 +183,6 @@ export default {
       this.currentIndex = index
       Object.assign(this.currentRecord, row)
       this.editDate = new Date(this.currentRecord.dutyDate)
-      // console.log('currentRecord.deptName:' + this.currentRecord.deptName)
     },
     deleteConfirm() {
       this.$http.post('/onduty/deleteDutyInfo', { 'id': this.currentRecord.id }).then((data) => {

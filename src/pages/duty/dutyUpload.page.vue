@@ -180,6 +180,7 @@ export default {
             this.fileList = [];
             this.tableData = [];
             this.sendData = [];
+            this.editAble = false;
             this.$message({
               message: '提交成功',
               type: 'success',
