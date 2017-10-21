@@ -9,9 +9,8 @@
         <el-menu mode="vertical" v-bind:router="true" ref="emenu" class="mySideLink">
           <el-menu-item-group title="消息中心">
             <template v-for='(item,index) in navMenu'>
-              <div class="badge" v-if="message[index]" :style="{'top': getTop(index)}">{{ message[index] }}</div>
-              <el-menu-item v-if='item.path' :index='index.toString()' :route="{path:item.path}">
-                <span>{{item.title}}</span>
+              <el-menu-item v-if='item.path' :index='index.toString()' :route="{path:item.path}">{{item.title}}
+                 <el-badge class="mark" :value="message[index]" />
                 <i class="el-icon-arrow-right"></i>
               </el-menu-item>
             </template>
@@ -104,20 +103,10 @@ export default {
 #os {
   .mySideLink {
     margin-bottom: 20px;
-    .badge {
-      z-index: 2;
-      display: block;
-      position: absolute;
-      padding-top: .6px;
-      left: 95px;
-      background-color: #BE3B7F;
-      color: #fff;
-      border-radius: 50%;
-      text-align: center;
-      width: 19px;
-      height: 19px;
-      line-height: 19px;
-      font-size: 12px;
+    .el-badge__content {
+      margin-bottom: 5px;
+      background: #BE3B7F;
+      margin-left: 5px;
     }
   }
   .processDialog {

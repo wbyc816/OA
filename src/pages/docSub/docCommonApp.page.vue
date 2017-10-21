@@ -69,12 +69,9 @@ export default {
     RYY,
     SWD,
     YSS,
-<<<<<<< HEAD
     HTS,
-    FKS
-=======
+    FKS,
     JKS
->>>>>>> origin/wangchen
   },
   created() {
     this.initDoc();
