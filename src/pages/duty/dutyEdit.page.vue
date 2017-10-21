@@ -37,13 +37,13 @@
         </el-row>
       </div>
       <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
-        <el-table-column type="index" width="50">
+        <el-table-column label="序号" type="index" width="80">
         </el-table-column>
         <el-table-column property="dutyDate" sortable label="日期" width="140">
         </el-table-column>
-        <el-table-column property="deptName" label="部门" width="120">
+        <el-table-column property="deptName" label="部门" width="110">
         </el-table-column>
-        <el-table-column property="empName" label="值班人" width="110">
+        <el-table-column property="empName" label="值班人" width="90">
         </el-table-column>
         <el-table-column property="mobileNumber" label="手机">
         </el-table-column>
