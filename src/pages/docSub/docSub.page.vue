@@ -50,14 +50,14 @@ const adminData = [
   { 'logo': 'icon-car', 'color': '#A5A3FF', 'text': '用车申请', 'link': '#/doc/vehicleApp' },
   { 'logo': 'icon-plane2', 'color': '#9FD867', 'text': '差旅申请', 'link': '#/doc/docCommonApp/CLV' },
   { 'logo': 'icon-documents', 'color': '#FF5F88', 'text': '材料申请', 'link': '#/doc/materialApp' },
-  { 'logo': 'icon-biaodan', 'color': '#5BB5FC', 'text': '收文登记', 'link': '#/doc/docCommonApp/SWD' }
+  { 'logo': 'icon-biaodan', 'color': '#5BB5FC', 'text': '收文登记', 'link': '#/doc/docCommonApp/SWD' },
+  { 'logo': 'icon-weibiaoti-4', 'color': '#FFE066', 'text': '合同申请', 'link': '#/doc/docCommonApp/HTS' },
 ];
 const financeData = [
   { 'logo': 'icon-fukuan', 'color': '#5BB5FC', 'text': '预算申请', 'link': '#/doc/docCommonApp/YSS' },
-  { 'logo': 'icon-fukuan2', 'color': '#FF754F', 'text': '付款申请', 'link': '#' },
+  { 'logo': 'icon-fukuan2', 'color': '#FF754F', 'text': '付款申请', 'link': '#/doc/docCommonApp/FKS' },
   { 'logo': 'icon-fukuan1', 'color': '#A5A3FF', 'text': '报销申请', 'link': '#' },
-  { 'logo': 'icon-yusuankongzhi', 'color': '#FF5F88', 'text': '借款申请', 'link': '#' },
-  { 'logo': 'icon-weibiaoti-4', 'color': '#FFE066', 'text': '合同申请', 'link': '#' },
+  { 'logo': 'icon-yusuankongzhi', 'color': '#FF5F88', 'text': '借款申请', 'link': '#/doc/docCommonApp/JKS' },
   { 'logo': 'icon-imgtag', 'color': '#5BB5FC', 'text': '差旅报销申请', 'link': '#' },
   { 'logo': 'icon-manage', 'color': '#9FD867', 'text': '预付款核销申请', 'link': '#' },
 ];

@@ -118,7 +118,7 @@ export default {
         } else {
           this.pathList.push({
             typeId: 'secretary',
-            typeIdName: '公文秘书',
+            typeIdName: '公文管理员',
             type: 3
           })
         }
@@ -178,7 +178,7 @@ export default {
           if (last.children.length != 0) {
             this.pathList.push({
               typeId: 'secretary',
-              typeIdName: '公文秘书',
+              typeIdName: '公文管理员',
               type: 3
             })
           } else {

@@ -190,8 +190,7 @@ export default {
         var params = {
           fileId: this.fileIds,
           taskContent: this.ruleForm.des,
-          quoteDocTitle: this.docs[0].quoteDocTitle,
-          quoteDocId: this.docs[0].quoteDocId,
+          qutoes: this.docs[0].quoteDocId ? this.docs : [],
           suggests: this.handlePath(this.ruleForm.path)
         }
         this.$emit('submitEnd', params);

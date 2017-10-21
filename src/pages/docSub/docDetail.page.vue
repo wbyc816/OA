@@ -60,12 +60,20 @@
       </div>
       <div class='history commonBox'>
         <h4 class='doc-form_title'>历史审批意见</h4>
-        <el-row class="backV" v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0&&task.isFlag!=1">
-          <!-- <el-col :span="1">&nbsp;</el-col> -->
-          <el-col :span="23" :offset="1">{{task.taskContent}}</el-col>
-          <el-col :span="23" class="timeRight">{{task.taskUserName}} {{task.startTime}}</el-col>
-          <!-- <el-col :span="23" v-if="index==0">无</el-col> -->
-        </el-row>
+        <ul class="backV" v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0&&task.isFlag!=1" :class="{'hasSign':task.signInfo!=''}">
+          <li>{{task.taskContent}}</li>
+          <li class="timeRight">{{task.taskUserName}} {{task.startTime}}</li>
+          <ul class="signBox" v-if="task.signInfo.length!=0">
+            <li class="signStart"><i class="el-icon-caret-right"></i>公文会签开始</li>
+            <div class="depSignBox" v-for="depBox in task.signInfo">
+              <div v-for="child in depBox.deptSigns" class="childSign">
+                <li><p class="depTip">{{depBox.deptName}}</p>{{child.signContent}}</li>
+                <li class="timeRight">{{child.signUserName}} {{child.signTime}}</li>
+              </div>
+            </div>
+            <li class="signEnd"><i class="el-icon-caret-right"></i>公文会签结束</li>
+          </ul>
+        </ul>
       </div>
       <div v-if="distData.length!=0">
         <h4 class='doc-form_title'>分发意见</h4>
@@ -84,7 +92,7 @@
           <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         </div>
       </div>
-      <div class='myAdvice' v-if="docDetialInfo.doc.isTask==1">
+      <div class='myAdvice' v-if="docDetialInfo.doc.isTask==1&&docDetialInfo.doc.isSign!=1">
         <h4 class='doc-form_title'>我的审批意见</h4>
         <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="审批意见" class="textarea" prop="state">
@@ -95,12 +103,12 @@
               </el-radio-group>
             </el-col>
           </el-form-item>
-          <el-form-item label="审批类型" class="textarea" v-if="ableSign&&isAdmin">
+          <el-form-item label="审批类型" class="textarea" v-if="ableSign&&isAdmin&&docDetialInfo.doc.signDoc==0">
             <el-col :span='18'>
               <el-radio-group class="myRadio" v-model="signType" @change="signTypeChange">
                 <el-radio-button label="0">审批<i></i></el-radio-button>
                 <el-radio-button label="1" v-if="docDetialInfo.doc.pageCode!='SWD'">部门会签<i></i></el-radio-button>
-                <el-radio-button label="2" v-else>人员会签<i></i></el-radio-button>
+                <el-radio-button label="2">人员会签<i></i></el-radio-button>
               </el-radio-group>
             </el-col>
           </el-form-item>
@@ -144,6 +152,13 @@
               </el-radio-group>
             </el-col>
           </el-form-item>
+          <el-form-item class="textarea signWrap" label="接收人" prop="sign" v-if="docDetialInfo.doc.signDoc==1">
+            <el-col :span='18' class="clearfix">
+              <el-input class="search" :value="ruleForm.sign[0]?ruleForm.sign[0].signUserName:''" :readonly="true">
+                <el-button slot="append" @click="selSignPerson">选择</el-button>
+              </el-input>
+            </el-col>
+          </el-form-item>
           <el-form-item label="会签内容" class="textarea">
             <el-col :span='18'>
               <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8"></el-input>
@@ -152,6 +167,7 @@
           <el-form-item>
             <el-col :span='18'>
               <el-button type="primary" size="large" class="submitButton" @click="submitSign">提交</el-button>
+              <el-button size="large" class="docArchiveButton" @click="endDepSign" v-if="docDetialInfo.doc.isManager==1&&docDetialInfo.doc.signDoc==1">结束会签</el-button>
             </el-col>
           </el-form-item>
         </el-form>
@@ -181,7 +197,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <person-dialog @updatePerson="updatePerson" :visible.sync="dialogTableVisible" :dialogType="personDialogType"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :admin="docDetialInfo.doc.signDoc==1?'0':''" :visible.sync="dialogTableVisible" :dialogType="personDialogType"></person-dialog>
     <person-dialog @updatePerson="updateSignPerson" :visible.sync="signPersonVisible" dialogType="multi"></person-dialog>
     <dep-dialog :dialogVisible.sync="signDepVisible" dialogType="multi" @updateDep="updateSignDep"></dep-dialog>
   </div>
@@ -268,7 +284,7 @@ export default {
       topDistData: [],
       distData: [],
       isSuccessSubmit: false,
-      ableSignDoc: ['CPD', 'SWD','LZS','HTS'],
+      ableSignDoc: ['CPD', 'SWD', 'LZS', 'HTS'],
       ableSign: false,
     }
   },
@@ -277,7 +293,9 @@ export default {
       .then(res => {
         if (res.status == 0) {
           this.docDetialInfo = res.data;
-          this.currentView = this.docDetialInfo.doc.pageCode;
+          if (this.docDetialInfo.doc.pageCode != 'CPD') {
+            this.currentView = this.docDetialInfo.doc.pageCode;
+          }
           if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
             this.getDistInfo();
           }
@@ -379,18 +397,54 @@ export default {
     submitSign() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          var params = {
-            "state": this.ruleForm.state,
-            "signContent": this.ruleForm.taskContent,
-            "signUserId": this.userInfo.empId,
-            "docId": this.docDetialInfo.doc.id,
-            "operateType": 1,
+          if (this.docDetialInfo.doc.signDoc == 1) {
+            this.docTask();
+          } else {
+            var params = {
+              "state": this.ruleForm.state,
+              "signContent": this.ruleForm.taskContent,
+              "signUserId": this.userInfo.empId,
+              "docId": this.docDetialInfo.doc.id,
+              "operateType": 1,
+            }
+            this.$http.post('/doc/empSignTask', params, { body: true })
+              .then(res => {
+                if (res.status == '0') {
+                  this.$message.success('会签成功');
+                  this.$router.push('/doc/docPending');
+                } else {
+                  this.$message.error('会签失败，请重试');
+                }
+              }, res => {
+
+              })
           }
-          this.$http.post('/doc/empSignTask', params, { body: true })
+        } else {
+          return false;
+        }
+      });
+    },
+    endDepSign() {
+      this.$refs.ruleForm.validateField('state', (errorMessage) => {
+        if (errorMessage == '') {
+          var params = {
+            docId: this.docDetialInfo.doc.id,
+            "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
+            "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
+            "taskDeptName": this.userInfo.deptVo.dept,
+            "taskDeptId": this.userInfo.deptVo.deptId,
+            "taskUserName": this.userInfo.name,
+            "taskUserId": this.userInfo.empId,
+            taskContent: this.ruleForm.taskContent,
+            state: this.ruleForm.state,
+            submitType: 3,
+            operateType: '1'
+          }
+          this.$http.post('/doc/docTask', params, { body: true })
             .then(res => {
               if (res.status == '0') {
                 this.$message.success('会签成功');
-                this.$router.push('/doc/docPending');
+                this.$router.push('/doc/docTracking');
               } else {
                 this.$message.error('会签失败，请重试');
               }
@@ -398,9 +452,10 @@ export default {
 
             })
         } else {
-          return false;
+          return false
         }
-      });
+      })
+
     },
     docTask() {
 
@@ -606,14 +661,40 @@ $sub:#1465C0;
     text-align: right;
   }
   .history {
-    .el-col {
+    li {
       min-height: 50px;
-      padding: 15px 0;
+      padding: 15px 20px;
     }
-    .el-row {
+    .hasSign {
+      border-bottom: none;
+    }
+    >ul {
       border-bottom: 1px solid #D5DADF;
       &:first-of-type {
         border-top: 1px solid #D5DADF;
+      }
+    }
+    .signBox {
+      background: #EAECF7;
+      .signStart,
+      .signEnd {
+        color: $main;
+        padding: 0 20px;
+        min-height: 25px;
+        line-height: 25px;
+      }
+      .signStart {
+        border-bottom: 1px solid #D5DADF;
+        border-top: 1px dashed #D5DADF;
+      }
+      .signEnd {
+        border-bottom: 1px dashed #D5DADF;
+      }
+      .depTip{
+        color: $main;
+      }
+      .childSign {
+        border-bottom: 1px solid #D5DADF;
       }
     }
   }
