@@ -84,7 +84,7 @@ export default {
         endTime: '',
         conferenceTitle: '',
         isInside: '1',
-        isMessage: '1',
+        isMessage: '0',
         messageContent: '',
         person: []
       },

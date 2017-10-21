@@ -43,7 +43,7 @@
               </template>
             </li>
           </ul>
-          <el-button type="primary" class="submit" :disabled="pathList.length<3" @click="submit">提交</el-button>
+          <el-button type="primary" class="submit" :disabled="pathList.length==0" @click="submit">提交</el-button>
         </el-col>
       </el-row>
     </el-dialog>

@@ -71,7 +71,7 @@ export default {
       currencyValue:"",
       appMoney: '',
       payTypes:[],
-      choosePayType:[],
+      choosePayType:'',
       bankAccount:"",
       selectMoney:"",
       timeout:  null,
@@ -93,7 +93,6 @@ export default {
       cExecRate:"0%",
       isDisable:true,
       loanAppForm: {
-        choosePayType:[],
         appMoney  :"",
         choosePayType:"",
         timeout:  null,
@@ -106,7 +105,6 @@ export default {
         timeRange: "",
         year:"",
         appMoney: '',
-        choosePayType:[],
         person: [],
         // budgetDept: [],
         budgetDate:{},
@@ -206,7 +204,7 @@ export default {
         clearTimeout(this.timeout);
         this.timeout = setTimeout(() => {
           cb( queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants);
-        }, 3000 * Math.random());
+        }, 500);
         
         
       },

@@ -217,6 +217,11 @@ import JJS from './component/empUpgradeDetail.component' //晋升详情
 import PXS from './component/empTrainingDetail.component' //培训详情
 import RYY from './component/empIntroduceDetail.component' //引进详情
 import SWD from './component/docCheckInDetail.component' //引进详情
+import HTS from './component/contractDetail.component' //合同详情
+import JKS from './component/loanDetail.component' //借款详情
+import YSS from './component/budgetDetail.component' //预算详情
+import BXS from './component/reimburseDetail.component' //预算详情
+import FKS from './component/paymentDetail.component' //付款详情
 import { mapGetters } from 'vuex'
 
 export default {
@@ -234,7 +239,12 @@ export default {
     JJS,
     PXS,
     RYY,
-    SWD
+    SWD,
+    HTS,
+    JKS,
+    YSS,
+    BXS,
+    FKS
   },
   data() {
     var checkSign = (rule, value, callback) => {
@@ -634,7 +644,7 @@ $sub:#1465C0;
     padding-bottom: 10px;
     .el-col {
       border-bottom: 1px solid #D5DADF;
-      padding: 15px 24px;
+      padding: 15px 18px 15px 24px;
       overflow: hidden;
       display: flex;
       font-size: 15px;
@@ -646,7 +656,7 @@ $sub:#1465C0;
       height: 51px;
     }
     .title {
-      width: 150px;
+      width: 140px;
     }
     .textContent {
       flex: 1;

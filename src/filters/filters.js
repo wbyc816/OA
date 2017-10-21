@@ -4,6 +4,7 @@ Vue.filter('sex', sexFilter);
 Vue.filter('phone', phone);
 Vue.filter('didDate', didDate);
 Vue.filter('percent', percent);
+Vue.filter('toThousands', toThousands);
 Vue.filter('nodeNameFormatter', nodeNameFormatter);
 
 function timeFilter(value, type) { //value为13位的时间戳
@@ -90,6 +91,19 @@ function nodeNameFormatter(cellValue) {
       return cellValue;
   }
 }
+function toThousands(val) {  
+    var arr=(val || 0).toString().split('.'),result = '';
+    var num = arr[0];  
+    while (num.length > 3) {  
+        result = ',' + num.slice(-3) + result;  
+        num = num.slice(0, num.length - 3);  
+    }  
+    if (num) { result = num + result; }  
+    if(arr[1]){
+      result=result+'.'+arr[1];
+    }
+    return result;  
+}  
 
 function sexFilter(val) {
   switch (val) {
@@ -104,4 +118,4 @@ function sexFilter(val) {
       return val;
   }
 }
-export { timeFilter }
+export { timeFilter,toThousands }

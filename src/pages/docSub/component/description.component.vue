@@ -98,7 +98,7 @@ export default {
       },
       totalSize: 0,
       searchOptions: '',
-      searchLoading: false
+      searchLoading: false,
     }
   },
   computed: {

@@ -49,7 +49,7 @@
       </nav>
     </div>
     <el-carousel height="382px" arrow="never" v-if="$route.path=='/home'">
-      <el-carousel-item>
+      <!--       <el-carousel-item>
         <img src="./assets/images/bg4.jpg">
       </el-carousel-item>
       <el-carousel-item>
@@ -57,6 +57,9 @@
       </el-carousel-item>
       <el-carousel-item>
         <img src="./assets/images/bg5.jpg">
+      </el-carousel-item> -->
+      <el-carousel-item v-for="pic in homePics">
+        <img :src="pic">
       </el-carousel-item>
     </el-carousel>
     <div class="container" :class="{'childCon':!$route.path=='/home'}">
@@ -70,12 +73,12 @@
       <div class="container">
         <div class="links clearfix">
           <a href="http://www.donghaiair.com" target="_blank"><img src="./assets/images/foot1.png" alt=""></a>
-          <div class="flRight">
-            <a href="http://www.eastpacific.com.cn" target="_blank"><img src="./assets/images/foot2.png" alt=""></a>
-            <a href="http://www.donghaijet.com/" target="_blank"><img src="./assets/images/foot3.png" alt=""></a>
-            <a href="http://www.langhamhotels.com/sc/the-langham/shenzhen/" target="_blank"><img src="./assets/images/foot4.png" alt=""></a>
-            <a href="http://www.szanbao.com.cn/Cn/" target="_blank"><img src="./assets/images/foot5.png" alt=""></a>
-          </div>
+          <!-- <div class="flRight"> -->
+          <a href="http://www.eastpacific.com.cn" target="_blank"><img src="./assets/images/foot2.png" alt=""></a>
+          <a href="http://www.donghaijet.com/" target="_blank"><img src="./assets/images/foot3.png" alt=""></a>
+          <a href="http://www.langhamhotels.com/sc/the-langham/shenzhen/" target="_blank"><img src="./assets/images/foot4.png" alt=""></a>
+          <a href="http://www.szanbao.com.cn/Cn/" target="_blank"><img src="./assets/images/foot5.png" alt=""></a>
+          <!-- </div> -->
         </div>
         <p class="copyRight">COPYRIGHT @2017 东海航空有限公司 ALLRIGHTS RESERVED</p>
       </div>
@@ -133,6 +136,7 @@ export default {
       this.baseUrl = 'http://127.0.0.1:8080'
     } else {
       this.baseUrl = 'http://apitest.donghaiair.com:8082'
+      // this.baseUrl = 'http://localhost:8080'
     }
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));
@@ -224,7 +228,7 @@ export default {
       }
     },
     getHomePics() {
-      if (this.$route.path == 'home') {
+      if (this.$route.path == '/home') {
         if (this.homePics.length == 0) {
           this.$http.post('/index/getBasicImage', { imageType: 'ADM0601' })
             .then(res => {
@@ -274,9 +278,9 @@ $brown: #985D55;
 
 #app {
   padding-top: 26px;
-  min-height:100%;
+  min-height: 100%;
   padding-bottom: 140px;
-  position:relative;
+  position: relative;
 }
 
 .topBar {
@@ -535,33 +539,35 @@ $brown: #985D55;
 }
 
 footer {
-  position:absolute;
-  width:100%;
-  bottom:0;
-  left:0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 0;
   background: #fff;
   .container {
     .links {
       font-size: 0;
-
-      border-bottom: 1px solid #D5D5D5;
-
+      border-bottom: 1px solid #D5D5D5; // display:table;
       a {
-        line-height: 90px;
-        // float: right;
+        // display:table-cell;
+        text-align: center;
+        float: left;
+        line-height: 90px; // float: right;
         img {
           vertical-align: middle;
         }
         &:first-child {
-          float: left;
+          text-align: left;
+        }
+        &:last-child {
+          text-align: right;
         }
       }
-      .flRight{
-        a{
-          margin-right:10px;
-          &:first-child{
-            margin-right:35px;
-          }
+      $widths: (1: 15%, 2: 20%, 3: 20%, 4: 20%, 5: 25%);
+      @each $num,
+      $width in $widths {
+        a:nth-child(#{$num}) {
+          width: $width;
         }
       }
     }

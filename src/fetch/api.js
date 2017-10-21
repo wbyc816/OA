@@ -4,6 +4,7 @@ import Vue from 'vue'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.defaults.baseURL = 'http://apitest.donghaiair.com:8080/DonghaiAirAPI';
+// axios.defaults.baseURL = 'http://localhost:8080/DongHaiAirAPI/';
 // axios.defaults.baseURL = 'http://apitest.donghaiair.com:8899/DonghaiAirAPI';
 
 

@@ -1,8 +1,8 @@
 <template>
   <div id="homeChild">
     <el-carousel height="347px" arrow="always">
-      <el-carousel-item v-for="o in 4" :key="o">
-        <img src="../../assets/images/Intersection16.png">
+      <el-carousel-item v-for="p in pics" :key="o">
+        <img :src="p">
       </el-carousel-item>
     </el-carousel>
     <el-card class="shareBox">
@@ -32,7 +32,8 @@
       </el-row>
     </el-card>
     <div class="imgBox">
-      <img src="../../assets/images/Image88.jpg" alt="">
+      <!-- <img src="../../assets/images/Image88.jpg" alt=""> -->
+      <img :src="childPic" alt="">
     </div>
     <el-card class="borderCard highLight">
       <p slot="header"><i class="iconfont icon-zhinan"></i>办事指南

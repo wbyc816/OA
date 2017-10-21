@@ -37,6 +37,7 @@ import YSS from './component/budgetApp.component.vue'
 import HTS from './component/contractApp.component.vue'
 import FKS from './component/paymentApp.component.vue'
 import JKS from './component/loanApp.component.vue'
+import BXS from './component/reimburseApp.component.vue'
 
 export default {
   data() {
@@ -69,12 +70,10 @@ export default {
     RYY,
     SWD,
     YSS,
-<<<<<<< HEAD
     HTS,
-    FKS
-=======
-    JKS
->>>>>>> origin/wangchen
+    FKS,
+    JKS,
+    BXS
   },
   created() {
     this.initDoc();

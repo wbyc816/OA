@@ -71,4 +71,9 @@ export const docConfig = [{
     code: 'FKS',
     url:'/doc/docFinPayment'
   },
+  {
+    docName: '报销申请',
+    code: 'BXS',
+    url:'/doc/reimburseApp'
+  },
 ]

@@ -1,11 +1,13 @@
 import Vue from 'vue';
-import { timeFilter } from '../filters/filters'
+import { timeFilter,toThousands } from '../filters/filters'
 Vue.prototype.validatePhone = validatePhone
 Vue.prototype.combineObj = combineObj
 Vue.prototype.timeFilter = timeFilter
 Vue.prototype.clone = clone
 Vue.prototype.changeTime = changeTime
 Vue.prototype.renderContent = renderContent
+Vue.prototype.toThousands = toThousands
+// Vue.prototype.lodash = lodash
 
 function getCookie(c_name) {
   if (document.cookie.length > 0) {
@@ -71,7 +73,6 @@ function changeTime(obj) {
 
     }
   })
-  console.log(_obj)
   return _obj
 }
 

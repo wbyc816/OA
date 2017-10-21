@@ -127,7 +127,7 @@ export default {
           console.log(111)
           if (res.status == '0') {
             Object.keys(this.eduForm).forEach(name => {
-              this.eduForm[name].forEach(c => c.checkID = res.data)
+              this.eduForm[name].forEach(c => c.checkId = res.data)
             })
             this.updateInfo();
           } else {

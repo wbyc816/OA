@@ -80,21 +80,18 @@ export default {
       if (newVal) {
         if (this.admin != '') {
           if (this.admin == 0) {
-            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
             this.$store.dispatch('getDepById');
           } else {
-            this.$store.dispatch('setQueryDepId', '');
             this.$store.dispatch('getDeptList');
           }
         } else {
           if (this.isAdmin) {
-            this.$store.dispatch('setQueryDepId', '');
             this.$store.dispatch('getDeptList');
           } else {
-            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
             this.$store.dispatch('getDepById');
           }
         }
+        this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
         this.name = "";
         this.$store.dispatch('setQueryPage', 1);
         this.$store.dispatch('queryEmpList', {});

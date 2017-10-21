@@ -1,5 +1,5 @@
 <template>
-  <div class="paymentApp">
+  <div class="reimburseApp">
     <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px">
       <el-form-item label="预算年份" class="widthLeft40 year">
         {{year}}
@@ -12,7 +12,7 @@
         <li>可用预算{{budgetInfo.budgetRemain | toThousands}}元</li>
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
-      <el-form-item label="付款类型" prop="payTypeCode" placeholder="" class="deptArea" style="width:51%">
+      <el-form-item label="报销类型" prop="payTypeCode" placeholder="" class="deptArea" style="width:51%">
         <el-select v-model="budgetForm.payTypeCode" style="width:100%" ref="contractType">
           <el-option v-for="item in payTypes" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
@@ -71,50 +71,34 @@
       <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
     </div>
     <el-form label-position="left" :model="paymentForm" :rules="paymentRule" ref="paymentForm" label-width="128px">
-      <el-form-item label="收款供应商" prop="supplierIds">
-        <el-cascader expand-trigger="hover" :options="supplierList" :props="paymentProp" v-model="paymentForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier">
-        </el-cascader>
-      </el-form-item>
-      <ul class="supplierInfo clearfix" v-show="supplierInfo">
-        <li>开户银行 {{supplierInfo.supplierBank}}</li>
-        <li>收款账户 {{supplierInfo.supplierBankAccountName}}</li>
-      </ul>
-      <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea">
+      <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea" style="width:51%">
         <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType">
           <el-option v-for="item in payMthods" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="其他" prop="paymentOthers" class="arrArea" v-if="paymentForm.payMthodCode=='FIN0104'" label-width="100px">
+      <el-form-item label="其他" prop="paymentOthers" class="arrArea" v-if="paymentForm.payMthodCode=='FIN0104'" label-width="100px" style="width:49%">
         <el-input v-model="paymentForm.paymentOthers">
         </el-input>
       </el-form-item>
-      <el-form-item label="合同" prop="contractAttach" class="clearBoth">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:1}" :on-success="handleContractSuccess" :on-error="handleContractError" :on-change="handleContractChange" ref="contractUpload" :on-remove="handleContractRemove">
+      <el-form-item label="收款人" prop="payee" class="deptArea" style="width:51%">
+        <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
+      </el-form-item>
+      <el-form-item label="收款账户" prop="bankAccount" class="arrArea" style="width:49%" label-width="100px">
+        <el-input v-model="paymentForm.bankAccount"></el-input>
+      </el-form-item>
+      <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
+        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'BXS',finType:2,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
           <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
-      </el-form-item>
-      <el-form-item label="上传发票" prop="invoiceAttach">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
-          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
-        </el-upload>
-      </el-form-item>
-      <el-form-item label="费用类型" prop="feeType" placeholder="" class="width60">
-        <el-cascader expand-trigger="hover" :options="feeTypes" :props="feeTypeProp" v-model="paymentForm.feeType" style="width:100%" popper-class="myCascader" ref="feeType">
-        </el-cascader>
-      </el-form-item>
-      <el-form-item label="预付款" prop="isAdvancePayment" placeholder="" class="width40" label-width="110px">
-        <el-radio-group v-model="paymentForm.isAdvancePayment" class="myRadio">
-          <el-radio-button label="1">是<i></i></el-radio-button>
-          <el-radio-button label="0">否<i></i></el-radio-button>
-        </el-radio-group>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
-import _ from 'lodash'
 import { mapGetters } from 'vuex'
+import _ from 'lodash'
+
 export default {
   components: {},
   data() {
@@ -139,7 +123,7 @@ export default {
       },
       budgetRule: {
         budgetDept: [{ type: 'array', required: true, message: '请选择预算机构/科目', trigger: 'blur' }],
-        payTypeCode: [{ required: true, message: '请选择付款类型', trigger: 'blur' }],
+        payTypeCode: [{ required: true, message: '请选择报销类型', trigger: 'blur' }],
         invoiceNum: [{ required: true, message: '请输入发票号', validator: checkNum, trigger: 'blur' }],
         appMoney: [{ required: true, message: '请输入申请金额', trigger: 'blur' }],
       },
@@ -152,49 +136,38 @@ export default {
       activeCurrency: '',
       activeInvoice: '',
       budgetTable: [],
+      timeout: null,
       paymentForm: {
-        supplierIds: [],
         payMthodCode: '',
         paymentOthers: '',
-        contractAttach: [],
         invoiceAttach: [],
-        feeType: [],
-        isAdvancePayment: '0'
+        payee: '',
+        bankAccount: '',
+        empId: '',
       },
       paymentRule: {
-        contractCode: [{ required: true, message: '请选择合同类型', trigger: 'blur' }],
         payMthodCode: [{ required: true, message: '请选择付款方式', trigger: 'blur' }],
-        supplierIds: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
         paymentOthers: [{ required: true, trigger: 'blur', message: '请输入付款方式' }],
-        feeType: [{ type: 'array', required: true, trigger: 'blur', message: '请选费用类型' }],
-        isAdvancePayment: [{ required: true, trigger: 'blur' }],
         contractAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择合同' }],
         invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票' }],
+        bankAccount: [{ required: true, trigger: 'blur', message: '请输入收款账户' }],
+        payee: [{ required: true, trigger: 'blur', message: '请输入收款人' }],
       },
       invoiceAttach: [],
-      contractAttach: [],
       payMthods: [],
       types: [],
       payMthod: '',
-      supplierList: [],
-      supplierInfo: '',
       params: '',
-      feeTypes: [],
-      paymentProp: {
-        value: 'id',
-        label: 'supplierName',
-        children: 'supplier'
-      },
       budgetProp: {
         label: 'budgetItemName',
         value: 'budgetItemCode',
         children: 'items'
       },
-      feeTypeProp: {
-        label: 'dictName',
-        value: 'dictCode',
-        children: 'child'
-      }
+      testprops: {
+        value: "name",
+        label: "name"
+      },
+      payees: [],
     }
   },
   computed: {
@@ -216,14 +189,16 @@ export default {
     ])
   },
   created() {
-    this.getPayType(); //付款类型
-    this.getBudgetDeptList(); //预算机构/科目
-    this.getFileCatalogue(); //收款供应商
+    this.getPayType(); //报销类型
+    this.getBudgetDeptList(); //预算机构
     this.getInvoiceList(); //发票类型
     this.getCurrencyList(); //币种
     this.getPayMthod(); //付款方式
-    this.getFeeTypes(4); //费用类型
-    this.getFeeTypes(5); //费用类型
+  },
+  mounted() {
+    this.paymentForm.payee = this.userInfo.name;
+    this.paymentForm.empId = this.userInfo.empId;
+    this.getEmpBankAccount(this.userInfo.empId);
   },
   methods: {
     fomatMoney(val) {
@@ -247,74 +222,77 @@ export default {
       if (this.budgetTable.length != 0) {
         this.$refs.paymentForm.validate((valid) => {
           if (valid) {
-            this.$refs.contractUpload.submit();
+            this.$refs.invoiceUpload.submit();
           } else {
             this.$message.warning('请检查填写字段')
             this.$emit('submitMiddle', false);
             return false;
           }
         });
-      } else {
+      }else{
         this.$message.warning('未添加付款项');
       }
+
     },
     submitAll() {
       var payMthod = this.payMthods.find(i => i.dictCode == this.paymentForm.payMthodCode);
-      var feeType = this.getFeeType();
-      var finPayment = {
-        "budgetYear": this.year, //预算年份
-        "supplierId": this.supplierInfo.id, //供应商id
-        "supplierName": this.supplierInfo.supplierName, //供应商名
-        "supplierBank": this.supplierInfo.supplierBank, //供应商开户银行
-        "supplierBankAccountName": this.supplierInfo.supplierBankAccountName, //供应商开户账号名
-        "supplierBankAccountCode": this.supplierInfo.supplierBankAccountCode, //供应商开户账号编号
-        "totalMoney": this.totalMoney, //合计金额
+      var tDocFinReimbursementItems = this.clone(this.budgetTable).map(function(b) {
+        delete b.currencyCode;
+        delete b.appMoney;
+        b.receiptTicket = b.invoiceCode.join();
+        delete b.invoiceCode;
+        return b;
+      });
+      var tDocFinReimbursement = {
+        "budgetYear": this.year,
         "paymentMethodCode": payMthod.dictCode, //付款方式code 
         "paymentMethodName": payMthod.dictName, //付款方式名
         "paymentOthers": this.paymentForm.paymentOthers, //其他付款方式名
-        "isAdvancePayment": this.paymentForm.isAdvancePayment, //是否是预付款, 1为是, 0为否
-        "isProduction": feeType.pro, //是否是生产类, 1为是,0为否
-        "costTypeCode": feeType.dictCode, //费用类型code , FIN04和FIN05 中
-        "costTypeName": feeType.dictName //费用类型名
-      };
-      console.log(this.clone(this.budgetTable));
-      var paymentItems = this.clone(this.budgetTable).map(function(b) {
-        delete b.currencyCode;
-        delete b.appMoney;
-        b.invoiceCode = b.invoiceCode.join();
-        return b;
-      });
-      var finFileIds = this.contractAttach.concat(this.invoiceAttach);
-      console.log(finPayment, paymentItems, finFileIds);
-      this.$emit('submitMiddle', { finPayment: finPayment, paymentItems: paymentItems, finFileIds: finFileIds })
+        "payeeEmpId": this.paymentForm.empId,
+        "payeeName": this.paymentForm.payee,
+        "payeeAccount": this.paymentForm.bankAccount,
+        "tDocFinReimbursementItems": tDocFinReimbursementItems
+      }
+      // console.log(this.clone(this.budgetTable));
+      var finFileIds = this.invoiceAttach;
+      console.log(tDocFinReimbursement, finFileIds);
+      this.$emit('submitMiddle', { tDocFinReimbursement: tDocFinReimbursement,finFileIds:finFileIds })
     },
     invoiceTypeChange(code) {
       if (code != 'FIN0201') {
         this.budgetForm.invoiceNum = '';
       }
     },
-    handleContractSuccess(res, file) {
-      this.contractAttach.push(res.data);
-      if (this.contractAttach.length == this.paymentForm.contractAttach.length) {
-        this.$refs.invoiceUpload.submit();
-      }
-    },
-    handleContractError(res, file) {
-      this.$emit('submitMiddle', false);
-      this.$message.error('合同上传失败，请重试');
-    },
-    handleContractChange(file, fileList) {
-      const isLt20M = file.size / 1024 / 1024 < 20;
-      if (!isLt20M) {
-        this.$message.error('上传合同大小不能超过 20MB!');
-      }
-      if (isLt20M) {
-        this.paymentForm.contractAttach = fileList;
-      }
-    },
+    querySearchAsync(queryString, cb) {
+      clearTimeout(this.timeout);
+      var that = this;
+      this.timeout = setTimeout(() => {
+        that.$http.post('/emp/queryEmpDeptList', { name: that.paymentForm.payee, pageSize: 100, })
+          .then(res => {
+            if (res.status == 0) {
+              if (res.empVoList) {
+                cb(res.empVoList)
+              } else {
+                cb([])
+              }
+            } else {
+              cb([])
+            }
+          })
+      }, 600);
 
-    handleContractRemove() {
-
+    },
+    handleSelect(item) {
+      this.getEmpBankAccount(item.empId);
+      this.paymentForm.empId = item.empId
+    },
+    getEmpBankAccount(Id) {
+      this.$http.post('/doc/getEmpBankAccount', { empId: Id })
+        .then(res => {
+          if (res.status == 0) {
+            this.paymentForm.bankAccount = res.data.data.bankAccount;
+          }
+        })
     },
     handleInvoiceSuccess(res, file) {
       this.invoiceAttach.push(res.data);
@@ -343,22 +321,20 @@ export default {
         if (valid) {
           var dep = this.getBudgetDep();
           var invoice = this.invoiceList.find(i => i.dictCode == this.activeInvoice);
+          var currency = this.currencyList.find(c => c.currencyCode == this.activeCurrency);
           var payType = this.payTypes.find(i => i.dictCode == this.budgetForm.payTypeCode);
-          var currency = this.currencyList.find(c => c.currencyCode == this.activeCurrency)
           var item = {
-            "paymentTypeCode": payType.dictCode, //付款申请类型code, DOC04中
-            "paymentTypeName": payType.dictName, //付款申请类型名
+            "docTypeCode": payType.dictCode, //付款申请类型code, DOC04中
+            "docTypeName": payType.dictName, //付款申请类型名
             "budgetDeptId": dep.budgetDeptCode, //预算部门id
             "budgetDeptName": dep.budgetDeptName, //预算部门名
             "budgetItemId": dep.budgetItemCode, //预算科目id
             "budgetItemName": dep.budgetItemName, //预算科目名
             "money": this.budgetForm.appMoney, //申报金额
-            "invoiceTypeCode": invoice.dictCode, //发票类型code, FIN02中
-            "invoiceTypeName": invoice.dictName, //发票类型名
+            "receiptTypeCode": invoice.dictCode, //发票类型code, FIN02中
+            "receiptTypeName": invoice.dictName, //发票类型名
             "accurencyName": currency.currencyName, //币种
             "currencyCode": currency.currencyCode,
-            "exchangeRateId": "", //汇率id
-            "exchangeRate": "", //汇率
             "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
             "rmb": "", //对应的人民币
             "appMoney": this.budgetForm.appMoney,
@@ -368,12 +344,11 @@ export default {
             .then(res => {
               if (res.status == 0) {
                 item.rmb = res.data.amount;
-                item.exchangeRateId = res.data.rateId;
-                item.exchangeRate = res.data.rateReverse;
                 if (this.activeInvoice == 'FIN0201') {
 
                 }
                 this.budgetTable.push(item);
+                console.log(item);
               } else {
                 console.log('货币兑换失败')
               }
@@ -410,12 +385,12 @@ export default {
       return temp;
     },
     getPayType() {
-      this.$http.post('/api/getDict', { dictCode: 'DOC04' })
+      this.$http.post('/api/getDict', { dictCode: 'DOC05' })
         .then(res => {
           if (res.status == '0') {
             this.payTypes = res.data;
           } else {
-            console.log('获取付款类型失败')
+            console.log('获取报销类型失败')
           }
         }, res => {
 
@@ -428,30 +403,6 @@ export default {
             this.payMthods = res.data;
           } else {
             console.log('获取付款方式失败')
-          }
-        }, res => {
-
-        })
-    },
-    getFeeTypes(num) {
-      this.$http.post('/api/getDict', { dictCode: 'FIN0' + num })
-        .then(res => {
-          if (res.status == '0') {
-            res.data.forEach(r => {
-              if (num == 5) {
-                r.pro = 1
-              } else {
-                r.pro = 0
-              }
-            })
-            var item = [{
-              dictName: num == 5 ? '生产类' : '非生产类',
-              dictCode: num,
-              child: res.data
-            }]
-            this.feeTypes = this.feeTypes.concat(item);
-          } else {
-            console.log('获取费用类型失败')
           }
         }, res => {
 
@@ -481,19 +432,6 @@ export default {
           }
         }, res => {
 
-        })
-    },
-    getFileCatalogue() {
-      this.$http.post('/doc/getSupplier')
-        .then(res => {
-          if (res.status == '0') {
-            res.data.forEach((s, index) => {
-              s.id = index;
-            })
-            this.supplierList = res.data;
-          } else {
-            console.log('获取供应商失败')
-          }
         })
     },
     getBudgetDeptList() {
@@ -538,28 +476,6 @@ export default {
           }
         })
     },
-    supplierChange(val) {
-      var len = this.paymentForm.supplierIds.length;
-      var temp = this.supplierList;
-      for (var i = 0; i < len; i++) {
-        temp = temp.find(s => s.id == this.paymentForm.supplierIds[i]);
-        if (temp.supplier && temp.supplier.length != 0) {
-          temp = temp.supplier;
-        }
-      }
-      this.supplierInfo = temp
-    },
-    getFeeType() {
-      var len = this.paymentForm.feeType.length;
-      var temp = this.feeTypes;
-      for (var i = 0; i < len; i++) {
-        temp = temp.find(s => s.dictCode == this.paymentForm.feeType[i]);
-        if (temp.child && temp.child.length != 0) {
-          temp = temp.child;
-        }
-      }
-      return temp
-    },
     getBudgetDep() {
       var len = this.budgetForm.budgetDept.length;
       var temp = this.budgetDeptList;
@@ -577,7 +493,7 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.paymentApp {
+.reimburseApp {
   // .el-input {
   //   width: 100%;
   // }

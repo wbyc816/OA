@@ -9,7 +9,7 @@
           <th v-for="title in tableTitle">{{title}}</th>
         </tr>
       </thead>
-      <tbody v-for="doc in docData" :key="doc.taskTime">
+      <tbody v-for="doc in docData">
         <tr>
           <td>{{doc.docDenseType}}</td>
           <td>{{doc.docImprotType}}</td>
