@@ -16,8 +16,8 @@
 
 
 
-      <el-form-item label="付款方式" prop="choosePayType" class="flw50"  ref="paymentMethod">
-        <el-select v-model="loanAppForm.choosePayType" @change="isCashType">
+      <el-form-item label="付款方式" prop="choosePayType" class="flw50" >
+        <el-select v-model="loanAppForm.choosePayType" @change="isCashType"  ref="paymentMethod">
           <el-option v-for="payType in payTypes"  :label="payType.dictName" :value="payType.dictCode">
           </el-option>
         </el-select>
@@ -216,6 +216,7 @@ export default {
         };
       },
        handleSelect(item) {
+        console.log(item.empId);
         this.getEmpBankAccount(item.empId);
       },
 
@@ -240,6 +241,7 @@ export default {
     },
     isCashType(val){
       // this.paymentMethodName="";
+      console.log(this.$refs.paymentMethod);
       if(val=="FIN0103"){
         this.collectionInformation=0;
       }else{
@@ -248,6 +250,7 @@ export default {
     },
     getEmpBankAccount(Id){
       var that=this;
+      console.log(Id)
       that.$http.post('/doc/getEmpBankAccount', { 
         empId:Id
        })
@@ -296,20 +299,23 @@ export default {
     //   this.signDialogVisible = false;
     // },
     submitForm() {
-      var that = this;
+      // var that = this;
       this.$refs.loanAppForm.validate((valid) => {
         if (valid) {
           // var dep=this.getBudgetDep();
+          console.log(this.$refs.paymentMethod);
           this.params = {
             docFinBorrow: {
               "money":this.loanAppForm.appMoney,//金额
               "accurencyName": this.$refs.accurency.selectedLabel, //货币名字
-              "paymentMethodName": this.$refs.paymentMethod.label, //付款方式名字
+              "paymentMethodName": this.$refs.paymentMethod.Label, //付款方式名字
               "paymentMethodCode": this.$refs.paymentMethod.fieldValue, //付款方式编号
               "gatherName": this.loanAppForm.payee, //收款人
               "gatherAccount": this.loanAppForm.bankAccount, // 收款人账户
             }
+
           }
+          console.log(this.params);
           this.$emit('submitMiddle', this.params);
         } else {
           this.$message.warning('请检查填写字段')
