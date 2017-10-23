@@ -19,12 +19,12 @@
         </el-select>
       </el-form-item>
       <el-form-item label="申请金额" label-width="100px" class="arrArea" style="width:49%" prop="appMoney">
-        <el-input v-model="budgetForm.appMoney" class="hasUnit">
+        <money-input v-model="budgetForm.appMoney">
           <el-select v-model="activeCurrency" slot="prepend" style="width:90px">
             <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
           </el-select>
           <template slot="append">元</template>
-        </el-input>
+        </money-input>
       </el-form-item>
       <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
         <el-input v-model="budgetForm.invoiceNum" class="hasUnit" :disabled="activeInvoice!='FIN0201'">
@@ -55,7 +55,7 @@
         </el-table-column>
         <el-table-column property="appMoney" label="报销金额(元)" width="130">
           <template scope="scope">
-            <el-input v-model="scope.row.appMoney" @change="tranMoney(scope.row)"></el-input>
+            <money-input v-model="scope.row.appMoney" :prepend="false" :append="false" @change="tranMoney(scope.row)"></money-input>
           </template>
         </el-table-column>
         <el-table-column property="accurencyName" label="币种" width="75"></el-table-column>
@@ -113,10 +113,11 @@
   </div>
 </template>
 <script>
+import MoneyInput from '../../../components/moneyInput.component'
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 export default {
-  components: {},
+  components: {MoneyInput},
   data() {
     var that = this;
     var checkNum = function(rule, value, callback) {
@@ -226,23 +227,6 @@ export default {
     this.getFeeTypes(5); //费用类型
   },
   methods: {
-    fomatMoney(val) {
-      val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
-      if (val) {
-        this.contractForm.contractCashPledge = val[0];
-        this.$refs.contractCashPledge.setCurrentValue(val[0]);
-      } else {
-        this.contractForm.contractCashPledge = ''
-        this.$refs.contractCashPledge.setCurrentValue('')
-      }
-    },
-    blurInput(event) {
-      var temp = event.target.value.split('.');
-      if (temp.length == 2 && (temp[1] == undefined || temp[1] == '' || temp[1] == null)) {
-        this.contractForm.contractCashPledge = temp[0];
-        this.$refs.contractCashPledge.setCurrentValue(temp[0]);
-      }
-    },
     submitForm() {
       if (this.budgetTable.length != 0) {
         this.$refs.paymentForm.validate((valid) => {

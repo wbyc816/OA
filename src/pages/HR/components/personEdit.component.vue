@@ -178,19 +178,25 @@ export default {
       }
     },
     updateInfo() {
-      this.$http.post('/resume/updateEmp', Object.assign({ createUser: this.userInfo.name, oldId: this.resumeInfo.id, empId: this.userInfo.empId }, this.personForm), { body: true })
-        .then(
-          res => {
-            this.submitLoading = false;
-            if (res.status == '0') {
-              this.$message.success('提交修改申请成功,请等待后台审核！')
-              this.$router.push('/HR/resume')
-            } else {
-              this.$message.error('修改个人信息失败,请稍后再试！');
-            }
-          }, res => {
+      this.$http.post('/resume/insertCheck', { empId: this.userInfo.empId }, { body: true })
+        .then(res => {
+          if (res.status == 0) {
+            this.$http.post('/resume/updateEmp', Object.assign({ createUser: this.userInfo.name, oldId: this.resumeInfo.id, empId: this.userInfo.empId,checkId:res.data }, this.personForm), { body: true })
+              .then(
+                res => {
+                  this.submitLoading = false;
+                  if (res.status == '0') {
+                    this.$message.success('提交修改申请成功,请等待后台审核！')
+                    this.$router.push('/HR/resume')
+                  } else {
+                    this.$message.error('修改个人信息失败,请稍后再试！');
+                  }
+                }, res => {
 
-          })
+                })
+          }
+        })
+
     }
   }
 }

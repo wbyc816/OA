@@ -14,6 +14,10 @@
           </div>
           <el-form-item :label="item.label" :prop="edu.enName+'.'+index+'.'+item.name" :rules="{type:item.type,required: true, message:item.label+'不能为空', trigger: 'blur'}" v-for="item in edu.prop">
             <el-date-picker type="date" v-model="info[item.name]" style="width: 100%;" :editable="false" :clearable="false" v-if="item.type=='date'"></el-date-picker>
+            <el-radio-group v-model="info[item.name]" class="myRadio" v-else-if="item.type=='boolean'">
+              <el-radio-button label="1">是<i></i></el-radio-button>
+              <el-radio-button label="0">否<i></i></el-radio-button>
+            </el-radio-group>
             <el-input v-model="info[item.name]" v-else></el-input>
           </el-form-item>
           <div class="borderBox"></div>
@@ -34,14 +38,13 @@ export default {
       type: Boolean,
       default: false
     },
-    dataList:{
-      type:Array
+    dataList: {
+      type: Array
     }
   },
   data() {
     return {
-      eduForm: {
-      },
+      eduForm: {},
       submitLoading: false,
       constTemp: {}
     }
@@ -83,8 +86,8 @@ export default {
           temp[c.name] = '';
         })
         this.constTemp[e.enName] = temp;
-        this.$set(this.eduForm,e.enName,[])
-      })      
+        this.$set(this.eduForm, e.enName, [])
+      })
     },
     getCheckId() {
       return this.$http.post('/resume/insertCheck', { empId: this.userInfo.empId }, { body: true })
@@ -142,11 +145,11 @@ export default {
       var nameList = []
       this.dataList.forEach(e => {
         if (this.eduForm[e.enName].length > 0) {
-          var params=this.eduForm[e.enName].map(c=>this.changeTime(c));
-          if(e.extraParams){
-            Object.assign(params,e.extraParams)
+          var params = this.eduForm[e.enName].map(c => this.changeTime(c));
+          if (e.extraParams) {
+            Object.assign(params, e.extraParams)
           }
-          requests.push(this.$http.post(e.postUrl,params, { body: true }));
+          requests.push(this.$http.post(e.postUrl, params, { body: true }));
           nameList.push(e.head);
         }
       })
@@ -155,7 +158,7 @@ export default {
           this.submitLoading = false;
           var successList = [];
           var failList = [];
-          res.forEach((r,index) => {
+          res.forEach((r, index) => {
             if (r.status == 0) {
               successList.push(nameList[index]);
             } else {

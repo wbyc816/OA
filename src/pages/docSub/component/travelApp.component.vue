@@ -36,9 +36,9 @@
         <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" popper-class="myCascader" ref="budgetDep" style="width:100%"></el-cascader>
       </el-form-item>
       <el-form-item label="出差总预算" prop="budgetMoney" class="budgetMoney">
-        <el-input v-model="travelForm.budgetMoney" ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
+        <money-input v-model="travelForm.budgetMoney" :prepend="false">
           <template slot="append">元</template>
-        </el-input>
+        </money-input>
         <span class="usge">預算已使用率 75%</span>
       </el-form-item>
     </el-form>
@@ -47,9 +47,10 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import MoneyInput from '../../../components/moneyInput.component'
 import PersonDialog from '../../../components/personDialog.component'
 export default {
-  components: { PersonDialog },
+  components: { PersonDialog,MoneyInput },
   data() {
     var checkDate = (rule, value, callback) => {
       if (value.every(val => val != null)) {

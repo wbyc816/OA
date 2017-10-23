@@ -1,7 +1,7 @@
 <template>
   <div id="homeChild">
     <el-carousel height="347px" arrow="always">
-      <el-carousel-item v-for="p in pics" :key="o">
+      <el-carousel-item v-for="p in pics">
         <img :src="p">
       </el-carousel-item>
     </el-carousel>

@@ -76,4 +76,9 @@ export const docConfig = [{
     code: 'BXS',
     url:'/doc/reimburseApp'
   },
+  {
+    docName: '预付款核销申请',
+    code: 'YFK',
+    url:'/doc/docFinVerification'
+  },
 ]

@@ -14,7 +14,7 @@
                        <el-input v-model="baseForm.emailTitle" ></el-input>
                     </el-form-item>
                     <el-form-item label="内容">
-                        <el-input type="textarea" v-model="baseForm.emailContent" class="textarea" resize="none"></el-input>
+                        <el-input type="textarea" :rows="6" v-model="baseForm.emailContent" class="textarea" resize="none"></el-input>
                     </el-form-item>
                     <el-form-item >
                       <el-button type="primary" @click="onSubmit">提交</el-button>

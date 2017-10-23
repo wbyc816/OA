@@ -12,10 +12,10 @@
             <el-option v-for="item in urgency" :label="item.dictName" :value="item.dictCode"></el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="6" v-if="!notype">
           <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false"></el-cascader>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="notype?18:12">
           <el-input placeholder="公文标题" v-model="params.keyWords"></el-input>
         </el-col>
         <el-col :span="6">
@@ -38,6 +38,10 @@ export default {
   props: {
     title: {
       type: String
+    },
+    notype: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -70,7 +74,9 @@ export default {
     this.$store.dispatch('getConfident');
     this.$store.dispatch('getUrgency');
     this.$store.dispatch('getDocForm');
-    this.getTypes();
+    if (!this.notype) {
+      this.getTypes();
+    }
   },
   methods: {
     dateChange(val) {
@@ -79,8 +85,8 @@ export default {
     submitParam() {
       if (this.docTypes.length != 0) {
         this.params.docType = this.docTypes[this.docTypes.length - 1]
-      }else{
-        this.params.docType='';
+      } else {
+        this.params.docType = '';
       }
       this.$emit('search', this.params)
     },
@@ -114,9 +120,11 @@ $sub:#1465C0;
     }
   }
 }
-.el-cascader__label{
+
+.el-cascader__label {
   line-height: 46px;
 }
+
 .el-date-editor.el-input {
   width: 100%;
 }

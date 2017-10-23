@@ -5,7 +5,7 @@ import Vue from 'vue'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.defaults.baseURL = 'http://apitest.donghaiair.com:8080/DonghaiAirAPI';
 // axios.defaults.baseURL = 'http://localhost:8080/DongHaiAirAPI/';
-// axios.defaults.baseURL = 'http://apitest.donghaiair.com:8899/DonghaiAirAPI';
+// axios.defaults.baseURL = 'http://58.250.197.143:8899/DonghaiAirAPI';  //外网
 
 
 //POST传参序列化

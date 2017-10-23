@@ -38,6 +38,7 @@ import HTS from './component/contractApp.component.vue'
 import FKS from './component/paymentApp.component.vue'
 import JKS from './component/loanApp.component.vue'
 import BXS from './component/reimburseApp.component.vue'
+import YFK from './component/prePayApp.component.vue'
 
 export default {
   data() {
@@ -73,7 +74,8 @@ export default {
     HTS,
     FKS,
     JKS,
-    BXS
+    BXS,
+    YFK
   },
   created() {
     this.initDoc();

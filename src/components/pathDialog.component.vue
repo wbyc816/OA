@@ -30,7 +30,7 @@
             <span>审批路径</span>
             <i class="el-icon-close" @click="close"></i>
           </div>
-          <ul class="nodeWrap">
+          <ul class="nodeWrap" ref="nodeWrap">
             <li v-for="(node,nodeIndex) in pathList" class="nodeBox">
               <i class="el-icon-close nodeClose" @click="deleteNode(node,nodeIndex)" v-if="node.type!=3"></i>
               <span class="nodeIndex">{{nodeIndex+1}}</span>
@@ -118,7 +118,7 @@ export default {
         } else {
           this.pathList.push({
             typeId: 'secretary',
-            typeIdName: '公文管理员',
+            typeIdName: '发起会签人',
             type: 3
           })
         }
@@ -151,8 +151,10 @@ export default {
         if (children.length == 0 ? true : (children[0].type == type && children.find(c => c.typeId == node.typeId) == undefined)) {
           children.push(node)
         }
-
       }
+      this.$nextTick(function(){
+        this.$refs.nodeWrap.scrollTop=this.$refs.nodeWrap.scrollHeight;
+      })
     },
     deleteNode(node, index) {
       this.pathList.splice(index, 1);
@@ -178,7 +180,7 @@ export default {
           if (last.children.length != 0) {
             this.pathList.push({
               typeId: 'secretary',
-              typeIdName: '公文管理员',
+              typeIdName: '发起会签人',
               type: 3
             })
           } else {

@@ -50,7 +50,7 @@
           </el-form-item>
           <el-form-item label="短信会议通知">
             <el-radio-group v-model="appForm.isMessage" class="myRadio">
-              <el-radio-button label="1">发放<i></i></el-radio-button>
+              <!-- <el-radio-button label="1">发放<i></i></el-radio-button> -->
               <el-radio-button label="0">不发放<i></i></el-radio-button>
             </el-radio-group>
           </el-form-item>

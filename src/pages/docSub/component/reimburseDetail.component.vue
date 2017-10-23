@@ -18,12 +18,12 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column property="money" label="报销金额(元)" width="130">
+      <el-table-column property="money" label="报销金额(元)" width="150">
         <template scope="scope">
           {{scope.row.accurencyName}} <span style="color:#0460AE">{{scope.row.money | toThousands}}</span>
         </template>
       </el-table-column>
-      <el-table-column property="rmb" label="人民币(元)" :formatter="formatMoney" width="130"></el-table-column>
+      <el-table-column property="rmb" label="人民币(元)" :formatter="formatMoney" width="110"></el-table-column>
     </el-table>
 
     <p class="totalMoney">合计金额 人民币 <span>{{info[0].tDocFinReimbursement.totalMoney | toThousands}} 元</span></p>

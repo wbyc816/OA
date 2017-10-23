@@ -135,8 +135,9 @@ export default {
       // this.$store.dispatch('getUserInfo');
       this.baseUrl = 'http://127.0.0.1:8080'
     } else {
-      this.baseUrl = 'http://apitest.donghaiair.com:8082'
+      // this.baseUrl = 'http://apitest.donghaiair.com:8082'
       // this.baseUrl = 'http://localhost:8080'
+      this.baseUrl = 'http://58.250.197.143:8899'  //外网
     }
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));
@@ -563,7 +564,7 @@ footer {
           text-align: right;
         }
       }
-      $widths: (1: 15%, 2: 20%, 3: 20%, 4: 20%, 5: 25%);
+      $widths: (1: 15%, 2: 18%, 3: 18%, 4: 22%, 5: 27%);
       @each $num,
       $width in $widths {
         a:nth-child(#{$num}) {

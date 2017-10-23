@@ -16,7 +16,7 @@ export const contractInfo = [{
 export const eduInfo = [{
   head: '教育经历',
   enName:'EduInfo',
-  prop: [{ name: 'graduationSchool', label: '毕业院校', width: '' }, { name: 'major', label: '专业', width: '' }, { name: 'eduBackground', label: '学历', width: '' }, { name: 'learningForms', label: '学习形式', width: '' }, { name: 'isHighest', label: '最高学历', width: '' }, { name: 'graduationDate', label: '毕业日期', width: '', type: 'date' }],
+  prop: [{ name: 'graduationSchool', label: '毕业院校', width: '' }, { name: 'major', label: '专业', width: '' }, { name: 'eduBackground', label: '学历', width: '' }, { name: 'learningForms', label: '学习形式', width: '' }, { name: 'isHighest', label: '最高学历', width: '' ,type:'boolean'}, { name: 'graduationDate', label: '毕业日期', width: '', type: 'date' }],
   url: '/resume/getEduInfo',
   postUrl:'/resume/updateEduInfo'
 }, {
