@@ -16,7 +16,7 @@
          <ul>
            <li>年度预算{{yearBudget}}元</li>
            <li>可用预算{{useBudget}}元</li>
-           <li>预算执行比例{{cExecRate}}</li>
+           <li>预算执行比例{{execRateStr}}</li>
          </ul>
         </div>
        </el-form-item>
@@ -37,7 +37,7 @@
       <el-table-column type="index" label=" " width="40"></el-table-column>
       <el-table-column property="budgetDept" label="预算机构" ></el-table-column>
       <el-table-column property="useBudget" label="可用额度（元）" ></el-table-column>
-      <el-table-column property="cExecRate" label="执行比例" width="100"></el-table-column>
+      <el-table-column property="execRateStr" label="执行比例" width="100"></el-table-column>
       <el-table-column property="budgetMoney" label="申报额度（元）" ></el-table-column>
       <el-table-column label="操作" width="55">
         <template scope="scope">
@@ -78,7 +78,7 @@ export default {
       showData:0,
       yearBudget:0,
       useBudget:0,
-      cExecRate:"0%",
+      execRateStr:"0%",
       budgetForm: {
         isBookFlight: '1',
         deptArea: '',
@@ -135,7 +135,7 @@ export default {
           temp.budgetDept=this.$refs.budgetDept.currentLabels[0]+"/"+this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length-1];
           temp.budgetMoney=this.budgetForm.budgetMoney;
           temp.useBudget=this.useBudget;
-          temp.cExecRate=this.cExecRate;
+          temp.execRateStr=this.execRateStr;
           temp.budgetDeptId=this.budgetForm.budgetDept[0];
           temp.budgetDeptName=this.$refs.budgetDept.currentLabels[0];
           temp.budgetItemId=this.budgetForm.budgetDept[this.budgetForm.budgetDept.length-1];
@@ -300,7 +300,7 @@ export default {
         .then(res => {
           if (res.status == 0) {
           this.showData=1;
-          this.cExecRate=res.data.budgetRate*100+"%";
+          this.execRateStr=res.data.execRateStr;
           this.yearBudget=res.data.budgetTotal;
           this.useBudget=res.data.budgetRemain;
           }
