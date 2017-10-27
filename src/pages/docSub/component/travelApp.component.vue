@@ -33,13 +33,13 @@
         <!-- <el-input class="search" :readonly="true" :value="travelForm.signName">
           <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
         </el-input> -->
-        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" popper-class="myCascader" ref="budgetDep" style="width:100%"></el-cascader>
+        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" ref="budgetDep" style="width:100%"></el-cascader>
       </el-form-item>
       <el-form-item label="出差总预算" prop="budgetMoney" class="budgetMoney">
         <money-input v-model="travelForm.budgetMoney" :prepend="false">
           <template slot="append">元</template>
         </money-input>
-        <span class="usge">預算已使用率 75%</span>
+        <span class="usge" v-show="budgetInfo.execRateStr">預算已使用率 {{budgetInfo.execRateStr}}</span>
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog>
@@ -50,7 +50,7 @@ import { mapGetters } from 'vuex'
 import MoneyInput from '../../../components/moneyInput.component'
 import PersonDialog from '../../../components/personDialog.component'
 export default {
-  components: { PersonDialog,MoneyInput },
+  components: { PersonDialog, MoneyInput },
   data() {
     var checkDate = (rule, value, callback) => {
       if (value.every(val => val != null)) {
@@ -68,7 +68,8 @@ export default {
     };
     return {
       signDialogVisible: false,
-      bookTypes:[],
+      year: new Date().getFullYear(),
+      bookTypes: [],
       travelForm: {
         isBookFlight: '1',
         deptArea: '',
@@ -100,6 +101,7 @@ export default {
         value: 'budgetItemCode',
         children: 'items'
       },
+      budgetInfo: {}
     }
   },
   computed: {
@@ -122,7 +124,7 @@ export default {
       var that = this;
       this.$refs.travelForm.validate((valid) => {
         if (valid) {
-          var dep=this.getBudgetDep();
+          var dep = this.getBudgetDep();
           this.params = {
             app: {
               "startTime": this.travelForm.timeRange[0].getTime(), //出差开始时间
@@ -158,16 +160,6 @@ export default {
     closePerson(index) {
       this.travelForm.person.splice(index, 1);
     },
-    fomatMoney(val) {
-      val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
-      if (val) {
-        this.travelForm.budgetMoney = val[0];
-        this.$refs.budgetMoney.setCurrentValue(val[0]);
-      } else {
-        this.travelForm.budgetMoney = ''
-        this.$refs.budgetMoney.setCurrentValue('')
-      }
-    },
     getBudgetDeptList() {
       this.$http.post('/doc/getBudItemTreeList')
         .then(res => {
@@ -200,33 +192,40 @@ export default {
           })
       }
     },
-    getBookType(){
-      this.$http.post('/api/getDict',{dictCode:'ADM05'})
-      .then(res=>{
-        if(res.status==0){
-          this.bookTypes=res.data;
-          this.travelForm.bookType=this.bookTypes[0].dictCode
-        }
-      })
+    getBookType() {
+      this.$http.post('/api/getDict', { dictCode: 'ADM05' })
+        .then(res => {
+          if (res.status == 0) {
+            this.bookTypes = res.data;
+            this.travelForm.bookType = this.bookTypes[0].dictCode
+          }
+        })
     },
-    getBudgetDep(){
-      var len=this.travelForm.budgetDept.length;
-      var temp=this.budgetDeptList;
-      for(var i=0;i<len;i++){
-        temp=temp.find(dep=>dep.budgetItemCode==this.travelForm.budgetDept[i]);
-        if(temp.items&&temp.items.length!=0){
-          temp=temp.items;
+    getBudgetDep() {
+      var len = this.travelForm.budgetDept.length;
+      var temp = this.budgetDeptList;
+      for (var i = 0; i < len; i++) {
+        temp = temp.find(dep => dep.budgetItemCode == this.travelForm.budgetDept[i]);
+        if (temp.items && temp.items.length != 0) {
+          temp = temp.items;
         }
       }
       return temp;
     },
-    blurInput(event){
-      var temp=event.target.value.split('.');
-      if(temp.length==2&&(temp[1]==undefined||temp[1]==''||temp[1]==null)){
-        this.travelForm.budgetMoney = temp[0];
-        this.$refs.budgetMoney.setCurrentValue(temp[0]);
+    depChange(val) {
+      if (val.length>0) {
+        this.$http.post('/doc/getExecStatisofItemId', { budgetYear: this.year, budgetItemCode: val[val.length - 1] })
+          .then(res => {
+            if (res.status == 0) {
+              this.budgetInfo = res.data;
+            } else {
+
+            }
+          })
+      }else{
+        this.budgetInfo={}
       }
-    }
+    },
   }
 }
 
@@ -271,7 +270,7 @@ $main:#0460AE;
   }
   .usge {
     color: $main;
-    vertical-align: text-top;
+    margin-left: 10px;
   }
   .bookType {
     float: right;
@@ -286,7 +285,8 @@ $main:#0460AE;
     }
   }
   .budgetMoney {
-    .el-input {
+    .moenyInput {
+      display: inline-block;
       width: 40%;
     }
   }

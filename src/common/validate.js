@@ -1,5 +1,5 @@
-export const validateEquel = (compareValue)=>{
-  return (rule,value,callback) => {
+export const validateEquel = (compareValue) => {
+  return (rule, value, callback) => {
     if (value === '') {
       callback(new Error('请再次输入密码'));
     } else if (value !== compareValue) {
@@ -11,8 +11,8 @@ export const validateEquel = (compareValue)=>{
   }
 }
 
-export const validateDiff = (compareValue)=>{
-  return (rule,value,callback) => {
+export const validateDiff = (compareValue) => {
+  return (rule, value, callback) => {
     if (value === '') {
       callback(new Error('请输入新密码'));
     } else if (value === compareValue) {
@@ -22,3 +22,15 @@ export const validateDiff = (compareValue)=>{
     }
   }
 }
+
+export const validatePhone = (rule, value, callback) => {
+  if (value && value.length != 0) {
+    if (!(/^1[34578]\d{9}$/.test(value))) {
+      callback(new Error("手机号码格式有误"));
+    } else {
+      callback();
+    }
+  } else {
+    callback();
+  }
+};

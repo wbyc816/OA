@@ -15,6 +15,7 @@ Vue.use(Vuex);
 const state = {
   searchLoading: false,
   baseURL:'http://apitest.donghaiair.com:8080/DonghaiAirAPI',
+  // baseURL:'http://192.168.14.32:8080/DongHaiAirAPI/',
   // baseURL:'http://localhost:8080/DongHaiAirAPI/',
   // baseURL:'http://58.250.197.143:8899/DongHaiAirAPI/',  //外网
   editStatus:false,

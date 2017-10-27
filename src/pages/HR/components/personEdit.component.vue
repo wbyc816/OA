@@ -53,7 +53,7 @@
         <el-input v-model="personForm.bloodType"></el-input>
       </el-form-item>
       <el-form-item label="身份证号" prop="idNumber">
-        <el-input v-model="personForm.idNumber"></el-input>
+        <el-input v-model="personForm.idNumber" :maxlength="18"></el-input>
       </el-form-item>
       <el-form-item label="参加工作日期" prop="joinDate">
         <el-date-picker type="date" v-model="personForm.joinDate" style="width: 100%;" :editable="false" :clearable="false" @change="function(val){personForm.joinDate=val}"></el-date-picker>
@@ -67,7 +67,7 @@
       </el-form-item>
       <div class="borderBox"></div>
       <el-form-item>
-        <el-button type="primary" size="large" class="submitButton" @click.native="onSubmit" :disabled="submitLoading">提交</el-button>
+        <el-button type="primary" size="large" class="submitButton" @click="nextClick" :disabled="submitLoading">下一步</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -104,7 +104,8 @@ export default {
         picUrl: ''
       },
       rules: {
-        mobileNumber: [{ validator: this.validatePhone, trigger: 'blur,change' }]
+        mobileNumber: [{ validator: this.validatePhone, trigger: 'blur,change' }],
+        workEmail: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }]
       },
       submitLoading: false
     }
@@ -138,21 +139,14 @@ export default {
   // },
   methods: {
     onSubmit() {
-      this.$refs['personForm'].validate((valid) => {
-        if (valid) {
-          if (!this.submitLoading) {
-            this.submitLoading = true;
-            if (this.picChangeStatus) {
-              this.$refs.upload.submit();
-            } else {
-              this.updateInfo();
-            }
-          }
-
+      if (!this.submitLoading) {
+        this.submitLoading = true;
+        if (this.picChangeStatus) {
+          this.$refs.upload.submit();
         } else {
-          return false;
+          this.updateInfo();
         }
-      });
+      }
     },
     handleAvatarSuccess(res, file) {
       this.personForm.picUrl = res.data;
@@ -178,25 +172,17 @@ export default {
       }
     },
     updateInfo() {
-      this.$http.post('/resume/insertCheck', { empId: this.userInfo.empId }, { body: true })
-        .then(res => {
-          if (res.status == 0) {
-            this.$http.post('/resume/updateEmp', Object.assign({ createUser: this.userInfo.name, oldId: this.resumeInfo.id, empId: this.userInfo.empId,checkId:res.data }, this.personForm), { body: true })
-              .then(
-                res => {
-                  this.submitLoading = false;
-                  if (res.status == '0') {
-                    this.$message.success('提交修改申请成功,请等待后台审核！')
-                    this.$router.push('/HR/resume')
-                  } else {
-                    this.$message.error('修改个人信息失败,请稍后再试！');
-                  }
-                }, res => {
-
-                })
-          }
-        })
-
+      var params=Object.assign({ createUser: this.userInfo.name, oldId: this.resumeInfo.id, empId: this.userInfo.empId}, this.personForm)
+      this.$emit('submit',{emp:params})
+    },
+    nextClick() {
+      this.$refs['personForm'].validate((valid) => {
+        if (valid) {
+          this.$emit('nextClick', 'contract')
+        } else {
+          return false;
+        }
+      });
     }
   }
 }

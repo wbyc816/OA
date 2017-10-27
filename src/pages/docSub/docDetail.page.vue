@@ -31,31 +31,35 @@
             <h1 class="title">标题</h1>
             <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
-          <component v-bind:is="currentView" :info="docDetialInfo.otherInfo">
-            <!-- 组件在 vm.currentview 变化时改变！ -->
-          </component>
           <el-col :span="24" style="min-height:90px">
             <h1 class="title">请示内容</h1>
             <p class="textContent">{{docDetialInfo.doc.taskContent}}</p>
           </el-col>
-          <el-col :span="24">
-            <h1 class="title">建议路径</h1>
-            <p class="textContent">{{docDetialInfo.doc.suggestPath}}</p>
-          </el-col>
-          <el-col :span="24">
-            <h1 class="title">附件</h1>
-            <p class="attch textContent">
-              <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
-                <p v-for="file in docDetialInfo.taskFile">{{file.fileName}}</p>
-              </template>
-            </p>
-          </el-col>
-          <el-col :span="24" style="border-bottom:none">
-            <h1 class="title">附加公文</h1>
-            <p class="attch textContent">
-              <p v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</p>
-            </p>
-          </el-col>
+          <el-collapse class="clearfix clearBoth">
+            <el-collapse-item title="查看公文详情" name="1">
+              <component v-bind:is="currentView" :info="docDetialInfo.otherInfo">
+                <!-- 组件在 vm.currentview 变化时改变！ -->
+              </component>
+              <el-col :span="24">
+                <h1 class="title">建议路径</h1>
+                <p class="textContent suggestHtml" v-html="suggestHtml"></p>
+              </el-col>
+              <el-col :span="24">
+                <h1 class="title">附件</h1>
+                <p class="attch textContent">
+                  <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
+                    <a :href="file.filePath" target="_blank" v-for="file in docDetialInfo.taskFile">{{file.fileNameNew}}</a>
+                  </template>
+                </p>
+              </el-col>
+              <el-col :span="24" style="border-bottom:none">
+                <h1 class="title">附加公文</h1>
+                <p class="attch textContent">
+                  <router-link :to="'/doc/docDetail/'+file.id" v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</router-link>
+                </p>
+              </el-col>
+            </el-collapse-item>
+          </el-collapse>
         </el-row>
       </div>
       <div class='history commonBox'>
@@ -67,7 +71,8 @@
             <li class="signStart"><i class="el-icon-caret-right"></i>公文会签开始</li>
             <div class="depSignBox" v-for="depBox in task.signInfo">
               <div v-for="child in depBox.deptSigns" class="childSign">
-                <li><p class="depTip">{{depBox.deptName}}</p>{{child.signContent}}</li>
+                <li>
+                  <p class="depTip">{{depBox.deptName}}</p>{{child.signContent}}</li>
                 <li class="timeRight">{{child.signUserName}} {{child.signTime}}</li>
               </div>
             </div>
@@ -115,7 +120,7 @@
           <el-form-item class="textarea signWrap" label="接收人" prop="sign">
             <el-col :span='18' class="clearfix">
               <el-input class="search" :value="ruleForm.sign[0]?ruleForm.sign[0].signUserName:''" :readonly="true" v-show="signType==0">
-                <el-button slot="append" @click="selSignPerson">选择</el-button>
+                <el-button slot="append" @click="selSignPerson" :disabled="chooseDisable">选择</el-button>
               </el-input>
               <div class="signList" v-show="signType!=0">
                 <el-tag :key="person.id" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==1">
@@ -222,7 +227,10 @@ import JKS from './component/loanDetail.component' //借款详情
 import YSS from './component/budgetDetail.component' //预算详情
 import BXS from './component/reimburseDetail.component' //预算详情
 import FKS from './component/paymentDetail.component' //付款详情
+import YFK from './component/prePayDetail.component' //预付款详情
 import { mapGetters } from 'vuex'
+const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
+const signFlag = '<i class="signFlag">#</i>'
 
 export default {
   components: {
@@ -244,7 +252,8 @@ export default {
     JKS,
     YSS,
     BXS,
-    FKS
+    FKS,
+    YFK
   },
   data() {
     var checkSign = (rule, value, callback) => {
@@ -296,24 +305,16 @@ export default {
       isSuccessSubmit: false,
       ableSignDoc: ['CPD', 'SWD', 'LZS', 'HTS'],
       ableSign: false,
+      chooseDisable: false,
+      suggestHtml: ''
     }
   },
   created() {
-    this.$http.post("/doc/getDocDetailInfo", { id: this.$route.params.id, empId: this.userInfo.empId })
-      .then(res => {
-        if (res.status == 0) {
-          this.docDetialInfo = res.data;
-          if (this.docDetialInfo.doc.pageCode != 'CPD') {
-            this.currentView = this.docDetialInfo.doc.pageCode;
-          }
-          if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
-            this.getDistInfo();
-          }
-          this.ableSign = (this.ableSignDoc.find(code => code == this.docDetialInfo.doc.pageCode) != undefined);
-        }
-      }, res => {
-
-      })
+    this.getDetail(this.$route);
+  },
+  beforeRouteUpdate (to, from, next) {
+    this.getDetail(to);
+    next();
   },
   computed: {
     ...mapGetters([
@@ -322,6 +323,56 @@ export default {
     ])
   },
   methods: {
+    getDetail(route) {
+      this.$http.post("/doc/getDocDetailInfo", { id: route.params.id, empId: this.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            this.docDetialInfo = res.data;
+            if (this.docDetialInfo.doc.pageCode != 'CPD') {
+              this.currentView = this.docDetialInfo.doc.pageCode;
+            }
+            if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
+              this.getDistInfo();
+            }
+            this.ableSign = (this.ableSignDoc.find(code => code == this.docDetialInfo.doc.pageCode) != undefined);
+            if (this.docDetialInfo.doc.defaultSuggestVo.reciUserId) {
+              this.handleReciver(this.docDetialInfo.doc.defaultSuggestVo);
+            }
+            this.handleSuggest();
+          }
+        }, res => {
+
+        })
+    },
+    handleSuggest() {
+      var html = ''
+      this.docDetialInfo.suggests.forEach((s, i, arr) => {
+        if (s.nodeName == 'sign') {
+          if (arr[i - 1].nodeName != 'sign') {
+            html += signFlag + ' ' + s.typeIdName + ' ';
+          } else if (arr[i + 1].nodeName != 'sign') {
+            html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+          } else {
+            html += s.typeIdName + ' ';
+          }
+        } else {
+          if (i == arr.length - 1) {
+            html += s.typeIdName
+          } else {
+            html += s.typeIdName + arrowHtml
+          }
+        }
+      })
+      this.suggestHtml = html;
+    },
+    handleReciver(vo) {
+      console.log(vo)
+      this.reciver = vo;
+      this.ruleForm.sign.push({
+        signUserName: vo.reciUserName
+      });
+      this.chooseDisable = true;
+    },
     adviceChange(val) {
       if (val == 1) {
         this.ruleForm.taskContent = '同意。'
@@ -333,7 +384,6 @@ export default {
       this.ruleForm.sign = []
     },
     selSignPerson() {
-      console.log(this.signType)
       if (this.signType == 0) {
         this.selectPerson('radio');
       } else if (this.signType == 1) {
@@ -404,12 +454,12 @@ export default {
         }
       });
     },
-    submitSign() {
+    submitSign() { //会签审批
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          if (this.docDetialInfo.doc.signDoc == 1) {
-            this.docTask();
-          } else {
+          if (this.docDetialInfo.doc.signDoc == 1) { //部门会签
+            this.docTask(4);
+          } else { //人员会签
             var params = {
               "state": this.ruleForm.state,
               "signContent": this.ruleForm.taskContent,
@@ -434,7 +484,7 @@ export default {
         }
       });
     },
-    endDepSign() {
+    endDepSign() { //部门结束会签
       this.$refs.ruleForm.validateField('state', (errorMessage) => {
         if (errorMessage == '') {
           var params = {
@@ -467,8 +517,7 @@ export default {
       })
 
     },
-    docTask() {
-
+    docTask(submitType) {
       var params = {
         docId: this.docDetialInfo.doc.id,
         "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
@@ -479,7 +528,7 @@ export default {
         "taskUserId": this.userInfo.empId,
         taskContent: this.ruleForm.taskContent,
         state: this.ruleForm.state,
-        submitType: this.signType,
+        submitType: submitType ? submitType : this.signType,
         operateType: '1'
       }
       if (this.signType == '0') {
@@ -604,7 +653,17 @@ $sub:#1465C0;
       float: right;
     }
   }
-
+  .suggestHtml {
+    i {
+      color: $main;
+      &.icon-jiantouyou {
+        padding-right: 10px;
+      }
+      &.signFlag {
+        font-style: normal;
+      }
+    }
+  }
   .el-card__header {
     margin-bottom: 10px;
   }
@@ -612,6 +671,9 @@ $sub:#1465C0;
     color: blue;
     cursor: pointer;
     text-decoration: underline;
+    a {
+      display: block;
+    }
   }
   .doc-form_title {
     padding-bottom: 20px;
@@ -653,7 +715,7 @@ $sub:#1465C0;
       border-right: 1px solid #D5DADF;
     }
     .blank {
-      height: 51px;
+      height: 57px;
     }
     .title {
       width: 140px;
@@ -664,6 +726,19 @@ $sub:#1465C0;
       word-wrap: break-word;
       &.blackText {
         font-weight: bold;
+      }
+    }
+    .el-collapse {
+      border: none;
+      .el-collapse-item__header {
+        border-bottom: none;
+        font-size: 15px;
+        padding-left: 0;
+        color: $main;
+      }
+      .el-collapse-item__content {
+        overflow: hidden;
+        padding: 0;
       }
     }
   }
@@ -700,7 +775,7 @@ $sub:#1465C0;
       .signEnd {
         border-bottom: 1px dashed #D5DADF;
       }
-      .depTip{
+      .depTip {
         color: $main;
       }
       .childSign {

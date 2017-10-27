@@ -3,6 +3,7 @@
     <el-card class="borderCard highLight">
       <div slot="header" class="clearfix">
         <span>{{newsType[params.classify2]}}</span>
+        <span v-show="params.title!=''" class="headRight">按搜索条件 "<i>{{params.title}}</i>" 查询结果</span>
       </div>
       <el-row>
         <template>
@@ -14,7 +15,10 @@
           </el-col>
         </template>
       </el-row>
-      <div class="alignCenter" v-if="newList.length==0"><br>暂无数据<br></div>
+      <div class="alignCenter" v-if="newList.length==0">
+        <br>暂无数据
+        <br>
+      </div>
     </el-card>
     <div class="pageBox" v-show="newList.length>0">
       <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
@@ -23,39 +27,60 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   components: {},
   data() {
     return {
-      newList:[],
-      newsType:{
-        'FIL0301':'人事任免',
-        'FIL0302':'HR政策',
-        'FIL0303':'规章制度',
-        'FIL0304':'使用手册',
-        'FIL0305':'办事指南'
+      newList: [],
+      newsType: {
+        'FIL0301': '人事任免',
+        'FIL0302': 'HR政策',
+        'FIL0303': '规章制度',
+        'FIL0304': '使用手册',
+        'FIL0305': '办事指南'
       },
-      params:{
-        classify2:"",
-        pageNumber:1,
-        pageSize:10
+      params: {
+        classify2: "",
+        pageNumber: 1,
+        pageSize: 10,
+        title: ''
       },
-      totalSize:0
+      totalSize: 0
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+    ])
+  },
   created() {
-    this.params.classify2=this.$route.params.classify;
-    this.getOtherNews();
+    this.initSearch(this.$route);
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.initSearch(to);
+    next();
   },
   methods: {
-    getOtherNews(){
-      this.$http.post('/index/selectBasicFileList', this.params)
-      .then(res => {
-        if (res.status == 0 && res.data.tBasicFileList) {
-          this.newList=res.data.tBasicFileList;
-          this.totalSize = res.data.totalSize;
-        }
-      })
+    initSearch(route) {
+      this.params.classify2 = route.params.classify;
+      this.params.title = route.query.title;
+      this.getOtherNews();
+    },
+    getOtherNews() {
+      this.$http.post('/index/selectBasicFileList', Object.assign(this.params, { empId: this.userInfo.empId }))
+        .then(res => {
+          if (res.status == 0) {
+            if (res.data.tBasicFileList) {
+              this.newList = res.data.tBasicFileList;
+              this.totalSize = res.data.totalSize;
+            }else{
+              this.newList=[];
+              this.totalSize=1;
+            }
+
+          }
+        })
     },
     handleCurrentChange(page) {
       this.params.pageNumber = page;
@@ -70,8 +95,8 @@ $main: #0460AE;
 $brown: #985D55;
 
 #newsListHr {
-  .alignCenter{
-    text-align:center!important;
+  .alignCenter {
+    text-align: center!important;
   }
   .pageBox {
     text-align: right;
@@ -86,13 +111,14 @@ $brown: #985D55;
       padding: 0;
       line-height: 45px;
       color: $main;
-      i {
-        margin-right: 10px;
-        font-size: 20px;
-      }
+
       .headRight {
         font-size: 14px;
         color: #676767;
+        i {
+          color: $main;
+          font-style: normal;
+        }
       }
     }
     .el-card__body {
@@ -106,14 +132,14 @@ $brown: #985D55;
           color: #676767;
           cursor: pointer;
           .new {
-              font-size: 12px;
-              font-weight: normal;
-              background: #FF9300;
-              color: #fff;
-              border-radius: 2px;
-              padding: 0 2px;
-              vertical-align: top;
-            }
+            font-size: 12px;
+            font-weight: normal;
+            background: #FF9300;
+            color: #fff;
+            border-radius: 2px;
+            padding: 0 2px;
+            vertical-align: top;
+          }
           p:first-child {
             font-size: 16px;
             line-height: 30px;
@@ -128,7 +154,7 @@ $brown: #985D55;
           p:last-child {
             margin-top: 10px;
             font-size: 12px;
-                height: 14px;
+            height: 14px;
             span {
               float: right;
             }

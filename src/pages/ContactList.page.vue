@@ -10,25 +10,25 @@
             <el-form :model="searchForm" label-position="left" :rules="rules" ref="searchForm" label-width="100px" class="searchForm">
               <el-col :span="9">
                 <el-form-item label="员工姓名" prop="name">
-                  <el-input :maxlength="20" v-model="searchForm.name">
+                  <el-input :maxlength="20" v-model="searchForm.name"  @keyup.enter.native="submitForm">
                   </el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="9">
                 <el-form-item label="手机" prop="mobileNumber">
-                  <el-input v-model="searchForm.mobileNumber" :maxlength="11">
+                  <el-input v-model="searchForm.mobileNumber" :maxlength="11"  @keyup.enter.native="submitForm">
                   </el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="9">
                 <el-form-item label="工号" prop="workNo">
-                  <el-input v-model="searchForm.workNo" :maxlength="10">
+                  <el-input v-model="searchForm.workNo" :maxlength="10"  @keyup.enter.native="submitForm">
                   </el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="9">
                 <el-form-item label="办公电话" prop="phoneNumber">
-                  <el-input v-model="searchForm.phoneNumber" :maxlength="11">
+                  <el-input v-model="searchForm.phoneNumber" :maxlength="11"  @keyup.enter.native="submitForm">
                   </el-input>
                 </el-form-item>
               </el-col>
@@ -85,7 +85,7 @@
         <el-col :span="6">
           <div class="photoBox">
             <img :src="empDetial.picUrl" alt="" v-show="empDetial.picUrl">
-            <img src="../assets/images/blankHead.png" alt="">
+            <img src="../assets/images/blankHead.png" alt="" v-show="!empDetial.picUrl">
           </div>
         </el-col>
       </el-row>
@@ -168,7 +168,8 @@ export default {
   },
   methods: {
     handleCurrentChange(page) {
-      if (this.searchRes.status == '0') {
+      console.log(this.searchRes)
+      if (this.searchRes.empVoList) {
         this.$store.dispatch('setQueryPage', page);
         if (this.searchButton) {
           this.$store.dispatch('queryEmpList', this.searchForm);

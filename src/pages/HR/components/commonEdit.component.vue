@@ -5,27 +5,27 @@
         <div class="header">
           <span class="title">{{edu.head}}</span>
           <el-button type="primary" icon="plus" size="small" @click="addItem(edu.enName)">添加</el-button>
-          <el-button type="primary" icon="close" size="small" @click="showWarn(edu.enName,0)" v-show="eduForm[edu.enName].length!=0">删除</el-button>
+          <el-button type="primary" icon="close" size="small" @click="showWarn(edu.enName,0)" v-if="eduForm[edu.enName].length!=0" :disabled="eduForm[edu.enName][0].id!=undefined">删除</el-button>
         </div>
         <template v-for="(info,index) in eduForm[edu.enName]">
           <div class="header" v-if="index!=0">
             <span class="title">{{edu.head}}</span>
-            <el-button type="primary" icon="close" size="small" @click="showWarn(edu.enName,index)">删除</el-button>
+            <el-button type="primary" icon="close" size="small" @click="showWarn(edu.enName,index)" :disabled="info.id!=undefined">删除</el-button>
           </div>
-          <el-form-item :label="item.label" :prop="edu.enName+'.'+index+'.'+item.name" :rules="{type:item.type,required: true, message:item.label+'不能为空', trigger: 'blur'}" v-for="item in edu.prop">
+          <el-form-item :label="item.label" :prop="edu.enName+'.'+index+'.'+item.name" :rules="creatRule(item)" v-for="item in edu.prop">
             <el-date-picker type="date" v-model="info[item.name]" style="width: 100%;" :editable="false" :clearable="false" v-if="item.type=='date'"></el-date-picker>
             <el-radio-group v-model="info[item.name]" class="myRadio" v-else-if="item.type=='boolean'">
               <el-radio-button label="1">是<i></i></el-radio-button>
               <el-radio-button label="0">否<i></i></el-radio-button>
             </el-radio-group>
-            <el-input v-model="info[item.name]" v-else></el-input>
+            <el-input v-model="info[item.name]" v-else :maxlength="item.maxlength||99"></el-input>
           </el-form-item>
           <div class="borderBox"></div>
         </template>
         <div class="bgBorder"></div>
       </template>
       <el-form-item>
-        <el-button type="primary" size="large" class="submitButton" @click.native="onSubmit" :disabled="submitLoading">提交</el-button>
+        <el-button type="primary" size="large" class="submitButton" @click="nextClick" :disabled="submitLoading">{{nextTabName=='last'?'提交':'下一步'}}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -40,6 +40,10 @@ export default {
     },
     dataList: {
       type: Array
+    },
+    nextTabName: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -89,8 +93,12 @@ export default {
         this.$set(this.eduForm, e.enName, [])
       })
     },
-    getCheckId() {
-      return this.$http.post('/resume/insertCheck', { empId: this.userInfo.empId }, { body: true })
+    creatRule(item) {
+      var rules = [{ type: item.type == 'boolean' ? 'string' : item.type, required: true, message: item.label + '不能为空', trigger: 'blur' }];
+      if (item.rule) {
+        rules.push(item.rule)
+      }
+      return rules
     },
     addItem(name) {
       this.eduForm[name].push(this.clone(this.constTemp[name]));
@@ -110,69 +118,15 @@ export default {
       this.eduForm[name].splice(index, 1);
     },
     onSubmit() {
-      if (Object.keys(this.eduForm).some(name => this.eduForm[name].length > 0)) {
-        this.$refs['eduForm'].validate((valid) => {
-          if (valid) {
-            if (!this.submitLoading) {
-              this.submitLoading = true;
-              this.handleSubmit();
-            }
-          } else {
-            this.$message.warning('请检查填写信息')
-            return false;
-          }
-        });
-      }
-    },
-    handleSubmit() {
-      this.$http.post('/resume/insertCheck', { empId: this.userInfo.empId }, { body: true })
-        .then(res => {
-          console.log(111)
-          if (res.status == '0') {
-            Object.keys(this.eduForm).forEach(name => {
-              this.eduForm[name].forEach(c => c.checkId = res.data)
-            })
-            this.updateInfo();
-          } else {
-            console.log('获取checkId失败')
-          }
-        }, res => {
-
-        })
-    },
-    updateInfo() {
-      var requests = [];
-      var nameList = []
+      var paramList = {};
       this.dataList.forEach(e => {
+        paramList[e.postName] = [];
         if (this.eduForm[e.enName].length > 0) {
           var params = this.eduForm[e.enName].map(c => this.changeTime(c));
-          if (e.extraParams) {
-            Object.assign(params, e.extraParams)
-          }
-          requests.push(this.$http.post(e.postUrl, params, { body: true }));
-          nameList.push(e.head);
+          paramList[e.postName] = params;
         }
       })
-      this.$http.all(requests)
-        .then(res => {
-          this.submitLoading = false;
-          var successList = [];
-          var failList = [];
-          res.forEach((r, index) => {
-            if (r.status == 0) {
-              successList.push(nameList[index]);
-            } else {
-              failList.push(nameList[index]);
-            }
-          })
-          if (successList.length != 0) {
-            this.$notify.success('提交' + successList.join('、') + '申请成功,请等待后台审核!')
-          }
-          if (failList.length != 0) {
-            this.$notify.error('提交' + failList.join('、') + '申请失败,请等待后台审核!')
-          }
-          this.$router.push('/HR/resume')
-        })
+      this.$emit('submit', paramList);
     },
     getDataList() {
       this.dataList.forEach(e => {
@@ -194,7 +148,16 @@ export default {
 
           })
       })
-      console.log(this.eduForm);
+    },
+    nextClick() {
+      this.$refs['eduForm'].validate((valid) => {
+        if (valid) {
+          this.$emit('nextClick', this.nextTabName);
+        } else {
+          this.$message.warning('请检查填写信息')
+          return false;
+        }
+      });
     }
   }
 }

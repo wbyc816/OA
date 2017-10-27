@@ -92,7 +92,7 @@
             <p>{{empDetial.workEmail}}</p>
           </el-form-item>
           <el-form-item label="电话" class="pr70" prop="phoneNumber">
-            <el-input v-model="baseForm.phoneNumber" :maxlength="11"></el-input>
+            <el-input v-model="baseForm.phoneNumber" :maxlength="20"></el-input>
           </el-form-item>
           <el-form-item label="手机">
             <p>{{empDetial.mobileNumber}}</p>

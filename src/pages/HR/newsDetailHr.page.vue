@@ -20,6 +20,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import pdf from '../../assets/pdf/test.pdf'
 import pdfjsLib from 'pdfjs-dist'
 import SidePersonSearch from '../../components/sidePersonSearch.component'
@@ -40,6 +41,11 @@ export default {
       detail:""
     }
 
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+    ])
   },
   created() {
     this.getDetail();
@@ -120,7 +126,7 @@ export default {
       this.pafParam.pageNum = newPage;
     },
     getDetail() {
-      this.$http.post('/index/selectByFileId', { fileId: this.$route.params.id })
+      this.$http.post('/index/selectByFileId', { fileId: this.$route.params.id,empId:this.userInfo.empId })
         .then(res => {
           if (res.status == 0&&res.data) {
             this.detail = res.data;

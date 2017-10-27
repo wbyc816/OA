@@ -8,7 +8,7 @@
         </el-input>
       </el-form-item>
       <el-form-item class='form-box' label="标题" prop="sub">
-        <el-input :value="docTtile" @input="updateTitle">
+        <el-input :value="docTitle" @input="updateTitle" :maxlength="50">
         </el-input>
       </el-form-item>
       <el-form-item class='form-box' label="密级程度">
@@ -32,10 +32,14 @@ export default {
   components: {
     PersonDialog
   },
-  props:{
-    reciverTtitle:{
+  props: {
+    reciverTtitle: {
+      type: String,
+      default: '收件人'
+    },
+    reciverName:{
       type:String,
-      default:'收件人'
+      default:''
     }
   },
   data() {
@@ -72,11 +76,18 @@ export default {
       'baseForm',
       'selConfident',
       'selUrgency',
-      'docTtile',
+      'docTitle',
       'searchLoading',
       'searchRes',
       'reciver'
     ])
+  },
+  watch:{
+    reciverName:function(newVal){
+      if(newVal){
+        this.ruleForm.rec=newVal;
+      }
+    }
   },
   created() {
     this.$store.dispatch('getConfident');

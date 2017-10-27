@@ -37,6 +37,7 @@ import pdf from '../../assets/pdf/test.pdf'
 import pdfjsLib from 'pdfjs-dist'
 import SidePersonSearch from '../../components/sidePersonSearch.component'
 import Duty from '../../components/duty.component'
+import { mapGetters } from 'vuex'
 
 export default {
   components: { SidePersonSearch, Duty },
@@ -56,6 +57,11 @@ export default {
       }
     }
 
+  },
+  computed:{
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   created() {
     this.getDetail();
@@ -136,7 +142,7 @@ export default {
       this.pafParam.pageNum = newPage;
     },
     getDetail() {
-      this.$http.post('/doc/selectFileDetail', { Id: this.$route.params.id })
+      this.$http.post('/doc/selectFileDetail', { Id: this.$route.params.id,empId:this.userInfo.empId })
         .then(res => {
           if (res.status == 0&&res.data) {
             this.detail = res.data;

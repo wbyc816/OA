@@ -22,7 +22,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
-        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove"  :disabled="noMore">
+        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove"  :disabled="noMore">
           <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -73,6 +73,7 @@ export default {
     this.getType();
     this.getSendType();
     this.getFileCatalogue();
+    console.log(this.$route.params)
   },
   methods: {
     handleAvatarSuccess(res, file) {

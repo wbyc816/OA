@@ -36,16 +36,19 @@ export default {
       if (value.every(val => val != null)) {
         callback();
       } else {
-        callback(new Error('请选择出差时间'))
+        callback(new Error('请选择休假时间'))
       }
     };
     var checkDay = (rule, value, callback) => {
-      var remain=this.empVacation.currentSeasonDays-this.empVacation.annual1Days+this.empVacation.preQuarterdDays-this.empVacation.annualDays
-      console.log(remain)
-      if (parseFloat(value)&&parseFloat(value)<=remain) {
-        callback();
+      var remain = this.empVacation.currentSeasonDays - this.empVacation.annual1Days + this.empVacation.preQuarterdDays - this.empVacation.annualDays
+      if (this.vacationForm.typeId == 'EMP0101') {
+        if (parseFloat(value) && parseFloat(value) <= remain) {
+          callback();
+        } else {
+          callback(new Error('休假天数不能大于剩余总天数'))
+        }
       } else {
-        callback(new Error('休假天数不能大于剩余总天数'))
+        callback();
       }
     };
     return {
@@ -57,7 +60,8 @@ export default {
       },
       rules: {
         days: [{ required: true, message: '请输入休假天数', trigger: 'blur' },
-        { validator: checkDay, trigger: 'change,blur' } ],
+          { validator: checkDay, trigger: 'change,blur' }
+        ],
         timeRange: [{ type: 'array', required: true, validator: checkDate, trigger: 'blur' }],
         typeId: [{ required: true, message: '请选择休假类型', trigger: 'blur' }],
         workHandover: [{ required: true, message: '请填写工作交接情况', trigger: 'blur' }],
@@ -90,7 +94,6 @@ export default {
   },
   methods: {
     submitForm() {
-      var that = this;
       this.$refs.vacationForm.validate((valid) => {
         if (valid) {
           this.params = {
@@ -99,7 +102,7 @@ export default {
               "endTime": this.vacationForm.timeRange[1], //结束时间
               "annual": new Date().getFullYear(), //年度
               "days": this.vacationForm.days, //本次休假天数
-              "typeId":this.vacationForm.typeId,//类型
+              "typeId": this.vacationForm.typeId, //类型
               "workHandover": this.vacationForm.workHandover, //工作交接
             }]
           }
@@ -110,6 +113,11 @@ export default {
           return false;
         }
       });
+    },
+    saveForm(){
+      var params={
+
+      }
     },
     fomatDays(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,1})?/);

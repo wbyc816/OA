@@ -5,7 +5,6 @@ Vue.prototype.combineObj = combineObj
 Vue.prototype.timeFilter = timeFilter
 Vue.prototype.clone = clone
 Vue.prototype.changeTime = changeTime
-Vue.prototype.renderContent = renderContent
 Vue.prototype.toThousands = toThousands
 // Vue.prototype.lodash = lodash
 
@@ -65,28 +64,15 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
 function changeTime(obj) {
-  var _obj = obj;
-  Object.keys(_obj).forEach(name => {
-    console.log(_obj[name] instanceof Date)
-    if (_obj[name] instanceof Date) {
-      _obj[name] = _obj[name].getTime();
-
+  var _obj = clone(obj);
+  Object.keys(obj).forEach(name => {
+    if (obj[name] instanceof Date) {
+      _obj[name] = obj[name].getTime();
     }
   })
   return _obj
 }
 
-function renderContent(h, { node, data, store }) {
-  return (
-    <span>
-      <span>
-        <span>{data.name}</span>
-      </span>
-      <span style="float: right; margin-right: 20px">
-        <el-button class="depAdd" type="primary" icon="plus" size="mini" on-click={() => this.addDep(store, data)}>添加</el-button>
-      </span>
-    </span>);
-}
 
 function formatTime (date, fmt) { //author: meizz
   date = new Date(date) 
@@ -112,4 +98,4 @@ function preventEmpty(data, param = '空') {
   return data
 }
 
-export default { combineObj, formatTime, preventEmpty }
+export  default{ combineObj, formatTime, preventEmpty}

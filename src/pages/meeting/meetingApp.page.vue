@@ -14,7 +14,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="房间" prop="roomId" placeholder="" class="arrArea">
-            <el-select v-model="appForm.roomId" style="width:100%" @visible-change="checkFloor">
+            <el-select v-model="appForm.roomId" style="width:100%" @visible-change="checkFloor"  no-data-text="请先选择位置">
               <el-option v-for="item in rooms" :key="item.id" :label="item.roomName" :value="item.id">
               </el-option>
             </el-select>

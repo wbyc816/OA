@@ -135,9 +135,9 @@ export default {
       // this.$store.dispatch('getUserInfo');
       this.baseUrl = 'http://127.0.0.1:8080'
     } else {
-      // this.baseUrl = 'http://apitest.donghaiair.com:8082'
+      this.baseUrl = 'http://apitest.donghaiair.com:8082'
       // this.baseUrl = 'http://localhost:8080'
-      this.baseUrl = 'http://58.250.197.143:8899'  //外网
+      // this.baseUrl = 'http://58.250.197.143:8899'  //外网
     }
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));

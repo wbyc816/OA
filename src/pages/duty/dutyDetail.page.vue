@@ -14,7 +14,7 @@
       </div>
       <el-row :gutter="10">
         <el-col :span="11">
-          <el-date-picker v-model="date" type="daterange" placeholder="起始及截止日期栏">
+          <el-date-picker v-model="date" type="daterange" placeholder="起始及截止日期栏" range-separator=" 至 ">
           </el-date-picker>
         </el-col>
         <el-col :span="5">
@@ -90,10 +90,11 @@ export default {
   },
   computed: {
     startDate() {
-      return this.date.length ? util.formatTime(this.date[0], 'yyyyMMdd') : ''
+
+      return this.date.length!=0&&this.date[0] ? util.formatTime(this.date[0], 'yyyyMMdd') : ''
     },
     endDate() {
-      return this.date.length ? util.formatTime(this.date[1], 'yyyyMMdd') : ''
+      return this.date.length!=0&&this.date[1] ? util.formatTime(this.date[1], 'yyyyMMdd') : ''
     }
   },
   created() {

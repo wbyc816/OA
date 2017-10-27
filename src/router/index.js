@@ -11,6 +11,7 @@ import docDetail from 'pages/docSub/docDetail.page'
 import docSearch from 'pages/docSub/docSearch.page'
 import docPending from 'pages/docSub/docPending.page'
 import docToRead from 'pages/docSub/docToRead.page'
+import docDraft from 'pages/docSub/docDraft.page'
 
 import approvalForm from 'pages/docSub/approvalForm.page'
 import materialApp from 'pages/docSub/materialApp.page'
@@ -467,6 +468,13 @@ export default new Router({
                     component: docToRead,
                     meta: {
                         breadcrumb: "公文待阅",
+                    }
+                },{
+                    path: '/doc/docDraft',
+                    name: 'docDraft',
+                    component: docDraft,
+                    meta: {
+                        breadcrumb: "公文草稿箱",
                     }
                 },
                 //  {

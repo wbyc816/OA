@@ -34,7 +34,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="正文" prop="docFileId">
-        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove">
+        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove">
           <el-button size="small" type="primary" :disabled="noMore">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -135,16 +135,16 @@ export default {
         this.picSuccesss = 0;
       }
       const isPDF = file.raw.type === 'application/pdf';
-      const isLt20M = file.size / 1024 / 1024 < 20;
+      const isLt10M = file.size / 1024 / 1024 < 10;
       if (!isPDF) {
         this.$message.error('上传正文只能是 PDF 格式!');
         this.$refs.myUpload.clearFiles();
       }
-      if (!isLt20M) {
+      if (!isLt10M) {
         this.$refs.myUpload.clearFiles();
         this.$message.error('上传正文大小不能超过 20MB!');
       }
-      if (isPDF && isLt20M) {
+      if (isPDF && isLt10M) {
         this.noMore=true;
         this.manuscriptForm.docFileId = file.url
       }

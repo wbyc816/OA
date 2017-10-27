@@ -42,8 +42,8 @@
               <td></td>
               <td>{{doc.taskUserName}}</td>
               <td>{{doc.readTime}}</td>
-              <td>{{doc.taskTime}}</td>
-              <td>{{doc.isOvertime}}</td>
+              <td>{{doc.startTime}}</td>
+              <td>{{doc.endTime}}</td>
               <td :class="{overTime:doc.isOvertime==1}">{{doc.isOvertime==0?'准时':'超时'}}</td>
               <td>{{doc.nodeName}}</td>
               <td>{{doc.taskDeptMajorName}}</td>
@@ -104,6 +104,10 @@ export default {
         {
           title: '公文待阅',
           path: '/doc/docToRead'
+        },
+        {
+          title: '公文草稿箱',
+          path: '/doc/docDraft'
         },
         // {
         //   title: '公文统计',

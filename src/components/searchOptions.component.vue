@@ -16,10 +16,10 @@
           <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false"></el-cascader>
         </el-col>
         <el-col :span="notype?18:12">
-          <el-input placeholder="公文标题" v-model="params.keyWords"></el-input>
+          <el-input placeholder="公文标题" v-model="params.keyWords"  @keyup.enter.native="submitParam"></el-input>
         </el-col>
         <el-col :span="6">
-          <el-input placeholder="公文编号" v-model="params.docNo"></el-input>
+          <el-input placeholder="公文编号" v-model="params.docNo"  @keyup.enter.native="submitParam"></el-input>
         </el-col>
         <el-col :span="12">
           <el-date-picker v-model="params.startTime" @change="dateChange" type="date" :editable="false" placeholder="选择呈报日期">

@@ -21,24 +21,25 @@
         </el-input>
       </el-form-item>
       <el-form-item label="培训总预算" prop="trainTotalCost" class="deptArea">
-        <el-input v-model="trainingForm.trainTotalCost" ref="trainTotalCost" @change="fomatTotal" :maxlength="10" class="hasUnit" @blur="blurInput">
+        <money-input v-model="trainingForm.trainTotalCost" :prepend="false">
           <template slot="append">元</template>
-        </el-input>
+        </money-input>
       </el-form-item>
       <el-form-item label="单人预算" prop="trainPerCost" class="arrArea" label-width="100px">
-        <el-input v-model="trainingForm.trainPerCost" ref="trainPerCost" @change="fomatPer" :maxlength="10" class="hasUnit" @blur="blurInput1">
+        <money-input v-model="trainingForm.trainPerCost" :prepend="false">
           <template slot="append">元</template>
-        </el-input>
+        </money-input>
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="dialogVisible"></person-dialog>
   </div>
 </template>
 <script>
+import MoneyInput from '../../../components/moneyInput.component'
 import PersonDialog from '../../../components/personDialog.component'
 import { mapGetters } from 'vuex'
 export default {
-  components: { PersonDialog },
+  components: { PersonDialog, MoneyInput },
   data() {
     var checkDept = (rule, value, callback) => {
       if (value[0]) {
@@ -46,7 +47,14 @@ export default {
       } else {
         callback(new Error('参训部门/处室'))
       }
-    };
+    }
+    var checkMoney = (rule, value,callback) => {
+      if (parseFloat(value) <= parseFloat(this.trainingForm.trainTotalCost)) {
+        callback();
+      } else {
+        callback(new Error('单人预算不能大于总预算'))
+      }
+    }
     return {
       dialogVisible: false,
       trainingForm: {
@@ -59,7 +67,8 @@ export default {
       },
       rules: {
         trainTotalCost: [{ required: true, message: '请输入培训总预算', trigger: 'blur' }],
-        trainPerCost: [{ required: true, message: '请输入单人预算', trigger: 'blur' }],
+        trainPerCost: [{ required: true, message: '请输入单人预算', trigger: 'blur' },
+        {validator: checkMoney, trigger: 'blur,change'}],
         person: [{ type: 'array', required: true, message: '请选择培训人', trigger: 'blur' }],
         timeRange: [{ type: 'array', required: true, message: '请选择培训日期', trigger: 'blur' }],
         trainSubjects: [{ required: true, message: '请输入培训科目', trigger: 'blur' }],

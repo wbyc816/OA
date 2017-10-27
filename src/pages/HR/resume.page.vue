@@ -43,7 +43,7 @@
               <p class="infoText" v-if="resumeInfo">{{resumeInfo.height}}</p>
             </div>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="10">
             <div class="infoItem">
               <span class="infoTittle">工号</span>
               <p class="infoText" v-if="resumeInfo">{{resumeInfo.workNo}}</p>

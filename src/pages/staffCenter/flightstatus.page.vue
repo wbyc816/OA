@@ -21,7 +21,7 @@
                 <el-select v-model="flightNoTitle">
                   <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-                <el-input v-model="flightNoValue"></el-input>
+                <el-input v-model="flightNoValue"  @keyup.enter.native="getData"></el-input>
               </div>
               <div class="route" v-show="flightStatusType=='route'">
                 <!-- <el-input v-model="tripFrom" placeholder="出发地"></el-input> -->

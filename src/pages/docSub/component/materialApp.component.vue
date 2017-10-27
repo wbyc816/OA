@@ -8,9 +8,9 @@
         <el-input v-model="materialForm.specification"></el-input>
       </el-form-item>
       <el-form-item label="计划单价" class="inlinItem" prop="plannedUnitPrice">
-        <el-input v-model.number="materialForm.plannedUnitPrice" class="hasUnit">
+        <money-input v-model="materialForm.plannedUnitPrice" :prepend="false">
           <template slot="append">元</template>
-        </el-input>
+        </money-input>
       </el-form-item>
       <el-form-item label="数量" class="inlinItem" prop="quantity">
         <el-input v-model.number="materialForm.quantity"></el-input>
@@ -29,8 +29,8 @@
       <el-table-column type="index" label=" " width="40"></el-table-column>
       <el-table-column property="productName" label="品名" width="160"></el-table-column>
       <el-table-column property="specification" label="规格" width="65"></el-table-column>
-      <el-table-column property="plannedUnitPrice" label="计划单价" width="85"></el-table-column>
-      <el-table-column property="quantity" label="数量" width="65"></el-table-column>
+      <el-table-column property="plannedUnitPrice" label="计划单价" width="100"></el-table-column>
+      <el-table-column property="quantity" label="数量" width="100"></el-table-column>
       <el-table-column property="remark" label="备注"></el-table-column>
       <el-table-column label="操作" width="55">
         <template scope="scope">
@@ -43,8 +43,10 @@
   </div>
 </template>
 <script>
+import MoneyInput from '../../../components/moneyInput.component'
 import { mapGetters } from 'vuex'
 export default {
+  components: { MoneyInput },
   data() {
     return {
       materialForm: {
@@ -58,7 +60,7 @@ export default {
         productName: [{ required: true, message: '请输入品名', trigger: 'blur' }],
         specification: [{ required: true, message: '请输入规格', trigger: 'blur' }],
         quantity: [{ required: true, message: '请输入数量' }, { type: 'number', message: '数量必须为数字值' }],
-        plannedUnitPrice: [{ required: true, message: '请输入单价' }, { type: 'number', message: '单价必须为数字值' }],
+        plannedUnitPrice: [{ required: true, message: '请输入单价' }],
       },
       materials: []
     }
@@ -100,7 +102,7 @@ export default {
     fomatFloat(src, pos) {
       return Math.round(src * Math.pow(10, pos)) / Math.pow(10, pos);
     },
-    checkEmpty(){
+    submitForm(){
       if(this.materials.length!=0){
         this.$emit('submitMiddle',{materials:this.materials});
       }else{

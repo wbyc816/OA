@@ -4,12 +4,12 @@
       <div class="header">
         <span class="title">合同信息</span>
         <el-button type="primary" icon="plus" size="small" @click="addContract">添加</el-button>
-        <el-button type="primary" icon="close" size="small" @click="delContract(0)" v-show="contractForm.content.length!=0">删除</el-button>
+        <el-button type="primary" icon="close" size="small" @click="delContract(0)" v-if="contractForm.content.length!=0" :disabled="contractForm.content[0].id!=undefined">删除</el-button>
       </div>
       <template v-for="(contract,index) in contractForm.content">
         <div class="header" v-if="index!=0">
           <span class="title">合同信息</span>
-          <el-button type="primary" icon="close" size="small" @click="delContract(index)">删除</el-button>
+          <el-button type="primary" icon="close" size="small" @click="delContract(index)" :disabled="contract.id!=undefined">删除</el-button>
         </div>
         <el-form-item label="合同类型" :prop="'content.'+index+'.type'" :rules="{required: true, message: '合同类型不能为空', trigger: 'blur'}">
           <el-input v-model="contract.type"></el-input>
@@ -18,15 +18,15 @@
           <el-input v-model="contract.subject"></el-input>
         </el-form-item>
         <el-form-item label="合同开始日期" :prop="'content.'+index+'.startDate'" :rules="{type:'date',required: true, message: '合同开始日期不能为空', trigger: 'blur'}">
-          <el-date-picker type="date" v-model="contract.startDate" style="width: 100%;" :editable="false" :clearable="false"></el-date-picker>
+          <el-date-picker type="date" v-model="contract.startDate" style="width: 100%;" :editable="false" :clearable="false" :picker-options="dateOptions[index].start"></el-date-picker>
         </el-form-item>
         <el-form-item label="合同结束日期" :prop="'content.'+index+'.endDate'" :rules="{type:'date',required: true, message: '合同结束日期不能为空', trigger: 'blur'}">
-          <el-date-picker type="date" v-model="contract.endDate" style="width: 100%;" :editable="false" :clearable="false"></el-date-picker>
+          <el-date-picker type="date" v-model="contract.endDate" style="width: 100%;" :editable="false" :clearable="false"  :picker-options="dateOptions[index].end"></el-date-picker>
         </el-form-item>
         <div class="borderBox"></div>
       </template>
       <el-form-item>
-        <el-button type="primary" size="large" class="submitButton" @click.native="onSubmit" :disabled="submitLoading">提交</el-button>
+        <el-button type="primary" size="large" class="submitButton" @click="nextClick" :disabled="submitLoading">下一步</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -50,6 +50,32 @@ export default {
     }
   },
   computed: {
+    dateOptions: function() {
+      var options = []
+      this.contractForm.content.forEach((c, index) => {
+        var start = {
+          disabledDate(time) {
+            if (c.endDate != '') {
+              return time.getTime() > c.endDate.getTime();
+            } else {
+              return false
+            }
+          }
+        }
+        var end = {
+          disabledDate(time) {
+            if (c.startDate != '') {
+              return time.getTime() < c.startDate.getTime();
+            } else {
+              return false
+            }
+          }
+        }
+        options.push({ start: start, end: end })
+      })
+      console.log(options)
+      return options
+    },
     ...mapGetters([
       'resumeInfo',
       'userInfo',
@@ -69,62 +95,29 @@ export default {
   created() {
     this.constTemp.empId = this.userInfo.empId;
     this.constTemp.createUser = this.userInfo.name;
-    // this.$store.dispatch('getResumeInfo');
   },
   // beforeRouteLeave(to, from, next) {
   //   // this.$store.dispatch('setEditStatus', false);
   //   // next()
   // },
   methods: {
-    getCheckId() {
-      return this.$http.post('/resume/insertCheck', { empId: this.userInfo.empId }, { body: true })
-    },
+
     addContract() {
       this.contractForm.content.push(this.clone(this.constTemp));
     },
     delContract(index) {
-      this.contractForm.content.splice(index, 1);
-    },
-    onSubmit() {
-      this.$refs['contractForm'].validate((valid) => {
-        if (valid) {
-          if (!this.submitLoading) {
-            this.submitLoading = true;
-            this.handleSubmit();
-          }
-        } else {
-          this.$message.warning('请检查填写信息')
-          return false;
-        }
+      this.$confirm('确定删除此条信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.contractForm.content.splice(index, 1);
+      }).catch(() => {
+
       });
     },
-    handleSubmit() {
-      this.getCheckId()
-        .then(res => {
-          if (res.status == '0') {
-            this.contractForm.content.forEach(c => c.checkId = res.data);
-            this.updateInfo();
-          } else {
-            console.log('获取checkId失败')
-          }
-        }, res => {
-
-        })
-    },
-    updateInfo() {
-      this.$http.post('/resume/updateContractInfo', this.contractForm.content.map(c=>this.changeTime(c)), { body: true })
-        .then(
-          res => {
-            this.submitLoading = false;
-            if (res.status == '0') {
-              this.$message.success('提交修改申请成功,请等待后台审核！')
-              this.$router.push('/HR/resume');
-            } else {
-              this.$message.error('修改个人信息失败,请稍后再试！');
-            }
-          }, res => {
-            this.submitLoading = false;
-          })
+    onSubmit() {
+      this.$emit('submit',{ contract:this.contractForm.content.map(c => this.changeTime(c))});
     },
     getContract() {
       this.$http.post('/resume/getContractInfo', { id: this.userInfo.empId })
@@ -139,6 +132,16 @@ export default {
         }, res => {
 
         })
+    },
+    nextClick() {
+      this.$refs['contractForm'].validate((valid) => {
+        if (valid) {
+          this.$emit('nextClick', 'edu')
+        } else {
+          this.$message.warning('请检查填写信息')
+          return false;
+        }
+      });
     }
   }
 }

@@ -1,26 +1,22 @@
 <template>
   <div class="duty" v-loading="organLoading">
     <el-card>
-      <div slot="header">今日值班
+      <div slot="header">值班列表
         <router-link to="/duty/">更多</router-link>
       </div>
-      <p class="leader" v-if="dutys.leader&&dutys.leader.name"><span class="name">01 {{dutys.leader.name}}</span><span>{{dutys.leader.phone | phone}}</span>
-      </p>
-      <el-menu mode="vertical" default-active="1">
-        <el-menu-item-group>
-          <template v-for="duty in dutys.ondutylist">
-            <el-submenu :index="duty.deptName" v-if="duty.onduty.length>1">
-              <template slot="title"><span>{{duty.deptName}}</span> <span class="titleName">{{duty.onduty[0].empName}}</span><span>{{duty.onduty[0].mobileNumber | phone}}</span></template>
-              <el-menu-item :index="duty.deptName+child.empName" v-for="(child,index) in duty.onduty" v-if="index!=0">
-                <span class="name">{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
-              </el-menu-item>
-            </el-submenu>
-            <el-menu-item :index="duty.deptName" v-else><span>
-              {{duty.deptName}}</span> <span class="titleName">{{duty.onduty[0].empName}}</span><span>{{duty.onduty[0].mobileNumber | phone}}</span>
-            </el-menu-item>
-          </template>
-        </el-menu-item-group>
-      </el-menu>
+      <div class="dutyWrap">
+        <div class="dutyBox clearfix" v-for="(item,index) in dutys">
+          <div class="dateBox">
+            <p v-if="index==0">今天</p>
+            <p v-else-if="index==1">明天</p>
+            <p v-else>{{item.oudutyDate | time('ch')}}
+              <br/>{{item.oudutyDate | time('week')}}</p>
+          </div>
+          <div class="infoBox">
+            <p v-for="(child,index) in item.onduty"><span>{{index==0?'01':'AOC'}}</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span></p>
+          </div>
+        </div>
+      </div>
     </el-card>
   </div>
 </template>
@@ -30,7 +26,7 @@ export default {
   data() {
     return {
       organLoading: false,
-      dutys: { ondutylist: [] }
+      dutys: []
     }
   },
   created() {
@@ -47,8 +43,7 @@ export default {
   },
   methods: {
     getData() {
-      var date1 = new Date().getTime()
-      this.$http.post('/onduty/getDutyInfo', { dutyDate: this.timeFilter(new Date().getTime(),'date') })
+      this.$http.post('/onduty/getDutyInfo', )
         .then(res => {
           if (res.status == 0) {
             this.dutys = res.data;
@@ -67,9 +62,14 @@ $main:#0460AE;
 $sub:#1465C0;
 .duty {
   margin-bottom: 20px;
+  .el-card__header {
+    // border-bottom: 1px solid #b5b5b5;
+  }
+  .el-card__body {
+    padding: 0 10px;
+  }
   .name {
-    padding-right:20px;
-    // display: inline-block;
+    padding-right: 20px; // display: inline-block;
   }
   .titleName {
     padding-left: 20px;
@@ -81,8 +81,69 @@ $sub:#1465C0;
     padding-left: 20px;
     font-size: 14px;
     color: rgb(72, 86, 106);
-    border-bottom: 1px solid #F2F2F2;
   }
+  .dutyBox {
+    border-bottom: 1px solid #D5DADF;
+    font-size: 14px;
+    color: #676767;
+    .dateBox {
+      width: 35%;
+      float: left;
+      height: 80px;
+      padding-left: 14px;
+      padding-top: 20px;
+      p {
+        line-height: 20px;
+        vertical-align: middle;
+        display: inline-block;
+      }
+    }
+    .infoBox {
+      float: left;
+      width: 65%;
+      p {
+        line-height: 40px;
+        height: 40px;
+        padding-left: 10px;
+        span:first-child {
+          width: 40px;
+          display: inline-block;
+        }
+        span:nth-child(2) {
+          padding-right: 10px;
+        }
+        &:first-child {
+          border-bottom: 1px solid #F2F2F2;
+        }
+      }
+    }
+  }
+  .dutyWrap {
+    $colors: (1: #02B4EE, 2: #028CD2, 3: #026CB9, 4: #4B3D9D, 5: #761690, 6: #BE018C, 7: #E70282);
+    @each $num,
+    $color in $colors {
+      .dutyBox:nth-child(#{$num}) {
+        .dateBox {
+          color: $color;
+        }
+        &:hover {
+          background: $color;
+          color: #fff;
+          .dateBox {
+            color: #FFF;
+          }
+        }
+      }
+    }
+    .dutyBox:first-child {
+      background:#0281EE;
+      color: #fff;
+      .dateBox {
+        color: #FFF;
+      }
+    }
+  }
+
   .el-card__header {
     a {
       float: right;
@@ -97,11 +158,10 @@ $sub:#1465C0;
   .el-card__body {
     padding: 0;
     .el-submenu__title {
-      border-bottom: 1px solid #F2F2F2;
-      // transition:all 0.3s;
+      border-bottom: 1px solid #F2F2F2; // transition:all 0.3s;
     }
-    .el-menu-item{
-      cursor:auto;
+    .el-menu-item {
+      cursor: auto;
     }
   }
   .el-submenu.is-opened {
@@ -118,10 +178,9 @@ $sub:#1465C0;
       }
     }
   }
-  .el-menu-item-group{
-    >ul>.el-menu-item{
+  .el-menu-item-group {
+    >ul>.el-menu-item {
       border-bottom: 1px solid #F2F2F2;
-
     }
   }
   .el-submenu .el-menu-item {

@@ -5,10 +5,13 @@
         <router-view></router-view>
       </el-col>
       <el-col :span="7" class="sideBar">
-        <el-card class="borderCard searchBox" v-show="$route.path=='/HR/clildHR'">
+        <el-card class="borderCard searchBox" v-show="$route.name=='newsListHr'||$route.name=='clildHR'">
           <!-- <div slot="header">新闻查询</div> -->
-          <el-input class="search">
-            <el-button slot="append">搜索</el-button>
+          <el-input class="search searchFile" v-model="searchTitle" @keyup.enter.native="searchFile">
+            <el-select v-model="selFile" slot="prepend" placeholder="请选择">
+              <el-option :label="item.dictName" :value="item.dictCode" v-for="item in fileLink"></el-option>
+            </el-select>
+            <el-button slot="append" @click="searchFile">搜索</el-button>
           </el-input>
         </el-card>
         <el-card class="borderCard searchBox" v-show="$route.name=='salary' || $route.name =='salaryHistory'">
@@ -22,7 +25,6 @@
               <el-button @click="searchSalary" class="searchSalary">搜索</el-button>
             </el-col>
           </el-row>
-
         </el-card>
         <!-- <el-card class="borderCard searchBox" v-show="$route.name== 'salary' || $route.name == 'salaryHistory'">
           <div slot="header">最新工资单</div>
@@ -32,7 +34,8 @@
             </el-col>
           </el-row>
         </el-card>
- -->        <el-card class="department borderCard">
+ -->
+        <el-card class="department borderCard">
           <div slot="header">人力资源</div>
           <el-menu class="el-menu-vertical-demo" :default-openeds="['个人中心','我要申请','薪资绩效','相关链接']">
             <el-submenu :index="menu.title" v-for="(menu,index) in menuList" :key="menu.title">
@@ -47,49 +50,27 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-dialog title="Advanced search" v-model="dialogFormVisible" size="tiny">
-      <el-form :model="form">
-        <el-form-item label="Department :" :label-width="formLabelWidth">
-          <el-input v-model="form.dep" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="File Name :" :label-width="formLabelWidth">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="File Category :" :label-width="formLabelWidth" class="inputButton">
-          <el-input v-model="form.Category" auto-complete="off">
-            <el-button slot="append">...</el-button>
-          </el-input>
-          <span>Clear</span>
-        </el-form-item>
-        <el-form-item label="Release Date From :" :label-width="formLabelWidth">
-          <el-date-picker type="date" v-model="form.date"></el-date-picker>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisible = false">Search</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
 import util from '../../common/util'
 const nowDate = new Date();
 const nowMonth = nowDate.getMonth() + 1;
-const defaultSalaryHistory = ''+'@'+ util.formatTime(nowDate, 'yyyyMM')   // 默认获取历史返回数据有待商榷
+const defaultSalaryHistory = '' + '@' + util.formatTime(nowDate, 'yyyyMM') // 默认获取历史返回数据有待商榷
 const menuList = [{
-  title: '个人中心',
-  child: [{ name: '个人信息', path: '#/HR/personalInfo' }, { name: '个人简历', path: '#/HR/resume' }, { name: '简历完善', path: '#/HR/editResume' }]
-}, {
-  title: '我要申请',
-  child: [{ name: '请假申请', path: '#/doc/docCommonApp/QJS' }, { name: '转正申请', path: '#/doc/docCommonApp/ZZS' }, { name: '离职申请', path: '#' }, { name: '工伤事故申请', path: '#/doc/docCommonApp/GSS' }, { name: '培训申请', path: '#/doc/docCommonApp/PXS' }, { name: '人事变动', path: '#/doc/docCommonApp/RSB' }]
-},
-{
-  title: '薪资绩效',
-  child: [{ name: '最新工资单', path: '#/HR/salary/1' }, { name: '历史工资单', path: '#/HR/salaryHistory/1' }]
-}, {
-  title: '相关链接',
-  child: [{ name: '社会保障系统', path: 'http://www.szsi.gov.cn/', target: '_blank' }, { name: '公积金系统', path: 'http://www.szzfgjj.com/', target: '_blank'}]
-}
+    title: '个人中心',
+    child: [{ name: '个人信息', path: '#/HR/personalInfo' }, { name: '个人简历', path: '#/HR/resume' }, { name: '简历完善', path: '#/HR/editResume' }]
+  }, {
+    title: '我要申请',
+    child: [{ name: '请假申请', path: '#/doc/docCommonApp/QJS' }, { name: '转正申请', path: '#/doc/docCommonApp/ZZS' }, { name: '离职申请', path: '#' }, { name: '工伤事故申请', path: '#/doc/docCommonApp/GSS' }, { name: '培训申请', path: '#/doc/docCommonApp/PXS' }, { name: '人事变动', path: '#/doc/docCommonApp/RSB' }]
+  },
+  {
+    title: '薪资绩效',
+    child: [{ name: '最新工资单', path: '#/HR/salary/1' }, { name: '历史工资单', path: '#/HR/salaryHistory/1' }]
+  }, {
+    title: '相关链接',
+    child: [{ name: '社会保障系统', path: 'http://www.szsi.gov.cn/', target: '_blank' }, { name: '公积金系统', path: 'http://www.szzfgjj.com/', target: '_blank' }]
+  }
 ]
 export default {
   components: {},
@@ -109,11 +90,15 @@ export default {
         resource: '',
         desc: ''
       },
+      selFile: '',
       formLabelWidth: '210px',
+      fileLink:[],
+      searchTitle:''
     }
   },
   created() {
     this.getNewSalaryList();
+    this.getFileLink();
   },
   methods: {
     searchSalary() {
@@ -146,6 +131,21 @@ export default {
         });
         month -= 1;
       }
+    },
+    getFileLink(){
+      this.$http.post('/api/getDict',{dictCode:'FIL03'}).
+      then(res=>{
+        if(res.status==0){
+          this.fileLink=res.data;
+          this.selFile=this.fileLink[0].dictCode;
+        }else{
+
+        }
+      })
+    },
+    searchFile(){
+      this.$router.push({name: 'newsListHr', params: { classify: this.selFile },query:{title:this.searchTitle}});
+      this.searchTitle='';
     }
   }
 }
@@ -178,8 +178,21 @@ $sub:#1465C0;
         border-bottom: none;
       }
       .el-card__body {
-        padding-top:15px;
+        padding-top: 15px;
         padding-bottom: 15px;
+      }
+      .searchFile {
+        .el-button {
+          width: 70px;
+        }
+        .el-input__inner {
+          padding-right: 10px;
+        }
+        .el-input-group__prepend {
+          width: 100px;
+          border-radius: 0;
+          border-color:#bfcbd9;
+        }
       }
     }
   }
@@ -211,17 +224,16 @@ $sub:#1465C0;
         border-bottom: 1px solid #E9E9E9;
         padding: 10px 0;
       }
-      .el-menu-item{
+      .el-menu-item {
         padding-left: 14px!important;
         font-size: 15px;
         height: 35px;
         line-height: 35px;
-        a{
-          display:block;
+        a {
+          display: block;
           color: $main;
           white-space: normal;
         }
-        
       }
     }
   }
@@ -310,4 +322,5 @@ $sub:#1465C0;
     }
   }
 }
+
 </style>

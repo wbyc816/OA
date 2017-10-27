@@ -19,7 +19,7 @@
           </el-select>
         </el-col>
         <el-col :span="4">
-          <el-select v-model="searchParams.roomId" placeholder="房间">
+          <el-select v-model="searchParams.roomId" placeholder="房间" no-data-text="请先选择位置">
             <el-option v-for="item in rooms" :key="item.id" :label="item.roomName" :value="item.id">
             </el-option>
           </el-select>

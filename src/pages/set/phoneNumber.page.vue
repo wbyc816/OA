@@ -3,30 +3,28 @@
     <el-card>
       <div slot="header">
         <el-row>
-          <el-col :span="4">
-            修改手机号码
-          </el-col>
+          <el-col :span="4">修改手机号码</el-col>
         </el-row>
       </div>
       <el-form :label-position="labelPosition" :label-width="labelWidth" :model="ruleForm" ref="ruleForm" :rules="rules">
-        <el-form-item label="输入登录密码" prop="pass">
-          <el-input v-model="ruleForm.pass"></el-input>
+        <el-form-item label="输入登录密码" prop="pass" :error="passError">
+          <el-input v-model="ruleForm.pass" :maxlength="20" type="password"></el-input>
         </el-form-item>
-        <el-form-item label="输入手机号码" prop="mobile">
-          <el-input v-model="ruleForm.mobile"></el-input>
+        <el-form-item label="输入新手机号码" prop="mobile">
+          <el-input v-model="ruleForm.mobile" :maxlength="11"></el-input>
         </el-form-item>
-        <el-form-item label="验证码" prop="authCode">
+        <!-- <el-form-item label="验证码" prop="authCode">
           <el-input class="authInput" v-model="ruleForm.authCode"></el-input>
           <el-button class="authBtn" :disabled="authMsg.disableAuth" @click="getAuth(authMsg.defaultInterval)" type="primary">{{authMsg.msg}}</el-button>
-        </el-form-item>
-        <el-button @click="submitForm('ruleForm')" type="primary" :style="{'margin-left': labelWidth}">提交</el-button>
+        </el-form-item> -->
+        <el-button @click="submitForm" type="primary" :disabled="submiting" :style="{'margin-left': labelWidth}">提交</el-button>
       </el-form>
     </el-card>
   </div>
 </template>
-
 <script>
 const localStorage = window.localStorage;
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -45,7 +43,6 @@ export default {
         mobile: '',
         authCode: ''
       },
-      authMsg: '发送验证码',
       labelPosition: 'left',
       labelWidth: '150px',
       rules: {
@@ -65,8 +62,16 @@ export default {
         msg: '发送验证码',
         disableAuth: false,
         defaultInterval: 60
-      }
+      },
+      passError: '',
+      submiting: false
     }
+  },
+  computed: {
+
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   created() {
     if (localStorage.getItem('dhair')) {
@@ -78,40 +83,68 @@ export default {
     }
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+    submitForm() {
+      this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          alert('submit!');
+          if (!this.submiting) {
+            this.submiting = true;
+            this.passError='';
+            this.checkPass()
+          }
         } else {
           console.log('error submit!!');
           return false;
         }
       });
     },
+    checkPass() {
+      this.$http.post('/emp/login', { password: this.ruleForm.pass, workNo: this.userInfo.workNo })
+        .then(res => {
+          if (res.status == 0) {
+            this.updateNum();
+          } else {
+            this.submiting = false;
+            this.passError = res.message;
+          }
+        })
+    },
+    updateNum() {
+      this.$http.post('/emp/mobileNumberUpdate', { mobileNumber: this.ruleForm.mobile, empId: this.userInfo.empId })
+        .then(res => {
+          this.submiting = false;
+          if (res.status == 0) {
+            this.$message.success('修改成功！');
+            this.$refs.ruleForm.resetFields()
+          } else {
+            this.$message.error(res.message);
+          }
+        })
+    },
     getAuth(remainingTime, refresh = false) {
       if (refresh) {
         this.countDown(remainingTime)
       } else {
-        if ((/^1[34578]\d{9}$/.test(this.ruleForm.mobile))) {
-          localStorage.setItem('dhair', new Date().getTime());
-          this.countDown(remainingTime)
-          this.$http.post().then(
-            (data) => {
-              if (data.status == '0') {
-                this.$message.success('手机号码修改成功')
-                this.resetForm('ruleForm')
-              } else {
-                this.$message.error(data.message)
-              }
-            })
-        } else {
-          this.$message.error('手机号码不正确')
-        }
+        this.$refs.ruleForm.validateField('mobile', errorMessage => {
+          if (!errorMessage) {
+            localStorage.setItem('dhair', new Date().getTime());
+            this.countDown(remainingTime)
+            this.$http.post().then(
+              (res) => {
+                if (res.status == '0') {
+                  this.$message.success('手机号码修改成功')
+                  this.$refs.ruleForm.resetFields()
+                } else {
+                  this.$message.error(res.message)
+                }
+              })
+          }
+        })
+
       }
     },
     countDown(remainingTime) {
       this.authMsg.disableAuth = true
-      new Promise((resolve, reject) => {    //  验证码倒计时实现
+      new Promise((resolve, reject) => { //  验证码倒计时实现
         this.authMsg.msg = remainingTime;
         let interval = setInterval(() => {
           remainingTime--;
@@ -125,14 +158,11 @@ export default {
         this.authMsg.msg = '重新发送';
         this.authMsg.disableAuth = false;
       });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
     }
   }
 }
-</script>
 
+</script>
 <style lang="scss">
 @import '../../assets/scss/color.scss';
 
@@ -146,7 +176,7 @@ export default {
       width: 110px;
       height: 47px;
       font-size: 14px;
-      right:113px;
+      right: 113px;
       position: relative;
       top: -2px;
       span {
@@ -167,4 +197,5 @@ export default {
     content: ''
   }
 }
+
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="moenyInput">
-    <el-input :value="value" :class="{'hasUnit':hasUnit}" ref="input" @change="fomat" :maxlength="10" @blur="blurInput">
+    <el-input :value="value" :class="{'hasUnit':append}" ref="input" @change="fomat" :maxlength="10" @blur="blurInput">
       <template slot="prepend" v-if="prepend">
         <slot name="prepend"></slot>
       </template>
@@ -15,10 +15,6 @@ import { mapGetters } from 'vuex'
 export default {
   props: {
     value: '',
-    hasUnit: {
-      type: Boolean,
-      default: true
-    },
     prepend:{
       type: Boolean,
       default: true
@@ -48,13 +44,14 @@ export default {
   methods: {
     fomat(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
+
       if (val) {
         this.$emit('input', val[0]);
         this.$emit('change', val[0]);
         this.$refs.input.setCurrentValue(val[0]);
       } else {
-        this.$emit('input', val[0]);
-        this.$emit('change', val[0]);
+        this.$emit('input', '');
+        this.$emit('change', '');
         this.$refs.input.setCurrentValue('')
       }
     },

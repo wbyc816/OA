@@ -43,14 +43,11 @@ export default {
     submitDoc() {
       this.$store.commit('SET_SUBMIT_LOADING', true)
       this.$refs.subject.submitForm();
-      console.log(1);
     },
     submitStart(val) {
       if (val) {
-        console.log(3);
         this.$refs.description.submitForm();
       } else {
-        console.log(3);
         this.$store.commit('SET_SUBMIT_LOADING', false)
       }
     },

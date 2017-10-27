@@ -552,7 +552,7 @@ export default {
         })
     },
     getOtherNews(classify) {
-      this.$http.post('/index/selectFileList', { classify2: classify })
+      this.$http.post('/index/selectFileList', { classify2: classify,empId:this.userInfo.empId })
         .then(res1 => {
           if (res1.status == 0) {
             if (classify == 'FIL0301') {

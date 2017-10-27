@@ -9,7 +9,7 @@
           <div class="topSearch clearfix">
             <p class="tips">选择收件人<span v-show="dialogType=='radio'">请单击姓名选择</span></p>
             <el-input class="search" v-model="name">
-              <el-button slot="append" @click="search">搜索</el-button>
+              <el-button slot="append" @click="search" @keyup.enter.native="search">搜索</el-button>
             </el-input>
           </div>
           <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
@@ -72,6 +72,10 @@ export default {
     admin: {
       type: String,
       default: ''
+    },
+    selfDisable: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -148,14 +152,17 @@ export default {
     },
     selectPerson(row) {
       if (this.dialogType == 'radio') {
-        if (row.empId != this.userInfo.empId) {
+        if (this.selfDisable) {
+          if (row.empId != this.userInfo.empId) {
+            this.selPerson = row;
+          } else {
+            this.$message({
+              message: '请重新选择收件人！',
+              type: 'warning'
+            })
+          }
+        }else{
           this.selPerson = row;
-
-        } else {
-          this.$message({
-            message: '请重新选择收件人！',
-            type: 'warning'
-          })
         }
       } else {
         this.$refs.multipleTable.toggleRowSelection(row);

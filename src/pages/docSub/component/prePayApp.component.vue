@@ -65,33 +65,46 @@
       <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
     </div>
     <el-form label-position="left" :model="paymentForm" :rules="paymentRule" ref="paymentForm" label-width="128px">
-      <el-form-item label="预付款公文" prop="title" placeholder="">
-        <el-input class="search" :readonly="true" :value="paymentForm.title">
-            <div slot="append">
-              <el-button @click='showDialog'>选择</el-button>
-            </div>
-          </el-input>
+      <el-form-item label="预付款公文" prop="docs">
+        <el-col :span='21' class="docs" style="left: -6px;position: relative;">
+          <div class="docsBox">
+            <el-tag type="gray" v-for="(doc,index) in paymentForm.docs" :closable="true" @close="clearDoc(index)">{{doc.docTitle}}</el-tag>
+          </div>
+        </el-col>
+        <el-col :span='3'>
+          <el-button class="addButton" @click="addDoc"> <i class="el-icon-plus"></i></el-button>
+        </el-col>
       </el-form-item>
+      <div class="appTable">
+        <el-table :data="paymentForm.docs" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加公文">
+          <el-table-column property="supplierName" label="供应商"></el-table-column>
+          <el-table-column property="paymentMethodName" label="付款方式" width="120"></el-table-column>
+          <el-table-column property="supplierBank" label="开户行" width="130"></el-table-column>
+          <el-table-column property="supplierBankAccountName" label="收款账户" width="120"></el-table-column>
+          <el-table-column property="costTypeName" label="费用类型" width="125"></el-table-column>
+        </el-table>
+      </div>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'BXS',finType:2,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
+        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'YFK',finType:3,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
           <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>
-
     <el-dialog :visible.sync="dialogTableVisible" size="large" class="docDialog">
       <div class="topSearch clearfix">
-        <p class="tips">选择公文<span>请双击公文选择</span></p>
+        <p class="tips">选择公文</p>
       </div>
       <search-options @search="setOptions" :notype="true"></search-options>
-      <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="250" v-loading="searchLoading">
+      <el-table :data="extraDocs" class="myTable searchRes" :height="250" v-loading="searchLoading" @selection-change="handleSelectionChange" :row-key="rowKey" ref="dialogTable">
+        <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
         <el-table-column prop="docTitle" label="标题" width="310"></el-table-column>
-        <el-table-column prop="taskUser" label="呈报人" width="150"></el-table-column>
+        <el-table-column prop="taskName" label="呈报人" width="150"></el-table-column>
         <el-table-column prop="taskTime" label="呈报时间"></el-table-column>
       </el-table>
-      <div class="pageBox" v-show="extraDocs.length>0">
-        <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="5" layout="total, prev, pager, next, jumper" :total="totalSize">
+      <div class="pageBox">
+        <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="5" layout="total, prev, pager, next, jumper" :total="totalSize" v-show="extraDocs.length>0">
         </el-pagination>
+        <el-button size="small" type="primary" @click="confirmDocs">选中</el-button>
       </div>
     </el-dialog>
   </div>
@@ -103,7 +116,7 @@ import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
 export default {
-  components: {SearchOptions,MoneyInput},
+  components: { SearchOptions, MoneyInput },
   data() {
     var that = this;
     var checkNum = function(rule, value, callback) {
@@ -138,11 +151,11 @@ export default {
       budgetTable: [],
       paymentForm: {
         invoiceAttach: [],
-        title:''
+        docs: []
       },
       paymentRule: {
-        invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票', trigger: 'blur' }],
-        title: [{  required: true, trigger: 'blur', message: '请选择预付款公文' }],
+        invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票' }],
+        docs: [{ type: 'array', required: true, trigger: 'blur', message: '请选择预付款公文' }],
       },
       invoiceAttach: [],
       budgetProp: {
@@ -150,15 +163,17 @@ export default {
         value: 'budgetItemCode',
         children: 'items'
       },
-      dialogTableVisible:false,
-      extraDocs:[],
+      dialogTableVisible: false,
+      extraDocs: [],
       totalSize: 0,
       searchOptions: '',
       searchLoading: false,
-       params: {
+      params: {
         "pageNumber": 1,
         "pageSize": 5
       },
+      docInfo: '',
+      docsTemp: []
     }
   },
   computed: {
@@ -188,27 +203,41 @@ export default {
 
   },
   methods: {
-    showDialog(){
-      this.dialogTableVisible=true;
+    confirmDocs() {
+      if (this.paymentForm.docs.length != 0) {
+        this.dialogTableVisible = false;
+      } else {
+        this.$message.warning('请至少选择一个公文再提交！')
+      }
     },
-    selectDoc(row) {
-
+    rowKey(row) {
+      return row.docId
+    },
+    handleSelectionChange(val) {
+      this.paymentForm.docs = val;
+    },
+    addDoc() {
+      this.dialogTableVisible = true;
+      this.getDoc();
+    },
+    clearDoc(index) {
+      this.paymentForm.docs.splice(index, 1);
     },
     setOptions(options) {
       this.searchOptions = options;
       this.params.pageNumber = 1;
       this.getDoc();
     },
-    getDoc(){
+    getDoc() {
       this.searchLoading = true;
       var params = Object.assign({ userId: this.userInfo.empId }, this.params, this.searchOptions);
-      this.$http.post("/doc/selectDocList", params, { body: true }).then(res => {
+      this.$http.post("/doc/advanceDocument", params, { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;
         }.bind(this), 200)
         if (res.status == 0) {
-          this.extraDocs = res.data.dList;
-          this.totalSize = res.data.totalSize;
+          this.extraDocs = res.data.records;
+          this.totalSize = res.data.total;
         } else {
           this.extraDocs = [];
           this.totalSize = 0;
@@ -232,28 +261,42 @@ export default {
             return false;
           }
         });
-      }else{
+      } else {
         this.$message.warning('未添加付款项');
       }
 
     },
     submitAll() {
-      var payMthod = this.payMthods.find(i => i.dictCode == this.paymentForm.payMthodCode);
-      var tDocFinReimbursementItems = this.clone(this.budgetTable).map(function(b) {
+      var items = this.clone(this.budgetTable).map(function(b) {
         delete b.currencyCode;
         delete b.appMoney;
         b.receiptTicket = b.invoiceCode.join();
         delete b.invoiceCode;
         return b;
       });
-      var tDocFinReimbursement = {
-        "budgetYear": this.year,
-        "tDocFinReimbursementItems": tDocFinReimbursementItems
+      var verificationPays = this.paymentForm.docs.map(function(d) {
+        return {
+          "budgetYear": d.budgetYear, //预算年度
+          "paymentDocId": d.docId, //预付款申请公文id
+          "paymentDocName": d.docTitle, //预付款申请公文名
+          "paymentSupplierId": d.supplierId, //预付款-供应商id
+          "paymentSupplierName": d.supplierName, //预付款-供应商名
+          "paymentSupplierBank": d.supplierBank, //预付款-供应商开户银行
+          "paymentSupplierAccountName": d.supplierBankAccountName, //预付款-供应商开户名
+          "paymentSupplierAccountCode": d.supplierBankAccountCode, //预付款-供应商开户号
+          "paymentIsProduction": d.isProduction, //是否是生产类, 1为是 0为否
+          "paymentMethodCode": d.paymentMethodName, //付款方式
+          "costTypeCode": d.costTypeCode, //费用类型code , FIN04和FIN05 中
+          "costTypeName": d.costTypeName,// 费用类型名
+          "totalMoney":d.totalMoney
+        }
+      })
+      var verification = {
+        budgetYear: this.year
       }
       // console.log(this.clone(this.budgetTable));
       var finFileIds = this.invoiceAttach;
-      console.log(tDocFinReimbursement, finFileIds);
-      this.$emit('submitMiddle', { tDocFinReimbursement: tDocFinReimbursement,finFileIds:finFileIds })
+      this.$emit('submitMiddle', { verification: verification, items: items, verificationPays: verificationPays, finFileIds: finFileIds })
     },
     invoiceTypeChange(code) {
       if (code != 'FIN0201') {
@@ -406,14 +449,18 @@ export default {
       }
     },
     depChange(val) {
-      this.$http.post('/doc/getExecStatisofItemId', { budgetYear: this.year, budgetItemCode: val[val.length - 1] })
-        .then(res => {
-          if (res.status == 0) {
-            this.budgetInfo = res.data;
-          } else {
+      if (val.length > 0) {
+        this.$http.post('/doc/getExecStatisofItemId', { budgetYear: this.year, budgetItemCode: val[val.length - 1] })
+          .then(res => {
+            if (res.status == 0) {
+              this.budgetInfo = res.data;
+            } else {
 
-          }
-        })
+            }
+          })
+      } else {
+        this.budgetInfo = ''
+      }
     },
     getBudgetDep() {
       var len = this.budgetForm.budgetDept.length;
@@ -493,22 +540,6 @@ $main:#0460AE;
       }
     }
   }
-  .supplierInfo {
-    background: #F7F7F7;
-    font-size: 15px;
-    color: $main;
-    margin-bottom: 20px;
-    li {
-      float: left;
-      width: 60%;
-      text-align: center;
-      line-height: 54px;
-      &:nth-child(2) {
-        width: 40%;
-        border-left: 1px solid #D5DADF;
-      }
-    }
-  }
   .addBudget {
     width: 220px;
     height: 45px;
@@ -532,7 +563,7 @@ $main:#0460AE;
       color: $main;
     }
   }
-    .docDialog {
+  .docDialog {
     .el-dialog--large {
       width: 800px;
       top: 50%!important;
@@ -590,7 +621,33 @@ $main:#0460AE;
       padding-bottom: 5px;
       border-bottom: 1px solid #D5DADF;
       .el-pagination {
+        float: left;
+      }
+      .el-button {
         float: right;
+        width: 100px;
+      }
+    }
+  }
+  .docs {
+    .docsBox {
+      min-height: 45px;
+      border-bottom: 1px solid #D5DADF;
+      padding-top: 10px;
+      .el-tag {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 14px;
+        position: relative;
+        padding-right: 20px;
+        .el-icon-close {
+          position: absolute;
+          top: 2px;
+          right: 2px;
+        }
       }
     }
   }

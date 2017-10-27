@@ -70,7 +70,7 @@
          <el-card class="highSearch" >
            
                 <span class="title_label">标题</span>
-                <el-input class="" placeholder=""  v-model="params.docTitle">
+                <el-input class="" placeholder=""  v-model="params.docTitle"    @keyup.enter.native="click_Search">
                 </el-input>
                 <div class="block">
                  <span class="title_label">日历</span>

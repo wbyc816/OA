@@ -5,7 +5,7 @@
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
       <el-form-item label="请示内容" prop="des">
         <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des"></el-input>
-        <div class="tempBox"><span></span>
+        <div class="tempBox" @click="ruleForm.des=tempText"><span></span>
           <div><i class="iconfont icon-moban"></i>模板</div>
         </div>
       </el-form-item>
@@ -24,8 +24,8 @@
         <el-button size="small" type="text" @click="pathDialogVisible=true"><i class="iconfont icon-edit"></i>编辑</el-button>
       </el-form-item>
       <el-form-item label="附件">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'DOC_ADM_APPROVAL'}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload">
-          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="fileList" :on-remove="handleRemove" ref="myUpload">
+          <el-button size="small" type="primary" :disabled="attchment.length>4">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
@@ -99,6 +99,8 @@ export default {
       totalSize: 0,
       searchOptions: '',
       searchLoading: false,
+      tempText: '',
+      fileList:[]
     }
   },
   computed: {
@@ -107,13 +109,13 @@ export default {
       if (this.ruleForm.path.length != 0) {
         this.ruleForm.path.forEach((node, index) => {
           if (node.nodeName == 'sign') {
-            node.children.forEach((child,childIndex)=>{
-              if(childIndex==0){
-                html +='#'+child.typeIdName+' ';
-              }else if(childIndex==node.children.length-1){
-                html+=child.typeIdName+'# '+arrowHtml;
-              }else{
-                html+=child.typeIdName+' '
+            node.children.forEach((child, childIndex) => {
+              if (childIndex == 0) {
+                html += '#' + child.typeIdName + ' ';
+              } else if (childIndex == node.children.length - 1) {
+                html += child.typeIdName + '# ' + arrowHtml;
+              } else {
+                html += child.typeIdName + ' '
               }
             })
           } else {
@@ -131,12 +133,21 @@ export default {
       'baseURL',
       'docType',
       'userInfo'
-
     ])
+  },
+  watch: {
+    docType: function(newval) {
+      if (newval.length != 0) {
+        this.handleTemp();
+      }
+    }
   },
   components: {
     SearchOptions,
     PathDialog
+  },
+  created() {
+    this.handleTemp();
   },
   methods: {
     submitForm() {
@@ -158,6 +169,20 @@ export default {
           return false;
         }
       });
+    },
+    saveForm() {
+      var params = {
+        taskContent: this.ruleForm.des, //请示内容
+        qutoes: this.docs[0].quoteDocId ? this.docs : [],
+        suggests: this.handlePath(this.ruleForm.path)
+      }
+      this.$emit('saveEnd', params);
+    },
+    handleTemp() {
+      if (this.docType.length != 0) {
+        var doc = this.docType.find(d => d.docTypeCode == this.$route.params.code);
+        this.tempText = doc.temPlate.replace(/↵/g, "\n");
+      }
     },
     clearDoc(index) {
       if (this.docs.length == 1) {
@@ -197,11 +222,25 @@ export default {
       }
     },
     handleAvatarError(res, file) {
-      console.log(5);
       this.$emit('submitEnd', false);
       this.$message.error('附件上传失败，请重试');
     },
     handleChange(file, fileList) {
+      const isPDF = file.raw.type === 'application/pdf';
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isPDF) {
+        this.$message.error('上传正文只能是 PDF 格式!');
+      }
+      if (!isLt10M) {
+        this.$message.error('上传正文大小不能超过 20MB!');
+      }
+      if (isPDF && isLt10M) {
+        this.attchment = fileList;
+      }else{
+        this.$refs.myUpload.uploadFiles.splice(this.$refs.myUpload.uploadFiles.length-1,1)
+      }
+    },
+    handleRemove(file, fileList){
       this.attchment = fileList;
     },
     tableRowClassName(row, index) {

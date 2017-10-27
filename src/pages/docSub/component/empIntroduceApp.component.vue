@@ -7,8 +7,8 @@
       </el-form-item>
       <el-form-item label="性别" prop="gender" class="arrArea" label-width="100px">
         <el-select v-model="introduceForm.gender">
-          <el-option key="F" label="男" value="F"></el-option>
-          <el-option key="M" label="女" value="M"></el-option>
+          <el-option key="M" label="男" value="M"></el-option>
+          <el-option key="F" label="女" value="F"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="出生日期" prop="birthday" class="deptArea">
@@ -44,7 +44,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="个人照片" class="uploadBox" prop="picUrl">
-        <el-upload ref="upload" class="avatar-uploader" :auto-upload="false" :action="baseURL+'/emp/updatePic'" :data="{id:userInfo.empId}" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange">
+        <el-upload ref="upload" class="avatar-uploader" :auto-upload="false" :action="baseURL+'/emp/updatePic'" :data="{id:userInfo.empId,introducePic:'RRY'}" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange">
           <img v-if="introduceForm.picUrl" :src="introduceForm.picUrl" class="avatar">
           <img v-else src="../../../assets/images/blankHead1.png" alt="">
         </el-upload>
@@ -129,6 +129,7 @@ export default {
         education: [{ required: true, message: '请选择学历', trigger: 'blur' }],
         major: [{ required: true, message: '请输入专业', trigger: 'blur' }],
         picUrl: [{ required: true, message: '请上传照片', trigger: 'blur' }],
+        email:[{type:'email',message:'请输入正确的邮箱',trigger: 'blur,change'}]
       },
       params: '',
       edus: [],

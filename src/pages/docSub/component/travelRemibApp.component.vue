@@ -1,5 +1,5 @@
 <template>
-  <div class="reimburseApp">
+  <div class="travelRemibApp">
     <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px">
       <el-form-item label="预算年份" class="widthLeft40 year">
         {{year}}
@@ -485,7 +485,7 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.reimburseApp {
+.travelRemibApp {
   // .el-input {
   //   width: 100%;
   // }

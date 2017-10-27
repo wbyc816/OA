@@ -87,8 +87,10 @@ video {
   vertical-align: baseline;
   box-sizing: border-box;
 }
-html,body{
-  height:100%;
+
+html,
+body {
+  height: 100%;
 }
 
 body {
@@ -191,6 +193,11 @@ ul {
       color: #fff;
       background: $main;
       border-color: $main;
+      &.is-disabled {
+        background-color: rgb(238, 241, 246);
+        border-color: rgb(209, 218, 229);
+        color: rgb(191, 202, 217);
+      }
     }
   }
 }
@@ -605,14 +612,7 @@ ul {
   // }
 }
 
-.doc-form-submit_btn button {
-  height: 46px;
-  width: 200px;
-  margin-left: 134px;
-  font-size: 16px;
-  border-radius: 3px;
-  background-color: $main;
-}
+
 
 .doc-section:nth-last-child(2) {
   border-bottom: none;

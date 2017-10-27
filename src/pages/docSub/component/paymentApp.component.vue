@@ -72,7 +72,7 @@
     </div>
     <el-form label-position="left" :model="paymentForm" :rules="paymentRule" ref="paymentForm" label-width="128px">
       <el-form-item label="收款供应商" prop="supplierIds">
-        <el-cascader expand-trigger="hover" :options="supplierList" :props="paymentProp" v-model="paymentForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier">
+        <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="paymentProp" v-model="paymentForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier">
         </el-cascader>
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo">
@@ -472,8 +472,9 @@ export default {
         .then(res => {
           if (res.status == '0') {
             res.data.forEach((s, index) => {
-              s.id = index;
+              s.id = s.supplierName;
             })
+            console.log(res.data)
             this.supplierList = res.data;
           } else {
             console.log('获取供应商失败')
@@ -513,14 +514,18 @@ export default {
       }
     },
     depChange(val) {
-      this.$http.post('/doc/getExecStatisofItemId', { budgetYear: this.year, budgetItemCode: val[val.length - 1] })
-        .then(res => {
-          if (res.status == 0) {
-            this.budgetInfo = res.data;
-          } else {
+      if (val.length>0) {
+        this.$http.post('/doc/getExecStatisofItemId', { budgetYear: this.year, budgetItemCode: val[val.length - 1] })
+          .then(res => {
+            if (res.status == 0) {
+              this.budgetInfo = res.data;
+            } else {
 
-          }
-        })
+            }
+          })
+      }else{
+        this.budgetInfo=''
+      }
     },
     supplierChange(val) {
       var len = this.paymentForm.supplierIds.length;

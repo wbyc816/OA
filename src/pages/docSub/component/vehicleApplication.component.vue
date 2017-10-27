@@ -18,7 +18,7 @@
         <el-date-picker v-model="vehicleForm.timeLine" type="datetimerange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :visible.sync="personDialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :selfDisable="false" :visible.sync="personDialogVisible"></person-dialog>
 
     <dep-dialog :dialogVisible.sync="depDialogVisible" @updateDep="updateDep"></dep-dialog>
   </div>
@@ -51,7 +51,7 @@ export default {
           { validator: this.validatePhone, trigger: 'blur,change' }
         ],
         contactDeptName: [{ required: true, message: '请选择用车部门', trigger: 'blur' }],
-        timeLine: [{type:'array',required: true, validator: checkDate, trigger: 'blur' }],
+        timeLine: [{type:'array',required: true, message: '请选择用车时间', trigger: 'blur' }],
       },
       personDialogVisible: false,
       selDep: '',
@@ -97,7 +97,11 @@ export default {
           return false;
         }
       });
-    }
+    },
+    saveForm(){
+      var params=JSON.stringify(this.vehicleForm);
+      this.$emit('saveMiddle',params);
+    },
   }
 }
 

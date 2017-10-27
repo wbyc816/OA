@@ -9,8 +9,15 @@ const state = {
   urgency: [], //重要程度
   docType: [], //公文类别
   isAdmin: false,
-  docTtile: '',
-  reciver: '',
+  docTitle: '',
+  reciver: {
+    "reciDeptMajorName": '',
+    "reciDeptMajorId": '',
+    "reciDeptName": '',
+    "reciDeptId": '',
+    "reciUserName": '',
+    "reciUserId": '',
+  },
   selConfident: {
     "docDenseTypeCode": "",
     "docDenseType": ""
@@ -22,8 +29,8 @@ const state = {
   extraDocs: [],
   processView: false,
   processData: [],
-  docTips:{
-     "trackingNum": 0,
+  docTips: {
+    "trackingNum": 0,
     "toReadNum": 0,
     "overTimeNum": 0,
     "birthdayNum": 0,
@@ -33,10 +40,10 @@ const state = {
 }
 
 const actions = {
-  getDocTips({ commit, state, rootState, rootGetters }){
+  getDocTips({ commit, state, rootState, rootGetters }) {
     api.getDocTips(rootGetters.userInfo.empId)
       .then(res => {
-        if (res.status==0) {
+        if (res.status == 0) {
           commit(types.GET_DOC_TIPS, res)
         }
       }, res => {
@@ -63,7 +70,7 @@ const actions = {
   getAdminStatus({ commit, state, rootState, rootGetters }) {
     api.getAdminStatus(rootGetters.userInfo.empId)
       .then(res => {
-        if (res.data != null&&res.data != ''&&res.data != undefined) {
+        if (res.data != null && res.data != '' && res.data != undefined) {
           commit(types.GET_ADMIN_STATUS, true)
         }
       }, res => {
@@ -160,11 +167,11 @@ const actions = {
       "taskUserName": rootGetters.userInfo.name,
       "taskUserId": rootGetters.userInfo.empId,
       "docTypeCode": payLoad.docTypeCode,
-      "docTitle": state.docTtile,
-      "isSubmit":1
+      "docTitle": state.docTitle,
+      "isSubmit": 1
     }
     Object.assign(params, state.reciver, state.selConfident, state.selUrgency, payLoad.params)
-    api.submitDoc(payLoad.url,params)
+    api.submitDoc(payLoad.url, params)
       .then(res => {
         if (res.status == "0") {
           this.commit(types.SET_SUBMIT_LOADING, false, { root: true })
@@ -234,7 +241,7 @@ const getters = {
   urgency: state => state.urgency,
   selConfident: state => state.selConfident,
   selUrgency: state => state.selUrgency,
-  docTtile: state => state.docTtile,
+  docTitle: state => state.docTitle,
   reciver: state => state.reciver,
   extraDocs: state => state.extraDocs,
   docType: state => state.docType,
@@ -280,7 +287,7 @@ const mutations = {
     state.selUrgency = payLoad
   },
   setDocTtile(state, payLoad) {
-    state.docTtile = payLoad
+    state.docTitle = payLoad
   },
   setReciver(state, payLoad) {
     state.reciver = payLoad;
