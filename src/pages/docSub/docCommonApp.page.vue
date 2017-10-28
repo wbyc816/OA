@@ -94,7 +94,7 @@ export default {
     CLS,
     CLB
   },
-  created() {
+  mounted() {
     this.initDoc();
   },
   methods: {
@@ -214,8 +214,12 @@ export default {
             this.$store.commit('setReciver', res.data.reciver);
             this.$store.commit('setConfident', res.data.selConfident);
             this.$store.commit('setUrgency', res.data.selUrgency);
-            this.$store.commit('setDocTtile', res.data.docTtile);
+            // this.$store.commit('setDocTtile', res.data.docTtile);
             this.reciverName = res.data.receiver.reciUserName;
+            this.$refs.subject.updateTitle(res.data.docTtile);
+            this.$refs.description.updatePath(res.data.path);
+            this.$refs.description.docs=res.data.docs;
+            console.log(JSON.parse(res.data.draftContent))
           } else {
 
           }

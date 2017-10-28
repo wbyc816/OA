@@ -173,8 +173,8 @@ const actions = {
     Object.assign(params, state.reciver, state.selConfident, state.selUrgency, payLoad.params)
     api.submitDoc(payLoad.url, params)
       .then(res => {
-        if (res.status == "0") {
-          this.commit(types.SET_SUBMIT_LOADING, false, { root: true })
+        this.commit(types.SET_SUBMIT_LOADING, false, { root: true })
+        if (res.status == "0") {         
           Notification({
             message: '呈报公文成功',
             type: 'success'
@@ -188,6 +188,7 @@ const actions = {
           });
         }
       }, res => {
+        this.commit(types.SET_SUBMIT_LOADING, false, { root: true })
         Notification({
           message: '呈报公文失败，请重试！',
           type: 'error'

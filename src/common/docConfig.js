@@ -94,6 +94,6 @@ export const docConfig = [{
   {
     docName: '差旅报销申请',
     code: 'CLB',
-    url: '/doc/reimburseApp'
+    url: '/doc/docFinTravelpay'
   },
 ]

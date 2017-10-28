@@ -984,3 +984,23 @@ ul {
   border-color: #f2f2f2;
   padding: 8px 20px;
 }
+
+.expandTable {
+  .el-table__expanded-cell {
+    padding: 10px 50px;
+    .el-form {
+      font-size: 0;
+      label {
+        width: 90px;
+        color: #99a9bf;
+        padding: 0 0 0 10px;
+        line-height: 36px;
+      }
+      .el-form-item {
+        margin-right: 0;
+        margin-bottom: 0;
+        width: 50%;
+      }
+    }
+  }
+}

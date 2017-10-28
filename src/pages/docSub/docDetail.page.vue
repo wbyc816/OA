@@ -141,7 +141,7 @@
           <el-form-item>
             <el-col :span='18'>
               <el-button type="primary" size="large" class="submitButton" @click="submit">提交</el-button>
-              <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="isAdmin"><i class="iconfont icon-archive"></i>归档</el-button>
+              <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isSecretary==1"><i class="iconfont icon-archive"></i>归档</el-button>
             </el-col>
           </el-form-item>
         </el-form>
@@ -228,6 +228,7 @@ import YSS from './component/budgetDetail.component' //预算详情
 import BXS from './component/reimburseDetail.component' //预算详情
 import FKS from './component/paymentDetail.component' //付款详情
 import YFK from './component/prePayDetail.component' //预付款详情
+import CLB from './component/travelRemibDetail.component' //预付款详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -253,7 +254,8 @@ export default {
     YSS,
     BXS,
     FKS,
-    YFK
+    YFK,
+    CLB
   },
   data() {
     var checkSign = (rule, value, callback) => {

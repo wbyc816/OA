@@ -37,10 +37,10 @@
       <el-table-column property="cExecRate" label="执行比例" width="100"></el-table-column>
     </el-table>
     <!-- <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p> -->
-    <el-table :data="info[0].pay" :stripe="true" highlight-current-row style="width: 100%" class="appTable docTable ">
+    <el-table :data="info[0].pay" :stripe="true" highlight-current-row style="width: 100%" class="appTable docTable expandTable">
       <el-table-column type="expand">
         <template scope="props">
-          <el-form label-position="left" label-width="90px" inline class="demo-table-expand">
+          <el-form label-position="left" label-width="90px" inline>
             <el-form-item label="付款方式">
               <span>{{ props.row.paymentMethodCode }}</span>
             </el-form-item>
@@ -168,23 +168,6 @@ $sub:#1465C0;
     .el-table__footer-wrapper thead div {
       background: $sub;
     }
-  }
-  .demo-table-expand {
-    font-size: 0;
-    label {
-      width: 90px;
-      color: #99a9bf;
-      padding: 0 0 0 10px;
-      line-height: 36px;
-    }
-    .el-form-item {
-      margin-right: 0;
-      margin-bottom: 0;
-      width: 50%;
-    }
-  }
-  .el-table__expanded-cell{
-    padding:10px 50px;
   }
 }
 

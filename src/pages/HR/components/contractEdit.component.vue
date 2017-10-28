@@ -1,15 +1,15 @@
 <template>
   <div class="contractEdit">
-    <el-form :model="contractForm" ref="contractForm" label-position="left" label-width="110px" class="editForm">
+    <el-form :model="contractForm" ref="contractForm" label-position="left" label-width="120px" class="editForm">
       <div class="header">
         <span class="title">合同信息</span>
         <el-button type="primary" icon="plus" size="small" @click="addContract">添加</el-button>
-        <el-button type="primary" icon="close" size="small" @click="delContract(0)" v-if="contractForm.content.length!=0" :disabled="contractForm.content[0].id!=undefined">删除</el-button>
+        <el-button type="primary" icon="close" size="small" @click="delContract(0)" v-if="contractForm.content.length!=0&&contractForm.content[0].isDel!=1">删除</el-button>
       </div>
-      <template v-for="(contract,index) in contractForm.content">
+      <template v-for="(contract,index) in contractForm.content" v-if="contract.isDel!=1">
         <div class="header" v-if="index!=0">
           <span class="title">合同信息</span>
-          <el-button type="primary" icon="close" size="small" @click="delContract(index)" :disabled="contract.id!=undefined">删除</el-button>
+          <el-button type="primary" icon="close" size="small" @click="delContract(index)">删除</el-button>
         </div>
         <el-form-item label="合同类型" :prop="'content.'+index+'.type'" :rules="{required: true, message: '合同类型不能为空', trigger: 'blur'}">
           <el-input v-model="contract.type"></el-input>
@@ -21,7 +21,7 @@
           <el-date-picker type="date" v-model="contract.startDate" style="width: 100%;" :editable="false" :clearable="false" :picker-options="dateOptions[index].start"></el-date-picker>
         </el-form-item>
         <el-form-item label="合同结束日期" :prop="'content.'+index+'.endDate'" :rules="{type:'date',required: true, message: '合同结束日期不能为空', trigger: 'blur'}">
-          <el-date-picker type="date" v-model="contract.endDate" style="width: 100%;" :editable="false" :clearable="false"  :picker-options="dateOptions[index].end"></el-date-picker>
+          <el-date-picker type="date" v-model="contract.endDate" style="width: 100%;" :editable="false" :clearable="false" :picker-options="dateOptions[index].end"></el-date-picker>
         </el-form-item>
         <div class="borderBox"></div>
       </template>
@@ -46,7 +46,7 @@ export default {
         content: []
       },
       submitLoading: false,
-      constTemp: { type: '', subject: '', endDate: '', startDate: '', createUser: '', empId: '', oldId: '' }
+      constTemp: { type: '', subject: '', endDate: '', startDate: '', createUser: '', empId: '', oldId: '', isDel: 0 }
     }
   },
   computed: {
@@ -73,7 +73,6 @@ export default {
         }
         options.push({ start: start, end: end })
       })
-      console.log(options)
       return options
     },
     ...mapGetters([
@@ -101,9 +100,12 @@ export default {
   //   // next()
   // },
   methods: {
-
     addContract() {
-      this.contractForm.content.push(this.clone(this.constTemp));
+      if (this.contractForm.content.filter(c => c.id != undefined).every(c => c.isDel == 1)) {
+        this.contractForm.content.unshift(this.clone(this.constTemp));
+      } else {
+        this.contractForm.content.push(this.clone(this.constTemp));
+      }
     },
     delContract(index) {
       this.$confirm('确定删除此条信息?', '提示', {
@@ -111,13 +113,18 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.contractForm.content.splice(index, 1);
+        if (this.contractForm.content[index].id) {
+          this.contractForm.content[index].isDel = 1;
+          this.contractForm.content.push(this.contractForm.content.splice(index, 1)[0])
+        } else {
+          this.contractForm.content.splice(index, 1);
+        }
       }).catch(() => {
 
       });
     },
     onSubmit() {
-      this.$emit('submit',{ contract:this.contractForm.content.map(c => this.changeTime(c))});
+      this.$emit('submit', { contract: this.contractForm.content.map(c => this.changeTime(c)) });
     },
     getContract() {
       this.$http.post('/resume/getContractInfo', { id: this.userInfo.empId })

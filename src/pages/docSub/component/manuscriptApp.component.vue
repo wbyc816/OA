@@ -97,6 +97,7 @@ export default {
         children: 'catalogues'
       },
       noMore:false,
+      docFileId:''
     }
   },
   computed: {
@@ -120,7 +121,7 @@ export default {
       this.manuscriptForm.fileSend = params;
     },
     handleAvatarSuccess(res, file) {
-      this.params.docFileId = res.data;
+      this.docFileId = res.data;
       this.picSuccesss = 1;
       this.submitMiddle();
     },
@@ -176,6 +177,7 @@ export default {
             "ids": []
           }
         },
+        docFileId:this.docFileId
       }
       // if(!this.manuscriptForm.fileSend.all.max){
       //   this.params.fileSend.sendTypeAll={};

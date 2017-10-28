@@ -283,7 +283,6 @@ export default {
       })
     },
     updatePath(list) {
-      console.log(list)
       this.ruleForm.path = this.clone(list);
       this.pathDialogVisible = false;
     },

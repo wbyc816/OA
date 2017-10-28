@@ -6,8 +6,8 @@
       </el-form-item>
       <el-form-item label="性别">
         <el-radio-group class="myRadio" v-model="personForm.gender">
-          <el-radio-button label="F">男<i></i></el-radio-button>
-          <el-radio-button label="M">女<i></i></el-radio-button>
+          <el-radio-button label="M">男<i></i></el-radio-button>
+          <el-radio-button label="F">女<i></i></el-radio-button>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="英文名" prop="nameEn">

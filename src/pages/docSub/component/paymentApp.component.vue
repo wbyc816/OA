@@ -76,8 +76,8 @@
         </el-cascader>
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo">
-        <li>开户银行 {{supplierInfo.supplierBank}}</li>
-        <li>收款账户 {{supplierInfo.supplierBankAccountName}}</li>
+        <li>开户银行 {{supplierInfo.accountBank}}</li>
+        <li>收款账户 {{supplierInfo.accountName}}</li>
       </ul>
       <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea">
         <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType">
@@ -249,9 +249,9 @@ export default {
         "budgetYear": this.year, //预算年份
         "supplierId": this.supplierInfo.id, //供应商id
         "supplierName": this.supplierInfo.supplierName, //供应商名
-        "supplierBank": this.supplierInfo.supplierBank, //供应商开户银行
-        "supplierBankAccountName": this.supplierInfo.supplierBankAccountName, //供应商开户账号名
-        "supplierBankAccountCode": this.supplierInfo.supplierBankAccountCode, //供应商开户账号编号
+        "supplierBank": this.supplierInfo.accountBank, //供应商开户银行
+        "supplierBankAccountName": this.supplierInfo.accountName, //供应商开户账号名
+        "supplierBankAccountCode": this.supplierInfo.accountCode, //供应商开户账号编号
         "totalMoney": this.totalMoney, //合计金额
         "paymentMethodCode": payMthod.dictCode, //付款方式code 
         "paymentMethodName": payMthod.dictName, //付款方式名
