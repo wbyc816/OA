@@ -53,7 +53,7 @@ const production = [
   // { 'logo': 'icon-Group22', 'color': '#5BB5FC', 'text': '排班系统', 'link': '#' },
   // { 'logo': 'icon-Path2', 'color': '#FF754F', 'text': '飞行排班系统', 'link': '#' },
   { 'logo': 'icon-Group7', 'font': '22px','color': '#FFE066', 'text': '机供品配餐管理系统', 'link': 'http://192.168.8.150:8090/base/themes/style4/login.jsp' },
-  { 'logo': 'icon-Group9', 'font': '24px', 'color': '#5BB5FC', 'text': '地面保障系统', 'link': 'http://192.168.8.147:8081/GroundWeb/ ' },
+  { 'logo': 'icon-Group9', 'font': '24px', 'color': '#5BB5FC', 'text': '地面保障系统', 'link': 'http://192.168.8.147:8081/GroundWeb/' },
   // { 'logo': 'icon-Group8', 'color': '#FF754F', 'text': '飞行计划系统', 'link': '#' }
 ];
 const saleService = [

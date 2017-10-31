@@ -30,7 +30,7 @@
     </el-col>
     <el-col :span="24">
       <h1 class="title">正文</h1>
-      <p v-if="info" class="textContent" style="color:#0460AE">{{info[0].classify1}}.pdf</p>
+      <p v-if="info" class="textContent" style="color:#0460AE"><a :href="info[0].url" target="_blank">{{info[0].classify1}}</a></p>
     </el-col>
   </div>
 </template>

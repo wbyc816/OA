@@ -3,7 +3,7 @@
     <el-card class="borderCard highLight">
       <div slot="header" class="clearfix">
         <span>{{newsType[params.classify2]}}</span>
-        <span v-show="params.title!=''" class="headRight">按搜索条件 "<i>{{params.title}}</i>" 查询结果</span>
+        <span v-show="params.title" class="headRight">按搜索条件 "<i>{{params.title}}</i>" 查询结果</span>
       </div>
       <el-row>
         <template>

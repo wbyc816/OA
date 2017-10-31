@@ -6,33 +6,18 @@
       </el-col>
       <el-col :span='6'>
         <el-menu mode="vertical" v-bind:router="true" class="mySideLink">
-          <el-menu-item-group title="会议预订与通知">
-            <el-menu-item index='1' :route="{path:'/meeting/MyBooking'}">
-              我发起的<i>{{conferenceNum.launchNum}}</i>
+          <el-menu-item-group title="客户">
+            <el-menu-item index='1' :route="{path:'/supplier/mySupplier'}">
+              我的客户
             </el-menu-item>
-            <el-menu-item index='2' :route="{path:'/meeting/meetingSearch/1'}">
-              我参与的<i>{{conferenceNum.partakeNum}}</i>
+            <el-menu-item index='2' :route="{path:'/supplier/supplierSearch'}">
+              客户查询
             </el-menu-item>
-            <el-menu-item index='3' :route="{path:'/meeting/meetingSearch/2'}">
-              取消的<i>{{conferenceNum.cancelNum}}</i>
-            </el-menu-item>
-            <el-menu-item index='4' :route="{path:'/meeting/meetingSearch/3'}">
-              历史记录
-            </el-menu-item>
-            <el-menu-item index='5' :route="{path:'/meeting/meetingApp'}">
-              预订会议室
-            </el-menu-item>
-            <el-menu-item index='6' :route="{path:'/meeting/ReservationAllRoom/all'}">
-              会议室预订状态
+            <el-menu-item index='3' :route="{path:'/supplier/supplierCreate/all'}">
+              新建客户
             </el-menu-item>
           </el-menu-item-group>
         </el-menu>
-        <el-card class="roomList" v-show="$route.name=='ReservationAllRoom'">
-          <ul v-for="floor in roomList">
-            <li>{{floor.roomPosition}}</li>
-            <router-link tag="li" :to="'/meeting/ReservationAllRoom/'+room.id" v-for="room in floor.rooms">- {{room.roomName}}</router-link>
-          </ul>
-        </el-card>
       </el-col>
     </el-row>
   </div>
@@ -66,16 +51,14 @@ export default {
     return {};
   },
   created() {
-    this.$store.dispatch('getRoomPosition');
-    this.$store.dispatch('getConferenceType');
-    this.$store.dispatch('getConferenceNum');
+    
   },
   methods: {
 
   },
   watch: {
     '$route' (to, from) {
-      this.$store.dispatch('getConferenceNum');
+      
     }
   },
   computed: {

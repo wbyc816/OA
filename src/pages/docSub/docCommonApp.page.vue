@@ -98,7 +98,7 @@ export default {
     BKY,
     YGY
   },
-  created() {
+  mounted() {
     this.initDoc();
   },
   methods: {
@@ -145,13 +145,16 @@ export default {
       }
     },
     saveStart() {
-      this.$store.commit('SET_SUBMIT_LOADING', true)
-      if (this.doc.code == 'CPD') {
-        this.$refs.description.saveForm();
+      if (this.docTitle) {
+        this.$store.commit('SET_SUBMIT_LOADING', true)
+        if (this.doc.code == 'CPD') {
+          this.$refs.description.saveForm();
+        } else {
+          this.$refs.middleCom.saveForm();
+        }
       } else {
-        this.$refs.middleCom.saveForm();
+        this.$message.warning('公文标题不能为空！')
       }
-
     },
     saveMiddle(params) {
       this.saveMiddlePara = params;
@@ -218,8 +221,18 @@ export default {
             this.$store.commit('setReciver', res.data.reciver);
             this.$store.commit('setConfident', res.data.selConfident);
             this.$store.commit('setUrgency', res.data.selUrgency);
-            this.$store.commit('setDocTtile', res.data.docTtile);
+            // this.$store.commit('setDocTtile', res.data.docTtile);
             this.reciverName = res.data.receiver.reciUserName;
+            this.$refs.subject.updateTitle(res.data.docTtile);
+            if (res.data.path) {
+              this.$refs.description.updatePath(res.data.path);
+            }
+            if (res.data.docs.length != 0) {
+              this.$refs.description.docs = res.data.docs;
+            }
+            if (this.doc.code != 'CPD') {
+              this.$refs.middleCom.getDraft(JSON.parse(res.data.draftContent));
+            }
           } else {
 
           }

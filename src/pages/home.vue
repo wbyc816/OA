@@ -81,7 +81,7 @@
               </p>
               <ul>
                 <li v-for="(hr,index) in hr1" v-if="index<3" @click="goTo(hr)">
-                  <p>{{hr.fileNameOld}} <span class="new" v-if="index==0">NEW</span></p>
+                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
                   <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
                 </li>
               </ul>
@@ -92,7 +92,7 @@
               </p>
               <ul>
                 <li v-for="(hr,index) in hr2" v-if="index<3" @click="goTo(hr)">
-                  <p>{{hr.fileNameOld}} <span class="new" v-if="index==0">NEW</span></p>
+                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
                   <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
                 </li>
               </ul>
@@ -224,6 +224,7 @@
             <el-menu-item index="3" @click.native="goToOthers('/PresidentMailbox')"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="6" @click.native="goToOthers('/supplier')"><i class="iconfont icon-geren"></i>客户维护<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -401,8 +402,8 @@ export default {
     this.getOtherNews('FIL0301');
     this.getOtherNews('FIL0302');
   },
-  watch:{
-    docTips (newVal){
+  watch: {
+    docTips(newVal) {
       msgs[1].value = newVal.trackingNum; //追踪
       msgs[2].value = newVal.toReadNum; //待阅
       msgs[3].value = newVal.overTimeNum; //超时
@@ -437,7 +438,7 @@ export default {
       this.showDrag.splice(index, 1, false);
     },
     getTips() {
-      this.$store.dispatch('getDocTips');      
+      this.$store.dispatch('getDocTips');
     },
     querySearch(queryString, cb) {
       var airPortList = JSON.parse(JSON.stringify(this.airPortList));
@@ -552,7 +553,7 @@ export default {
         })
     },
     getOtherNews(classify) {
-      this.$http.post('/index/selectFileList', { classify2: classify,empId:this.userInfo.empId })
+      this.$http.post('/index/selectFileList', { classify2: classify, empId: this.userInfo.empId })
         .then(res1 => {
           if (res1.status == 0) {
             if (classify == 'FIL0301') {
@@ -702,8 +703,8 @@ $sub:#1465C0;
       padding: 0;
     }
     .myTab .el-tabs__header .el-tabs__item {
-      line-height: 82px;
-      height: 82px;
+      line-height: 70px;
+      height: 70px;
     }
     .el-tab-pane {
       .newBox {
@@ -977,13 +978,17 @@ $sub:#1465C0;
           cursor: pointer;
           p:first-child {
             font-size: 16px;
-            line-height: 30px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
+            line-height: 23px;
             img {
               vertical-align: sub;
               padding-right: 5px;
+            }
+            .title {
+              display: inline-block;
+              max-width: 90%;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
             }
             .new {
               font-size: 12px;

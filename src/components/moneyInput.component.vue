@@ -1,6 +1,6 @@
 <template>
   <div class="moenyInput">
-    <el-input :value="value" :class="{'hasUnit':append}" ref="input" @change="fomat" :maxlength="10" @blur="blurInput">
+    <el-input :value="value" :class="{'hasUnit':append}" ref="input" @change="fomat" :maxlength="maxlength" @blur="blurInput" :readonly="readonly">
       <template slot="prepend" v-if="prepend">
         <slot name="prepend"></slot>
       </template>
@@ -22,6 +22,18 @@ export default {
     append:{
       type: Boolean,
       default: true
+    },
+    maxlength:{
+      type:Number,
+      default:10,
+    },
+    hasDot:{
+      type:Boolean,
+      default:true
+    },
+    readonly:{
+      type:Boolean,
+      default:false
     }
   },
   data() {

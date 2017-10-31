@@ -51,9 +51,13 @@ function validatePhone(rule, value, callback) {
   }
 };
 
-function combineObj(target, source) {
+function combineObj(target, source,ignoreList) {
   Object.keys(target).forEach(function (key) {
-    if (source.hasOwnProperty(key)) {
+    var temp;
+    if(ignoreList&&ignoreList.length!=0){
+      temp=ignoreList.find(i=>i==key);
+    }
+    if (source.hasOwnProperty(key)&&!temp) {
       target[key] = source[key]
     }
   })

@@ -50,11 +50,11 @@
       <p v-if="info[0].tDocFinReimbursement.paymentMethodCode!='FIN0104'" class="textContent">{{info[0].tDocFinReimbursement.paymentMethodName}}</p>
       <p class="textContent" v-else>{{info[0].tDocFinReimbursement.paymentOthers}}</p>
     </el-col>
-    <el-col :span="12" class="rightBorder">
+    <el-col :span="12" class="rightBorder" v-if="info[0].tDocFinReimbursement.payeeName">
       <h1 class="title">收款人</h1>
       <p v-if="info" class="textContent">{{info[0].tDocFinReimbursement.payeeName}}</p>
     </el-col>
-    <el-col :span="12">
+    <el-col :span="12" v-if="info[0].tDocFinReimbursement.payeeAccount">
       <h1 class="title">收款账户</h1>
       <p v-if="info" class="textContent">{{info[0].tDocFinReimbursement.payeeAccount}}</p>
     </el-col>

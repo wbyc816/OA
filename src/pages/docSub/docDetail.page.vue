@@ -33,7 +33,7 @@
           </el-col>
           <el-col :span="24" style="min-height:90px">
             <h1 class="title">请示内容</h1>
-            <p class="textContent">{{docDetialInfo.doc.taskContent}}</p>
+            <p class="textContent" style="white-space:pre-wrap">{{docDetialInfo.doc.taskContent}}</p>
           </el-col>
           <el-collapse class="clearfix clearBoth">
             <el-collapse-item title="查看公文详情" name="1">
@@ -64,7 +64,7 @@
       </div>
       <div class='history commonBox'>
         <h4 class='doc-form_title'>历史审批意见</h4>
-        <ul class="backV" v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0&&task.isFlag!=1" :class="{'hasSign':task.signInfo!=''}">
+        <ul class="backV" v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0&&task.isFlag!=1" :class="{'hasSign':task.signInfo!='','isAgree':task.state==2}">
           <li>{{task.taskContent}}</li>
           <li class="timeRight">{{task.taskUserName}} {{task.startTime}}</li>
           <ul class="signBox" v-if="task.signInfo.length!=0">
@@ -80,7 +80,7 @@
           </ul>
         </ul>
       </div>
-      <div v-if="distData.length!=0">
+      <div v-if="distData.length!=0" style="margin-bottom:20px;">
         <h4 class='doc-form_title'>分发意见</h4>
         <el-table :data="topDistData" style="width: 100%" class="distTable" :stripe="true">
           <el-table-column prop="distUserName" label="分发人" width="100"></el-table-column>
@@ -93,9 +93,9 @@
           <el-collapse-item title="查看更多记录" name="1">
           </el-collapse-item>
         </el-collapse>
-        <div class="operateBox">
-          <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
-        </div>
+      </div>
+      <div class="operateBox" v-if="docDetialInfo.doc.isSecretary==1&&docDetialInfo.task[0].state==3">
+        <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
       </div>
       <div class='myAdvice' v-if="docDetialInfo.doc.isTask==1&&docDetialInfo.doc.isSign!=1">
         <h4 class='doc-form_title'>我的审批意见</h4>
@@ -133,6 +133,11 @@
               <el-button class="addButton" @click="selSignPerson" v-show="signType==1||signType==2"><i class="el-icon-plus"></i></el-button>
             </el-col>
           </el-form-item>
+          <el-form-item label="建议路径" class="textarea">
+            <el-col :span='18'>
+              <p class="textContent suggestHtml" v-html="suggestHtml" style="padding-top: 5px;"></p>
+            </el-col>
+          </el-form-item>
           <el-form-item label="审批内容" class="textarea">
             <el-col :span='18'>
               <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8"></el-input>
@@ -141,7 +146,7 @@
           <el-form-item>
             <el-col :span='18'>
               <el-button type="primary" size="large" class="submitButton" @click="submit">提交</el-button>
-              <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="isAdmin"><i class="iconfont icon-archive"></i>归档</el-button>
+              <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isSecretary==1"><i class="iconfont icon-archive"></i>归档</el-button>
             </el-col>
           </el-form-item>
         </el-form>
@@ -228,6 +233,7 @@ import YSS from './component/budgetDetail.component' //预算详情
 import BXS from './component/reimburseDetail.component' //预算详情
 import FKS from './component/paymentDetail.component' //付款详情
 import YFK from './component/prePayDetail.component' //预付款详情
+import CLB from './component/travelRemibDetail.component' //预付款详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -253,7 +259,8 @@ export default {
     YSS,
     BXS,
     FKS,
-    YFK
+    YFK,
+    CLB
   },
   data() {
     var checkSign = (rule, value, callback) => {
@@ -312,7 +319,7 @@ export default {
   created() {
     this.getDetail(this.$route);
   },
-  beforeRouteUpdate (to, from, next) {
+  beforeRouteUpdate(to, from, next) {
     this.getDetail(to);
     next();
   },
@@ -758,6 +765,27 @@ $sub:#1465C0;
       &:first-of-type {
         border-top: 1px solid #D5DADF;
       }
+      &.isAgree {
+        background: #FFF0F0;
+        position: relative;
+        &:before {
+          font-weight: normal;
+          content: "\e743";
+          font-family: "iconfont" !important;
+          font-size: 70px;
+          font-style: normal;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          position: absolute;
+          top: 9px;
+          right: 16px;
+          color: #F4B8B2;
+        }
+        li {
+          position: relative;
+          z-index: 2;
+        }
+      }
     }
     .signBox {
       background: #EAECF7;
@@ -873,7 +901,7 @@ $sub:#1465C0;
     }
   }
   .operateBox {
-    margin: 50px 0;
+    margin: 30px 0;
   }
 }
 

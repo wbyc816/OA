@@ -207,7 +207,7 @@ export default {
       this.getData();
     },
     addDoc() {
-      this.docs.push({ title: '', id: '' })
+      this.docs.push({ quoteDocTitle: '', quoteDocId: '' })
     },
     handleAvatarSuccess(res, file) {
       this.fileIds.push(res.data);
@@ -226,15 +226,15 @@ export default {
       this.$message.error('附件上传失败，请重试');
     },
     handleChange(file, fileList) {
-      const isPDF = file.raw.type === 'application/pdf';
+      // const isPDF = file.raw.type === 'application/pdf';
       const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isPDF) {
-        this.$message.error('上传正文只能是 PDF 格式!');
-      }
+      // if (!isPDF) {
+      //   this.$message.error('上传附件只能是 PDF 格式!');
+      // }
       if (!isLt10M) {
-        this.$message.error('上传正文大小不能超过 20MB!');
+        this.$message.error('上传附件大小不能超过 10MB!');
       }
-      if (isPDF && isLt10M) {
+      if ( isLt10M) {
         this.attchment = fileList;
       }else{
         this.$refs.myUpload.uploadFiles.splice(this.$refs.myUpload.uploadFiles.length-1,1)
@@ -283,7 +283,6 @@ export default {
       })
     },
     updatePath(list) {
-      console.log(list)
       this.ruleForm.path = this.clone(list);
       this.pathDialogVisible = false;
     },

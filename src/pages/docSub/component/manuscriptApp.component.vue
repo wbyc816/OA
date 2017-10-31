@@ -97,6 +97,7 @@ export default {
         children: 'catalogues'
       },
       noMore:false,
+      docFileId:''
     }
   },
   computed: {
@@ -120,7 +121,7 @@ export default {
       this.manuscriptForm.fileSend = params;
     },
     handleAvatarSuccess(res, file) {
-      this.params.docFileId = res.data;
+      this.docFileId = res.data;
       this.picSuccesss = 1;
       this.submitMiddle();
     },
@@ -134,10 +135,10 @@ export default {
       } else {
         this.picSuccesss = 0;
       }
-      const isPDF = file.raw.type === 'application/pdf';
+      const isPDF = (file.raw.type == 'application/pdf'||file.raw.type =='application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       const isLt10M = file.size / 1024 / 1024 < 10;
       if (!isPDF) {
-        this.$message.error('上传正文只能是 PDF 格式!');
+        this.$message.error('上传正文只能是 PDF或DOCX 格式!');
         this.$refs.myUpload.clearFiles();
       }
       if (!isLt10M) {
@@ -176,6 +177,7 @@ export default {
             "ids": []
           }
         },
+        docFileId:this.docFileId
       }
       // if(!this.manuscriptForm.fileSend.all.max){
       //   this.params.fileSend.sendTypeAll={};
@@ -192,6 +194,16 @@ export default {
         return person.empId
       });
       this.$emit('submitMiddle', this.params);
+    },
+    saveForm(){
+      var params=JSON.stringify(Object.assign(this.manuscriptForm));
+      this.$emit('saveMiddle',params);
+    },
+    getDraft(obj){
+      this.combineObj(this.manuscriptForm,obj);
+      if(this.manuscriptForm.issueDate){
+        this.manuscriptForm.issueDate=new Date(this.manuscriptForm.issueDate);
+      }
     },
     submitForm() {
       this.$refs.manuscriptForm.validate((valid) => {

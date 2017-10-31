@@ -13,7 +13,7 @@
           </p>
           <ul>
             <li v-for="(hr,index) in hr1" v-if="index<3" @click="goTo(hr)">
-              <p>{{hr.fileNameOld}} <span class="new" v-if="index==0">NEW</span></p>
+              <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
               <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
             </li>
           </ul>
@@ -24,7 +24,7 @@
           </p>
           <ul>
             <li v-for="(hr,index) in hr2" v-if="index<3" @click="goTo(hr)">
-              <p>{{hr.fileNameOld}} <span class="new" v-if="index==0">NEW</span></p>
+              <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
               <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
             </li>
           </ul>
@@ -41,9 +41,9 @@
       </p>
       <el-row>
         <template>
-          <el-col :span="12" v-for="(hr,index) in hr3" v-if="index<3">
+          <el-col :span="12" v-for="(hr,index) in hr3" v-if="index<6">
             <div @click="goTo(hr)">
-              <p>{{hr.fileNameOld}} </p>
+              <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
               <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
             </div>
           </el-col>
@@ -53,6 +53,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   components: {},
   data() {
@@ -63,6 +64,11 @@ export default {
       hr2:[],
       hr3:[]
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+    ])
   },
   created() {
     this.getPics();
@@ -89,7 +95,7 @@ export default {
         })
     },
     getOtherNews(classify){
-      this.$http.post('/index/selectFileList', { classify2: classify })
+      this.$http.post('/index/selectFileList', { classify2: classify,empId:this.userInfo.empId })
       .then(res1 => {
         if (res1.status == 0) {
           if(classify=='FIL0301'){
@@ -211,13 +217,17 @@ $brown: #985D55;
           cursor: pointer;
           p:first-child {
             font-size: 16px;
-            line-height: 30px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
+            line-height: 23px;
             img {
               vertical-align: sub;
               padding-right: 5px;
+            }
+            .title {
+              display:inline-block;
+              max-width: 90%;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
             }
             .new {
               font-size: 12px;

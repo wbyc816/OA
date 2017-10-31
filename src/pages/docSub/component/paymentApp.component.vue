@@ -27,7 +27,7 @@
         </money-input>
       </el-form-item>
       <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
-        <el-input v-model="budgetForm.invoiceNum" class="hasUnit" :disabled="activeInvoice!='FIN0201'">
+        <el-input v-model="budgetForm.invoiceNum" class="hasUnit" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号">
           <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange">
             <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
           </el-select>
@@ -63,7 +63,7 @@
         </el-table-column>
         <el-table-column label=" " width="55">
           <template scope="scope">
-            <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
+            <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete"  v-if="scope.row.budgetItemId!=addTax.budgetItemId||scope.row.invoiceTypeCode != 'FIN0201'">
             </el-button>
           </template>
         </el-table-column>
@@ -76,8 +76,8 @@
         </el-cascader>
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo">
-        <li>开户银行 {{supplierInfo.supplierBank}}</li>
-        <li>收款账户 {{supplierInfo.supplierBankAccountName}}</li>
+        <li>开户银行 {{supplierInfo.accountBank}}</li>
+        <li>收款账户 {{supplierInfo.accountName}}</li>
       </ul>
       <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea">
         <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType">
@@ -117,7 +117,7 @@ import MoneyInput from '../../../components/moneyInput.component'
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 export default {
-  components: {MoneyInput},
+  components: { MoneyInput },
   data() {
     var that = this;
     var checkNum = function(rule, value, callback) {
@@ -181,6 +181,7 @@ export default {
       supplierInfo: '',
       params: '',
       feeTypes: [],
+      addTax: '',
       paymentProp: {
         value: 'id',
         label: 'supplierName',
@@ -225,6 +226,7 @@ export default {
     this.getPayMthod(); //付款方式
     this.getFeeTypes(4); //费用类型
     this.getFeeTypes(5); //费用类型
+    this.getAddTax() //增值税进项税额
   },
   methods: {
     submitForm() {
@@ -249,9 +251,9 @@ export default {
         "budgetYear": this.year, //预算年份
         "supplierId": this.supplierInfo.id, //供应商id
         "supplierName": this.supplierInfo.supplierName, //供应商名
-        "supplierBank": this.supplierInfo.supplierBank, //供应商开户银行
-        "supplierBankAccountName": this.supplierInfo.supplierBankAccountName, //供应商开户账号名
-        "supplierBankAccountCode": this.supplierInfo.supplierBankAccountCode, //供应商开户账号编号
+        "supplierBank": this.supplierInfo.accountBank, //供应商开户银行
+        "supplierBankAccountName": this.supplierInfo.accountName, //供应商开户账号名
+        "supplierBankAccountCode": this.supplierInfo.accountCode, //供应商开户账号编号
         "totalMoney": this.totalMoney, //合计金额
         "paymentMethodCode": payMthod.dictCode, //付款方式code 
         "paymentMethodName": payMthod.dictName, //付款方式名
@@ -288,11 +290,11 @@ export default {
       this.$message.error('合同上传失败，请重试');
     },
     handleContractChange(file, fileList) {
-      const isLt20M = file.size / 1024 / 1024 < 20;
-      if (!isLt20M) {
-        this.$message.error('上传合同大小不能超过 20MB!');
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        this.$message.error('上传合同大小不能超过 10MB!');
       }
-      if (isLt20M) {
+      if (isLt10M) {
         this.paymentForm.contractAttach = fileList;
       }
     },
@@ -311,11 +313,11 @@ export default {
       this.$message.error('附件上传失败，请重试');
     },
     handleInvoiceChange(file, fileList) {
-      const isLt20M = file.size / 1024 / 1024 < 20;
-      if (!isLt20M) {
-        this.$message.error('上传发票大小不能超过 20MB!');
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        this.$message.error('上传发票大小不能超过 10MB!');
       }
-      if (isLt20M) {
+      if (isLt10M) {
         this.paymentForm.invoiceAttach = fileList;
       }
     },
@@ -343,7 +345,7 @@ export default {
             "currencyCode": currency.currencyCode,
             "exchangeRateId": "", //汇率id
             "exchangeRate": "", //汇率
-            "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
+            "invoiceCode": [], //发票票号, 可以为多个, 用英文逗号分隔
             "rmb": "", //对应的人民币
             "appMoney": this.budgetForm.appMoney,
             "budgetYear": this.year
@@ -354,10 +356,29 @@ export default {
                 item.rmb = res.data.amount;
                 item.exchangeRateId = res.data.rateId;
                 item.exchangeRate = res.data.rateReverse;
-                if (this.activeInvoice == 'FIN0201') {
-
-                }
                 this.budgetTable.push(item);
+                if (this.activeInvoice == 'FIN0201') {
+                  var taxItem = {
+                    "paymentTypeCode": payType.dictCode, //付款申请类型code, DOC04中
+                    "paymentTypeName": payType.dictName, //付款申请类型名
+                    "budgetDeptId": this.addTax.deptId, //预算部门id
+                    "budgetDeptName": this.addTax.budgetDeptName, //预算部门名
+                    "budgetItemId": this.addTax.budgetItemId, //预算科目id
+                    "budgetItemName": this.addTax.budgetName, //预算科目名
+                    "money": '0', //申报金额
+                    "invoiceTypeCode": invoice.dictCode, //发票类型code, FIN02中
+                    "invoiceTypeName": invoice.dictName, //发票类型名
+                    "accurencyName": currency.currencyName, //币种
+                    "currencyCode": currency.currencyCode,
+                    "exchangeRateId": res.data.rateId, //汇率id
+                    "exchangeRate": res.data.rateReverse, //汇率
+                    "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
+                    "rmb": "0", //对应的人民币
+                    "appMoney": '0',
+                    "budgetYear": this.year
+                  }
+                  this.budgetTable.push(taxItem);
+                }
               } else {
                 console.log('货币兑换失败')
               }
@@ -370,7 +391,11 @@ export default {
       })
     },
     deleteBudget(index) {
-      this.budgetTable.splice(index, 1);
+      if (this.budgetTable[index].invoiceTypeCode == 'FIN0201') {
+        this.budgetTable.splice(index, 2);
+      } else {
+        this.budgetTable.splice(index, 1);
+      }
     },
     tranMoney: _.debounce(function(row) {
       this.$http.post('/doc/getRmbByExchangeRate', { currencyId: row.currencyCode, amount: row.appMoney })
@@ -474,7 +499,6 @@ export default {
             res.data.forEach((s, index) => {
               s.id = s.supplierName;
             })
-            console.log(res.data)
             this.supplierList = res.data;
           } else {
             console.log('获取供应商失败')
@@ -514,7 +538,7 @@ export default {
       }
     },
     depChange(val) {
-      if (val.length>0) {
+      if (val.length > 0) {
         this.$http.post('/doc/getExecStatisofItemId', { budgetYear: this.year, budgetItemCode: val[val.length - 1] })
           .then(res => {
             if (res.status == 0) {
@@ -523,8 +547,8 @@ export default {
 
             }
           })
-      }else{
-        this.budgetInfo=''
+      } else {
+        this.budgetInfo = ''
       }
     },
     supplierChange(val) {
@@ -560,6 +584,16 @@ export default {
       }
       return temp;
     },
+    getAddTax() {
+      this.$http.post('/doc/addValueTax', { budgetYear: this.year })
+        .then(res => {
+          if (res.status == 0) {
+            this.addTax = res.data[0];
+          } else {
+
+          }
+        })
+    }
   }
 }
 
