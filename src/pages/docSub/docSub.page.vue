@@ -72,8 +72,8 @@ const contrastData = [
   { 'logo': 'icon-biaodan', 'color': '#9FD867', 'text': '晋升申请', 'link': '#/doc/docCommonApp/JJS' },
 ];
 const ticketData = [
-  { 'logo': 'icon-qiaquan', 'color': '#FF754F', 'text': '宾客优惠机票', 'link': '#' },
-  { 'logo': 'icon-jipiao', 'color': '#FF5F88', 'text': '员工优惠机票', 'link': '#' }
+  { 'logo': 'icon-qiaquan', 'color': '#FF754F', 'text': '宾客优惠机票', 'link': '#doc/docCommonApp/BKY' },
+  { 'logo': 'icon-jipiao', 'color': '#FF5F88', 'text': '员工优惠机票', 'link': '#doc/docCommonApp/YGY' }
 ];
 export default {
   data() {

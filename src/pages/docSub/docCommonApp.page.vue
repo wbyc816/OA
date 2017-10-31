@@ -44,6 +44,8 @@ import FWG from './component/manuscriptApp.component.vue'
 import YCS from './component/vehicleApplication.component.vue'
 import CLS from './component/materialApp.component.vue'
 import CLB from './component/travelRemibApp.component.vue'
+import BKY from './component/guestTicketApp.component.vue'
+import YGY from './component/staffBenefitApp.component.vue'
 
 export default {
   data() {
@@ -92,7 +94,9 @@ export default {
     FWG,
     YCS,
     CLS,
-    CLB
+    CLB,
+    BKY,
+    YGY
   },
   created() {
     this.initDoc();
