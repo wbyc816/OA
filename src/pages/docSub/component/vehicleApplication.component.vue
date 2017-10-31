@@ -99,9 +99,18 @@ export default {
       });
     },
     saveForm(){
-      var params=JSON.stringify(this.vehicleForm);
+      // console.log(this.vehicleForm)
+      var params=JSON.stringify(Object.assign(this.vehicleForm,this.selDep));
       this.$emit('saveMiddle',params);
     },
+    getDraft(obj){
+      this.combineObj(this.vehicleForm,obj);
+      this.combineObj(this.selDep,obj);
+      this.vehicleForm.timeLine=[];
+      obj.timeLine.forEach(t=>{
+        this.vehicleForm.timeLine.push(new Date(t));
+      })
+    }
   }
 }
 

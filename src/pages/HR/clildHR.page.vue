@@ -41,7 +41,7 @@
       </p>
       <el-row>
         <template>
-          <el-col :span="12" v-for="(hr,index) in hr3" v-if="index<3">
+          <el-col :span="12" v-for="(hr,index) in hr3" v-if="index<6">
             <div @click="goTo(hr)">
               <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
               <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>

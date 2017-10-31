@@ -224,6 +224,7 @@
             <el-menu-item index="3" @click.native="goToOthers('/PresidentMailbox')"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="6" @click.native="goToOthers('/supplier')"><i class="iconfont icon-geren"></i>客户维护<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -702,8 +703,8 @@ $sub:#1465C0;
       padding: 0;
     }
     .myTab .el-tabs__header .el-tabs__item {
-      line-height: 82px;
-      height: 82px;
+      line-height: 70px;
+      height: 70px;
     }
     .el-tab-pane {
       .newBox {
@@ -983,7 +984,7 @@ $sub:#1465C0;
               padding-right: 5px;
             }
             .title {
-              display:inline-block;
+              display: inline-block;
               max-width: 90%;
               white-space: nowrap;
               text-overflow: ellipsis;

@@ -9,9 +9,11 @@
           <th v-for="title in tableTitle">{{title}}</th>
         </tr>
       </thead>
-      <tbody v-for="doc in docData">
+      <tbody v-for="doc in docData" :class="{'disagree':doc.isAgree==='0'}">
         <tr>
-          <td>{{doc.docNo}}</td>
+          <td>
+            <p>{{doc.docNo}}</p>
+          </td>
           <td>{{doc.docTitle}}</td>
           <td>{{doc.docTypeCode}}</td>
           <td>{{doc.taskTime}}</td>
@@ -147,7 +149,7 @@ $purple: #0460AE;
       font-size: 14px;
     }
     tbody {
-      background:#fff;
+      background: #fff;
       tr:first-child {
         td {
           border-bottom: 1px dashed #D5DADF;
@@ -180,6 +182,31 @@ $purple: #0460AE;
     }
     tbody:nth-child(even) {
       background: #F7F7F7;
+    }
+    tbody.disagree {
+      background: #FFF0F0;
+      tr {
+        td:first-child {
+          position: relative;
+          p {
+            position: relative;
+            z-index: 2;
+          }
+          &:before {
+            font-weight: normal;
+            content: "\e743";
+            font-family: "iconfont" !important;
+            font-size: 70px;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: absolute;
+            top: -5px;
+            left: 20px;
+            color: #F4B8B2;
+          }
+        }
+      }
     }
     tfoot {
       td {

@@ -14,7 +14,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="房间" prop="roomId" placeholder="" class="arrArea">
-            <el-select v-model="appForm.roomId" style="width:100%" @visible-change="checkFloor"  no-data-text="请先选择位置">
+            <el-select v-model="appForm.roomId" style="width:100%" @visible-change="checkFloor" no-data-text="请先选择位置">
               <el-option v-for="item in rooms" :key="item.id" :label="item.roomName" :value="item.id">
               </el-option>
             </el-select>
@@ -34,13 +34,19 @@
             <el-input v-model="appForm.conferenceTitle">
             </el-input>
           </el-form-item>
-          <el-form-item label="会议类型" prop="isInside">
+          <el-form-item label="会议类型" prop="type" class="deptArea">
+            <el-select v-model="appForm.type" style="width:100%" @change="changeFloor">
+              <el-option v-for="item in conferenceType" :key="item.id" :label="item.typeName" :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="是否内部会议" prop="isInside" class="arrArea inside">
             <el-radio-group v-model="appForm.isInside" class="myRadio">
               <el-radio-button label="1">内部<i></i></el-radio-button>
               <el-radio-button label="0">外部<i></i></el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="参会人员" prop="person" class="reciverWrap">
+          <el-form-item label="参会人员" prop="person" class="reciverWrap clearBoth">
             <div class="reciverList">
               <el-tag :key="person.id" :closable="true" type="primary" @close="closePerson(index)" v-for="(person,index) in appForm.person">
                 {{person.name}}
@@ -63,7 +69,7 @@
         </div>
       </div>
     </el-card>
-    <person-dialog @updatePerson="updatePerson" dialogType="multi" admin="1"  :visible.sync="signDialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" dialogType="multi" admin="1" :visible.sync="signDialogVisible"></person-dialog>
   </div>
 </template>
 <script>
@@ -86,7 +92,8 @@ export default {
         isInside: '1',
         isMessage: '0',
         messageContent: '',
-        person: []
+        person: [],
+        type: ''
       },
       searchForm: {
         name: ''
@@ -95,6 +102,7 @@ export default {
         floor: [{ required: true, message: '请选择位置' }, ],
         roomId: [{ required: true, message: '请选择房间' }, ],
         isInside: [{ required: true, message: '请选择房间' }, ],
+        type: [{ required: true, message: '请选择会议类型' }, ],
         reserveDate: [{ type: 'date', required: true, message: '请选择预订日期' }, ],
         beginTime: [{ type: 'date', required: true, message: '请选择开始时间' }, ],
         endTime: [{ type: 'date', required: true, message: '请选择结束时间' }, ],
@@ -125,6 +133,7 @@ export default {
     ...mapGetters([
       'userInfo',
       'roomList',
+      'conferenceType'
     ])
   },
   created() {
@@ -145,9 +154,9 @@ export default {
         this.$refs.appForm.validateField('floor');
       }
     },
-    beginTimeChange(val) {      
+    beginTimeChange(val) {
       if (this.appForm.beginTime) {
-        this.appForm.beginTime =new Date(this.appForm.beginTime.setSeconds(0));
+        this.appForm.beginTime = new Date(this.appForm.beginTime.setSeconds(0));
         this.endOption = val;
       }
       this.appForm.endTime = '';
@@ -171,8 +180,8 @@ export default {
       });
     },
     checkApp() {
-      var m=this.appForm.reserveDate.getMonth();
-      var d=this.appForm.reserveDate.getDate();
+      var m = this.appForm.reserveDate.getMonth();
+      var d = this.appForm.reserveDate.getDate();
       var params = {
         "beginTime": new Date(new Date(this.appForm.beginTime.setMonth(m))).setDate(d), //开始时间
         "endTime": new Date(new Date(this.appForm.endTime.setMonth(m))).setDate(d), //结束时间
@@ -196,6 +205,7 @@ export default {
     },
     postApp(p) {
       var room = this.rooms.find(r => r.id == this.appForm.roomId);
+      var type = this.conferenceType.find(r => r.id == this.appForm.type);
       var params = {
         "roomId": room.id, //房间id
         "roomPlace": room.roomPlace, //会议室位置
@@ -208,6 +218,8 @@ export default {
         "convenerName": this.userInfo.name, //召集人
         "conferenceTitle": this.appForm.conferenceTitle, //会议名称
         // "conferenceContent": "11", //会议内容
+        "conferenceTypeId": type.id, //会议类型ID
+        "conferenceTypeName": type.typeName, //会议类型
         "isInside": this.appForm.isInside, //是否是内部会议
         "isMessage": this.appForm.isMessage, //是否短信通知
         "messageContent": this.appForm.messageContent, //通知内容
@@ -240,14 +252,22 @@ export default {
 #meetingApp {
   .docBaseBox {
     padding-right: 150px;
-
+    border-bottom:none;
     .el-form-item__error {
       padding-left: 6px;
     }
+
   }
   .doc-form-submit_btn {
     button {
       margin-left: 128px;
+      width: 160px;
+      height:50px;
+    }
+  }
+  .inside{
+    .el-radio-button__inner{
+      width:90px;
     }
   }
 }

@@ -74,8 +74,8 @@
   </div>
 </template>
 <script>
-import SidePersonSearch from '../../components/sidePersonSearch.component'
-import duty from '../../components/duty.component'
+import SidePersonSearch from '../components/sidePersonSearch.component'
+import duty from '../components/duty.component'
 
 import { mapGetters } from 'vuex'
 const tableTitle = ['航班号', '出发地', '目的地', '计划起飞时间', '实际起飞时间', '计划到达时间', '实际到达时间', '状态']

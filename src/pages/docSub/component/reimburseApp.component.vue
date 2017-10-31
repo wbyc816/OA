@@ -27,7 +27,7 @@
         </money-input>
       </el-form-item>
       <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
-        <el-input v-model="budgetForm.invoiceNum" class="hasUnit" :disabled="activeInvoice!='FIN0201'">
+        <el-input v-model="budgetForm.invoiceNum" class="hasUnit" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号">
           <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange">
             <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
           </el-select>
@@ -63,7 +63,7 @@
         </el-table-column>
         <el-table-column label=" " width="55">
           <template scope="scope">
-            <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
+            <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete" v-if="scope.row.budgetItemId!=addTax.budgetItemId||scope.row.receiptTypeCode != 'FIN0201'">
             </el-button>
           </template>
         </el-table-column>
@@ -72,7 +72,7 @@
     </div>
     <el-form label-position="left" :model="paymentForm" :rules="paymentRule" ref="paymentForm" label-width="128px">
       <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea" style="width:51%">
-        <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType">
+        <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType" @change="payMthodChange">
           <el-option v-for="item in payMthods" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -81,12 +81,14 @@
         <el-input v-model="paymentForm.paymentOthers">
         </el-input>
       </el-form-item>
-      <el-form-item label="收款人" prop="empId" class="deptArea" style="width:51%">
-        <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
-      </el-form-item>
-      <el-form-item label="收款账户" prop="bankAccount" class="arrArea" style="width:49%" label-width="100px">
-        <el-input v-model="paymentForm.bankAccount"></el-input>
-      </el-form-item>
+      <template v-if="paymentForm.payMthodCode=='FIN0101'">
+        <el-form-item label="收款人" prop="payee" class="deptArea" style="width:51%">
+          <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
+        </el-form-item>
+        <el-form-item label="收款账户" prop="bankAccount" class="arrArea" style="width:49%" label-width="100px">
+          <el-input v-model="paymentForm.bankAccount"></el-input>
+        </el-form-item>
+      </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'BXS',finType:2,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
           <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
@@ -101,7 +103,7 @@ import MoneyInput from '../../../components/moneyInput.component'
 import _ from 'lodash'
 
 export default {
-  components: {MoneyInput},
+  components: { MoneyInput },
   data() {
     var that = this;
     var checkNum = function(rule, value, callback) {
@@ -149,7 +151,7 @@ export default {
       paymentRule: {
         payMthodCode: [{ required: true, message: '请选择付款方式', trigger: 'blur' }],
         paymentOthers: [{ required: true, trigger: 'blur', message: '请输入付款方式' }],
-        contractAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择合同'}],
+        contractAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择合同' }],
         invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票' }],
         bankAccount: [{ required: true, trigger: 'blur', message: '请输入收款账户' }],
         payee: [{ required: true, trigger: 'blur', message: '请选择收款人' }],
@@ -158,6 +160,7 @@ export default {
       payMthods: [],
       types: [],
       payMthod: '',
+      addTax: '',
       params: '',
       budgetProp: {
         label: 'budgetItemName',
@@ -195,11 +198,9 @@ export default {
     this.getInvoiceList(); //发票类型
     this.getCurrencyList(); //币种
     this.getPayMthod(); //付款方式
+    this.getAddTax() //增值税进项税额
   },
-  mounted() {
-    this.paymentForm.empId=this.userInfo.empId;
-    this.getEmpBankAccount(this.userInfo.empId);
-  },
+  mounted() {},
   methods: {
     submitForm() {
       if (this.budgetTable.length != 0) {
@@ -212,10 +213,9 @@ export default {
             return false;
           }
         });
-      }else{
+      } else {
         this.$message.warning('未添加付款项');
       }
-
     },
     submitAll() {
       var payMthod = this.payMthods.find(i => i.dictCode == this.paymentForm.payMthodCode);
@@ -239,7 +239,7 @@ export default {
       // console.log(this.clone(this.budgetTable));
       var finFileIds = this.invoiceAttach;
       console.log(tDocFinReimbursement, finFileIds);
-      this.$emit('submitMiddle', { tDocFinReimbursement: tDocFinReimbursement,finFileIds:finFileIds })
+      this.$emit('submitMiddle', { tDocFinReimbursement: tDocFinReimbursement, finFileIds: finFileIds })
     },
     invoiceTypeChange(code) {
       if (code != 'FIN0201') {
@@ -289,11 +289,11 @@ export default {
       this.$message.error('附件上传失败，请重试');
     },
     handleInvoiceChange(file, fileList) {
-      const isLt20M = file.size / 1024 / 1024 < 20;
-      if (!isLt20M) {
-        this.$message.error('上传发票大小不能超过 20MB!');
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        this.$message.error('上传发票大小不能超过 10MB!');
       }
-      if (isLt20M) {
+      if (isLt10M) {
         this.paymentForm.invoiceAttach = fileList;
       }
     },
@@ -319,7 +319,7 @@ export default {
             "receiptTypeName": invoice.dictName, //发票类型名
             "accurencyName": currency.currencyName, //币种
             "currencyCode": currency.currencyCode,
-            "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
+            "invoiceCode": [], //发票票号, 可以为多个, 用英文逗号分隔
             "rmb": "", //对应的人民币
             "appMoney": this.budgetForm.appMoney,
             "budgetYear": this.year,
@@ -332,11 +332,29 @@ export default {
                 item.rmb = res.data.amount;
                 item.exchangeRateId = res.data.rateId;
                 item.exchangeRate = res.data.rateReverse;
-                if (this.activeInvoice == 'FIN0201') {
-
-                }
                 this.budgetTable.push(item);
-                console.log(item);
+                if (this.activeInvoice == 'FIN0201') {
+                  var taxItem = {
+                    "docTypeCode": payType.dictCode, //付款申请类型code, DOC04中
+                    "docTypeName": payType.dictName, //付款申请类型名
+                    "budgetDeptId": this.addTax.deptId, //预算部门id
+                    "budgetDeptName": this.addTax.budgetDeptName, //预算部门名
+                    "budgetItemId": this.addTax.budgetItemId, //预算科目id
+                    "budgetItemName": this.addTax.budgetName, //预算科目名
+                    "money": "0", //申报金额
+                    "receiptTypeCode": invoice.dictCode, //发票类型code, FIN02中
+                    "receiptTypeName": invoice.dictName, //发票类型名
+                    "accurencyName": currency.currencyName, //币种
+                    "currencyCode": currency.currencyCode,
+                    "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
+                    "rmb": "0", //对应的人民币
+                    "appMoney": "0",
+                    "budgetYear": this.year,
+                    "exchangeRateId": res.data.rateId, //汇率id
+                    "exchangeRate": res.data.rateReverse, //汇率
+                  }
+                  this.budgetTable.push(taxItem);
+                }
               } else {
                 console.log('货币兑换失败')
               }
@@ -349,7 +367,11 @@ export default {
       })
     },
     deleteBudget(index) {
-      this.budgetTable.splice(index, 1);
+      if (this.budgetTable[index].receiptTypeCode == 'FIN0201') {
+        this.budgetTable.splice(index, 2);
+      } else {
+        this.budgetTable.splice(index, 1);
+      }
     },
     tranMoney: _.debounce(function(row) {
       this.$http.post('/doc/getRmbByExchangeRate', { currencyId: row.currencyCode, amount: row.appMoney })
@@ -454,8 +476,18 @@ export default {
           })
       }
     },
+    payMthodChange(val) {
+      if (val == 'FIN0101') {
+        this.getEmpBankAccount(this.userInfo.empId);
+        this.paymentForm.empId = this.userInfo.empId;
+      } else {
+        this.paymentForm.empId = '';
+        this.paymentForm.bankAccount = '';
+        this.paymentForm.payee = '';
+      }
+    },
     depChange(val) {
-      if (val.length>0) {
+      if (val.length > 0) {
         this.$http.post('/doc/getExecStatisofItemId', { budgetYear: this.year, budgetItemCode: val[val.length - 1] })
           .then(res => {
             if (res.status == 0) {
@@ -464,8 +496,8 @@ export default {
 
             }
           })
-      }else{
-        this.budgetInfo=''
+      } else {
+        this.budgetInfo = ''
       }
     },
     getBudgetDep() {
@@ -479,6 +511,16 @@ export default {
       }
       return temp;
     },
+    getAddTax() {
+      this.$http.post('/doc/addValueTax', { budgetYear: this.year })
+        .then(res => {
+          if (res.status == 0) {
+            this.addTax = res.data[0];
+          } else {
+
+          }
+        })
+    }
   }
 }
 

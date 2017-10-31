@@ -4,9 +4,9 @@ import { Message } from 'element-ui';
 
 
 const state = {
-  roomList:[],
-  conferenceType:[],
-  conferenceNum:{
+  roomList: [],
+  conferenceType: [],
+  conferenceNum: {
     "launchNum": 0,
     "partakeNum": 0,
     "cancelNum": 0
@@ -16,7 +16,7 @@ const state = {
 const actions = {
 
   //获取房间列表
-  getRoomPosition({ commit, rootState,rootGetters }) {
+  getRoomPosition({ commit, state, rootState, rootGetters }) {
     api.getRoomPosition()
       .then(res => {
         commit(types.GET_ROOM_POSITION, res)
@@ -28,21 +28,23 @@ const actions = {
         });
       })
   },
- //获取会议类型
-  getConferenceType({ commit, rootState,rootGetters }) {
-    api.getConferenceType()
-      .then(res => {
-        commit(types.GET_CONFERENCE_TYPE, res)
-      }, res => {
-        // commit(types.GET_EMP_DATAIL, '')
-        Message({
-          message: '获取会议类型失败！',
-          type: 'error'
-        });
-      })
+  //获取会议类型
+  getConferenceType({ commit, state, rootState, rootGetters }) {
+    if (state.conferenceType.length == 0) {
+      api.getConferenceType()
+        .then(res => {
+          commit(types.GET_CONFERENCE_TYPE, res)
+        }, res => {
+          // commit(types.GET_EMP_DATAIL, '')
+          Message({
+            message: '获取会议类型失败！',
+            type: 'error'
+          });
+        })
+    }
   },
   //获取会议数量
-  getConferenceNum({commit,rootState,rootGetters}){
+  getConferenceNum({ commit, rootState, rootGetters }) {
     api.getConferenceNum(rootGetters.userInfo.empId)
       .then(res => {
         commit(types.GET_CONFERENCE_NUM, res)

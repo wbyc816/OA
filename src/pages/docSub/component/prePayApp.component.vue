@@ -57,7 +57,7 @@
         </el-table-column>
         <el-table-column label=" " width="55">
           <template scope="scope">
-            <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
+            <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete" v-if="scope.row.budgetItemId!=addTax.budgetItemId||scope.row.receiptTypeCode != 'FIN0201'">
             </el-button>
           </template>
         </el-table-column>
@@ -99,7 +99,11 @@
         <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
         <el-table-column prop="docTitle" label="标题" width="310"></el-table-column>
         <el-table-column prop="taskName" label="呈报人" width="150"></el-table-column>
-        <el-table-column prop="taskTime" label="呈报时间"></el-table-column>
+        <el-table-column prop="taskTime" label="呈报时间">
+          <template scope="scope">
+            {{scopr.taskTime | time('all')}}
+          </template>
+        </el-table-column>
       </el-table>
       <div class="pageBox">
         <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="5" layout="total, prev, pager, next, jumper" :total="totalSize" v-show="extraDocs.length>0">
@@ -167,6 +171,7 @@ export default {
       extraDocs: [],
       totalSize: 0,
       searchOptions: '',
+      addTax: '',
       searchLoading: false,
       params: {
         "pageNumber": 1,
@@ -198,6 +203,7 @@ export default {
     this.getBudgetDeptList(); //预算机构
     this.getInvoiceList(); //发票类型
     this.getCurrencyList(); //币种
+    this.getAddTax() //增值税进项税额
   },
   mounted() {
 
@@ -287,8 +293,8 @@ export default {
           "paymentIsProduction": d.isProduction, //是否是生产类, 1为是 0为否
           "paymentMethodCode": d.paymentMethodName, //付款方式
           "costTypeCode": d.costTypeCode, //费用类型code , FIN04和FIN05 中
-          "costTypeName": d.costTypeName,// 费用类型名
-          "totalMoney":d.totalMoney
+          "costTypeName": d.costTypeName, // 费用类型名
+          "totalMoney": d.totalMoney
         }
       })
       var verification = {
@@ -314,11 +320,11 @@ export default {
       this.$message.error('附件上传失败，请重试');
     },
     handleInvoiceChange(file, fileList) {
-      const isLt20M = file.size / 1024 / 1024 < 20;
-      if (!isLt20M) {
-        this.$message.error('上传发票大小不能超过 20MB!');
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        this.$message.error('上传发票大小不能超过 10MB!');
       }
-      if (isLt20M) {
+      if (isLt10M) {
         this.paymentForm.invoiceAttach = fileList;
       }
     },
@@ -341,7 +347,7 @@ export default {
             "receiptTypeName": invoice.dictName, //发票类型名
             "accurencyName": currency.currencyName, //币种
             "currencyCode": currency.currencyCode,
-            "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
+            "invoiceCode": [], //发票票号, 可以为多个, 用英文逗号分隔
             "rmb": "", //对应的人民币
             "appMoney": this.budgetForm.appMoney,
             "budgetYear": this.year
@@ -350,11 +356,25 @@ export default {
             .then(res => {
               if (res.status == 0) {
                 item.rmb = res.data.amount;
-                if (this.activeInvoice == 'FIN0201') {
-
-                }
                 this.budgetTable.push(item);
-                console.log(item);
+                if (this.activeInvoice == 'FIN0201') {
+                  var taxItem = {
+                    "budgetDeptId": this.addTax.deptId, //预算部门id
+                    "budgetDeptName": this.addTax.budgetDeptName, //预算部门名
+                    "budgetItemId": this.addTax.budgetItemId, //预算科目id
+                    "budgetItemName": this.addTax.budgetName, //预算科目名
+                    "money": "0", //申报金额
+                    "receiptTypeCode": invoice.dictCode, //发票类型code, FIN02中
+                    "receiptTypeName": invoice.dictName, //发票类型名
+                    "accurencyName": currency.currencyName, //币种
+                    "currencyCode": currency.currencyCode,
+                    "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
+                    "rmb": "0", //对应的人民币
+                    "appMoney": "0",
+                    "budgetYear": this.year
+                  }
+                  this.budgetTable.push(taxItem);
+                }
               } else {
                 console.log('货币兑换失败')
               }
@@ -367,7 +387,11 @@ export default {
       })
     },
     deleteBudget(index) {
-      this.budgetTable.splice(index, 1);
+      if (this.budgetTable[index].receiptTypeCode == 'FIN0201') {
+        this.budgetTable.splice(index, 2);
+      } else {
+        this.budgetTable.splice(index, 1);
+      }
     },
     tranMoney: _.debounce(function(row) {
       this.$http.post('/doc/getRmbByExchangeRate', { currencyId: row.currencyCode, amount: row.appMoney })
@@ -473,6 +497,16 @@ export default {
       }
       return temp;
     },
+    getAddTax() {
+      this.$http.post('/doc/addValueTax', { budgetYear: this.year })
+        .then(res => {
+          if (res.status == 0) {
+            this.addTax = res.data[0];
+          } else {
+
+          }
+        })
+    }
   }
 }
 

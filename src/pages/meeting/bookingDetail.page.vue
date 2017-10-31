@@ -17,7 +17,7 @@
         </el-col>
         <el-col :span="11" class="clearfix right">
           <span class="title">会议类型</span>
-          <p class="text">{{detail.isInside==1?'内部会议':'外部会议'}}</p>
+          <p class="text">{{detail.conferenceTypeName}}</p>
         </el-col>
         <el-col :span="13" class="clearfix">
           <span class="title">开始时间</span>
@@ -34,6 +34,10 @@
         <el-col :span="11" class="clearfix right">
           <span class="title">房间</span>
           <p class="text">{{detail.roomName}}</p>
+        </el-col>
+        <el-col :span="24" class="clearfix">
+          <span class="title">是否内部会议</span>
+          <p class="text">{{detail.isInside==1?'内部会议':'外部会议'}}</p>          
         </el-col>
         <el-col :span="24" class="clearfix">
           <span class="title">会议名称</span>

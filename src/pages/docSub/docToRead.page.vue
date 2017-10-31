@@ -13,7 +13,7 @@
         <tr>
           <td>{{doc.docNo}}</td>
           <td>{{doc.docTitle}}</td>
-          <td>{{doc.docTypeCode}}</td>
+          <td>{{doc.docTypeName}}</td>
           <td>{{doc.taskTime}}</td>
           <td>{{doc.taskUser}}</td>
           <td>{{doc.nodeName | nodeNameFormatter}}</td>

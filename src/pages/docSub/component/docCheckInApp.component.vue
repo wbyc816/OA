@@ -22,7 +22,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
-        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove"  :disabled="noMore">
+        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove" :disabled="noMore">
           <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -60,7 +60,7 @@ export default {
       },
       wordFileId: '',
       sucessFlag: 0,
-      noMore:false
+      noMore: false
     }
   },
   computed: {
@@ -91,18 +91,18 @@ export default {
       } else {
         this.picSuccesss = 0;
       }
-      const isPDF = file.raw.type === 'application/pdf';
-      const isLt20M = file.size / 1024 / 1024 < 20;
+      const isPDF = (file.raw.type == 'application/pdf' || file.raw.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      const isLt10M = file.size / 1024 / 1024 < 10;
       if (!isPDF) {
-        this.$message.error('上传正文只能是 PDF 格式!');
+        this.$message.error('上传正文只能是 PDF或DOCX 格式!');
         this.$refs.myUpload.clearFiles();
       }
-      if (!isLt20M) {
+      if (!isLt10M) {
         this.$refs.myUpload.clearFiles();
         this.$message.error('上传正文大小不能超过 20MB!');
       }
-      if (isPDF && isLt20M) {
-        this.noMore=true;
+      if (isPDF && isLt10M) {
+        this.noMore = true;
         this.checkInForm.wordFileId = file.url
       }
     },
@@ -110,7 +110,7 @@ export default {
       this.checkInForm.wordFileId = '';
       this.wordFileId = '';
       this.picSuccesss = 0;
-      this.noMore=false;
+      this.noMore = false;
     },
     submitMiddle() {
       var params = {

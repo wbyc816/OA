@@ -226,7 +226,7 @@
         <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
       </div>
       <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea" style="width:51%">
-        <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType">
+        <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType" @change="payMthodChange">
           <el-option v-for="item in payMthods" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -235,12 +235,14 @@
         <el-input v-model="paymentForm.paymentOthers">
         </el-input>
       </el-form-item>
-      <el-form-item label="收款人" prop="payee" class="deptArea" style="width:51%">
-        <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
-      </el-form-item>
-      <el-form-item label="收款账户" prop="bankAccount" class="arrArea" label-width="100px" style="width:49%">
-        <el-input v-model="paymentForm.bankAccount"></el-input>
-      </el-form-item>
+      <template v-if="paymentForm.payMthodCode=='FIN0101'">
+        <el-form-item label="收款人" prop="payee" class="deptArea" style="width:51%">
+          <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
+        </el-form-item>
+        <el-form-item label="收款账户" prop="bankAccount" class="arrArea" label-width="100px" style="width:49%">
+          <el-input v-model="paymentForm.bankAccount"></el-input>
+        </el-form-item>
+      </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'CLB',finType:2,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
           <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
@@ -438,8 +440,6 @@ export default {
     this.getAddTax() //增值税进项税额
   },
   mounted() {
-    this.paymentForm.empId = this.userInfo.empId;
-    this.getEmpBankAccount(this.userInfo.empId);
   },
   methods: {
     addFee() {
@@ -527,6 +527,7 @@ export default {
       this.paymentForm.appUserName = reciver.reciUserName;
       this.appPerson = reciver;
       this.personDialogVisible = false;
+      this.getRoomPrice();
     },
     priceChange() {
       this.calcTotalFee();
@@ -549,9 +550,9 @@ export default {
     },
     calcTotalFee2() {
       if (this.feeTypeCode == 'FIN0604') {
-        if (this.feeForm.isSend != '' && this.feeForm.timeLine.length > 0 && this.feeForm.timeLine[0]) {
+        if (this.feeForm.isSend != '' && this.appPerson && this.feeForm.timeLine.length > 0 && this.feeForm.timeLine[0]) {
           var params = {
-            empId: this.userInfo.empId,
+            empId: this.appPerson.reciUserId,
             travelType: this.feeTypeCode,
             startDate: this.timeFilter(this.feeForm.timeLine[0].getTime(), 'date'),
             endDate: this.timeFilter(this.feeForm.timeLine[1].getTime(), 'date'),
@@ -577,9 +578,9 @@ export default {
       this.budgetTable = [];
     },
     getRoomPrice() {
-      if (this.feeForm.area && this.roomType && this.feeTypeCode == 'FIN0601' && this.feeForm.timeLine.length > 0 && this.feeForm.timeLine[0]) {
+      if (this.feeForm.area && this.appPerson && this.roomType && this.feeTypeCode == 'FIN0601' && this.feeForm.timeLine.length > 0 && this.feeForm.timeLine[0]) {
         var params = {
-          empId: this.userInfo.empId,
+          empId: this.appPerson.reciUserId,
           cityCode: this.feeForm.area,
           roomType: this.roomType,
           travelType: this.feeTypeCode,
@@ -731,11 +732,11 @@ export default {
       this.$message.error('附件上传失败，请重试');
     },
     handleInvoiceChange(file, fileList) {
-      const isLt20M = file.size / 1024 / 1024 < 20;
-      if (!isLt20M) {
-        this.$message.error('上传发票大小不能超过 20MB!');
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        this.$message.error('上传发票大小不能超过 10MB!');
       }
-      if (isLt20M) {
+      if (isLt10M) {
         this.paymentForm.invoiceAttach = fileList;
       }
     },
@@ -968,6 +969,16 @@ export default {
           })
       } else {
         this.budgetInfo = ''
+      }
+    },
+    payMthodChange(val) {
+      if (val == 'FIN0101') {
+        this.getEmpBankAccount(this.userInfo.empId);
+        this.paymentForm.empId = this.userInfo.empId;
+      } else {
+        this.paymentForm.empId = '';
+        this.paymentForm.bankAccount = '';
+        this.paymentForm.payee = '';
       }
     },
     getBudgetDep() {

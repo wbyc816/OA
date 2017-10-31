@@ -145,7 +145,7 @@ $purple: #0460AE;
       th {
         padding: 6px 13px;
       }
-      $widths: (1: 15%, 2: 10%, 3: 18%, 4: 25%, 5: 16%, 6: 16%);
+      $widths: (1: 15%, 2: 11%, 3: 18%, 4: 24%, 5: 16%, 6: 16%);
       @each $num,
       $width in $widths {
         th:nth-child(#{$num}) {

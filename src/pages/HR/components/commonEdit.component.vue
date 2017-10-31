@@ -13,7 +13,7 @@
             <el-button type="primary" icon="close" size="small" @click="showWarn(edu.enName,index)">删除</el-button>
           </div>
           <el-form-item :label="item.label" :prop="edu.enName+'.'+index+'.'+item.name" :rules="creatRule(item)" v-for="item in edu.prop" :style="{marginBottom:item.name=='postCompany'?'19px':'20px'}">
-            <el-date-picker type="date" v-model="info[item.name]" style="width: 100%;" :editable="false" :clearable="false" v-if="item.type=='date'" :default-value="new Date(parseInt(info[item.name]))"></el-date-picker>
+            <el-date-picker type="date" v-model="info[item.name]" style="width: 100%;" :editable="false" :clearable="false" v-if="item.type=='date'"></el-date-picker>
             <el-radio-group v-model="info[item.name]" class="myRadio" v-else-if="item.type=='boolean'">
               <el-radio-button :label="1">是<i></i></el-radio-button>
               <el-radio-button :label="0">否<i></i></el-radio-button>

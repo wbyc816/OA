@@ -12,6 +12,7 @@
                 <i class="iconfont icon-zhinan"></i>
                 <a style="color: #0460AE" href="#">下载操作说明</a>
               </el-col> -->
+              <a :href="link" target="_blank" style="float:right;color:#0460AE;font-size:14px;">软件下载说明</a>
             </el-row>
           </div>
           <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
@@ -65,6 +66,7 @@ export default {
         layout: "total,prev, pager, next, jumper",
         total: 0,
       },
+      link:''
     }
   },
   created() {
@@ -77,6 +79,7 @@ export default {
         pageNumber: this.paginate.currentPage,
         pageSize: 10
       }).then((data) => {
+        this.link=data.manualUrl;
         this.paginate.total = data.totalSize
         this.tableData = dataTransform(data.basicSoftwareInfosList, fmts)
       })
