@@ -1,8 +1,8 @@
 <template>
-  <div id="macroStatistics">
+  <div id="normalStatistics">
     <el-card class="borderCard searchOptions">
       <div slot="header">
-        <span>宏观统计</span>
+        <span>公文统计</span>
         <i class="iconfont icon-shuaxin" @click="reset"></i>
       </div>
       <el-row :gutter="12">
@@ -14,8 +14,17 @@
         <el-col :span="6">
           <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
         </el-col>
+        <el-col :span="6">
+          <el-input v-model="searchParams.taskUserName" placeholder="呈报人"></el-input>
+        </el-col>
+        <el-col :span="6">
+          <el-input v-model="searchParams.docNo" placeholder="公文编号"></el-input>
+        </el-col>
         <el-col :span="8">
           <el-date-picker v-model="timeline" placeholder="呈报日期" type="daterange" :editable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+        </el-col>
+        <el-col :span="12">
+          <el-input v-model="searchParams.keyWords" placeholder="公文标题"></el-input>
         </el-col>
         <el-col :span="4">
           <el-button type="primary" @click="search" :disabled="searchLoading">搜索</el-button>
@@ -24,17 +33,31 @@
     </el-card>
     <el-card class="borderCard searchResult" v-loading="searchLoading">
       <div slot="header" class="clearfix">
-        <span v-if="timeline&&timeline.length>0&&timeline[0]">{{+timeline[0] | time('ch')}} ~ {{+timeline[1] | time('ch')}}</span>
+        <span v-if="timeline&&timeline.length>0&&timeline[0]">
+          <template v-if="dayCount>1">
+            {{+timeline[0] | time('ch')}} ~             
+          </template>
+            {{+timeline[1] | time('ch')}}
+        </span>
         <span class="download"><i class="iconfont icon-icon202"></i>导出报表</span>
       </div>
       <el-table :data="searchData" class="myTable">
-        <el-table-column prop="deptName" label="呈报部门" width="150"></el-table-column>
-        <el-table-column prop="supplierName" label="公文类型"></el-table-column>
-        <el-table-column prop="taskDocNum" label="呈报公文" width="100" align="center"></el-table-column>
-        <el-table-column prop="signDocNum" label="签批公文" width="100" align="center"></el-table-column>
-        <el-table-column prop="countersignNum" label="会签公文" width="100" align="center"></el-table-column>
-        <el-table-column prop="overTimeNum" label="超时公文" width="100" align="center"></el-table-column>
-        <el-table-column prop="overTimeProportion" label="超时比例" width="100" align="center"></el-table-column>
+        <el-table-column prop="docTypeName" label="公文类型" width="100"></el-table-column>
+        <el-table-column prop="taskUser" label="呈报人" width="100"></el-table-column>
+        <el-table-column prop="docTitle" label="公文标题"></el-table-column>
+        <el-table-column prop="taskTime" label="呈报时间" width="100"></el-table-column>
+        <el-table-column prop="nodeName" label="公文状态" width="80"></el-table-column>
+        <el-table-column prop="currentUser" label="当前签批人" width="100"></el-table-column>
+        <el-table-column prop="isOvertime" label="超时状态" width="80">
+          <template scope="scope">
+            {{scope.row.isOvertime==1?'已超时':'正常'}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="overTimeProportion" label="超时节点" width="100">
+          <template scope="scope">
+            {{scope.row.isOvertime==1?scope.row.currentUser:''}}
+          </template>
+        </el-table-column>
       </el-table>
       <div class="pageBox" v-show="searchData.length>0">
         <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
@@ -56,6 +79,9 @@ export default {
         "endTime": "",
         "pageSize": 10,
         "pageNumber": 1,
+        "taskUserName": '',
+        "docNo": '',
+        "keyWords": ''
       },
       timeline: [],
       totalSize: 0,
@@ -72,7 +98,8 @@ export default {
         value: 'dictCode',
         children: 'childDict'
       },
-      depList: []
+      depList: [],
+      dayCount: 0
     }
   },
   computed: {
@@ -83,7 +110,7 @@ export default {
   created() {
     this.getTypes();
     this.getDepList();
-    this.timeline.push(new Date().setDate(1), new Date());
+    this.timeline.push(new Date(new Date().setHours(0, 0, 0, 0)), new Date());
     this.getData();
   },
   methods: {
@@ -91,16 +118,17 @@ export default {
       this.searchLoading = true;
       this.searchParams.docType = this.docTypes[this.docTypes.length - 1];
       if (this.timeline && this.timeline.length != 0) {
-        this.searchParams.startTime = this.timeFilter(+this.timeline[0],'date');
-        this.searchParams.endTime = this.timeFilter(+this.timeline[1],'date');
+        this.searchParams.startTime = this.timeFilter(+this.timeline[0], 'date');
+        this.searchParams.endTime = this.timeFilter(+this.timeline[1], 'date');
       } else {
         this.searchParams.startTime = '';
         this.searchParams.endTime = '';
       }
-      this.$http.post("/doc/docMacroStatistics", this.searchParams, { body: true }).then(res => {
+      this.$http.post("/doc/docStatistics", this.searchParams, { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;
         }.bind(this), 200)
+        this.dayCount++;
         if (res.status == 0) {
           this.searchData = res.data.records;
           this.totalSize = res.data.total;
@@ -111,7 +139,6 @@ export default {
       }, res => {})
     },
     handleCurrentChange(page) {
-      console.log(page)
       this.searchParams.pageNumber = page;
       this.getData()
     },
@@ -124,6 +151,9 @@ export default {
       this.searchParams.docType = '';
       this.searchParams.startTime = '';
       this.searchParams.endTime = '';
+      this.searchParams.keyWords = '';
+      this.searchParams.taskUserName = '';
+      this.searchParams.docNo = '';
       this.timeline = [];
     },
     getTypes() {
@@ -157,7 +187,7 @@ export default {
 <style lang='scss'>
 $main: #0460AE;
 $sub:#1465C0;
-#macroStatistics {
+#normalStatistics {
   .searchOptions {
     .el-card__body {
       padding-top: 13px;

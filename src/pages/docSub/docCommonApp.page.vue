@@ -176,6 +176,9 @@ export default {
         },
         "fileId": []
       }
+      if(this.$route.query.id){
+        temp.id=this.$route.query.id
+      }
       this.$http.post(this.doc.url, Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency), { body: true })
         .then(res => {
           this.$store.commit('SET_SUBMIT_LOADING', false)
@@ -198,7 +201,7 @@ export default {
         .then(res => {
           if (res.status == 0) {
             if (res.data.length != 0) {
-              var reciver = {
+              var receiver = {
                 "reciDeptMajorName": res.data.reciDeptMajorName,
                 "reciDeptMajorId": res.data.reciDeptMajorId,
                 "reciDeptName": res.data.reciDeptName,
@@ -206,7 +209,7 @@ export default {
                 "reciUserName": res.data.reciUserName,
                 "reciUserId": res.data.reciUserId,
               }
-              this.$store.commit('setReciver', reciver);
+              this.$store.commit('setReciver', receiver);
               this.reciverName = res.data.reciUserName;
             }
           } else {
@@ -218,12 +221,13 @@ export default {
       this.$http.post('/doc/getDocDraftsDetail', { docId: this.$route.query.id })
         .then(res => {
           if (res.status == 0) {
-            this.$store.commit('setReciver', res.data.reciver);
+            this.$store.commit('setReciver', res.data.receiver);
             this.$store.commit('setConfident', res.data.selConfident);
             this.$store.commit('setUrgency', res.data.selUrgency);
             // this.$store.commit('setDocTtile', res.data.docTtile);
             this.reciverName = res.data.receiver.reciUserName;
             this.$refs.subject.updateTitle(res.data.docTtile);
+            this.$refs.description.ruleForm.des=res.data.des.replace(/↵/g, "\n");
             if (res.data.path) {
               this.$refs.description.updatePath(res.data.path);
             }

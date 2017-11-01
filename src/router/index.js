@@ -13,8 +13,9 @@ import docToRead from 'pages/docSub/docToRead.page'
 import docDraft from 'pages/docSub/docDraft.page'
 import docCommonApp from 'pages/docSub/docCommonApp.page'
 //公文统计
-import statisticsHome from 'pages/docSub/statistical/statisticsHome.page'
 import macroStatistics from 'pages/docSub/statistical/macroStatistics.page'
+import normalStatistics from 'pages/docSub/statistical/normalStatistics.page'
+import approveStatistics from 'pages/docSub/statistical/approveStatistics.page'
 
 //会议
 import meetingHome from 'pages/meeting/meetingHome.page'
@@ -68,9 +69,7 @@ Vue.use(Router)
 import operationSystem from './operationSystem'
 import duty from './duty'
 import set from './set'
-
-
-export default new Router({
+const router = new Router({
 
   // mode: 'history',
   // history: false,
@@ -335,6 +334,22 @@ export default new Router({
           meta: {
             breadcrumb: "公文统计",
           }
+        }, {
+          path: '/doc/normalStatistics',
+          name: 'normalStatistics',
+          component: normalStatistics,
+          meta: {
+            breadcrumb: "公文统计",
+          }
+        },
+        {
+          path: '/doc/approveStatistics',
+          name: 'approveStatistics',
+          component: approveStatistics,
+          meta: {
+            breadcrumb: "公文统计",
+            power: ''
+          }
         },
         {
           path: '/doc/',
@@ -355,3 +370,10 @@ export default new Router({
 
   ]
 })
+
+// router.beforeEach((to, from, next) => {
+//   console.log(Vue.$http);
+//   next();
+// })
+
+export default router

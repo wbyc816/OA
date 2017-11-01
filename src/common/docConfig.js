@@ -135,23 +135,27 @@ export const docConfig = [{
     shortName: '差旅报销',
     code: 'CLB',
     url: '/doc/docFinTravelpay'
-  }, 
+  },   
+  {
+    docName: '宾客机票申请',
+    code: 'BKY',
+    color: '#A8D58A',
+    shortName: '宾客机票',
+    url: '/doc/ticGuestDoc'
+  },
+  {
+    docName: '员工优惠机票',
+    code: 'YGY',
+    color: '#D67CAB',
+    shortName: '员工机票',
+    url: '/doc/docEmpTicket'
+  },
   {
     docName: '离职申请',
     color: '#FF8460',
     shortName: '离职申请',
     code: 'LZS',
-    url: '/doc/docFinTravelpay'
-  },
-  {
-    docName: '宾客机票申请',
-    code: 'BKY',
-    url: '/doc/ticGuestDoc'
-  },
-  {
-    docName: '员工机票申请',
-    code: 'YGY',
-    url: '/doc/docEmpTicket'
+    url: '/doc/docEmpDimission'
   },
 ]
 

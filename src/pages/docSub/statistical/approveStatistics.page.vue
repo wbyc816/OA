@@ -1,21 +1,28 @@
 <template>
-  <div id="macroStatistics">
+  <div id="approveStatistics">
     <el-card class="borderCard searchOptions">
       <div slot="header">
-        <span>宏观统计</span>
+        <span>审批者统计</span>
         <i class="iconfont icon-shuaxin" @click="reset"></i>
       </div>
       <el-row :gutter="12">
         <el-col :span="6">
-          <el-select v-model="searchParams.taskDeptId" placeholder="呈报部门" clearable>
-            <el-option :key="item.deptId" :label="item.deptName" :value="item.deptId" v-for="item in depList"></el-option>
+          <el-select v-model="searchParams.isAdmin" placeholder="角色" clearable>
+            <el-option label="公文管理员" value="1"></el-option>
+            <el-option label="普通员工" value="0"></el-option>
           </el-select>
         </el-col>
         <el-col :span="6">
           <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="12">
           <el-date-picker v-model="timeline" placeholder="呈报日期" type="daterange" :editable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+        </el-col>
+        <el-col :span="20">
+          <el-select v-model="searchParams.taskUserId" multiple filterable remote placeholder="请输入关键词搜索人员" :remote-method="remoteMethod" :multiple-limit="10" :loading="loading">
+            <el-option v-for="item in personList" :key="item.empId" :label="item.name" :value="item.empId">
+            </el-option>
+          </el-select>
         </el-col>
         <el-col :span="4">
           <el-button type="primary" @click="search" :disabled="searchLoading">搜索</el-button>
@@ -28,13 +35,15 @@
         <span class="download"><i class="iconfont icon-icon202"></i>导出报表</span>
       </div>
       <el-table :data="searchData" class="myTable">
-        <el-table-column prop="deptName" label="呈报部门" width="150"></el-table-column>
-        <el-table-column prop="supplierName" label="公文类型"></el-table-column>
-        <el-table-column prop="taskDocNum" label="呈报公文" width="100" align="center"></el-table-column>
-        <el-table-column prop="signDocNum" label="签批公文" width="100" align="center"></el-table-column>
-        <el-table-column prop="countersignNum" label="会签公文" width="100" align="center"></el-table-column>
-        <el-table-column prop="overTimeNum" label="超时公文" width="100" align="center"></el-table-column>
-        <el-table-column prop="overTimeProportion" label="超时比例" width="100" align="center"></el-table-column>
+        <el-table-column prop="userName" label="姓名" width="100"></el-table-column>
+        <el-table-column prop="deptName" label="所属部门"></el-table-column>
+        <el-table-column prop="roleName" label="角色" width="100"></el-table-column>
+        <el-table-column prop="taskDocNum" label="呈报公文" width="80" align="center"></el-table-column>
+        <el-table-column prop="signDocNum" label="签批公文" width="80" align="center"></el-table-column>
+        <el-table-column prop="countersignLaunchNum" label="会签发起" width="80" align="center"></el-table-column>
+        <el-table-column prop="countersignNum" label="会签公文" width="80" align="center"></el-table-column>
+        <el-table-column prop="toReadingNum" label=" 待阅公文" width="80" align="center"></el-table-column>
+        <el-table-column prop="overTimeNum" label="超时公文" width="80" align="center"></el-table-column>
       </el-table>
       <div class="pageBox" v-show="searchData.length>0">
         <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
@@ -50,12 +59,14 @@ export default {
     return {
       searchData: [],
       searchParams: {
-        "taskDeptId": "",
         "docType": "",
         "startTime": "",
         "endTime": "",
         "pageSize": 10,
         "pageNumber": 1,
+        "taskUserId": [],
+        "isAdmin": '',
+        'docManageLevel': ''
       },
       timeline: [],
       totalSize: 0,
@@ -72,18 +83,23 @@ export default {
         value: 'dictCode',
         children: 'childDict'
       },
-      depList: []
+      depList: [],
+      loading: false,
+      personList: [],
+
     }
   },
   computed: {
     ...mapGetters([
       'userInfo',
+      'staticsPower'
     ])
   },
   created() {
     this.getTypes();
     this.getDepList();
     this.timeline.push(new Date().setDate(1), new Date());
+    this.searchParams.docManageLevel = this.staticsPower
     this.getData();
   },
   methods: {
@@ -91,13 +107,13 @@ export default {
       this.searchLoading = true;
       this.searchParams.docType = this.docTypes[this.docTypes.length - 1];
       if (this.timeline && this.timeline.length != 0) {
-        this.searchParams.startTime = this.timeFilter(+this.timeline[0],'date');
-        this.searchParams.endTime = this.timeFilter(+this.timeline[1],'date');
+        this.searchParams.startTime = this.timeFilter(+this.timeline[0], 'date');
+        this.searchParams.endTime = this.timeFilter(+this.timeline[1], 'date');
       } else {
         this.searchParams.startTime = '';
         this.searchParams.endTime = '';
       }
-      this.$http.post("/doc/docMacroStatistics", this.searchParams, { body: true }).then(res => {
+      this.$http.post("/doc/approveDocStatistics", this.searchParams, { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;
         }.bind(this), 200)
@@ -124,6 +140,9 @@ export default {
       this.searchParams.docType = '';
       this.searchParams.startTime = '';
       this.searchParams.endTime = '';
+      this.searchParams.keyWords = '';
+      this.searchParams.taskUserName = '';
+      this.searchParams.docNo = '';
       this.timeline = [];
     },
     getTypes() {
@@ -149,6 +168,25 @@ export default {
             }
           })
       }
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loading = true;
+        clearTimeout(this.meTimeout);
+        this.meTimeout = setTimeout(() => {
+          this.$http.post('/emp/queryEmpDeptList', { name: query, deptId: this.userInfo.deptParentId, pageNumber: 1, pageSize: 50 })
+            .then(res => {
+              this.loading = false;
+              if (res.status == 0) {
+                this.personList = res.empVoList;
+              } else {
+
+              }
+            })
+        }, 600);
+      } else {
+        this.personList = [];
+      }
     }
   }
 }
@@ -157,7 +195,7 @@ export default {
 <style lang='scss'>
 $main: #0460AE;
 $sub:#1465C0;
-#macroStatistics {
+#approveStatistics {
   .searchOptions {
     .el-card__body {
       padding-top: 13px;
@@ -176,7 +214,12 @@ $sub:#1465C0;
           width: 60%;
         }
       }
-
+      .el-select {
+        >.el-input input{
+          
+          min-height: 46px;
+        }
+      }
       button {
         height: 46px; // width: 40%;
         // float: right;

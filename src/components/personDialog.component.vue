@@ -83,7 +83,7 @@ export default {
       this.personVisible = newVal;
       if (newVal) {
         if (this.admin != '') {
-          if (this.admin == 0) {
+          if (this.admin == '0') {
             this.$store.dispatch('getDepById');
           } else {
             this.$store.dispatch('getDeptList');
@@ -95,7 +95,11 @@ export default {
             this.$store.dispatch('getDepById');
           }
         }
-        this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+        if (this.userInfo.levelNum == 30) {
+          this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+        } else {
+          this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+        }
         this.name = "";
         this.$store.dispatch('setQueryPage', 1);
         this.$store.dispatch('queryEmpList', {});
@@ -132,7 +136,11 @@ export default {
       this.searchButton = true;
       if (this.admin != '') {
         if (this.admin == 0) {
-          this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          if (this.userInfo.levelNum == 30) {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+          } else {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          }
           this.$store.dispatch('getDepById');
         } else {
           this.$store.dispatch('setQueryDepId', '');
@@ -143,7 +151,11 @@ export default {
           this.$store.dispatch('setQueryDepId', '');
           this.$store.dispatch('getDeptList');
         } else {
-          this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          if (this.userInfo.levelNum == 30) {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+          } else {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          }
           this.$store.dispatch('getDepById');
         }
       }
@@ -161,7 +173,7 @@ export default {
               type: 'warning'
             })
           }
-        }else{
+        } else {
           this.selPerson = row;
         }
       } else {

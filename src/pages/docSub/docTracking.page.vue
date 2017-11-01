@@ -25,6 +25,9 @@
             <el-tooltip content="查看流转" placement="top" effect="light">
               <i class="link iconfont icon-liucheng" @click="getProcess(doc.id)"></i>
             </el-tooltip>
+            <el-tooltip content="撤回" placement="top" effect="light" v-if="doc.isBack!=0">
+              <i class="link iconfont icon-chehui" @click="doBack(doc.id)"></i>
+            </el-tooltip>
           </td>
         </tr>
       </tbody>
@@ -96,6 +99,17 @@ export default {
     getProcess(id) {
       this.$store.dispatch('getTaskDetail', id);
     },
+    doBack(id) {
+      this.$http.post('/doc/docTaskBack', { empId: this.userInfo.empId, docId: id }, )
+        .then(res => {
+          if (res.status == 0) {
+            this.$message.success('撤回成功！');
+            this.getData();
+          } else {
+            this.$message.error(res.message);
+          }
+        })
+    },
     formatter(row, column, cellValue) {
       switch (cellValue) {
         case "start":
@@ -125,7 +139,7 @@ export default {
       this.getData();
     },
     handDocType(val) {
-      return docConfig.find(d => d.code == val.docTypeCode)||{color: '',shortName: '',}
+      return docConfig.find(d => d.code == val.docTypeCode) || { color: '', shortName: '', }
     },
     calWidth(doc) {
       var width = 1;

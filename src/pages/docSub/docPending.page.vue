@@ -15,7 +15,7 @@
           <td>
             <span class="overTime" v-if="doc.isOvertime"><i class="el-icon-information"></i> 超时</span>
             <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
-            <span class="improtType" v-if="doc.docImprotType!='普通'" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
+            <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
             <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
           </td>
           <td>{{doc.taskUser}}</td>

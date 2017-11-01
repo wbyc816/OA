@@ -1028,7 +1028,8 @@ ul {
       color: $main;
       cursor: pointer;
       font-size: 22px;
-      display: none;
+      // display: none;
+      padding-right:5px;
     }
     tr:hover{
       .link{

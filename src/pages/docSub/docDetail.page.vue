@@ -5,10 +5,11 @@
         <span class="docTypeName">{{docDetialInfo.doc.docTypeName}}</span>
         <span class="docNo">{{docDetialInfo.doc.docNo}}</span>
         <span class="improtType" v-if="docDetialInfo.doc.docImportType=='紧急'||docDetialInfo.doc.docImportType=='特急'" :style="{background:docDetialInfo.doc.docImportType=='紧急'?'#FFD702':'#FF0202'}">{{docDetialInfo.doc.docImportType}}</span>
-        <span class="improtType" v-if="docDetialInfo.doc.docDenseType=='保密'&&docDetialInfo.doc.docDenseType=='绝密'" :style="{background:docDetialInfo.doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{docDetialInfo.doc.docDenseType}}</span>
+        <span class="improtType" v-if="docDetialInfo.doc.docDenseType=='保密'||docDetialInfo.doc.docDenseType=='绝密'" :style="{background:docDetialInfo.doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{docDetialInfo.doc.docDenseType}}</span>
         <div class="rightBox">
           <span class="taskUserName">呈报人 {{docDetialInfo.doc.taskUserName}}</span>
           <span class="deptName">{{docDetialInfo.doc.taskDeptMajorName}}</span>
+          <span class="deptName">{{docDetialInfo.doc.taskUserJobTitle}}</span>
         </div>
       </div>
       <div class="baseInfoBox commonBox">
@@ -51,21 +52,50 @@
       </div>
       <div class='history commonBox'>
         <h4 class='doc-form_title'>历史审批意见</h4>
-        <ul class="backV" v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0&&task.isFlag!=1" :class="{'hasSign':task.signInfo!='','isAgree':task.state==2}">
-          <li>{{task.taskContent}}</li>
-          <li class="timeRight">{{task.taskUserName}} {{task.startTime}}</li>
+        <ul v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0&&task.isFlag!=1" :class="{'hasSign':task.signInfo!=''}" v-show="index<(!moreFlag?4:999)">
+          <li class="personAdvice" :class="{disAgree:task.state==2}">
+            <span class="isAgree"><i :class="task.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
+            <span class="userName">{{task.taskUserName}}</span>
+            <span class="taskContent">{{task.taskContent}}</span>
+            <span class="taskTime">{{task.startTime}}</span>
+          </li>
           <ul class="signBox" v-if="task.signInfo.length!=0">
-            <li class="signStart"><i class="el-icon-caret-right"></i>公文会签开始</li>
-            <div class="depSignBox" v-for="depBox in task.signInfo">
-              <div v-for="child in depBox.deptSigns" class="childSign">
-                <li>
-                  <p class="depTip">{{depBox.deptName}}</p>{{child.signContent}}</li>
-                <li class="timeRight">{{child.signUserName}} {{child.signTime}}</li>
-              </div>
-            </div>
-            <li class="signEnd"><i class="el-icon-caret-right"></i>公文会签结束</li>
+            <li class="signStart"><i class="el-icon-caret-right"></i>会签开始</li>
+            <template v-if="task.signType==1">
+              <el-collapse class="depSignBox">
+                <el-collapse-item v-for="signBox in task.signInfo">
+                  <template slot="title">
+                    <li class="personAdvice" :class="{disAgree:signBox.deptSigns[signBox.deptSigns.length-1].state==2}">
+                      <span class="isAgree"><i :class="signBox.deptSigns[signBox.deptSigns.length-1].state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
+                      <span class="depName"><i class="el-icon-arrow-down"></i><span>{{signBox.deptName}}</span></span>
+                      <span class="userName">{{signBox.deptSigns[signBox.deptSigns.length-1].signUserName}}</span>
+                      <span class="taskContent">{{signBox.deptSigns[signBox.deptSigns.length-1].signContent}}</span>
+                      <span class="taskTime">{{signBox.deptSigns[signBox.deptSigns.length-1].signTime}}</span>
+                    </li>
+                  </template>
+                  <li class="personAdvice" :class="{disAgree:sign.state==2}" v-for="sign in signBox.deptSigns">
+                    <span class="isAgree"><i :class="sign.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
+                    <span class="userName">{{sign.signUserName}}</span>
+                    <span class="taskContent">{{sign.signContent}}</span>
+                    <span class="taskTime">{{sign.signTime}}</span>
+                  </li>
+                </el-collapse-item>
+              </el-collapse>
+            </template>
+            <template v-if="task.signType==2">
+              <li class="personAdvice" :class="{disAgree:sign.state==2}" v-for="sign in task.signInfo[0].deptSigns">
+                <span class="isAgree"><i :class="sign.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
+                <span class="userName">{{sign.signUserName}}</span>
+                <span class="taskContent">{{sign.signContent}}</span>
+                <span class="taskTime">{{sign.signTime}}</span>
+              </li>
+            </template>
+            <li class="signEnd"><i class="el-icon-caret-right"></i>会签结束</li>
           </ul>
         </ul>
+        <div class="moreHistory" v-if="docDetialInfo.taskDetail.length>3" :class="{isActive:moreFlag}" @click="moreFlag=!moreFlag">
+          <i class="el-icon-arrow-down"></i> 查看更多审批意见
+        </div>
       </div>
       <div v-if="distData.length!=0" style="margin-bottom:20px;">
         <h4 class='doc-form_title'>分发意见</h4>
@@ -300,7 +330,8 @@ export default {
       ableSignDoc: ['CPD', 'SWD', 'LZS', 'HTS'],
       ableSign: false,
       chooseDisable: false,
-      suggestHtml: ''
+      suggestHtml: '',
+      moreFlag: false,
     }
   },
   created() {
@@ -680,7 +711,7 @@ $sub:#1465C0;
       .taskUserName {
         color: $sub;
         font-size: 18px;
-        padding-right:5px;
+        padding-right: 5px;
       }
       .deptName {
         color: #646464;
@@ -791,9 +822,11 @@ $sub:#1465C0;
     text-align: right;
   }
   .history {
+    padding-bottom: 0;
+    border-bottom: none;
     li {
       min-height: 50px;
-      padding: 15px 20px;
+      padding: 0 20px;
     }
     .hasSign {
       border-bottom: none;
@@ -802,6 +835,92 @@ $sub:#1465C0;
       border-bottom: 1px solid #D5DADF;
       &:first-of-type {
         border-top: 1px solid #D5DADF;
+      }
+      .personAdvice {
+        display: table;
+        span {
+          display: table-cell;
+          vertical-align: middle;
+        }
+        $widths: (1: 4%, 2: 12%, 3: 72%, 4: 12%);
+        @each $num,
+        $width in $widths {
+          span:nth-child(#{$num}) {
+            width: $width;
+          }
+        }
+        .isAgree {
+          i {
+            color: #00A0DC;
+            font-size: 20px;
+            vertical-align: middle;
+          }
+        }
+        &.disAgree {
+          background: #FFF0F0;
+          .isAgree {
+            i {
+              color: #F06666;
+            }
+          }
+        }
+        .userName {
+          color: $main;
+        }
+        .taskTime {
+          color: #9B9B9B;
+        }
+      }
+      .depSignBox {
+        .el-collapse-item__header {
+          padding-left: 0;
+          min-height: 50px;
+          height: auto;
+          line-height: 1;
+          font-size: 15px;
+          background: #EAECF7;
+          .el-collapse-item__header__arrow {
+            display: none;
+          }
+          .personAdvice {
+            width: 100%;
+            $widths: (1: 4%, 2:24%, 3: 12%, 4: 48%, 5: 12%);
+            @each $num,
+            $width in $widths {
+              span:nth-child(#{$num}) {
+                width: $width;
+              }
+            }
+            .depName {
+              font-size: 15px;
+              color: $main;
+              span {
+                display: inline-block;
+                width: auto;
+                padding-left: 10px;
+                max-width: 80%;
+              }
+              i {
+                font-size: 18px;
+                vertical-align: middle;
+                transition: transform .3s;
+              }
+            }
+          }
+        }
+        .el-collapse-item.is-active {
+          .el-collapse-item__header .personAdvice .depName i {
+            transform: rotate(180deg);
+          }
+        }
+        .el-collapse-item__wrap {
+          background: #EAECF7;
+          .el-collapse-item__content {
+            padding: 0;
+            font-size: 15px;
+            line-height: 1;
+          }
+        }
       }
       &.isAgree {
         background: #FFF0F0;
@@ -825,22 +944,40 @@ $sub:#1465C0;
         }
       }
     }
+    .moreHistory {
+      padding-left: 20px;
+      line-height: 40px;
+      color: $main;
+      border-bottom: 1px dashed #D5DADF;
+      cursor: pointer;
+      i {
+        transition: transform .3s;
+      }
+      &.isActive {
+        i {
+          transform: rotate(180deg);
+        }
+      }
+    }
     .signBox {
       background: #EAECF7;
       .signStart,
       .signEnd {
-        color: $main;
+        color: #fff;
         padding: 0 20px;
         min-height: 25px;
         line-height: 25px;
-      }
-      .signStart {
-        border-bottom: 1px solid #D5DADF;
-        border-top: 1px dashed #D5DADF;
-      }
-      .signEnd {
-        border-bottom: 1px dashed #D5DADF;
-      }
+        background: $main;
+        i {
+          padding-right: 10px;
+        }
+      } // .signStart {
+      //   border-bottom: 1px solid #D5DADF;
+      //   border-top: 1px dashed #D5DADF;
+      // }
+      // .signEnd {
+      //   border-bottom: 1px dashed #D5DADF;
+      // }
       .depTip {
         color: $main;
       }

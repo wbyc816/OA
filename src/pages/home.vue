@@ -544,7 +544,7 @@ export default {
         })
     },
     getNew(tab) {
-      this.$http.post('/doc/selectFileList', { empId: this.userInfo.empId, classify1: this.activeName })
+      this.$http.post('/doc/selectFileList', { empId: this.userInfo.empId, classify1: this.activeName,sort:0 })
         .then(res => {
           if (res.status == 0) {
             var temp = this.newsList.find(t => t.code == this.activeName);

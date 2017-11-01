@@ -20,9 +20,13 @@
             </template>
           </el-menu-item-group>
         </el-menu>
-        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-show="/Statistics/.test($route.path)">
+        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-show="/Statistics/.test($route.path)" v-if="staticsPower">
           <el-menu-item-group title="公文流转">
             <el-menu-item  index='/doc/macroStatistics'>宏观统计<i class="el-icon-arrow-right"></i>
+            </el-menu-item>
+            <el-menu-item  index='/doc/normalStatistics'>公文统计<i class="el-icon-arrow-right"></i>
+            </el-menu-item>
+            <el-menu-item  index='/doc/approveStatistics'>审批者统计<i class="el-icon-arrow-right"></i>
             </el-menu-item>
           </el-menu-item-group>
         </el-menu>
@@ -115,10 +119,10 @@ export default {
           title: '公文草稿箱',
           path: '/doc/docDraft'
         },
-        // {
-        //   title: '公文统计',
-        //   path: '#'
-        // }
+        {
+          title: '公文统计',
+          path: '/doc/macroStatistics'
+        }
       ],
       processDialogView: false,
       tips: [],
@@ -134,7 +138,8 @@ export default {
       'isAdmin',
       'processView',
       'processData',
-      'docTips'
+      'docTips',
+      'staticsPower'
     ])
   },
   components: { SidePersonSearch },
@@ -142,7 +147,7 @@ export default {
     this.$store.dispatch('getAdminStatus');
     this.$store.dispatch('getDocTips');
     this.$store.dispatch('getDocForm');
-    console.log(this.$route);
+    this.getPower();
   },
   mounted: function() {
     this.breadcrumbItem = this.$route.meta.breadcrumb;
@@ -185,6 +190,18 @@ export default {
         this.stepHeight.push(h)
       }
       console.log(this.stepHeight)
+    },
+    getPower(){
+      if(this.staticsPower===''){
+        this.$http.post('/doc/checkStatisticsPower',{userId:this.userInfo.empId})
+        .then(res=>{
+          if(res.status==0){
+            this.$store.commit('setStaticsPower',res.data);
+          }else{
+
+          }
+        })
+      }
     }
   },
   watch: {
