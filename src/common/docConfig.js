@@ -143,4 +143,17 @@ export const docConfig = [{
     code: 'LZS',
     url: '/doc/docFinTravelpay'
   },
+  {
+    docName: '宾客机票申请',
+    code: 'BKY',
+    url: '/doc/ticGuestDoc'
+  },
+  {
+    docName: '员工机票申请',
+    code: 'YGY',
+    url: '/doc/docEmpTicket'
+  },
 ]
+
+
+
