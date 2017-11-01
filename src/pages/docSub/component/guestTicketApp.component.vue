@@ -27,13 +27,7 @@
               </el-radio-group>
             </el-col>
           </el-row>
-
-
-
-          
       </el-form-item>
-
-
       <div class="clearBoth"></div>
       <el-form-item label="证件信息" prop="documentType" class="documentType">
         <el-input placeholder="请输入内容" v-model="guestTicketAppFormFirst.documentType" class="input-with-select">
@@ -288,7 +282,6 @@ export default {
       var confident= this.genders.find(ele => ele.dictName == val);
       this.genger=confident.dictName;
       this.$store.commit('setConfident', { docDenseType: confident.dictName, value: confident.value });
-      console.log(this);
     },
 
 
@@ -330,7 +323,6 @@ export default {
     },
     isCashType(val){
       // this.paymentMethodName="";
-      console.log(this.$refs.paymentMethod);
       if(val=="FIN0103"){
         this.collectionInformation=0;
       }else{
@@ -339,7 +331,6 @@ export default {
     },
     getEmpBankAccount(Id){
       var that=this;
-      console.log(Id)
       that.$http.post('/doc/getEmpBankAccount', { 
         empId:Id
        })
@@ -369,9 +360,7 @@ export default {
           temp.documentType=this.guestTicketAppFormFirst.documentType;
           ;
           temp.flightPersonTypeCode=this.guestTicketAppFormFirst.flightPersonTypeSelect;
-          console.log(this.guestTicketAppFormFirst.flightPersonTypeSelect);
           temp.documentTypeCode=this.guestTicketAppFormFirst.documentTypeSelect;
-          console.log(temp);
 
       
           this.flightPersonTable.push(temp);
@@ -417,7 +406,6 @@ export default {
           temp.classLevelsCode=this.guestTicketAppFormSecond.classLevelsSelect;
           temp.isBookcCode=this.guestTicketAppFormSecond.isBook;
           temp.departureDate=util.formatTime(this.guestTicketAppFormSecond.departureDate.getTime(), 'yyyy-MM-dd');
-          console.log(temp)
           this.TripTable.push(temp);
           this.$refs.guestTicketAppFormSecond.resetFields();
           this.showData=0;
@@ -452,14 +440,13 @@ export default {
       this.$emit('saveMiddle',params);
     },
     getDraft(obj){
-      this.combineObj(this.guestTicketAppFormThird,obj);
-      this.combineObj(this.flightPersonTable,obj);
-      this.combineObj(this.TripTable,obj);
+      this.TripTable=obj.TripTable;
+      this.flightPersonTable=obj.flightPersonTable;
+      this.guestTicketAppFormThird.ticketType=obj.guestTicketAppFormThird.ticketType;
     },
     submitForm() {
       // var that = this;
               if (this.flightPersonTable.length!=0&&this.TripTable.length!=0) {
-                console.log(this.guestTicketAppFormThird.ticketType);
                 // var dep=this.getBudgetDep();
                 this.params = {
                     "ticTypeName": this.guestTicketAppFormThird.ticketType,
@@ -509,7 +496,6 @@ export default {
             
 
           }
-          console.log(this.params);
           this.$emit('submitMiddle', this.params);
         } else {
           this.$message.warning('请检查填写字段')
@@ -543,7 +529,6 @@ export default {
             res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
             this.budgetDeptList = res.data
           } else {
-            console.log(res)
           }
         }, res => {})
       }
@@ -589,7 +574,6 @@ export default {
     //   return temp;
     // },
     blurInput(event){
-      console.log(event)
       var temp=event.target.value.split('.');
       if(temp.length==2&&(temp[1]==undefined||temp[1]==''||temp[1]==null)){
         this.budgetForm.budgetMoney = temp[0];

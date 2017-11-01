@@ -382,8 +382,8 @@ export default {
           },
   ticketTypeChange(){
     
-
-    this.$http.post('/emp/selectEmpTicket', { //二五折
+    if(this.staffBenefitAppFormThird.ticketTypes){
+        this.$http.post('/emp/selectEmpTicket', { //二五折
         typeId:this.staffBenefitAppFormThird.ticketTypes,
         empId: this.userInfo.empId ,                               
         annual :util.formatTime(new Date().getTime(), 'yyyy'),
@@ -398,6 +398,8 @@ export default {
        }
       }
     })
+    }
+  
 
 
 
@@ -477,9 +479,7 @@ export default {
 
           temp.documentTypeSelect=this.$refs.documentTypeSelect.selectedLabel;
           temp.documentType=this.staffBenefitAppFormFirst.documentType;
-          temp.ticTypeCode=this.staffBenefitAppFormThird.ticketTypes,
 
-          temp.ticTypeName=this.$refs.ticketType.selectedLabel,
           temp.flightPersonTypeCode=this.staffBenefitAppFormFirst.flightPersonTypeSelect;
           temp.documentTypeCode=this.staffBenefitAppFormFirst.documentTypeSelect;
           console.log(temp);
@@ -520,14 +520,14 @@ export default {
           var temp={};
           temp.start=this.staffBenefitAppFormSecond.start;
           temp.end=this.staffBenefitAppFormSecond.end;
-         
+
+          console.log(this.staffBenefitAppFormSecond.end)
           temp.carrier=this.staffBenefitAppFormSecond.carrier;
           temp.isBook=this.$refs.isBook.selectedLabel;
           temp.carrier=this.staffBenefitAppFormSecond.carrier;
           temp.flightNumber=this.staffBenefitAppFormSecond.flightNumber;
           temp.classLevelsSelect=this.$refs.classLevelsSelect.selectedLabel;
-          console.log(this.$refs.classLevelsSelect.selectedLabel)
-           console.log(this.$refs.classLevelsSelect)
+         
           temp.classLevelsCode=this.staffBenefitAppFormSecond.classLevelsSelect;
           temp.isBookcCode=this.staffBenefitAppFormSecond.isBook;
           temp.departureDate=util.formatTime(this.staffBenefitAppFormSecond.departureDate.getTime(), 'yyyy-MM-dd');
@@ -563,28 +563,33 @@ export default {
     },
     saveForm(){
       // console.log(this.vehicleForm)
-      var params=JSON.stringify(Object.assign(this.staffBenefitAppFormFirst,this.staffBenefitAppFormSecond,this.staffBenefitAppFormThird));
+      var param= {"staffBenefitAppFormThird":this.staffBenefitAppFormThird.ticketTypes,"flightPersonTable":this.flightPersonTable,"TripTable":this.TripTable}
+      var params=JSON.stringify(param);
       this.$emit('saveMiddle',params);
     },
     getDraft(obj){
-      this.combineObj(this.staffBenefitAppFormSecond,obj);
-      this.combineObj(this.staffBenefitAppFormThird,obj);
+      console.log(obj)
+      this.flightPersonTable=obj.flightPersonTable;
+      this.TripTable=obj.TripTable;
+      this.staffBenefitAppFormThird.ticketTypes=obj.staffBenefitAppFormThird
     },
     submitForm() {
       // var that = this;
-              if (this.flightPersonTable.length!=0&&this.TripTable.length!=0) {
-                if(this.isEnough){
-                    console.log(this.staffBenefitAppFormThird.ticketTypes);
+              var that=this;
+              if (that.flightPersonTable.length!=0&&that.TripTable.length!=0) {
+                if(that.isEnough){
+                    console.log(that.staffBenefitAppFormThird.ticketTypes);
                 // var dep=this.getBudgetDep();
-                this.params = {
+                that.params = {
+
                     "isSubmit": 1,
-                    "typeId":this.staffBenefitAppFormThird.ticketTypes,
+                    "typeId":that.staffBenefitAppFormThird.ticketTypes,
                     "annual": util.formatTime(new Date().getTime(), 'yyyy'),
-                    "docTicEmployeeRecipts": this.flightPersonTable.map(function(tabel) {
-                      if(tabel.gender=="男"){
-                        tabel.gender="M";
+                    "docTicEmployeeRecipts": that.flightPersonTable.map(function(tabel) {
+                      if(tabel.genger=="男"){
+                        tabel.genger="M";
                       }else{
-                        tabel.gender="F";
+                        tabel.genger="F";
                       }
                       return {
                         "id": "",//客机票身份信息表ID     
@@ -598,9 +603,9 @@ export default {
                         "reciptCredentialsAccount":tabel.documentType,//优惠人证件号
                         "reciptContact": tabel.contactPhone,//联系电话
                         "reciptSex": tabel.genger, // 性别 M男 F "女":,
-                        "ticTypeCode": tabel.ticTypeCode,//机票Code
+                        "ticTypeCode":that.staffBenefitAppFormThird.ticketTypes,//机票Code
 
-                        "ticTypeName": tabel.ticTypeName,//机票名称
+                        "ticTypeName": that.$refs.ticketType.selectedLabel,//机票名称
                       }
                     }),
                     "docTicEmployeeFlights": this.TripTable.map(function(tabel) {
