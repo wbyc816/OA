@@ -251,6 +251,9 @@ import BXS from './component/reimburseDetail.component' //预算详情
 import FKS from './component/paymentDetail.component' //付款详情
 import YFK from './component/prePayDetail.component' //预付款详情
 import CLB from './component/travelRemibDetail.component' //预付款详情
+import BKY from './component/guestTicketDetail.component.vue'//宾客机票详情
+import YGY from './component/staffBenefitDetail.component.vue'//员工优惠机票
+
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -277,7 +280,9 @@ export default {
     BXS,
     FKS,
     YFK,
-    CLB
+    CLB,
+    BKY,
+    YGY,
   },
   data() {
     var checkSign = (rule, value, callback) => {

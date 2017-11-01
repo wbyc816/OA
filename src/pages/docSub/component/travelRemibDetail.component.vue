@@ -147,6 +147,8 @@ export default {
       return this.toThousands(cellValue)
     },
     handleBudget(){
+      console.log( this.info[0]);
+      console.log(6666);
       this.info[0].travelpayItemList.forEach((item,i)=>{
         this.budgetTable.push(Object.assign(item,this.info[0].budgetExeststisVoList[i]))
       })
