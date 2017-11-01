@@ -5,7 +5,7 @@
       <el-form-item label="申请金额" prop="appMoney" class="flw50"> 
           <div>
             <el-input   v-model="loanAppForm.appMoney">
-              <el-select v-model="selectMoney" slot="prepend" placeholder="请选择" class="selectMoney" @change="chooseCurrency" ref="accurency">
+              <el-select v-model="loanAppForm.selectMoney" slot="prepend" placeholder="请选择" class="selectMoney" @change="chooseCurrency" ref="accurency">
                 <el-option v-for="currency in currencys" :label="currency.currencyName" :value="currency.currencyCode"></el-option>
                 
               </el-select>
@@ -73,7 +73,6 @@ export default {
       payTypes:[],
       choosePayType:'',
       bankAccount:"",
-      selectMoney:"",
       timeout:  null,
       payee:"",
       testprops:{
@@ -108,6 +107,7 @@ export default {
         person: [],
         // budgetDept: [],
         budgetDate:{},
+        selectMoney:"",
 
       
       },
@@ -161,7 +161,6 @@ export default {
         })
       },
       loadCollectionInformation(){
-        console.log(this.userInfo.name);
         this.loanAppForm.payee=this.userInfo.name;
         this.getEmpBankAccount(this.userInfo.empId);
       },
@@ -214,7 +213,6 @@ export default {
         };
       },
        handleSelect(item) {
-        console.log(item.empId);
         this.getEmpBankAccount(item.empId);
       },
 
@@ -239,7 +237,6 @@ export default {
     },
     isCashType(val){
       // this.paymentMethodName="";
-      console.log(this.$refs.paymentMethod);
       if(val=="FIN0103"){
         this.collectionInformation=0;
       }else{
@@ -248,7 +245,6 @@ export default {
     },
     getEmpBankAccount(Id){
       var that=this;
-      console.log(Id)
       that.$http.post('/doc/getEmpBankAccount', { 
         empId:Id
        })
@@ -260,42 +256,17 @@ export default {
     },
      
 
-    // addBudget() {
-    //   this.$refs.budgetForm.validate((valid) => {
-    //     if (valid) {
-    //       var temp={};
-    //       temp.budgetDept=this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length-1];
-    //       temp.budgetMoney=this.budgetForm.budgetMoney;
-    //       temp.useBudget=this.useBudget;
-    //       temp.cExecRate=this.cExecRate;
-    //       this.budgetTable.push(temp);
-    //       this.isDisable=true;
-    //       this.$refs.budgetMoney.currentValue="";
-    //       this.$refs.budgetForm.resetFields();
-    //       this.showData=0;
-    //     } else {
-    //       return false;
-    //     }
-    //   });
-    // },
-    //   deleteRow(index) {
-    //   this.budgetTable.splice(index,1)
-    // },
-    // fomatFloat(src, pos) {
-    //   return Math.round(src * Math.pow(10, pos)) / Math.pow(10, pos);
-    // },
-    // checkEmpty(){
-    //   if(this.budgetTable.length!=0){
-    //     this.$emit('submitMiddle',{budgetTable:this.budgetTable});
-    //   }else{
-    //     this.$message.warning('请添加信息')
-    //     this.$emit('submitMiddle',false);
-    //   }
-    // },
-    // updatePerson(list) {
-    //   this.budgetForm.person = list
-    //   this.signDialogVisible = false;
-    // },
+    saveForm(){
+      // console.log(this.vehicleForm)
+      var param= {"loanAppForm":this.loanAppForm}
+      var params=JSON.stringify(param);
+      this.$emit('saveMiddle',params);
+    },
+    getDraft(obj){
+      console.log(obj);
+      this.loanAppForm=obj.loanAppForm;
+
+    },
     submitForm() {
       // var that = this;
       this.$refs.loanAppForm.validate((valid) => {
