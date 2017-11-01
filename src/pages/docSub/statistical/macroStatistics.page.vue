@@ -1,41 +1,36 @@
 <template>
-  <div id="supplierSearch">
+  <div id="macroStatistics">
     <el-card class="borderCard searchOptions">
       <div slot="header">
-        <span>客户查询</span>
+        <span>宏观统计</span>
         <i class="iconfont icon-shuaxin" @click="reset"></i>
       </div>
       <el-row :gutter="12">
         <el-col :span="6">
-          <el-select v-model="searchParams.supplierType" placeholder="客户类型" :clearable="true">
-            <el-option :key="item.dictCode" :label="item.dictName" :value="item.dictCode" v-for="item in supplierTypes"></el-option>
+          <el-select v-model="searchParams.taskDeptId" placeholder="呈报部门">
+            <el-option :key="item.dictCode" :label="item.dictName" :value="item.dictCode" v-for="item in 5"></el-option>
           </el-select>
         </el-col>
         <el-col :span="6">
-          <el-input v-model="searchParams.supplierCity" placeholder="所在城市"></el-input>
+          <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
         </el-col>
-        <el-col :span="6">
-          <el-input v-model="searchParams.empName" placeholder="客户经理"></el-input>
+        <el-col :span="8">
+          <el-date-picker v-model="timeline" placeholder="呈报日期" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
         </el-col>
-        <el-col :span="6">
-          <el-input v-model="searchParams.supplierNo" placeholder="客户编码"></el-input>
-        </el-col>
-        <el-col :span="21">
-          <el-input v-model="searchParams.supplierName" placeholder="客户名称"></el-input>
-        </el-col>        
-        <el-col :span="3">
+        <el-col :span="4">
           <el-button type="primary" @click="search" :disabled="searchLoading">搜索</el-button>
         </el-col>
       </el-row>
     </el-card>
     <el-card class="borderCard searchResult" v-loading="searchLoading">
       <el-table :data="searchData" class="myTable">
-        <el-table-column prop="supplierNo" label="客户编码" width="180"></el-table-column>
-        <el-table-column prop="supplierName" label="客户名称"></el-table-column>
-        <el-table-column prop="supplierType" label="类型" width="100"></el-table-column>
-        <el-table-column prop="supplierCity" label="所在城市" width="100"></el-table-column>
-        <el-table-column prop="empName" label="客户经理" width="100"></el-table-column>
-        <el-table-column prop="supplierStatus" label="状态" width="100"></el-table-column>
+        <el-table-column prop="deptName" label="呈报部门" width="150"></el-table-column>
+        <el-table-column prop="supplierName" label="公文类型"></el-table-column>
+        <el-table-column prop="taskDocNum" label="呈报公文" width="100"></el-table-column>
+        <el-table-column prop="signDocNum" label="签批公文" width="100"></el-table-column>
+        <el-table-column prop="countersignNum" label="会签公文" width="100"></el-table-column>
+        <el-table-column prop="overTimeNum" label="超时公文" width="100"></el-table-column>
+        <el-table-column prop="overTimeProportion" label="超时比例" width="100"></el-table-column>
       </el-table>
       <div class="pageBox" v-show="searchData.length>0">
         <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
@@ -50,20 +45,29 @@ export default {
   data() {
     return {
       searchData: [],
-      reserveDate: '',
       searchParams: {
-        "supplierType": "",
-        "supplierNo": "",
-        "supplierName": "",
-        "supplierCity": "",
-        "empName": "",
-        "pageSize": 10,
-        "pageNumber": 1
+        "taskDeptId": "",
+        "docType": "",
+        "startTime": "",
+        "endTime": "",
+        "pageSize": 1,
+        "pageNumber": 10,
       },
+      timeline: [],
       totalSize: 1,
-      status: '',
       searchLoading: false,
-      supplierTypes: ''
+      docTypes: [],
+      docTypeOptions: [],
+      pickerOptions0: {
+        disabledDate(time) {
+          return time.getTime() >= Date.now() - 8.64e7;
+        }
+      },
+      defaultProp: {
+        label: 'dictName',
+        value: 'dictCode',
+        children: 'childDict'
+      }
     }
   },
   computed: {
@@ -72,13 +76,21 @@ export default {
     ])
   },
   created() {
-    this.getSupplierTypes();
+    this.getTypes();
     this.getData();
   },
   methods: {
     getData() {
       this.searchLoading = true;
-      this.$http.post("/Supplier/searchSupplier", this.searchParams, { body: true }).then(res => {
+      this.searchParams.docType = this.docTypes[this.docTypes.length - 1];
+      if (this.timeline.length != 0) {
+        this.searchParams.startTime = +this.timeline[0];
+        this.searchParams.endTime = +this.timeline[1];
+      } else {
+        this.searchParams.startTime = '';
+        this.searchParams.endTime = '';
+      }
+      this.$http.post("/doc/docMacroStatistics", this.searchParams, { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;
         }.bind(this), 200)
@@ -89,9 +101,7 @@ export default {
           this.searchData = [];
           this.totalSize = 0;
         }
-      }, res => {
-
-      })
+      }, res => {})
     },
     handleCurrentChange(page) {
       this.searchParams.pageNumber = page;
@@ -102,24 +112,23 @@ export default {
       this.getData();
     },
     reset() {
-      this.searchParams.supplierType = '';
-      this.searchParams.supplierNo = '';
-      this.searchParams.supplierName = '';
-      this.searchParams.supplierCity = '';
-      this.searchParams.empName = '';
+      this.searchParams.taskDeptId = '';
+      this.searchParams.docType = '';
+      this.searchParams.startTime = '';
+      this.searchParams.endTime = '';
     },
-    getSupplierTypes() { //客户类型
-      if (this.supplierTypes.length == 0) {
-        this.$http.post('/api/getDict', { dictCode: 'ADM01' })
+    getTypes() {
+      if (this.docTypeOptions.length == 0) {
+        this.$http.post('/doc/getDocTypeTreeList')
           .then(res => {
             if (res.status == 0) {
-              this.supplierTypes = res.data
+              this.docTypeOptions = res.data
             } else {
 
             }
           })
       }
-    },
+    }
   }
 }
 
@@ -127,10 +136,10 @@ export default {
 <style lang='scss'>
 $main: #0460AE;
 $sub:#1465C0;
-#supplierSearch {
+#macroStatistics {
   .searchOptions {
     .el-card__body {
-        padding-top: 13px;
+      padding-top: 13px;
 
       .el-col {
         margin-bottom: 13px;
@@ -189,7 +198,7 @@ $sub:#1465C0;
     }
   }
   .pageBox {
-    padding:10px 20px;
+    padding: 10px 20px;
     text-align: right;
   }
 }

@@ -167,7 +167,7 @@ export default {
               this.routers.push(subChildren[b]);
               if (subChildren[b].children) {
                 var rootChildren = subChildren[b].children;
-                for (c = 0; c < rootChildren.length; c++) {
+                for (var c = 0; c < rootChildren.length; c++) {
                   if (!rootChildren[c].redirect) {
                     this.routers.push(rootChildren[c]);
                   }

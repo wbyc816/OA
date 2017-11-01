@@ -12,6 +12,9 @@ import docPending from 'pages/docSub/docPending.page'
 import docToRead from 'pages/docSub/docToRead.page'
 import docDraft from 'pages/docSub/docDraft.page'
 import docCommonApp from 'pages/docSub/docCommonApp.page'
+//公文统计
+import statisticsHome from 'pages/docSub/statistical/statisticsHome.page'
+import macroStatistics from 'pages/docSub/statistical/macroStatistics.page'
 
 //会议
 import meetingHome from 'pages/meeting/meetingHome.page'
@@ -69,281 +72,286 @@ import set from './set'
 
 export default new Router({
 
-    // mode: 'history',
-    // history: false,
-    // hashbang: true,
-    routes: [{
-            path: '/home',
-            name: 'home',
-            component: home
-        }, {
-            path: '/contactList',
-            name: 'contactList',
-            component: contactList,
-            meta: {
-                breadcrumb: "公司同仁",
-            }
-        }, {
-            path: '/newsDetail/:id',
-            name: 'newsDetail',
-            component: newsDetail,
-            meta: {
-                breadcrumb: "新闻详情",
-            }
-        } , {
-            path: '/BirthdayReminder',
-            name: 'BirthdayReminder',
-            component: BirthdayReminder,
-            meta: {
-              breadcrumb: "生日提醒",
-            }
-       }, {
-            path: '/diningMenu',
-            name: 'diningMenu',
-            component: diningMenu,
-            meta: {
-              breadcrumb: "食堂菜谱",
-            }
-       } , {
-          path: '/FilesHome',
-          name: 'FilesHome',
-          component: FilesHome,
+  // mode: 'history',
+  // history: false,
+  // hashbang: true,
+  routes: [{
+      path: '/home',
+      name: 'home',
+      component: home
+    }, {
+      path: '/contactList',
+      name: 'contactList',
+      component: contactList,
+      meta: {
+        breadcrumb: "公司同仁",
+      }
+    }, {
+      path: '/newsDetail/:id',
+      name: 'newsDetail',
+      component: newsDetail,
+      meta: {
+        breadcrumb: "新闻详情",
+      }
+    }, {
+      path: '/BirthdayReminder',
+      name: 'BirthdayReminder',
+      component: BirthdayReminder,
+      meta: {
+        breadcrumb: "生日提醒",
+      }
+    }, {
+      path: '/diningMenu',
+      name: 'diningMenu',
+      component: diningMenu,
+      meta: {
+        breadcrumb: "食堂菜谱",
+      }
+    }, {
+      path: '/FilesHome',
+      name: 'FilesHome',
+      component: FilesHome,
+      meta: {
+        breadcrumb: "文件首页",
+      }
+    }, {
+      path: '/PresidentMailbox',
+      name: 'PresidentMailbox',
+      component: PresidentMailbox,
+      meta: {
+        breadcrumb: "总裁邮箱",
+      }
+    }, {
+      path: '/HR',
+      name: 'HR',
+      component: HR,
+      children: [{
+        path: '/HR/clildHR',
+        name: 'clildHR',
+        component: clildHR,
+      }, {
+        path: '/HR/personalInfo',
+        name: 'personalInfo',
+        component: personalInfo,
+      }, {
+        path: '/HR/newsListHr/:classify',
+        name: 'newsListHr',
+        component: newsListHr
+      }, {
+        path: '/HR/newsDetailHr/:id',
+        name: 'newsDetailHr',
+        component: newsDetailHr,
+      }, {
+        path: '/HR/salary/:salaryMonth',
+        name: 'salary',
+        component: salary,
+      }, {
+        path: '/HR/salaryHistory/:param',
+        name: 'salaryHistory',
+        component: salaryHistory
+      }, {
+        path: '/HR/resume',
+        name: 'resume',
+        component: resume,
+      }, {
+        path: '/HR/editResume',
+        name: 'editResume',
+        component: editResume,
+      }, {
+        path: '/HR/',
+        redirect: '/HR/clildHR'
+      }, ]
+    }, {
+      path: '',
+      redirect: '/home'
+    },
+    {
+      path: '/meeting',
+      name: 'meetingHome',
+      component: meetingHome,
+      meta: {
+        // breadcrumb:"会议室预",
+      },
+      children: [{
+          path: '/meeting/ReservationAllRoom/:id',
+          name: 'ReservationAllRoom',
+          component: ReservationAllRoom,
           meta: {
-            breadcrumb: "文件首页",
-          }
-       } , {
-          path: '/PresidentMailbox',
-          name: 'PresidentMailbox',
-          component: PresidentMailbox,
+            // breadcrumb:"会议室预定",
+          },
+        },
+        {
+          path: '/meeting/meetingApp',
+          name: 'meetingApp',
+          component: meetingApp,
           meta: {
-            breadcrumb: "总裁邮箱",
+            // breadcrumb:"会议室预定",
+          },
+
+        },
+        {
+          path: '/meeting/bookingDetail/:id',
+          name: 'bookingDetail',
+          component: bookingDetail,
+          meta: {
+            // breadcrumb:"Reservation Booking",
           }
-       } , {
-            path: '/HR',
-            name: 'HR',
-            component: HR,
-            children: [{
-                path: '/HR/clildHR',
-                name: 'clildHR',
-                component: clildHR,
-            }, {
-                path: '/HR/personalInfo',
-                name: 'personalInfo',
-                component: personalInfo,
-            }, {
-                path: '/HR/newsListHr/:classify',
-                name: 'newsListHr',
-                component: newsListHr
-            }, {
-                path: '/HR/newsDetailHr/:id',
-                name: 'newsDetailHr',
-                component: newsDetailHr,
-            }, {
-                path: '/HR/salary/:salaryMonth',
-                name: 'salary',
-                component: salary,
-            }, {
-              path: '/HR/salaryHistory/:param',
-              name: 'salaryHistory',
-              component: salaryHistory
-            },{
-                path: '/HR/resume',
-                name: 'resume',
-                component: resume,
-            }, {
-                path: '/HR/editResume',
-                name: 'editResume',
-                component: editResume,
-            }, {
-                path: '/HR/',
-                redirect: '/HR/clildHR'
-            }, ]
+        },
+        {
+          path: '/meeting/MyBooking',
+          name: 'MyBooking',
+          component: MyBooking,
+          meta: {
+            breadcrumb: "我的预订",
+          }
+        },
+        {
+          path: '/meeting/meetingSearch/:type',
+          name: 'meetingSearch',
+          component: meetingSearch,
+          meta: {
+            breadcrumb: "会议通知",
+          }
+        },
+        {
+          path: '/meeting',
+          redirect: '/meeting/ReservationAllRoom'
+        },
+      ]
+    },
+    {
+      path: '/supplier',
+      name: 'supplierHome',
+      component: supplierHome,
+      meta: {
+        breadcrumb: "客户关系",
+      },
+      children: [{
+          path: '/supplier/supplierCreate/:id',
+          name: 'supplierCreate',
+          component: supplierCreate,
+          meta: {
+            breadcrumb: "客户维护",
+          },
+
+        },
+        {
+          path: '/supplier/mySupplier',
+          name: 'mySupplier',
+          component: mySupplier,
+          meta: {
+            breadcrumb: "我的客户",
+          }
+        },
+        {
+          path: '/supplier/supplierSearch',
+          name: 'supplierSearch',
+          component: supplierSearch,
+          meta: {
+            breadcrumb: "客户查询",
+          }
+        },
+        {
+          path: '/supplier',
+          redirect: '/supplier/mySupplier'
+        },
+      ]
+    },
+    {
+      path: '/flightStatus',
+      name: 'flightStatus',
+      component: flightStatus,
+      meta: {
+        breadcrumb: "航班动态",
+      }
+    }, {
+      path: '/doc',
+      name: 'doc',
+      component: doc,
+      meta: {
+        breadcrumb: "公文流转",
+      },
+      children: [{
+          path: '/doc/docSub',
+          name: 'DocSub',
+          component: docSub,
+          meta: {
+            breadcrumb: "公文呈报",
+          },
         }, {
-            path: '',
-            redirect: '/home'
+          path: '/doc/docCommonApp/:code',
+          name: 'docCommonApp',
+          component: docCommonApp,
+          meta: {
+            breadcrumb: "公文呈报",
+          }
         },
         {
-         path:'/meeting',
-         name:'meetingHome',
-         component:meetingHome,
-         meta:{
-             // breadcrumb:"会议室预",
-         },
-         children:[
-         {
-             path:'/meeting/ReservationAllRoom/:id',
-             name:'ReservationAllRoom',
-             component:ReservationAllRoom,
-             meta:{
-                 // breadcrumb:"会议室预定",
-             },
-         },
-         {
-             path:'/meeting/meetingApp',
-             name:'meetingApp',
-             component:meetingApp,
-             meta:{
-                 // breadcrumb:"会议室预定",
-             },
-
-         },
-         {
-             path:'/meeting/bookingDetail/:id',
-             name:'bookingDetail',
-             component:bookingDetail,
-             meta:{
-                 // breadcrumb:"Reservation Booking",
-             }
-         },
-         {
-             path:'/meeting/MyBooking',
-             name:'MyBooking',
-             component:MyBooking,
-             meta:{
-                 breadcrumb:"我的预订",
-             }
-         },
-         {
-             path:'/meeting/meetingSearch/:type',
-             name:'meetingSearch',
-             component:meetingSearch,
-             meta:{
-                 breadcrumb:"会议通知",
-             }
-         },
-         {
-             path:'/meeting',
-             redirect: '/meeting/ReservationAllRoom'
-         },
-         ]
+          path: '/doc/docTracking',
+          name: 'docTracking',
+          component: docTracking,
+          meta: {
+            breadcrumb: "公文追踪",
+          }
+        }, {
+          path: '/doc/docPending',
+          name: 'docPending',
+          component: docPending,
+          meta: {
+            breadcrumb: "公文签批",
+          }
+        }, {
+          path: '/doc/docDetail/:id',
+          name: 'docDetail',
+          component: docDetail,
+          meta: {
+            breadcrumb: "公文详情",
+          }
+        }, {
+          path: '/doc/docSearch',
+          name: 'docSearch',
+          component: docSearch,
+          meta: {
+            breadcrumb: "公文查询",
+          }
+        }, {
+          path: '/doc/docToRead',
+          name: 'docToRead',
+          component: docToRead,
+          meta: {
+            breadcrumb: "公文待阅",
+          }
+        }, {
+          path: '/doc/docDraft',
+          name: 'docDraft',
+          component: docDraft,
+          meta: {
+            breadcrumb: "公文草稿箱",
+          }
+        }, {
+          path: '/doc/macroStatistics',
+          name: 'macroStatistics',
+          component: macroStatistics,
+          meta: {
+            breadcrumb: "公文统计",
+          }
         },
         {
-         path:'/supplier',
-         name:'supplierHome',
-         component:supplierHome,
-         meta:{
-             breadcrumb:"客户关系",
-         },
-         children:[
-         {
-             path:'/supplier/supplierCreate/:id',
-             name:'supplierCreate',
-             component:supplierCreate,
-             meta:{
-                 breadcrumb:"客户维护",
-             },
-
-         },
-         {
-             path:'/supplier/mySupplier',
-             name:'mySupplier',
-             component:mySupplier,
-             meta:{
-                 breadcrumb:"我的客户",
-             }
-         },
-         {
-             path:'/supplier/supplierSearch',
-             name:'supplierSearch',
-             component:supplierSearch,
-             meta:{
-                 breadcrumb:"客户查询",
-             }
-         },
-         {
-             path:'/supplier',
-             redirect: '/supplier/mySupplier'
-         },
-         ]
+          path: '/doc/',
+          redirect: '/doc/docSub'
         },
-         {
-            path: '/flightStatus',
-            name: 'flightStatus',
-            component: flightStatus,
-            meta: {
-                breadcrumb: "航班动态",
-            }
-        },{
-            path: '/doc',
-            name: 'doc',
-            component: doc,
-            meta: {
-                breadcrumb: "公文流转",
-            },
-            children: [{
-                    path: '/doc/docSub',
-                    name: 'DocSub',
-                    component: docSub,
-                    meta: {
-                        breadcrumb: "公文呈报",
-                    },
-                }, {
-                    path: '/doc/docCommonApp/:code',
-                    name: 'docCommonApp',
-                    component: docCommonApp,
-                    meta: {
-                        breadcrumb: "公文呈报",
-                    }
-                },
-                {
-                    path: '/doc/docTracking',
-                    name: 'docTracking',
-                    component: docTracking,
-                    meta: {
-                        breadcrumb: "公文追踪",
-                    }
-                }, {
-                    path: '/doc/docPending',
-                    name: 'docPending',
-                    component: docPending,
-                    meta: {
-                        breadcrumb: "公文签批",
-                    }
-                }, {
-                    path: '/doc/docDetail/:id',
-                    name: 'docDetail',
-                    component: docDetail,
-                    meta: {
-                        breadcrumb: "公文详情",
-                    }
-                }, {
-                    path: '/doc/docSearch',
-                    name: 'docSearch',
-                    component: docSearch,
-                    meta: {
-                        breadcrumb: "公文查询",
-                    }
-                }, {
-                    path: '/doc/docToRead',
-                    name: 'docToRead',
-                    component: docToRead,
-                    meta: {
-                        breadcrumb: "公文待阅",
-                    }
-                },{
-                    path: '/doc/docDraft',
-                    name: 'docDraft',
-                    component: docDraft,
-                    meta: {
-                        breadcrumb: "公文草稿箱",
-                    }
-                },
-                {
-                    path: '/doc/',
-                    redirect: '/doc/docSub'
-                },
-            ]
-        },
-       operationSystem,
-       duty,
-        set,
-        {
-            path: '/softDownload',
-            component: softDownload,
-            meta: {
-              breadcrumb: '软件下载'
-            }
-        }
+      ]
+    },
+    operationSystem,
+    duty,
+    set,
+    {
+      path: '/softDownload',
+      component: softDownload,
+      meta: {
+        breadcrumb: '软件下载'
+      }
+    }
 
-    ]
+  ]
 })

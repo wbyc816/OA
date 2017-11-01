@@ -1,5 +1,5 @@
 <template>
-  <div id='supplierHome'>
+  <div id='statisticsHome'>
     <el-row :gutter='12'>
       <el-col :span='18'>
         <router-view></router-view>
@@ -76,7 +76,7 @@ export default {
 $main: #0460AE;
 $sub:#1465C0;
 $brown: #985D55;
-#supplierHome {
+#statisticsHome {
   .mySideLink .el-menu-item i {
     color: $main;
   }

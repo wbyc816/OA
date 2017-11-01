@@ -1004,3 +1004,120 @@ ul {
     }
   }
 }
+
+.myDocList {
+  table-layout: fixed;
+  thead {
+    background: $main;
+    color: #fff;
+    font-size: 13px;
+    th {
+      padding: 6px 13px;
+    }
+    $widths: (1: 5%, 2: 40%, 3: 10%, 4: 11%, 5: 10%, 6: 10%);
+    @each $num,
+    $width in $widths {
+      th:nth-child(#{$num}) {
+        width: $width;
+      }
+    }
+  }
+  tbody {
+    background: #fff;
+    .link {
+      color: $main;
+      cursor: pointer;
+      font-size: 22px;
+      display: none;
+    }
+    tr:hover{
+      .link{
+        display:inline-block;
+      }
+    }
+    td {
+      padding: 4px 0 4px 13px;
+      font-size: 15px;
+      word-wrap: break-word;
+      height: 55px;
+      vertical-align: middle;
+      &:first-child {
+        padding-left: 0;
+      }
+
+      .docType {
+        color: #fff;
+        width: 42px;
+        height: 42px;
+        display: inline-block;
+        text-align: center;
+        font-size: 13px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 3px;
+      }
+      .overTime {
+        background: #ED854E;
+        height: 19px;
+        display: inline-block;
+        font-size: 13px;
+        line-height: 19px;
+        color: #fff;
+        border-radius: 2px;
+        margin-right: 5px;
+        width: 50px;
+        text-align: center;
+        i {
+          margin-right: 1px;
+          vertical-align: text-bottom;
+        }
+      }
+      .improtType {
+        display: inline-block;
+        width: 40px;
+        line-height: 19px;
+        height: 19px;
+        border-radius: 2px;
+        text-align: center;
+        font-size: 13px;
+        margin-left: 5px;
+        vertical-align: middle;
+        color: #fff;
+      }
+      .title {
+        display: inline-block;
+        vertical-align: middle;
+        max-width: 70%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+    &.disAgree {
+      background: #FFF0F0 !important;
+      td:nth-child(5) {
+        position: relative;
+        span {
+          z-index: 2;
+          position: relative;
+        }
+        &:before {
+          font-weight: normal;
+          content: "\e743";
+          font-family: "iconfont" !important;
+          font-size: 70px;
+          font-style: normal;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          position: absolute;
+          top: -15px;
+          right: 14px;
+          color: #F4B8B2;
+        }
+      }
+    }
+  }
+  tbody:nth-child(even) {
+    background: #F7F7F7;
+  }
+}

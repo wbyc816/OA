@@ -1,33 +1,20 @@
 <template>
   <div id="docDetail">
     <el-card class="borderCard">
-      <div slot="header">
-        <span>{{docDetialInfo.doc.docTypeName}}</span>
+      <div slot="header" class="clearfix docheader">
+        <span class="docTypeName">{{docDetialInfo.doc.docTypeName}}</span>
+        <span class="docNo">{{docDetialInfo.doc.docNo}}</span>
+        <span class="improtType" v-if="docDetialInfo.doc.docImportType=='紧急'||docDetialInfo.doc.docImportType=='特急'" :style="{background:docDetialInfo.doc.docImportType=='紧急'?'#FFD702':'#FF0202'}">{{docDetialInfo.doc.docImportType}}</span>
+        <span class="improtType" v-if="docDetialInfo.doc.docDenseType=='保密'&&docDetialInfo.doc.docDenseType=='绝密'" :style="{background:docDetialInfo.doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{docDetialInfo.doc.docDenseType}}</span>
+        <div class="rightBox">
+          <span class="taskUserName">呈报人 {{docDetialInfo.doc.taskUserName}}</span>
+          <span class="deptName">{{docDetialInfo.doc.taskDeptMajorName}}</span>
+        </div>
       </div>
       <div class="baseInfoBox commonBox">
-        <h4 class='doc-form_title'>公文信息</h4>
+        <!-- <h4 class='doc-form_title'>公文信息</h4> -->
         <el-row>
           <el-col :span="24">
-            <h1 class="title">公文号</h1>
-            <p class="textContent">{{docDetialInfo.doc.docNo}}</p>
-          </el-col>
-          <el-col :span="12" class="rightBorder">
-            <h1 class="title">呈报人</h1>
-            <p class="textContent">{{docDetialInfo.doc.taskUserName}}</p>
-          </el-col>
-          <el-col :span="12">
-            <h1 class="title">部门</h1>
-            <p class="textContent">{{docDetialInfo.doc.taskDeptMajorName}}</p>
-          </el-col>
-          <el-col :span="12" class="rightBorder">
-            <h1 class="title">密级程度</h1>
-            <p class="textContent">{{docDetialInfo.doc.docDenseType}}</p>
-          </el-col>
-          <el-col :span="12">
-            <h1 class="title">重要程度</h1>
-            <p class="textContent">{{docDetialInfo.doc.docImportType}}</p>
-          </el-col>
-          <el-col :span="24" class="backV">
             <h1 class="title">标题</h1>
             <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
@@ -36,7 +23,7 @@
             <p class="textContent" style="white-space:pre-wrap">{{docDetialInfo.doc.taskContent}}</p>
           </el-col>
           <el-collapse class="clearfix clearBoth">
-            <el-collapse-item title="查看公文详情" name="1">
+            <el-collapse-item title="附加内容" name="1">
               <component v-bind:is="currentView" :info="docDetialInfo.otherInfo">
                 <!-- 组件在 vm.currentview 变化时改变！ -->
               </component>
@@ -650,6 +637,57 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docDetail {
+  .docheader {
+    line-height: 24px;
+    padding: 8px 0 4px;
+    .docTypeName,
+    .docNo {
+      font-size: 18px;
+      color: #151515;
+      display: inline-block;
+      vertical-align: middle;
+      float: left;
+    }
+    .docTypeName {
+      position: relative;
+      padding-right: 7px;
+      margin-right: 5px;
+      &:before {
+        content: '';
+        position: absolute;
+        right: 0;
+        height: 18px;
+        top: 2px;
+        background: #151515;
+        width: 2px;
+      }
+    }
+    .improtType {
+      display: inline-block;
+      width: 40px;
+      line-height: 19px;
+      height: 19px;
+      border-radius: 2px;
+      text-align: center;
+      font-size: 13px;
+      margin-left: 10px;
+      vertical-align: middle;
+      color: #fff;
+      float: left;
+    }
+    .rightBox {
+      float: right;
+      .taskUserName {
+        color: $sub;
+        font-size: 18px;
+        padding-right:5px;
+      }
+      .deptName {
+        color: #646464;
+        font-size: 15px;
+      }
+    }
+  }
   .signWrap {
     .signList {
       width: 88%;
@@ -739,7 +777,7 @@ $sub:#1465C0;
       border: none;
       .el-collapse-item__header {
         border-bottom: none;
-        font-size: 15px;
+        font-size: 18px;
         padding-left: 0;
         color: $main;
       }

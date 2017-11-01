@@ -139,7 +139,7 @@
               </el-upload>
             </el-form-item>
             <el-form-item label="开户许可证" prop="accountLicense">
-              <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'AccountPermit'}" :file-list="permitsList" :on-success="permitsSuccess" :on-remove="permitsRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
+              <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:' AccountPermit'}" :file-list="permitsList" :on-success="permitsSuccess" :on-remove="permitsRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
                 <el-button size="small" type="primary" :disabled="appForm.accountLicense!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
               </el-upload>
             </el-form-item>
@@ -377,13 +377,13 @@ export default {
               this.superList = [{ id: res.data.classifySuperiorCode, supplierName: res.data.classifySuperiorName }]
             }
             if (res.data.accountLicense) {
-              this.permitsList.push({ name: res.data.accountLicenseFileName, url: res.data.accountLicensePath })
+              this.permitsList.push({ name: '11111.pdf', url: 'http://www.baidu.com' })
             }
             if (res.data.supplierLicense) {
-              this.licenseList.push({ name: res.data.supplierLicenseFileName, url: res.data.supplierLicensePath })
+              this.licenseList.push({ name: '11111.pdf', url: 'http://www.baidu.com' })
             }
             if (res.data.contactIdcards) {
-              this.IdcardsList.push({ name: res.data.contactIdcardsFileName, url: res.data.contactIdcardsPath })
+              this.IdcardsList.push({ name: '11111.pdf', url: 'http://www.baidu.com' })
             }
             this.getIndustryList(res.data.classifyIndustryCode); //行业
           } else {

@@ -6,7 +6,7 @@
       </el-col>
       <el-col :span='7' class="sideBox">
         <side-Person-Search></side-Person-Search>
-        <el-menu mode="vertical" v-bind:router="true" class="mySideLink">
+        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-show="!/Statistics/.test($route.path)">
           <el-menu-item-group title="公文流转">
             <template v-for='(item,index) in navMenu'>
               <el-menu-item v-if='item.path' :index='index.toString()' :route="{path:item.path}">{{item.title}}
@@ -18,6 +18,12 @@
                     <el-menu-item v-for='(i,key) in item.child' :index='index.toString()+key.toString()' :route="{path:i.path}">&nbsp;{{i.title}}</el-menu-item>
                 </el-submenu> -->
             </template>
+          </el-menu-item-group>
+        </el-menu>
+        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-show="/Statistics/.test($route.path)">
+          <el-menu-item-group title="公文流转">
+            <el-menu-item  index='/doc/macroStatistics'>宏观统计<i class="el-icon-arrow-right"></i>
+            </el-menu-item>
           </el-menu-item-group>
         </el-menu>
       </el-col>
@@ -136,6 +142,7 @@ export default {
     this.$store.dispatch('getAdminStatus');
     this.$store.dispatch('getDocTips');
     this.$store.dispatch('getDocForm');
+    console.log(this.$route);
   },
   mounted: function() {
     this.breadcrumbItem = this.$route.meta.breadcrumb;
@@ -254,8 +261,8 @@ $main: #0460AE;
             padding: 4px 13px;
           }
         }
-        .overTime{
-          color:#BE3B7F;
+        .overTime {
+          color: #BE3B7F;
         }
         tbody {
           background: #fff;

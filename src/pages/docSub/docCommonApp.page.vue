@@ -195,15 +195,15 @@ export default {
           if (res.status == 0) {
             if (res.data.length != 0) {
               var reciver = {
-                "reciDeptMajorName": res.data[0].reciDeptMajorName,
-                "reciDeptMajorId": res.data[0].reciDeptMajorId,
-                "reciDeptName": res.data[0].reciDeptName,
-                "reciDeptId": res.data[0].reciDeptId,
-                "reciUserName": res.data[0].reciUserName,
-                "reciUserId": res.data[0].reciUserId,
+                "reciDeptMajorName": res.data.reciDeptMajorName,
+                "reciDeptMajorId": res.data.reciDeptMajorId,
+                "reciDeptName": res.data.reciDeptName,
+                "reciDeptId": res.data.reciDeptId,
+                "reciUserName": res.data.reciUserName,
+                "reciUserId": res.data.reciUserId,
               }
               this.$store.commit('setReciver', reciver);
-              this.reciverName = res.data[0].reciUserName;
+              this.reciverName = res.data.reciUserName;
             }
           } else {
 
