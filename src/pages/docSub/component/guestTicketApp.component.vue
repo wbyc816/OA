@@ -445,7 +445,17 @@ export default {
       this.budgetForm.person = list
       this.signDialogVisible = false;
     },
-
+    saveForm(){
+      // console.log(this.vehicleForm)
+      var param= {"guestTicketAppFormThird":this.guestTicketAppFormThird,"flightPersonTable":this.flightPersonTable,"TripTable":this.TripTable}
+      var params=JSON.stringify(param);
+      this.$emit('saveMiddle',params);
+    },
+    getDraft(obj){
+      this.combineObj(this.guestTicketAppFormThird,obj);
+      this.combineObj(this.flightPersonTable,obj);
+      this.combineObj(this.TripTable,obj);
+    },
     submitForm() {
       // var that = this;
               if (this.flightPersonTable.length!=0&&this.TripTable.length!=0) {
