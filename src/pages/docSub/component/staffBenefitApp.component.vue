@@ -15,12 +15,10 @@
           <el-input v-model="staffBenefitAppFormFirst.contactPhone" ></el-input>
       </el-form-item>
       <div class="clearBoth"></div>
-      <el-form-item label="乘机人" prop="flightPerson" >
+      <el-form-item label="乘机人" >
           <el-row>
             <el-col :span="12">
-              
-
-             <el-select v-model="staffBenefitAppFormFirst.flightPersonSelect"  ref="flightPersonSelect" placeholder="请选择">
+             <el-select  v-model="staffBenefitAppFormFirst.flightPersonSelect"  ref="flightPersonSelect" placeholder="请选择">
             <el-option v-for="flightPerson in flightPersonSelects"  :label="flightPerson.name" :value="flightPerson.name">
             </el-option>
           </el-select>
@@ -100,7 +98,7 @@
             <el-input placeholder="请输入内容"  v-model="staffBenefitAppFormSecond.carrier" readonly>
               <el-select   v-model="staffBenefitAppFormSecond.isBook"   slot="append" placeholder="状态" class="w80" ref="isBook">
                 <el-option label="订座" value="1"></el-option>
-                <el-option label="后补" value="0"></el-option>
+                <el-option label="候补" value="0"></el-option>
               </el-select>
             </el-input>
             
@@ -623,7 +621,7 @@ export default {
                         "carriageCode": "EMP0701",//承运人code（默认 东海航空 EMP0701） 
                         "carriageName": tabel.carrier,//承运人名
                         "flightDate": tabel.departureDate,//航班日期
-                        "isBookingSeats": tabel.isBookcCode //是否订座 0 后补 1 订座（看规则填）
+                        "isBookingSeats": tabel.isBookcCode //是否订座 0 候补 1 订座（看规则填）
 
                       }
                     })

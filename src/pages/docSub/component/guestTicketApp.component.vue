@@ -84,7 +84,7 @@
             <el-input placeholder="请输入内容"  v-model="guestTicketAppFormSecond.carrier" readonly>
               <el-select   v-model="guestTicketAppFormSecond.isBook"   slot="append" placeholder="状态" class="w80" ref="isBook">
                 <el-option label="订座" value="1"></el-option>
-                <el-option label="后补" value="0"></el-option>
+                <el-option label="候补" value="0"></el-option>
               </el-select>
             </el-input>
             
@@ -487,7 +487,7 @@ export default {
                         "carriageCode": "EMP0701",//承运人code（默认 东海航空 EMP0701） 
                         "carriageName": tabel.carrier,//承运人名
                         "flightDate": tabel.departureDate,//航班日期
-                        "isBookingSeats": tabel.isBookcCode //是否订座 0 后补 1 订座（看规则填）
+                        "isBookingSeats": tabel.isBookcCode //是否订座 0 候补 1 订座（看规则填）
                       }
                     })
 
