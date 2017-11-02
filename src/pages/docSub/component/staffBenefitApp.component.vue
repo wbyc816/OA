@@ -15,7 +15,7 @@
           <el-input v-model="staffBenefitAppFormFirst.contactPhone" ></el-input>
       </el-form-item>
       <div class="clearBoth"></div>
-      <el-form-item label="乘机人" >
+      <el-form-item label="乘机人" prop="flightPersonSelect">
           <el-row>
             <el-col :span="12">
              <el-select  v-model="staffBenefitAppFormFirst.flightPersonSelect"  ref="flightPersonSelect" placeholder="请选择">
@@ -36,10 +36,6 @@
               </el-radio-group>
             </el-col>
           </el-row>
-
-
-
-          
       </el-form-item>
 
 
@@ -230,7 +226,7 @@ export default {
    
       
       rules: {
-        flightPerson: [{ required: true, message: '请选择乘机人', trigger: 'blur' }],
+        flightPersonSelect: [{ required: true, message: '请选择乘机人', trigger: 'blur' }],
         flightPersonTypeSelect: [{ required: true, message: '请选择乘机人类型', trigger: 'blur' }],
         genger: [{ required: true, message: '请选择性别', trigger: 'blur' }],
         documentTypeSelect: [{ required: true, message: '请选择证件类型', trigger: 'blur' }],
