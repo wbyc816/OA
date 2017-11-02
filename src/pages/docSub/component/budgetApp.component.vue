@@ -172,8 +172,17 @@ export default {
     updatePerson(list) {
       // console.log(list)
       this.budgetForm.person = list
-      console.log(list);
       this.signDialogVisible = false;
+    },
+    saveForm(){
+      // console.log(this.vehicleForm)
+      var param= {"budgetTable":this.budgetTable}
+      var params=JSON.stringify(param);
+      this.$emit('saveMiddle',params);
+    },
+    getDraft(obj){
+      this.budgetTable=obj.budgetTable;
+
     },
     submitForm() {
         console.log(this.budgetTable);
@@ -202,6 +211,10 @@ export default {
               }
 
               
+
+
+
+
             
           }
           this.$emit('submitMiddle', this.params);
@@ -237,7 +250,6 @@ export default {
             res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
             this.budgetDeptList = res.data
           } else {
-            console.log(res)
           }
         }, res => {})
       }
@@ -284,7 +296,6 @@ export default {
       return temp;
     },
     blurInput(event){
-      console.log(event)
       var temp=event.target.value.split('.');
       if(temp.length==2&&(temp[1]==undefined||temp[1]==''||temp[1]==null)){
         this.budgetForm.budgetMoney = temp[0];
