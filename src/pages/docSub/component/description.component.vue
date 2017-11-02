@@ -3,29 +3,22 @@
     <h4 class='doc-form_title'>详情信息</h4>
     <slot></slot>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
-      <el-form-item label="请示内容" prop="des">
-        <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des"></el-input>
+      <el-form-item :label="options.desTitle||'请示内容'" prop="des" :rules="[
+      { required: true, message: '请输入'+(options.desTitle||'请示内容'), trigger: 'blur,change' }]">
+        <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des" :maxlength="500"></el-input>
         <div class="tempBox" @click="ruleForm.des=tempText"><span></span>
           <div><i class="iconfont icon-moban"></i>模板</div>
         </div>
+        <p class="remainNum">还能输入<span>{{remainNum}}</span>个字</p>
       </el-form-item>
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
         <div class="pathBox clearfix" v-html="pathHtml">
-          <!-- <template v-for="(node,index) in ruleForm.path">
-            <div class="nodeBox">
-              <span v-if="node.nodeName=='sign'" class="signList">
-                #<span v-for="child in node.children">{{child.typeIdName}}</span>#
-              </span>
-              <span v-else>{{node.typeIdName}}</span>
-            </div>
-            <i class="iconfont icon-jiantouyou"></i>
-          </template> -->
         </div>
         <el-button size="small" type="text" @click="pathDialogVisible=true"><i class="iconfont icon-edit"></i>编辑</el-button>
       </el-form-item>
-      <el-form-item label="附件">
+      <el-form-item label="附件" prop="attchment">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="fileList" :on-remove="handleRemove" ref="myUpload">
-          <el-button size="small" type="primary" :disabled="attchment.length>4">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
@@ -76,19 +69,17 @@ export default {
     return {
       ruleForm: {
         des: '',
+        attchment: [],
         path: []
       },
       rules: {
-        des: [
-          { required: true, message: '请输入请示内容', trigger: 'blur,change' }
-        ],
         path: [{ type: 'array', required: true, message: '请选择建议路径', trigger: 'blur,change' }],
+        attchment:[]
       },
       dialogTableVisible: false,
       pathDialogVisible: false,
       docs: [{ quoteDocTitle: '', quoteDocId: '' }],
       activeDoc: '',
-      attchment: [],
       uploadOver: false,
       fileIds: [],
       extraDocs: [],
@@ -100,7 +91,7 @@ export default {
       searchOptions: '',
       searchLoading: false,
       tempText: '',
-      fileList:[]
+      fileList: []
     }
   },
   computed: {
@@ -129,6 +120,13 @@ export default {
       }
       return html;
     },
+    remainNum() {
+      var num = 500;
+      if (this.ruleForm.des !== '') {
+        num -= this.ruleForm.des.length
+      }
+      return parseInt(num)
+    },
     ...mapGetters([
       'baseURL',
       'docType',
@@ -148,12 +146,15 @@ export default {
   },
   created() {
     this.handleTemp();
+    if(this.$route.params.code=='LZS'){
+      this.rules.attchment.push({ type: 'array', required: true, message: '请提交本人签字的辞职报告', trigger: 'blur,change' })
+    }
   },
   methods: {
     submitForm() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          if (this.attchment.length != 0) {
+          if (this.ruleForm.attchment.length != 0) {
             this.$refs.myUpload.submit();
           } else {
             this.$emit('submitEnd', {
@@ -211,7 +212,7 @@ export default {
     },
     handleAvatarSuccess(res, file) {
       this.fileIds.push(res.data);
-      if (this.fileIds.length == this.attchment.length) {
+      if (this.fileIds.length == this.ruleForm.attchment.length) {
         var params = {
           fileId: this.fileIds,
           taskContent: this.ruleForm.des,
@@ -234,14 +235,14 @@ export default {
       if (!isLt10M) {
         this.$message.error('上传附件大小不能超过 10MB!');
       }
-      if ( isLt10M) {
-        this.attchment = fileList;
-      }else{
-        this.$refs.myUpload.uploadFiles.splice(this.$refs.myUpload.uploadFiles.length-1,1)
+      if (isLt10M) {
+        this.ruleForm.attchment = fileList;
+      } else {
+        this.$refs.myUpload.uploadFiles.splice(this.$refs.myUpload.uploadFiles.length - 1, 1)
       }
     },
-    handleRemove(file, fileList){
-      this.attchment = fileList;
+    handleRemove(file, fileList) {
+      this.ruleForm.attchment = fileList;
     },
     tableRowClassName(row, index) {
       if (this.docs.find(doc => doc.quoteDocId == row.id)) {
@@ -429,6 +430,16 @@ $sub:#1465C0;
     i {
       margin-right: 3px;
       font-size: 12px;
+    }
+  }
+  .remainNum {
+    position: absolute;
+    right: 10px;
+    bottom: 0;
+    color: #9a9a9a;
+    font-size: 14px;
+    span {
+      color: $main;
     }
   }
   .el-form-item__error {

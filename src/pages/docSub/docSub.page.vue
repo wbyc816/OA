@@ -68,7 +68,7 @@ const contrastData = [
   { 'logo': 'icon-hetong', 'color': '#FF5F88', 'text': '培训申请', 'link': '#/doc/docCommonApp/PXS' },
   { 'logo': 'icon-file1', 'color': '#5BB5FC', 'text': '人事变动', 'link': '#/doc/docCommonApp/RSB' },
   { 'logo': 'icon-gongwen', 'color': '#FF754F', 'text': '工伤申请', 'link': '#/doc/docCommonApp/GSS' },
-  { 'logo': 'icon-contract', 'color': '#FFE066', 'text': '离职申请', 'link': '#' },
+  { 'logo': 'icon-contract', 'color': '#FFE066', 'text': '离职申请', 'link': '#/doc/docCommonApp/LZS' },
   { 'logo': 'icon-biaodan', 'color': '#9FD867', 'text': '晋升申请', 'link': '#/doc/docCommonApp/JJS' },
 ];
 const ticketData = [

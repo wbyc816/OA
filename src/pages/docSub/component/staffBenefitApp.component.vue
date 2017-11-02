@@ -232,7 +232,7 @@ export default {
    
       
       rules: {
-        flightPersonSelect: [{ required: true, message: '请选择乘机人', trigger: 'blur' }],
+        flightPerson: [{ required: true, message: '请选择乘机人', trigger: 'blur' }],
         flightPersonTypeSelect: [{ required: true, message: '请选择乘机人类型', trigger: 'blur' }],
         genger: [{ required: true, message: '请选择性别', trigger: 'blur' }],
         documentTypeSelect: [{ required: true, message: '请选择证件类型', trigger: 'blur' }],

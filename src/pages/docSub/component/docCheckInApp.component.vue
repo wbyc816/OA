@@ -22,8 +22,8 @@
         </el-input>
       </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
-        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove" :disabled="noMore">
-          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :on-remove="handleRemove" :before-upload="beforeUpload">
+          <el-button size="small" type="primary" :disabled="checkInForm.wordFileId!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -77,40 +77,22 @@ export default {
   },
   methods: {
     handleAvatarSuccess(res, file) {
-      this.wordFileId = res.data;
-      this.picSuccesss = 1;
-      this.submitMiddle();
+      this.checkInForm.wordFileId = res.data;
     },
-    handleAvatarError(res, file) {
-      this.$emit('submitMiddle', false);
-      this.$message.error('正文上传失败，请重试');
-    },
-    handleChange(file, fileList) {
-      if (this.picSuccesss == 1) {
-        this.picSuccesss = 2;
-      } else {
-        this.picSuccesss = 0;
-      }
-      const isPDF = (file.raw.type == 'application/pdf' || file.raw.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    beforeUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
       const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isPDF) {
-        this.$message.error('上传正文只能是 PDF或DOCX 格式!');
-        this.$refs.myUpload.clearFiles();
+
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 JPG或PDF 格式!');
       }
       if (!isLt10M) {
-        this.$refs.myUpload.clearFiles();
-        this.$message.error('上传正文大小不能超过 20MB!');
+        this.$message.error('上传文件大小不能超过 10MB!');
       }
-      if (isPDF && isLt10M) {
-        this.noMore = true;
-        this.checkInForm.wordFileId = file.url
-      }
+      return isJPG && isLt10M;
     },
     handleRemove() {
       this.checkInForm.wordFileId = '';
-      this.wordFileId = '';
-      this.picSuccesss = 0;
-      this.noMore = false;
     },
     submitMiddle() {
       var params = {
@@ -120,18 +102,14 @@ export default {
           wordNo: this.checkInForm.wordNo,
           catalogueId: this.checkInForm.catalogueName[this.checkInForm.catalogueName.length - 1],
         },
-        wordFileId: this.wordFileId
+        wordFileId: this.checkInForm.wordFileId
       }
       this.$emit('submitMiddle', params);
     },
     submitForm() {
       this.$refs.checkInForm.validate((valid) => {
         if (valid) {
-          if (this.picSuccesss == 2) {
             this.submitMiddle();
-          } else {
-            this.$refs.myUpload.submit();
-          }
         } else {
           this.$message.warning('请检查填写字段')
           this.$emit('submitMiddle', false);

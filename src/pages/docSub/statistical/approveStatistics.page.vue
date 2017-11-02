@@ -19,7 +19,7 @@
           <el-date-picker v-model="timeline" placeholder="呈报日期" type="daterange" :editable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
         </el-col>
         <el-col :span="20">
-          <el-select v-model="searchParams.taskUserId" multiple filterable remote placeholder="请输入关键词搜索人员" :remote-method="remoteMethod" :multiple-limit="10" :loading="loading">
+          <el-select v-model="searchParams.taskUserIds" multiple filterable remote placeholder="请输入关键词搜索人员" :remote-method="remoteMethod" :multiple-limit="10" :loading="loading">
             <el-option v-for="item in personList" :key="item.empId" :label="item.name" :value="item.empId">
             </el-option>
           </el-select>
@@ -64,7 +64,7 @@ export default {
         "endTime": "",
         "pageSize": 10,
         "pageNumber": 1,
-        "taskUserId": [],
+        "taskUserIds": [],
         "isAdmin": '',
         'docManageLevel': ''
       },

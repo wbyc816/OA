@@ -113,6 +113,9 @@
       </div>
       <div class="operateBox" v-if="docDetialInfo.doc.isSecretary==1&&docDetialInfo.task[0].state==3">
         <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
+        <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id">
+          <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
+        </a>
       </div>
       <div class='myAdvice' v-if="docDetialInfo.doc.isTask==1&&docDetialInfo.doc.isSign!=1">
         <h4 class='doc-form_title'>我的审批意见</h4>
@@ -125,12 +128,12 @@
               </el-radio-group>
             </el-col>
           </el-form-item>
-          <el-form-item label="审批类型" class="textarea" v-if="ableSign&&isAdmin&&docDetialInfo.doc.signDoc==0">
+          <el-form-item label="审批类型" class="textarea" v-if="docDetialInfo.doc.isDept==1||docDetialInfo.doc.isPerson==1&&docDetialInfo.doc.signDoc==0">
             <el-col :span='18'>
               <el-radio-group class="myRadio" v-model="signType" @change="signTypeChange">
                 <el-radio-button label="0">审批<i></i></el-radio-button>
-                <el-radio-button label="1" v-if="docDetialInfo.doc.pageCode!='SWD'">部门会签<i></i></el-radio-button>
-                <el-radio-button label="2">人员会签<i></i></el-radio-button>
+                <el-radio-button label="1" v-if="docDetialInfo.doc.isDept==1">部门会签<i></i></el-radio-button>
+                <el-radio-button label="2" v-if="docDetialInfo.doc.isPerson==1">人员会签<i></i></el-radio-button>
               </el-radio-group>
             </el-col>
           </el-form-item>
@@ -163,7 +166,7 @@
           <el-form-item>
             <el-col :span='18'>
               <el-button type="primary" size="large" class="submitButton" @click="submit">提交</el-button>
-              <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isSecretary==1"><i class="iconfont icon-archive"></i>归档</el-button>
+              <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isFied==1"><i class="iconfont icon-archive"></i>归档</el-button>
             </el-col>
           </el-form-item>
         </el-form>
@@ -214,7 +217,7 @@
           <div class="reciverList">
             <el-tag type="primary" :closable="true" v-for="(person,index) in archiveForm.persons" @close="removePerson(index)">{{person.name}}</el-tag>
           </div>
-          <el-button class="addButton" @click="selectPerson('multi')"><i class="el-icon-plus"></i></el-button>
+          <el-button class="addButton" @click="selectArchivePerson"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="分发意见" prop="res">
           <el-input type="textarea" :rows="6" resize='none' v-model="archiveForm.res"></el-input>
@@ -224,8 +227,9 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <person-dialog @updatePerson="updatePerson" :admin="docDetialInfo.doc.signDoc==1?'0':''" :visible.sync="dialogTableVisible" :dialogType="personDialogType"></person-dialog>
-    <person-dialog @updatePerson="updateSignPerson" :visible.sync="signPersonVisible" dialogType="multi"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :admin="docDetialInfo.doc.isAdmin==1?'1':'0'" :visible.sync="dialogTableVisible" :dialogType="personDialogType"></person-dialog>
+    <person-dialog @updatePerson="updateArchivePerson" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog>
+    <person-dialog @updatePerson="updateSignPerson" :admin="docDetialInfo.doc.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi"></person-dialog>
     <dep-dialog :dialogVisible.sync="signDepVisible" dialogType="multi" @updateDep="updateSignDep"></dep-dialog>
   </div>
 </template>
@@ -251,8 +255,8 @@ import BXS from './component/reimburseDetail.component' //预算详情
 import FKS from './component/paymentDetail.component' //付款详情
 import YFK from './component/prePayDetail.component' //预付款详情
 import CLB from './component/travelRemibDetail.component' //预付款详情
-import BKY from './component/guestTicketDetail.component.vue'//宾客机票详情
-import YGY from './component/staffBenefitDetail.component.vue'//员工优惠机票
+import BKY from './component/guestTicketDetail.component.vue' //宾客机票详情
+import YGY from './component/staffBenefitDetail.component.vue' //员工优惠机票
 
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
@@ -306,6 +310,7 @@ export default {
       DialogSubmitVisible: false,
       signPersonVisible: false,
       signDepVisible: false,
+      dialogArchivePersonVisible: false,
       currentView: '',
       ruleForm: {
         taskContent: '',
@@ -324,9 +329,7 @@ export default {
         state: [{ required: true, message: '请选择审批意见' }]
       },
       reciver: '',
-      archiveFormRule: {
-
-      },
+      archiveFormRule: {},
       personDialogType: 'radio',
       activeNames: [],
       topDistData: [],
@@ -349,7 +352,8 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo',
-      'isAdmin'
+      'isAdmin',
+      'baseURL'
     ])
   },
   methods: {
@@ -426,6 +430,9 @@ export default {
       this.dialogTableVisible = true;
       this.personDialogType = val;
     },
+    selectArchivePerson() {
+      this.dialogArchivePersonVisible = true;
+    },
     updateSignDep(payLoad) {
       this.signDepVisible = false;
       this.ruleForm.sign = [];
@@ -435,6 +442,10 @@ export default {
           "signDeptMajorId": p.id,
         })
       })
+    },
+    updateArchivePerson(payLoad) {
+      this.dialogArchivePersonVisible = false;
+      this.archiveForm.persons = payLoad;
     },
     updateSignPerson(payLoad) {
       this.signPersonVisible = false;
@@ -467,10 +478,7 @@ export default {
           this.ruleForm.sign.push(person);
         }
         this.reciver = payLoad;
-      } else {
-        this.archiveForm.persons = payLoad;
       }
-      console.log(this.archiveForm.persons)
     },
     closeSign(index) {
       this.ruleForm.sign.splice(index, 1);
@@ -663,6 +671,16 @@ export default {
           }
         }, res => {
 
+        })
+    },
+    print() {
+      this.$http.get('/pdf/exportPdf?docId=' + this.$route.params.id)
+        .then(res => {
+          if (res.status == 0) {
+
+          } else {
+
+          }
         })
     }
   }
@@ -1082,6 +1100,13 @@ $sub:#1465C0;
   }
   .operateBox {
     margin: 30px 0;
+    a {
+      float: right;
+      i {
+        font-size: 22px;
+        vertical-align: middle;
+      }
+    }
   }
 }
 

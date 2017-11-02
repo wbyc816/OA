@@ -46,13 +46,14 @@ import CLS from './component/materialApp.component.vue'
 import CLB from './component/travelRemibApp.component.vue'
 import BKY from './component/guestTicketApp.component.vue'
 import YGY from './component/staffBenefitApp.component.vue'
+import LZS from './component/empQuitApp.component.vue'
 
 export default {
   data() {
     return {
       docConfig,
       middleParams: '',
-      options: { docType: '' },
+      options: { docType: '',desTitle:'' },
       doc: '',
       saveStartPara: '',
       saveMiddlePara: '',
@@ -96,7 +97,8 @@ export default {
     CLS,
     CLB,
     BKY,
-    YGY
+    YGY,
+    LZS
   },
   mounted() {
     this.initDoc();
@@ -105,6 +107,7 @@ export default {
     initDoc() {
       this.doc = this.docConfig.find(doc => doc.code == this.$route.params.code);
       this.options.docType = this.doc.code;
+      this.options.desTitle=this.doc.code=='LZS'?'离职理由说明':'';
       if (this.$route.query.id) {
         this.getDraft();
       } else {
@@ -137,6 +140,9 @@ export default {
     },
     submitEnd(params) {
       console.log(params)
+      if(this.$route.query.id){
+        params.id=this.$route.query.id
+      }
       if (params) {
         this.$store.dispatch('submitDoc', { params: Object.assign(params, this.middleParams), docTypeCode: this.doc.code, url: this.doc.url });
         this.middleParams = '';

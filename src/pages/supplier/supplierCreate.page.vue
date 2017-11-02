@@ -418,7 +418,7 @@ export default {
         this.$message.error('上传文件只能是 JPG或PDF 格式!');
       }
       if (!isLt10M) {
-        this.$message.error('上传文件大小不能超过 2MB!');
+        this.$message.error('上传文件大小不能超过 10MB!');
       }
       return isJPG && isLt10M;
     },

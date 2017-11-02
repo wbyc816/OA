@@ -7,9 +7,9 @@
         </el-col>
         <el-col :span='18'>
           <div class="topSearch clearfix">
-            <p class="tips">选择收件人<span v-show="dialogType=='radio'">请单击姓名选择</span></p>
-            <el-input class="search" v-model="name">
-              <el-button slot="append" @click="search" @keyup.enter.native="search">搜索</el-button>
+            <p class="tips">选择{{selText}}<span v-show="dialogType=='radio'">请单击姓名选择</span></p>
+            <el-input class="search" v-model="name" @keyup.enter.native="search">
+              <el-button slot="append" @click="search">搜索</el-button>
             </el-input>
           </div>
           <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
@@ -31,7 +31,7 @@
             </el-pagination>
           </div>
           <div class="selInfoBox">
-            <p>{{ dialogType=='radio'?'已选中的收件人':' '}}</p>
+            <p>{{ dialogType=='radio'?'已选中的'+selText:' '}}</p>
             <div class="clearfix selInfo">
               <span v-if="selPerson&&dialogType=='radio'">{{selPerson.name}} - {{selPerson.depts}}</span>
               <span v-for="person in multipleSelection" class="nameBox">{{person.name}}</span>
@@ -76,13 +76,17 @@ export default {
     selfDisable: {
       type: Boolean,
       default: true
+    },
+    selText:{
+      type:String,
+      default: '收件人'
     }
   },
   watch: {
     'visible': function(newVal) {
       this.personVisible = newVal;
       if (newVal) {
-        if (this.admin != '') {
+        if (this.admin !== '') {
           if (this.admin == '0') {
             this.$store.dispatch('getDepById');
           } else {
@@ -134,7 +138,7 @@ export default {
     },
     search() {
       this.searchButton = true;
-      if (this.admin != '') {
+      if (this.admin !== '') {
         if (this.admin == 0) {
           if (this.userInfo.levelNum == 30) {
             this.$store.dispatch('setQueryDepId', this.userInfo.deptId)

@@ -24,7 +24,7 @@
             </div>
             <div class="infoItem">
               <span class="infoTittle">出生日期</span>
-              <p class="infoText" v-if="resumeInfo">{{resumeInfo.birthday}}</p>
+              <p class="infoText" v-if="resumeInfo">{{resumeInfo.birthday | time('ch')}}</p>
             </div>
             <div class="infoItem">
               <span class="infoTittle">籍贯</span>
