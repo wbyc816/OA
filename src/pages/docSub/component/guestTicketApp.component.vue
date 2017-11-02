@@ -59,12 +59,12 @@
       </el-form>
 
         <el-form label-position="left" :model="guestTicketAppFormSecond" :rules="rules" ref="guestTicketAppFormSecond" label-width="128px" >
-        <el-form-item label="航段" prop="start"  class="flw50">
+        <el-form-item label="起始站" prop="start"  class="flw50">
           <el-input   v-model="guestTicketAppFormSecond.start">
             
             </el-input>
           </el-form-item>
-        <el-form-item label="到" prop="end" class="flw50">
+        <el-form-item label="目的站" prop="end" class="flw50">
           <el-input   v-model="guestTicketAppFormSecond.end">
             
           </el-input>
@@ -84,7 +84,7 @@
             <el-input placeholder="请输入内容"  v-model="guestTicketAppFormSecond.carrier" readonly>
               <el-select   v-model="guestTicketAppFormSecond.isBook"   slot="append" placeholder="状态" class="w80" ref="isBook">
                 <el-option label="订座" value="1"></el-option>
-                <el-option label="后补" value="0"></el-option>
+                <el-option label="候补" value="0"></el-option>
               </el-select>
             </el-input>
             
@@ -201,8 +201,8 @@ export default {
         documentType: [{ required: true, message: '请输入证件内容', trigger: 'blur' }],
 
         carrier: [{ required: true, message: '请输入承运人', trigger: 'blur' }],
-        start: [{ required: true, message: '请输入航段结束地点', trigger: 'blur' }],
-        end: [{ required: true, message: '请输入航段开始地点', trigger: 'blur' }],
+        start: [{ required: true, message: '请输入起始站', trigger: 'blur' }],
+        end: [{ required: true, message: '请输入目的站', trigger: 'blur' }],
         flightNumber: [{ required: true, message: '请输入航班号', trigger: 'blur' }],
         classLevelsSelect: [{ required: true, message: '请选择舱位等级', trigger: 'blur' }],
         departureDate: [{ type: 'date', required: true, validator: checkDate, trigger: 'blur' }],
@@ -279,8 +279,8 @@ export default {
     },
 
  updateCon(val) {
-      var confident= this.genders.find(ele => ele.dictName == val);
-      this.genger=confident.dictName;
+      var confident= this.genders.find(ele => ele.value == val);
+      this.genger=confident.value;
       this.$store.commit('setConfident', { docDenseType: confident.dictName, value: confident.value });
     },
 
@@ -487,7 +487,7 @@ export default {
                         "carriageCode": "EMP0701",//承运人code（默认 东海航空 EMP0701） 
                         "carriageName": tabel.carrier,//承运人名
                         "flightDate": tabel.departureDate,//航班日期
-                        "isBookingSeats": tabel.isBookcCode //是否订座 0 后补 1 订座（看规则填）
+                        "isBookingSeats": tabel.isBookcCode //是否订座 0 候补 1 订座（看规则填）
                       }
                     })
 

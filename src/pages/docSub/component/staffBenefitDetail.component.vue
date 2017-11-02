@@ -21,7 +21,7 @@
       <el-table-column property="seatsClassName" label="等级"></el-table-column>
       <el-table-column property="isBookingSeats" label="座位状态" >
         <template scope="scope">
-          {{scope.row.isBookingSeats=="1"?"订座":"后补"}}
+          {{scope.row.isBookingSeats=="1"?"订座":"候补"}}
         </template>
       </el-table-column>
       <el-table-column property="flightDate" label="出发日期" width="140">

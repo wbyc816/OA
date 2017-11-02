@@ -15,12 +15,10 @@
           <el-input v-model="staffBenefitAppFormFirst.contactPhone" ></el-input>
       </el-form-item>
       <div class="clearBoth"></div>
-      <el-form-item label="乘机人" prop="flightPerson" >
+      <el-form-item label="乘机人" prop="flightPersonSelect">
           <el-row>
             <el-col :span="12">
-              
-
-             <el-select v-model="staffBenefitAppFormFirst.flightPersonSelect"  ref="flightPersonSelect" placeholder="请选择">
+             <el-select  v-model="staffBenefitAppFormFirst.flightPersonSelect"  ref="flightPersonSelect" placeholder="请选择">
             <el-option v-for="flightPerson in flightPersonSelects"  :label="flightPerson.name" :value="flightPerson.name">
             </el-option>
           </el-select>
@@ -38,10 +36,6 @@
               </el-radio-group>
             </el-col>
           </el-row>
-
-
-
-          
       </el-form-item>
 
 
@@ -75,12 +69,12 @@
       </el-form>
 
         <el-form label-position="left" :model="staffBenefitAppFormSecond" :rules="rules" ref="staffBenefitAppFormSecond" label-width="128px" >
-        <el-form-item label="航段" prop="start"  class="flw50">
+        <el-form-item label="起始站" prop="start"  class="flw50">
           <el-input   v-model="staffBenefitAppFormSecond.start">
             
             </el-input>
           </el-form-item>
-        <el-form-item label="到" prop="end" class="flw50">
+        <el-form-item label="目的站" prop="end" class="flw50">
           <el-input   v-model="staffBenefitAppFormSecond.end">
             
           </el-input>
@@ -100,7 +94,7 @@
             <el-input placeholder="请输入内容"  v-model="staffBenefitAppFormSecond.carrier" readonly>
               <el-select   v-model="staffBenefitAppFormSecond.isBook"   slot="append" placeholder="状态" class="w80" ref="isBook">
                 <el-option label="订座" value="1"></el-option>
-                <el-option label="后补" value="0"></el-option>
+                <el-option label="候补" value="0"></el-option>
               </el-select>
             </el-input>
             
@@ -111,7 +105,7 @@
                
             </el-input>
         </el-form-item>
-        <el-form-item label="舱位等级" class="flw35" prop="classLevelsSelectProp">
+        <el-form-item label="舱位等级" class="flw35" prop="classLevelsSelect">
           <el-select v-model="staffBenefitAppFormSecond.classLevelsSelect"  ref="classLevelsSelect">
             <el-option v-for="level in classLevels"  :label="level.dictName" :value="level.dictCode">
             </el-option>
@@ -199,7 +193,7 @@ export default {
         flightPersonTypeSelect:"",
         contactPhone:"",
         documentTypeSelect:"",
-        genger:"M"
+        genger:"M",
       },
        staffBenefitAppFormSecond: {
         carrier:"东海航空",
@@ -239,10 +233,10 @@ export default {
         documentType: [{ required: true, message: '请输入证件内容', trigger: 'blur' }],
 
         carrier: [{ required: true, message: '请输入承运人', trigger: 'blur' }],
-        start: [{ required: true, message: '请输入航段结束地点', trigger: 'blur' }],
-        end: [{ required: true, message: '请输入航段开始地点', trigger: 'blur' }],
+        start: [{ required: true, message: '请输入起始站', trigger: 'blur' }],
+        end: [{ required: true, message: '请输入目的站', trigger: 'blur' }],
         flightNumber: [{ required: true, message: '请输入航班号', trigger: 'blur' }],
-        classLevelsSelect: [{ required: true, message: '请选择舱位等级', trigger: 'blur' }],
+        classLevelsSelect: [{ required: true, message: '请选择舱位等级', trigger: 'blur,change' }],
         departureDate: [{ type: 'date', required: true, validator: checkDate, trigger: 'blur' }],
         ticketTypes: [{ required: true, message: '请选择申请票种', trigger: 'blur' }],
         
@@ -376,8 +370,8 @@ export default {
     },
 
  updateCon(val) {
-      var confident= this.genders.find(ele => ele.dictName == val);
-      this.genger=confident.dictName;
+      var confident= this.genders.find(ele => ele.value == val);
+      this.genger=confident.value;
       this.$store.commit('setConfident', { docDenseType: confident.dictName, value: confident.value });
           },
   ticketTypeChange(){
@@ -623,7 +617,7 @@ export default {
                         "carriageCode": "EMP0701",//承运人code（默认 东海航空 EMP0701） 
                         "carriageName": tabel.carrier,//承运人名
                         "flightDate": tabel.departureDate,//航班日期
-                        "isBookingSeats": tabel.isBookcCode //是否订座 0 后补 1 订座（看规则填）
+                        "isBookingSeats": tabel.isBookcCode //是否订座 0 候补 1 订座（看规则填）
 
                       }
                     })
