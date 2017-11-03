@@ -124,11 +124,18 @@
     </el-form>
     <el-form label-position="left" :model="guestTicketAppFormThird" :rules="rules" ref="guestTicketAppFormThird" label-width="128px" >
 
-       <el-form-item label="申请票种" prop="ticketType">
+       <el-form-item label="申请票种" prop="ticketType" class="flw50">
             <el-input placeholder="请输入内容" v-model="guestTicketAppFormThird.ticketType"  >
                
             </el-input>
         </el-form-item>
+
+        <el-form-item label="出票方式" prop="ticketWays" class="flw50">
+        <el-select v-model="guestTicketAppFormThird.ticketWays"  ref="ticketWays">
+          <el-option v-for="ticketWay in ticketWays"  :label="ticketWay.dictName" :value="ticketWay.dictCode">
+          </el-option>
+        </el-select>
+      </el-form-item>
     </el-form>
   <!--   <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog> -->
   </div>
@@ -162,6 +169,7 @@ export default {
       departureDate:"",
       TripTable:[],
       ticketType:"",
+      ticketWays:[],
       flightPersonTypeCode:"DOC0801",
       genders:[{dictName:"男",value:"M"},{dictName:"女",value:"F"}],
       flightPersonTable:[],
@@ -186,7 +194,7 @@ export default {
       },
       guestTicketAppFormThird:{
         ticketType:"",
-
+        ticketWays:[],
       },
 
 
@@ -194,6 +202,7 @@ export default {
    
       
       rules: {
+        ticketWays: [{ required: true, message: '请选择出票方式', trigger: 'blur' }],
         flightPerson: [{ required: true, message: '请输入乘机人', trigger: 'blur' }],
         flightPersonTypeSelect: [{ required: true, message: '请选择乘机人类型', trigger: 'blur' }],
         genger: [{ required: true, message: '请选择性别', trigger: 'blur' }],
@@ -241,13 +250,22 @@ export default {
   },
   methods: {
     classLevel(){
+      this.$http.post('/api/getDict', { //出票方式
+          dictCode:"DOC14",
+       })
+      .then(res => {
+        if (res.status == 0) {
+         this.ticketWays=res.data;
+        }
+      })
+
         this.$http.post('api/getDict', { 
           dictCode:"DOC09",
        })
       .then(res => {
         if (res.status == 0) {
          this.classLevels=res.data;
-         this.guestTicketAppFormSecond.classLevelsSelect=res.data[0].dictCode;
+         this.guestTicketAppFormThird.classLevelsSelect=res.data[0].dictCode;
         }
       })
 
@@ -440,15 +458,19 @@ export default {
       this.$emit('saveMiddle',params);
     },
     getDraft(obj){
+      console.log(obj)
       this.TripTable=obj.TripTable;
       this.flightPersonTable=obj.flightPersonTable;
       this.guestTicketAppFormThird.ticketType=obj.guestTicketAppFormThird.ticketType;
+      this.guestTicketAppFormThird.ticketWays=obj.guestTicketAppFormThird.ticketWays;
     },
     submitForm() {
       // var that = this;
               if (this.flightPersonTable.length!=0&&this.TripTable.length!=0) {
                 // var dep=this.getBudgetDep();
                 this.params = {
+                    "ticketWayCode":this.guestTicketAppFormThird.ticketWays,
+                    "ticketWayName":this.$refs.ticketWays.selectedLabel,
                     "ticTypeName": this.guestTicketAppFormThird.ticketType,
                     "ticGuestRecipts": this.flightPersonTable.map(function(tabel) {
                       if (tabel.genger=="男"){
