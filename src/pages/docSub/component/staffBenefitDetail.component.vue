@@ -30,10 +30,14 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-col :span="24">
+    <el-col :span="12">
       <h1 class="title">申请票种</h1>
       <p class="textContent">{{typeName}}</p>
     </el-col>
+      <el-col :span="12" >
+      <h1 class="title">出票方式</h1>
+      <p class="textContent">{{info[0].docTicEmployees[0].ticketWayName}}</p>
+  </el-col>
   </div>
 </template>
 <script>
@@ -85,6 +89,7 @@ export default {
     // },
     handleInfo() {
       var list = this.info[0];
+      console.log(list)
       this.$http.post('/api/getDict', { 
          dictCode:"EMP03"
        })

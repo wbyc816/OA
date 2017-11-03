@@ -31,10 +31,14 @@
         </template>
     </el-table-column>
   </el-table>
-  <el-col :span="24" >
+  <el-col :span="12" >
       <h1 class="title">申请票种</h1>
       <p class="textContent">{{info[0].ticGuest.ticTypeName}}</p>
-    </el-col>
+  </el-col>
+   <el-col :span="12" >
+      <h1 class="title">出票方式</h1>
+      <p class="textContent">{{info[0].ticGuest.ticketWayName}}</p>
+  </el-col>
   </div>
 </template>
 <script>

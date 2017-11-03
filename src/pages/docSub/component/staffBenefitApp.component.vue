@@ -134,12 +134,19 @@
     </el-form>
     <el-form label-position="left" :model="staffBenefitAppFormThird" :rules="rules" ref="staffBenefitAppFormThird" label-width="128px" >
 
-       <el-form-item label="申请票种" prop="ticketTypes">
-          <el-select v-model="staffBenefitAppFormThird.ticketTypes" @change="ticketTypeChange" ref="ticketType">
-            <el-option v-for="ticketType in ticketTypes"  :label="ticketType.dictName" :value="ticketType.dictCode">
-            </el-option>
-          </el-select>
-        </el-form-item>
+      <el-form-item label="申请票种" prop="ticketTypes" class="flw50">
+        <el-select v-model="staffBenefitAppFormThird.ticketTypes" @change="ticketTypeChange" ref="ticketType">
+          <el-option v-for="ticketType in ticketTypes"  :label="ticketType.dictName" :value="ticketType.dictCode">
+          </el-option>
+        </el-select>
+      </el-form-item>
+
+       <el-form-item label="出票方式" prop="ticketWays" class="flw50">
+        <el-select v-model="staffBenefitAppFormThird.ticketWays"  ref="ticketWays">
+          <el-option v-for="ticketWay in ticketWays"  :label="ticketWay.dictName" :value="ticketWay.dictCode">
+          </el-option>
+        </el-select>
+      </el-form-item>
     </el-form>
   <!--   <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog> -->
   </div>
@@ -207,6 +214,7 @@ export default {
       },
       staffBenefitAppFormThird:{
         ticketTypes:[],
+        ticketWays:[],
       },
       discountTicket:{
         "ticketNumsTotal": 0,
@@ -220,13 +228,15 @@ export default {
         "ticketNumsTotal": 0,
         "ticketNumsLave": 0,
       },
-
+      ticketWays:[],
 
 
    
       
       rules: {
         flightPerson: [{ required: true, message: '请选择乘机人', trigger: 'blur' }],
+         ticketWays: [{ required: true, message: '请选择出票方式', trigger: 'blur' }],
+        flightPersonSelect: [{ required: true, message: '请选择乘机人', trigger: 'blur' }],
         flightPersonTypeSelect: [{ required: true, message: '请选择乘机人类型', trigger: 'blur' }],
         genger: [{ required: true, message: '请选择性别', trigger: 'blur' }],
         documentTypeSelect: [{ required: true, message: '请选择证件类型', trigger: 'blur' }],
@@ -328,7 +338,14 @@ export default {
 
         }
       })
-
+      this.$http.post('/api/getDict', { //出票方式
+          dictCode:"DOC14",
+       })
+      .then(res => {
+        if (res.status == 0) {
+         this.ticketWays=res.data;
+        }
+      })
     },
 
     classLevel(){
@@ -361,8 +378,8 @@ export default {
        })
       .then(res => {
         if (res.status == 0) {
-         this.documentTypes=res.data;
-           this.staffBenefitAppFormFirst.documentTypeSelect=res.data[0].dictCode;
+          this.documentTypes=res.data;
+          this.staffBenefitAppFormFirst.documentTypeSelect=res.data[0].dictCode;
 
         }
       })
@@ -557,7 +574,7 @@ export default {
     },
     saveForm(){
       // console.log(this.vehicleForm)
-      var param= {"staffBenefitAppFormThird":this.staffBenefitAppFormThird.ticketTypes,"flightPersonTable":this.flightPersonTable,"TripTable":this.TripTable}
+      var param= {"ticketTypes":this.staffBenefitAppFormThird.ticketTypes,"ticketWays":this.staffBenefitAppFormThird.ticketWays,"flightPersonTable":this.flightPersonTable,"TripTable":this.TripTable}
       var params=JSON.stringify(param);
       this.$emit('saveMiddle',params);
     },
@@ -565,7 +582,8 @@ export default {
       console.log(obj)
       this.flightPersonTable=obj.flightPersonTable;
       this.TripTable=obj.TripTable;
-      this.staffBenefitAppFormThird.ticketTypes=obj.staffBenefitAppFormThird
+      this.staffBenefitAppFormThird.ticketTypes=obj.ticketTypes;
+      this.staffBenefitAppFormThird.ticketWays=obj.ticketWays;
     },
     submitForm() {
       // var that = this;
@@ -575,6 +593,8 @@ export default {
                     console.log(that.staffBenefitAppFormThird.ticketTypes);
                 // var dep=this.getBudgetDep();
                 that.params = {
+                    "ticketWayCode":that.staffBenefitAppFormThird.ticketWays,
+                    "ticketWayName":that.$refs.ticketWays.selectedLabel,
 
                     "isSubmit": 1,
                     "typeId":that.staffBenefitAppFormThird.ticketTypes,

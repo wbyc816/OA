@@ -75,7 +75,7 @@
                 </div>
                 <div class="show_detail">
                   <div  v-show="isReply==1">
-                    <div class="name">回复人：{{detailDatas.replyName}}</div>   时间：{{detailDatas.replyTime | time("all")}}
+                    <div class="name"></div>   时间：{{detailDatas.replyTime | time("all")}}
                     <hr>
                     {{detailDatas.replyContent}}
                 </div>
