@@ -93,7 +93,7 @@
             <li class="signEnd"><i class="el-icon-caret-right"></i>会签结束</li>
           </ul>
         </ul>
-        <div class="moreHistory" v-if="docDetialInfo.taskDetail.length>3" :class="{isActive:moreFlag}" @click="moreFlag=!moreFlag">
+        <div class="moreHistory" v-if="docDetialInfo.taskDetail.length>4" :class="{isActive:moreFlag}" @click="moreFlag=!moreFlag">
           <i class="el-icon-arrow-down"></i> 查看更多审批意见
         </div>
       </div>
@@ -113,7 +113,7 @@
       </div>
       <div class="operateBox" v-if="docDetialInfo.doc.isSecretary==1&&docDetialInfo.task[0].state==3">
         <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
-        <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id">
+        <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank">
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
         </a>
       </div>
@@ -128,7 +128,7 @@
               </el-radio-group>
             </el-col>
           </el-form-item>
-          <el-form-item label="审批类型" class="textarea" v-if="docDetialInfo.doc.isDept==1||docDetialInfo.doc.isPerson==1&&docDetialInfo.doc.signDoc==0">
+          <el-form-item label="审批类型" class="textarea" v-if="showSignType">
             <el-col :span='18'>
               <el-radio-group class="myRadio" v-model="signType" @change="signTypeChange">
                 <el-radio-button label="0">审批<i></i></el-radio-button>
@@ -137,7 +137,7 @@
               </el-radio-group>
             </el-col>
           </el-form-item>
-          <el-form-item class="textarea signWrap" label="接收人" prop="sign">
+          <el-form-item class="textarea signWrap" label="接收人" prop="sign" v-if="!(currentView=='LZS'&&docDetialInfo.doc.isDept==1)">
             <el-col :span='18' class="clearfix">
               <el-input class="search" :value="ruleForm.sign[0]?ruleForm.sign[0].signUserName:''" :readonly="true" v-show="signType==0">
                 <el-button slot="append" @click="selSignPerson" :disabled="chooseDisable">选择</el-button>
@@ -161,6 +161,12 @@
           <el-form-item label="审批内容" class="textarea">
             <el-col :span='18'>
               <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8"></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="约定离职日期" class="textarea" prop="planDate" v-if="currentView=='LZS'&&docDetialInfo.doc.isDept==1">
+            <el-col :span='18'>
+              <el-date-picker v-model="ruleForm.planDate" type="date" placeholder="选择离职日期" :picker-options="pickerOptions0" style="width:100%">
+              </el-date-picker>
             </el-col>
           </el-form-item>
           <el-form-item>
@@ -257,6 +263,7 @@ import YFK from './component/prePayDetail.component' //预付款详情
 import CLB from './component/travelRemibDetail.component' //预付款详情
 import BKY from './component/guestTicketDetail.component.vue' //宾客机票详情
 import YGY from './component/staffBenefitDetail.component.vue' //员工优惠机票
+import LZS from './component/empQuitDetail.component.vue' //离职详情
 
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
@@ -287,6 +294,7 @@ export default {
     CLB,
     BKY,
     YGY,
+    LZS
   },
   data() {
     var checkSign = (rule, value, callback) => {
@@ -316,7 +324,8 @@ export default {
         taskContent: '',
         state: '',
         rec: '',
-        sign: []
+        sign: [],
+        planDate:''
       },
       signType: '0',
       archiveForm: {
@@ -326,7 +335,8 @@ export default {
       docDetialInfo: { doc: {}, task: [], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [] },
       rules: {
         sign: [{ type: 'array', validator: checkSign, required: true }],
-        state: [{ required: true, message: '请选择审批意见' }]
+        state: [{ required: true, message: '请选择审批意见' }],
+        planDate: [{ required: true, type: 'date', message: '请选择离职日期' }]
       },
       reciver: '',
       archiveFormRule: {},
@@ -335,11 +345,15 @@ export default {
       topDistData: [],
       distData: [],
       isSuccessSubmit: false,
-      ableSignDoc: ['CPD', 'SWD', 'LZS', 'HTS'],
-      ableSign: false,
       chooseDisable: false,
       suggestHtml: '',
       moreFlag: false,
+      workState: '',
+      pickerOptions0: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 8.64e7;
+        }
+      },
     }
   },
   created() {
@@ -350,6 +364,18 @@ export default {
     next();
   },
   computed: {
+    showSignType() {
+      if (this.docDetialInfo.doc != {}) {
+        if (this.currentView == 'LZS'&&this.docDetialInfo.doc.isDept == 1) {
+          return false
+        } else {
+          return this.docDetialInfo.doc.isDept == 1 || this.docDetialInfo.doc.isPerson == 1 && this.docDetialInfo.doc.signDoc == 0
+        }
+      } else {
+        return false
+      }
+
+    },
     ...mapGetters([
       'userInfo',
       'isAdmin',
@@ -358,19 +384,26 @@ export default {
   },
   methods: {
     getDetail(route) {
-      this.$http.post("/doc/getDocDetailInfo", { id: route.params.id, empId: this.userInfo.empId })
+      var url = "/doc/getDocDetailInfo";
+      if (route.query.code == 'LZS') {
+        url = '/doc/getDocDimissionInfo'
+      }
+      this.$http.post(url, { id: route.params.id, empId: this.userInfo.empId })
         .then(res => {
           if (res.status == 0) {
             this.docDetialInfo = res.data;
+            if (route.query.code == 'LZS') {
+              this.docDetialInfo.otherInfo = this.docDetialInfo.dimission;
+            }
             if (this.docDetialInfo.doc.pageCode != 'CPD') {
               this.currentView = this.docDetialInfo.doc.pageCode;
             }
+            console.log(this.currentView)
             if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
               this.getDistInfo();
             }
-            this.ableSign = (this.ableSignDoc.find(code => code == this.docDetialInfo.doc.pageCode) != undefined);
             if (this.docDetialInfo.doc.defaultSuggestVo.reciUserId) {
-              this.handleReciver(this.docDetialInfo.doc.defaultSuggestVo);
+              this.handleReciver(this.docDetialInfo.doc.defaultSuggestVo); //设置收件人，固定流
             }
             this.handleSuggest();
           }
@@ -379,32 +412,34 @@ export default {
         })
     },
     handleSuggest() {
-      var html = ''
-      this.docDetialInfo.suggests.forEach((s, i, arr) => {
-        if (s.nodeName == 'sign') {
-          if (arr[i - 1].nodeName != 'sign') {
-            html += signFlag + ' ' + s.typeIdName + ' ';
-          } else if (arr[i + 1].nodeName != 'sign') {
-            html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+      if (Array.isArray(this.docDetialInfo.suggests)) {
+        var html = ''
+        this.docDetialInfo.suggests.forEach((s, i, arr) => {
+          if (s.nodeName == 'sign') {
+            if (arr[i - 1].nodeName != 'sign') {
+              html += signFlag + ' ' + s.typeIdName + ' ';
+            } else if (arr[i + 1].nodeName != 'sign') {
+              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+            } else {
+              html += s.typeIdName + ' ';
+            }
           } else {
-            html += s.typeIdName + ' ';
+            if (i == arr.length - 1) {
+              html += s.typeIdName
+            } else {
+              html += s.typeIdName + arrowHtml
+            }
           }
-        } else {
-          if (i == arr.length - 1) {
-            html += s.typeIdName
-          } else {
-            html += s.typeIdName + arrowHtml
-          }
-        }
-      })
-      this.suggestHtml = html;
+        })
+        this.suggestHtml = html;
+      }
     },
     handleReciver(vo) {
-      console.log(vo)
       this.reciver = vo;
       this.ruleForm.sign.push({
         signUserName: vo.reciUserName
       });
+      this.workState = vo.workState;
       this.chooseDisable = true;
     },
     adviceChange(val) {
@@ -556,6 +591,14 @@ export default {
 
     },
     docTask(submitType) {
+      var subType = submitType ? submitType : this.signType;  
+      if (this.currentView == 'LZS') {   //
+        if (this.docDetialInfo.doc.isDept == 1) {
+          subType = 1
+        } else if (this.docDetialInfo.doc.isSign == 1) {
+          subType = 2
+        }
+      }
       var params = {
         docId: this.docDetialInfo.doc.id,
         "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
@@ -566,8 +609,12 @@ export default {
         "taskUserId": this.userInfo.empId,
         taskContent: this.ruleForm.taskContent,
         state: this.ruleForm.state,
-        submitType: submitType ? submitType : this.signType,
-        operateType: '1'
+        submitType: subType,
+        operateType: '1',
+        workState: this.workState
+      }
+      if (this.currentView == 'LZS'&&this.docDetialInfo.doc.isDept == 1) {
+        params.dimissionDate=this.timeFilter(+this.ruleForm.planDate,'date');
       }
       if (this.signType == '0') {
         params.nextUserId = this.reciver.reciUserId;
@@ -575,7 +622,11 @@ export default {
       } else {
         params.signs = this.ruleForm.sign;
       }
-      this.$http.post('/doc/docTask', params, { body: true })
+      var url = "/doc/docTask";
+      if (this.$route.query.code == 'LZS') { //离职审批
+        url = '/doc/docDimissionTask'
+      }
+      this.$http.post(url, params, { body: true })
         .then(res => {
           if (res.status == '0') {
             this.$message.success('审批成功');
@@ -838,6 +889,7 @@ $sub:#1465C0;
       .el-collapse-item__content {
         overflow: hidden;
         padding: 0;
+        border-top: 1px solid #D5DADF;
       }
     }
   }

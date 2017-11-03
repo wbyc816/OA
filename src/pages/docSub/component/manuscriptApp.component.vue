@@ -79,7 +79,7 @@ export default {
         classify1: [{ required: true, message: '请选择发文类型', trigger: 'blur' }],
         docFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
         fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
-        catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur'  }],
+        catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
         signName: [{ required: true, message: '请选择签发人', trigger: 'blur' }],
         issueDate: [{ type: 'date', required: true, message: '请选择发文日期', trigger: 'blur' }],
       },
@@ -90,8 +90,8 @@ export default {
       },
       params: {},
       sucessFlag: 0,
-      catalogueList:[],
-       defaultProp: {
+      catalogueList: [],
+      defaultProp: {
         value: 'id',
         label: 'name',
         children: 'catalogues'
@@ -110,6 +110,15 @@ export default {
     this.getFileCatalogue();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.manuscriptForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.manuscriptForm, obj, ['issueDate']);
+      if (obj.issueDate) {
+        this.manuscriptForm.issueDate = new Date(obj.issueDate);
+      }
+    },
     updateSign(reciver) {
       this.manuscriptForm.signName = reciver.reciUserName;
       this.manuscriptForm.signId = reciver.reciUserId;
@@ -142,7 +151,7 @@ export default {
         "file": {
           "classify1": this.manuscriptForm.classify1, //发文类型 
           "issueDate": this.manuscriptForm.issueDate.getTime(), //发文日期
-          "catalogueId": this.manuscriptForm.catalogueName[this.manuscriptForm.catalogueName.length-1], //目录 
+          "catalogueId": this.manuscriptForm.catalogueName[this.manuscriptForm.catalogueName.length - 1], //目录 
           "signId": this.manuscriptForm.signId //签发人
         },
         "fileSend": {
@@ -157,7 +166,7 @@ export default {
             "ids": []
           }
         },
-        docFileId:this.manuscriptForm.docFileId
+        docFileId: this.manuscriptForm.docFileId
       }
       // if(!this.manuscriptForm.fileSend.all.max){
       //   this.params.fileSend.sendTypeAll={};
@@ -175,20 +184,20 @@ export default {
       });
       this.$emit('submitMiddle', this.params);
     },
-    saveForm(){
-      var params=JSON.stringify(Object.assign(this.manuscriptForm));
-      this.$emit('saveMiddle',params);
+    saveForm() {
+      var params = JSON.stringify(Object.assign(this.manuscriptForm));
+      this.$emit('saveMiddle', params);
     },
-    getDraft(obj){
-      this.combineObj(this.manuscriptForm,obj);
-      if(this.manuscriptForm.issueDate){
-        this.manuscriptForm.issueDate=new Date(this.manuscriptForm.issueDate);
+    getDraft(obj) {
+      this.combineObj(this.manuscriptForm, obj);
+      if (this.manuscriptForm.issueDate) {
+        this.manuscriptForm.issueDate = new Date(this.manuscriptForm.issueDate);
       }
     },
     submitForm() {
       this.$refs.manuscriptForm.validate((valid) => {
         if (valid) {
-            this.submitMiddle();
+          this.submitMiddle();
         } else {
           this.$message.warning('请检查填写字段')
           this.$emit('submitMiddle', false);

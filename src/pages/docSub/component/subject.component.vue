@@ -130,11 +130,21 @@ export default {
     submitForm() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          console.log(2);
           this.$emit('submitStart', true);
         } else {
           this.$message.warning('请检查填写字段')
           this.$emit('submitStart', false);
+          return false;
+        }
+      });
+    },
+    saveForm() {
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          this.$emit('saveStart');
+        } else {
+          this.$message.warning('请检查填写字段')
+          this.$store.commit('SET_SUBMIT_LOADING', false)
           return false;
         }
       });

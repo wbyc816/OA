@@ -87,6 +87,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import  '../static/urlConfig'
 import Vue from 'vue'
 import Sortable from 'sortablejs'
 import router from './router'
@@ -135,7 +136,7 @@ export default {
       // this.$store.dispatch('getUserInfo');
       this.baseUrl = 'http://127.0.0.1:8080'
     } else {
-      this.baseUrl = 'http://apitest.donghaiair.com:8082'
+      this.baseUrl = urlConfig.loginUrl
       // this.baseUrl = 'http://localhost:8080'
       // this.baseUrl = 'http://58.250.197.143:8899'  //外网
     }

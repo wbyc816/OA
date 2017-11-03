@@ -34,7 +34,7 @@
             <el-carousel-item v-for="(list,index) in doneList" :key="index">
               <el-row :gutter="20">
                 <el-col :span="12" v-for="(item,itemIndex) in list" :class="{higher:itemIndex>1}">
-                  <router-link :to="'/doc/docDetail/'+item.id">
+                  <router-link :to="{path:'/doc/docDetail/'+item.id,query:{code:item.docTypeCode}}">
                     <span class="index">{{item.index}}</span>
                     <p class="title">{{item.docTitle}}</p>
                     <div class="timeline">
@@ -81,7 +81,7 @@
               </p>
               <ul>
                 <li v-for="(hr,index) in hr1" v-if="index<3" @click="goTo(hr)">
-                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
+                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==='0'">NEW</span></p>
                   <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
                 </li>
               </ul>
@@ -92,7 +92,7 @@
               </p>
               <ul>
                 <li v-for="(hr,index) in hr2" v-if="index<3" @click="goTo(hr)">
-                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
+                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==='0'">NEW</span></p>
                   <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
                 </li>
               </ul>

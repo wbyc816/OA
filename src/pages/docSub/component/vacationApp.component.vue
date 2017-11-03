@@ -93,6 +93,15 @@ export default {
     this.getEmpVacation();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle',JSON.stringify(this.vacationForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.vacationForm,obj,['timeRange']);
+      obj.timeRange.forEach(t=>{
+        this.vacationForm.timeRange.push(new Date(t));
+      })
+    },
     submitForm() {
       this.$refs.vacationForm.validate((valid) => {
         if (valid) {
@@ -113,11 +122,6 @@ export default {
           return false;
         }
       });
-    },
-    saveForm(){
-      var params={
-
-      }
     },
     fomatDays(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,1})?/);

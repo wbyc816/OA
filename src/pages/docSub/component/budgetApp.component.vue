@@ -128,6 +128,12 @@ export default {
     this.getBudgetDeptList();
   },
   methods: {
+     saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.budgetTable));
+    },
+    getDraft(obj) {
+      this.budgetTable=obj;
+    },
     addBudget() {
       this.$refs.budgetForm.validate((valid) => {
         if (valid) {

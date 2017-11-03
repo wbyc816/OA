@@ -76,6 +76,12 @@ export default {
     console.log(this.$route.params)
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.checkInForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.checkInForm, obj,['wordFileId']);
+    },
     handleAvatarSuccess(res, file) {
       this.checkInForm.wordFileId = res.data;
     },

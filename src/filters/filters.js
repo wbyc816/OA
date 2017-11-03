@@ -46,6 +46,8 @@ function timeFilter(value, type) { //value为13位的时间戳
       return  t(m + 1) + '月' + t(d) + '日'
     }else if (type == 'hours') {
       return  t(h)+":"+t(min);
+    }else if (type == 'second') {
+      return  t(h)+":"+t(min)+":"+t(s);
     }else if (type == 'nosecond') {
       return  y + '-' + t(m + 1) + '-' + t(d) + ' ' + t(h) + ':' + t(min) 
     }

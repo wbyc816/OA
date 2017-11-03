@@ -172,6 +172,7 @@ export default {
         label: "name"
       },
       payees: [],
+      isDraft: false
     }
   },
   computed: {
@@ -202,6 +203,20 @@ export default {
   },
   mounted() {},
   methods: {
+    saveForm() {
+      var params = JSON.stringify({
+        budgetTable: this.budgetTable,
+        paymentForm: this.paymentForm,
+      });
+      this.$emit('saveMiddle', params);
+    },
+    getDraft(obj) {
+      if (obj.paymentForm.payMthodCode == 'FIN0101') {
+        this.isDraft = true;
+      }
+      this.combineObj(this.paymentForm, obj.paymentForm);
+      this.budgetTable = obj.budgetTable;
+    },
     submitForm() {
       if (this.budgetTable.length != 0) {
         this.$refs.paymentForm.validate((valid) => {
@@ -270,13 +285,16 @@ export default {
       this.paymentForm.empId = item.empId
     },
     getEmpBankAccount(Id) {
-      this.$http.post('/doc/getEmpBankAccount', { empId: Id })
-        .then(res => {
-          if (res.status == 0) {
-            this.paymentForm.bankAccount = res.data.data.bankAccount;
-            this.paymentForm.payee = res.data.data.empName;
-          }
-        })
+      if (!this.isDraft) {
+        this.$http.post('/doc/getEmpBankAccount', { empId: Id })
+          .then(res => {
+            if (res.status == 0) {
+              this.paymentForm.bankAccount = res.data.data.bankAccount;
+              this.paymentForm.payee = res.data.data.empName;
+            }
+          })
+      }
+      this.isDraft = false;
     },
     handleInvoiceSuccess(res, file) {
       this.invoiceAttach.push(res.data);

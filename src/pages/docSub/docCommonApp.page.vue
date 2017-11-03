@@ -14,7 +14,7 @@
         </description>
         <div class='clearfix'>
           <el-button type="primary" @click="submitDoc" class="submitButton">提交</el-button>
-          <el-button @click="saveStart" class="saveButton"><i class="iconfont icon-caogao"></i> 保存至草稿箱</el-button>
+          <el-button @click="saveDoc" class="saveButton"><i class="iconfont icon-caogao"></i> 保存至草稿箱</el-button>
         </div>
       </div>
     </el-card>
@@ -53,7 +53,7 @@ export default {
     return {
       docConfig,
       middleParams: '',
-      options: { docType: '',desTitle:'' },
+      options: { docType: '', desTitle: '' },
       doc: '',
       saveStartPara: '',
       saveMiddlePara: '',
@@ -107,7 +107,7 @@ export default {
     initDoc() {
       this.doc = this.docConfig.find(doc => doc.code == this.$route.params.code);
       this.options.docType = this.doc.code;
-      this.options.desTitle=this.doc.code=='LZS'?'离职理由说明':'';
+      this.options.desTitle = this.doc.code == 'LZS' ? '离职理由说明' : '';
       if (this.$route.query.id) {
         this.getDraft();
       } else {
@@ -140,8 +140,8 @@ export default {
     },
     submitEnd(params) {
       console.log(params)
-      if(this.$route.query.id){
-        params.id=this.$route.query.id
+      if (this.$route.query.id) {
+        params.id = this.$route.query.id
       }
       if (params) {
         this.$store.dispatch('submitDoc', { params: Object.assign(params, this.middleParams), docTypeCode: this.doc.code, url: this.doc.url });
@@ -150,16 +150,15 @@ export default {
         this.$store.commit('SET_SUBMIT_LOADING', false)
       }
     },
+    saveDoc() {
+      this.$store.commit('SET_SUBMIT_LOADING', true)
+      this.$refs.subject.saveForm();
+    },
     saveStart() {
-      if (this.docTitle) {
-        this.$store.commit('SET_SUBMIT_LOADING', true)
-        if (this.doc.code == 'CPD') {
-          this.$refs.description.saveForm();
-        } else {
-          this.$refs.middleCom.saveForm();
-        }
+      if (this.doc.code == 'CPD') {
+        this.$refs.description.saveForm();
       } else {
-        this.$message.warning('公文标题不能为空！')
+        this.$refs.middleCom.saveForm();
       }
     },
     saveMiddle(params) {
@@ -182,8 +181,8 @@ export default {
         },
         "fileId": []
       }
-      if(this.$route.query.id){
-        temp.id=this.$route.query.id
+      if (this.$route.query.id) {
+        temp.id = this.$route.query.id
       }
       this.$http.post(this.doc.url, Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency), { body: true })
         .then(res => {
@@ -233,7 +232,7 @@ export default {
             // this.$store.commit('setDocTtile', res.data.docTtile);
             this.reciverName = res.data.receiver.reciUserName;
             this.$refs.subject.updateTitle(res.data.docTtile);
-            this.$refs.description.ruleForm.des=res.data.des.replace(/↵/g, "\n");
+            this.$refs.description.ruleForm.des = res.data.des.replace(/↵/g, "\n");
             if (res.data.path) {
               this.$refs.description.updatePath(res.data.path);
             }

@@ -209,6 +209,13 @@ export default {
 
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify({budgetTable:this.budgetTable,docs:this.paymentForm.docs}));
+    },
+    getDraft(obj) {
+      this.budgetTable=obj.budgetTable;
+      this.paymentForm.docs=obj.docs;
+    },
     confirmDocs() {
       if (this.paymentForm.docs.length != 0) {
         this.dialogTableVisible = false;

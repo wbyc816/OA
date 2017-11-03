@@ -129,7 +129,7 @@ export default {
         education: [{ required: true, message: '请选择学历', trigger: 'blur' }],
         major: [{ required: true, message: '请输入专业', trigger: 'blur' }],
         picUrl: [{ required: true, message: '请上传照片', trigger: 'blur' }],
-        email:[{type:'email',message:'请输入正确的邮箱',trigger: 'blur,change'}]
+        email: [{ type: 'email', message: '请输入正确的邮箱', trigger: 'blur,change' }]
       },
       params: '',
       edus: [],
@@ -150,6 +150,28 @@ export default {
     this.getTypes();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.introduceForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.introduceForm, obj, ['birthday', 'beginWorkDate', 'picUrl', 'leaveDate', 'introduceContract']);
+      ['birthday', 'beginWorkDate', 'leaveDate'].forEach(s => {
+        if (obj[s]) {
+          this.introduceForm[s] = new Date(obj[s])
+        }
+      })
+      this.introduceForm.introduceContract = this.clone(obj).introduceContract.map(function(s) {
+        // console.log(s)
+        if (s.contractStart) {
+          s.contractStart = new Date(s.contractStart)
+        }
+        if (s.contractEnd) {
+          s.contractEnd = new Date(s.contractEnd)
+        }
+        return s;
+      })
+      console.log(this.clone(obj).introduceContract)
+    },
     submitForm() {
       this.$refs.introduceForm.validate((valid) => {
         if (valid) {

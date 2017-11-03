@@ -44,6 +44,12 @@ export default {
     this.getEmp();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle',JSON.stringify(this.becomeForm));
+    },
+    getDraft(obj) {
+      this.becomeForm=obj;
+    },
     submitForm() {
       this.$refs.becomeForm.validate((valid) => {
         if (valid) {

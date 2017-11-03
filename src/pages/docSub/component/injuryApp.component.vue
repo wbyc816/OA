@@ -38,6 +38,15 @@ export default {
   created() {
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.injuryForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.injuryForm, obj, ['injuryDate']);
+      if (obj.injuryDate) {
+        this.injuryForm.injuryDate = new Date(obj.injuryDate);
+      }
+    },
     submitForm() {
       var that = this;
       this.$refs.injuryForm.validate((valid) => {

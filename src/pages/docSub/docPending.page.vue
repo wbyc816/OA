@@ -22,10 +22,10 @@
           <td>{{doc.taskTime}}</td>
           <td><span>{{doc.currentUser}}</span></td>
           <td>
-            <el-tooltip content="签批" placement="top" effect="light">
-              <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="'/doc/docDetail/'+doc.id"></router-link>
+            <el-tooltip content="签批" placement="top" :enterable="false" effect="light">
+              <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
             </el-tooltip>
-            <el-tooltip content="查看流转" placement="top" effect="light">
+            <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
               <i class="link iconfont icon-liucheng" @click="getProcess(doc.id)"></i>
             </el-tooltip>
           </td>

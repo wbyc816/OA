@@ -22,10 +22,10 @@
           <td>{{doc.taskTime}}</td>
           <td><span>{{doc.currentUser}}</span></td>
           <td>
-            <el-tooltip content="查看流转" placement="top" effect="light">
+            <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
               <i class="link iconfont icon-liucheng" @click="getProcess(doc.id)"></i>
             </el-tooltip>
-            <el-tooltip content="撤回" placement="top" effect="light" v-if="doc.isBack!=0">
+            <el-tooltip content="撤回" placement="top" :enterable="false" effect="light" v-if="doc.isBack!=0">
               <i class="link iconfont icon-chehui" @click="doBack(doc.id)"></i>
             </el-tooltip>
           </td>

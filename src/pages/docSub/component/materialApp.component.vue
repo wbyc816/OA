@@ -66,14 +66,14 @@ export default {
     }
   },
   computed: {
-    totalPrice:function(){
-      if(this.materials.length!=0){
-        var num=0;
-        this.materials.forEach(m=>{
-          num+=m.plannedUnitPrice*m.quantity
+    totalPrice: function() {
+      if (this.materials.length != 0) {
+        var num = 0;
+        this.materials.forEach(m => {
+          num += m.plannedUnitPrice * m.quantity
         })
         return num
-      }else{
+      } else {
         return 0
       }
     },
@@ -82,6 +82,12 @@ export default {
     ])
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.materials));
+    },
+    getDraft(obj) {
+      this.materials=obj;
+    },
     addMaterial() {
       this.$refs.materialForm.validate((valid) => {
         if (valid) {
@@ -90,24 +96,24 @@ export default {
           temp.quantity = parseInt(temp.quantity);
           this.materials.push(temp);
           this.$refs.materialForm.resetFields();
-          this.materialForm.remark='';
+          this.materialForm.remark = '';
         } else {
           return false;
         }
       });
     },
     deleteRow(index) {
-      this.materials.splice(index,1)
+      this.materials.splice(index, 1)
     },
     fomatFloat(src, pos) {
       return Math.round(src * Math.pow(10, pos)) / Math.pow(10, pos);
     },
-    submitForm(){
-      if(this.materials.length!=0){
-        this.$emit('submitMiddle',{materials:this.materials});
-      }else{
+    submitForm() {
+      if (this.materials.length != 0) {
+        this.$emit('submitMiddle', { materials: this.materials });
+      } else {
         this.$message.warning('请添加材料')
-        this.$emit('submitMiddle',false);
+        this.$emit('submitMiddle', false);
       }
     }
   }
@@ -128,16 +134,16 @@ $main:#0460AE;
       }
     }
   }
-  .totalPrice{
-    line-height:40px;
+  .totalPrice {
+    line-height: 40px;
     padding-left: 15px;
-    border:1px solid #D5DADF;
-    border-top:none;
-    font-size:15px;
-    span{
-      margin-left:5px;
-      color:$main;
-    } 
+    border: 1px solid #D5DADF;
+    border-top: none;
+    font-size: 15px;
+    span {
+      margin-left: 5px;
+      color: $main;
+    }
   }
 }
 

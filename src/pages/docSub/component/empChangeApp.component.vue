@@ -58,7 +58,13 @@ export default {
   created() {
     this.getDepList();
   },
-  methods: {
+  methods: { 
+    saveForm() {
+      this.$emit('saveMiddle',JSON.stringify(this.changeForm));
+    },
+    getDraft(obj) {
+      this.changeForm=obj;
+    },
     submitForm() {
       this.$refs.changeForm.validate((valid) => {
         if (valid) {

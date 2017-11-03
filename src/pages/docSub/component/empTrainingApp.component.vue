@@ -100,6 +100,15 @@ export default {
     this.getDepList();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle',JSON.stringify(this.trainingForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.trainingForm,obj,['timeRange']);
+      obj.timeRange.forEach(t=>{
+        this.trainingForm.timeRange.push(new Date(t));
+      })
+    },
     updatePerson(list) {
       // console.log(list)
       this.trainingForm.person = list
