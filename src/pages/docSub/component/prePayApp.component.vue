@@ -101,7 +101,7 @@
         <el-table-column prop="taskName" label="呈报人" width="150"></el-table-column>
         <el-table-column prop="taskTime" label="呈报时间">
           <template scope="scope">
-            {{scopr.taskTime | time('all')}}
+            {{scope.taskTime | time('all')}}
           </template>
         </el-table-column>
       </el-table>

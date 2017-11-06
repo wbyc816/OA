@@ -70,6 +70,7 @@ const management = [
   // { 'logo': 'icon-Group13', 'color': '#9FD867', 'text': '财务预算系统', 'link': '#' },
   // { 'logo': 'icon-Group16', 'color': '#FF5F88', 'text': '食堂管理系统', 'link': '#' },
   { 'logo': 'icon-Group15', 'font': '19px','color': '#5BB5FC', 'text': '邮箱', 'link': 'http://mail.donghaiair.cn/' },
+   { 'logo': 'icon-gongwen', 'font': '34px','color': '#FFE066', 'text': '泛微OA', 'link': 'http://oa.donghaiair.cn/wui/main.jsp' },
   // { 'logo': 'icon-Group18', 'color': '#FF754F', 'text': '短信平台', 'link': '#' }
 ];
 const staffService = [

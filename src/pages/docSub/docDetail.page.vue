@@ -177,7 +177,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="myAdvice" v-if="docDetialInfo.doc.isSign==1">
+      <div class="myAdvice" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'">
         <h4 class='doc-form_title'>我的会签意见</h4>
         <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="会签意见" class="textarea" prop="state">
@@ -208,6 +208,8 @@
           </el-form-item>
         </el-form>
       </div>
+      <quit-advice  :info="docDetialInfo" v-if="docDetialInfo.doc.isSign==1&&$route.query.code=='LZS'">
+      </quit-advice>
     </el-card>
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
       <span slot="title">公文归档</span>
@@ -242,6 +244,7 @@
 <script>
 import DepDialog from '../../components/depDialog.component'
 import PersonDialog from '../../components/personDialog.component'
+import QuitAdvice from './component/empQuitAdvice.component'
 import YCS from './component/vehicleDetail.component' //用车详情
 import CLS from './component/materialDetail.component' //材料详情
 import FWG from './component/manuscriptDetail.component' //材料详情
@@ -273,6 +276,7 @@ export default {
   components: {
     PersonDialog,
     DepDialog,
+    QuitAdvice,
     YCS,
     CLS,
     FWG,

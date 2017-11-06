@@ -3,9 +3,9 @@
     <div class="topBar" :class="{'active':scrollBanner}">
       <div class="topNavbar">
         <div class="container">
+          <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
           <a><i class="iconfont icon-1"></i> 简体</a>
           <a href="#/set"><i class="iconfont icon-shezhi"></i> 设置</a>
-          <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
           <a @click="loginOut"><i class="iconfont icon-guanbi"></i> 登出</a>
         </div>
       </div>
@@ -87,7 +87,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import  '../static/urlConfig'
+import '../static/urlConfig'
 import Vue from 'vue'
 import Sortable from 'sortablejs'
 import router from './router'

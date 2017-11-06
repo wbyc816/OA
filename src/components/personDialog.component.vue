@@ -197,6 +197,7 @@ export default {
             "reciDeptId": this.selPerson.deptId,
             "reciUserName": this.selPerson.name,
             "reciUserId": this.selPerson.empId,
+            "mobileNumber":this.selPerson.mobileNumber
           }
           this.$emit('updatePerson', reciver);
           this.$emit('update:visible', false)

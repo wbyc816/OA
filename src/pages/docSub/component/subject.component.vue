@@ -117,11 +117,19 @@ export default {
       this.$store.commit('setDocTtile', val)
     },
     updatePerson(reciver) {
-      this.$store.commit('setReciver', reciver);
+      var temp = {
+        "reciDeptMajorName": reciver.reciDeptMajorName,
+        "reciDeptMajorId": reciver.reciDeptMajorId,
+        "reciDeptName": reciver.reciDeptName,
+        "reciDeptId": reciver.reciDeptId,
+        "reciUserName": reciver.reciUserName,
+        "reciUserId": reciver.reciUserId,
+      }
+      this.$store.commit('setReciver', temp);
       this.dialogTableVisible = false;
-      this.ruleForm.rec = reciver.reciUserName;
+      this.ruleForm.rec = temp.reciUserName;
       if (this.isDefault) {
-        this.setDefault(reciver);
+        this.setDefault(temp);
       }
     },
     returnT() {

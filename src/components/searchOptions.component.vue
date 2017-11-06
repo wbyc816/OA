@@ -16,14 +16,20 @@
           <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false"></el-cascader>
         </el-col>
         <el-col :span="notype?18:12">
-          <el-input placeholder="公文标题" v-model="params.keyWords"  @keyup.enter.native="submitParam"></el-input>
+          <el-input placeholder="公文标题" v-model="params.keyWords" @keyup.enter.native="submitParam"></el-input>
         </el-col>
         <el-col :span="6">
-          <el-input placeholder="公文编号" v-model="params.docNo"  @keyup.enter.native="submitParam"></el-input>
+          <el-input placeholder="公文编号" v-model="params.docNo" @keyup.enter.native="submitParam"></el-input>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="hasOverTime?6:12">
           <el-date-picker v-model="params.startTime" @change="dateChange" type="date" :editable="false" placeholder="选择呈报日期">
           </el-date-picker>
+        </el-col>
+        <el-col :span="6" v-if="hasOverTime">
+          <el-select v-model="isOverTime" placeholder="是否超时" clearable>
+            <el-option label="全部" value="0"></el-option>
+            <el-option label="超时" value="1"></el-option>
+          </el-select>
         </el-col>
         <el-col :span="6">
           <el-button class="searchButton" @click="submitParam">搜索</el-button>
@@ -42,6 +48,10 @@ export default {
     notype: {
       type: Boolean,
       default: false
+    },
+    hasOverTime: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -53,6 +63,7 @@ export default {
         "docType": "",
         "startTime": "",
       },
+      isOverTime: "",
       docTypes: [],
       docTypeOptions: [],
       defaultProp: {
@@ -71,6 +82,9 @@ export default {
     ])
   },
   created() {
+    if (this.$route.params.isOverTime) {
+      this.isOverTime='1';
+    }
     this.$store.dispatch('getConfident');
     this.$store.dispatch('getUrgency');
     this.$store.dispatch('getDocForm');
@@ -87,6 +101,9 @@ export default {
         this.params.docType = this.docTypes[this.docTypes.length - 1]
       } else {
         this.params.docType = '';
+      }
+      if (this.hasOverTime) {
+        this.params.isOverTime = this.isOverTime;
       }
       this.$emit('search', this.params)
     },

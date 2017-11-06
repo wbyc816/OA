@@ -1,6 +1,6 @@
 <template>
   <div id="docPending">
-    <search-options title="公文签批" @search="setOptions"></search-options>
+    <search-options title="公文签批" @search="setOptions" hasOverTime></search-options>
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>
@@ -72,6 +72,7 @@ export default {
     SearchOptions
   },
   created() {
+
     this.getData();
   },
   methods: {

@@ -5,7 +5,7 @@
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
       <el-form-item :label="options.desTitle||'请示内容'" prop="des" :rules="[
       { required: true, message: '请输入'+(options.desTitle||'请示内容'), trigger: 'blur,change' }]">
-        <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des" :maxlength="500"></el-input>
+        <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des" :maxlength="5000"></el-input>
         <div class="tempBox" @click="ruleForm.des=tempText"><span></span>
           <div><i class="iconfont icon-moban"></i>模板</div>
         </div>
@@ -74,7 +74,7 @@ export default {
       },
       rules: {
         path: [{ type: 'array', required: true, message: '请选择建议路径', trigger: 'blur,change' }],
-        attchment:[]
+        attchment: []
       },
       dialogTableVisible: false,
       pathDialogVisible: false,
@@ -121,7 +121,7 @@ export default {
       return html;
     },
     remainNum() {
-      var num = 500;
+      var num = 5000;
       if (this.ruleForm.des !== '') {
         num -= this.ruleForm.des.length
       }
@@ -146,7 +146,7 @@ export default {
   },
   created() {
     this.handleTemp();
-    if(this.$route.params.code=='LZS'){
+    if (this.$route.params.code == 'LZS') {
       this.rules.attchment.push({ type: 'array', required: true, message: '请提交本人签字的辞职报告', trigger: 'blur,change' })
     }
   },
@@ -434,7 +434,7 @@ $sub:#1465C0;
   }
   .remainNum {
     position: absolute;
-    right: 10px;
+    right: -121px;
     bottom: 0;
     color: #9a9a9a;
     font-size: 14px;

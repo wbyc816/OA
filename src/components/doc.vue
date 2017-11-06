@@ -1,5 +1,5 @@
 <template>
-  <a :href="data.link" class='doc-block' :target="target">
+  <a :href="data.link" class='doc-block' :target="target" @click="goTo">
     <span class='doc-title'>
       <span class='logo' :style="{'background-color':data.color, 'padding': data.padding}">
         <i class='iconfont' :style="{'font-size': data.font ? data.font : fontSize }" :class='data.logo'></i>
@@ -54,6 +54,7 @@
     }
   }
 }
+
 </style>
 <script>
 export default {
@@ -80,13 +81,11 @@ export default {
     }
   },
   methods: {
-    // goTo() {
-    //   if (/^http/.test(this.data.link)) {
-    //     window.location.href=this.data.link;
-    //   } else {
-    //     this.$router.push(this.data.link);
-    //   }
-    // }
+    goTo() {
+      if (!/^http/.test(this.data.link)) {
+        this.$router.push(this.data.link);
+      }
+    }
   }
 }
 

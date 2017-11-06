@@ -46,6 +46,15 @@ export default {
     this.getTypes();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle',JSON.stringify(this.quitForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.quitForm,obj,['planDimissionDate']);
+      if(obj.planDimissionDate){
+        this.quitForm.planDimissionDate=new Date(obj.planDimissionDate)
+      }
+    },
     submitForm() {
       this.$refs.quitForm.validate((valid) => {
         if (valid) {
@@ -63,11 +72,6 @@ export default {
           return false;
         }
       });
-    },
-    saveForm() {
-      var params = {
-
-      }
     },
     getTypes() {
       this.$http.post('/api/getDict', { dictCode: 'EMP09' })
