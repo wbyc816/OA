@@ -84,7 +84,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.updateSalaryAccount({
-            empId: this.userInfo.empId,
+            workNo: this.userInfo.workNo,
             password: this.ruleForm.oldPass,
             newPassword: this.ruleForm.pass
           }).then((data) => {

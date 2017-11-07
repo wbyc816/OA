@@ -135,18 +135,18 @@
           <template v-if="appForm.classifyCompanyCode!='ADM1208'">
             <el-form-item label="营业执照" prop="supplierLicense">
               <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'LicenseCard'}" :file-list="licenseList" :on-success="licenseSuccess" :on-remove="licenseRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
-                <el-button size="small" type="primary" :disabled="appForm.supplierLicense!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                <el-button size="small" type="primary" :disabled="appForm.supplierLicense!=''">上传执照<i class="el-icon-upload el-icon--right"></i></el-button>
               </el-upload>
             </el-form-item>
             <el-form-item label="开户许可证" prop="accountLicense">
               <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'AccountPermit'}" :file-list="permitsList" :on-success="permitsSuccess" :on-remove="permitsRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
-                <el-button size="small" type="primary" :disabled="appForm.accountLicense!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                <el-button size="small" type="primary" :disabled="appForm.accountLicense!=''">上传许可证<i class="el-icon-upload el-icon--right"></i></el-button>
               </el-upload>
             </el-form-item>
           </template>
           <el-form-item label="身份证" prop="contactIdcards" v-else>
             <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'Idcard'}" :on-success="IdcardSuccess" :file-list="IdcardsList" :on-remove="IdcardRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
-              <el-button size="small" type="primary" :disabled="appForm.contactIdcards!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+              <el-button size="small" type="primary" :disabled="appForm.contactIdcards!=''">上传身份证<i class="el-icon-upload el-icon--right"></i></el-button>
             </el-upload>
           </el-form-item>
         </el-form>

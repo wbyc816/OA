@@ -23,7 +23,7 @@
       </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
         <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :on-remove="handleRemove" :before-upload="beforeUpload">
-          <el-button size="small" type="primary" :disabled="checkInForm.wordFileId!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="checkInForm.wordFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>

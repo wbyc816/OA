@@ -59,7 +59,7 @@ export default {
         if (valid) {
           this.$http.post("/salary/verifySalaryAccount", {
             // empId:'B38E5FF5F816AC6E4169BCE9314B2996',
-            empId:this.userInfo.empId,
+            workNo:this.userInfo.workNo,
             password:this.passwordValidateForm.password
           }).then(res=>{
             if (res.status == 0) {

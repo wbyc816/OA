@@ -3,15 +3,26 @@ import Router from 'vue-router'
 import home from 'pages/home'
 
 //公文
-import doc from 'pages/Doc-Approval'
-import docSub from 'pages/docSub/docSub.page'
-import docTracking from 'pages/docSub/docTracking.page'
-import docDetail from 'pages/docSub/docDetail.page'
-import docSearch from 'pages/docSub/docSearch.page'
-import docPending from 'pages/docSub/docPending.page'
-import docToRead from 'pages/docSub/docToRead.page'
-import docDraft from 'pages/docSub/docDraft.page'
-import docCommonApp from 'pages/docSub/docCommonApp.page'
+const doc = () => import('pages/Doc-Approval')
+const docSub = () => import('pages/docSub/docSub.page')
+const docTracking = () => import('pages/docSub/docTracking.page')
+const docDetail = () => import('pages/docSub/docDetail.page')
+const docInfo = () => import('pages/docSub/docInfo.page')
+const docSearch = () => import('pages/docSub/docSearch.page')
+const docPending = () => import('pages/docSub/docPending.page')
+const docToRead = () => import('pages/docSub/docToRead.page')
+const docDraft = () => import('pages/docSub/docDraft.page')
+const docCommonApp = () => import('pages/docSub/docCommonApp.page')
+// import doc from 'pages/Doc-Approval'
+// import docSub from 'pages/docSub/docSub.page'
+// import docTracking from 'pages/docSub/docTracking.page'
+// import docDetail from 'pages/docSub/docDetail.page'
+// import docInfo from 'pages/docSub/docInfo.page'
+// import docSearch from 'pages/docSub/docSearch.page'
+// import docPending from 'pages/docSub/docPending.page'
+// import docToRead from 'pages/docSub/docToRead.page'
+// import docDraft from 'pages/docSub/docDraft.page'
+// import docCommonApp from 'pages/docSub/docCommonApp.page'
 //公文统计
 import macroStatistics from 'pages/docSub/statistical/macroStatistics.page'
 import normalStatistics from 'pages/docSub/statistical/normalStatistics.page'
@@ -303,6 +314,13 @@ const router = new Router({
           path: '/doc/docDetail/:id',
           name: 'docDetail',
           component: docDetail,
+          meta: {
+            breadcrumb: "公文详情",
+          }
+        }, {
+          path: '/doc/docInfo/:id',
+          name: 'docInfo',
+          component: docInfo,
           meta: {
             breadcrumb: "公文详情",
           }

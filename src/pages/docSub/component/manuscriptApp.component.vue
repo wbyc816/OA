@@ -35,7 +35,7 @@
       </el-form-item>
       <el-form-item label="正文" prop="docFileId">
         <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
-          <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>

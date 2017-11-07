@@ -245,7 +245,7 @@
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'CLB',finType:2,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
-          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary">上传发票<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>

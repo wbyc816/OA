@@ -91,12 +91,12 @@
       </el-form-item>
       <el-form-item label="合同" prop="contractAttach" class="clearBoth">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:1}" :on-success="handleContractSuccess" :on-error="handleContractError" :on-change="handleContractChange" ref="contractUpload" :on-remove="handleContractRemove">
-          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary">上传合同<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
       <el-form-item label="上传发票" prop="invoiceAttach">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
-          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary">上传发票<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
       <el-form-item label="费用类型" prop="feeType" placeholder="" class="width60">

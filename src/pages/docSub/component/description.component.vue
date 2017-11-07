@@ -18,7 +18,7 @@
       </el-form-item>
       <el-form-item label="附件" prop="attchment">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="fileList" :on-remove="handleRemove" ref="myUpload">
-          <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
@@ -100,15 +100,19 @@ export default {
       if (this.ruleForm.path.length != 0) {
         this.ruleForm.path.forEach((node, index) => {
           if (node.nodeName == 'sign') {
-            node.children.forEach((child, childIndex) => {
-              if (childIndex == 0) {
-                html += '#' + child.typeIdName + ' ';
-              } else if (childIndex == node.children.length - 1) {
-                html += child.typeIdName + '# ' + arrowHtml;
-              } else {
-                html += child.typeIdName + ' '
-              }
-            })
+            if (!node.children || node.children.length == 0) {
+              html += node.typeIdName + ' ' + arrowHtml
+            } else {
+              node.children.forEach((child, childIndex) => {
+                if (childIndex == 0) {
+                  html += '#' + child.typeIdName + ' ';
+                } else if (childIndex == node.children.length - 1) {
+                  html += child.typeIdName + '# ' + arrowHtml;
+                } else {
+                  html += child.typeIdName + ' '
+                }
+              })
+            }
           } else {
             if (index != this.ruleForm.path.length - 1) {
               html += node.typeIdName + arrowHtml
@@ -146,6 +150,7 @@ export default {
   },
   created() {
     this.handleTemp();
+    this.getSuggestTemp();
     if (this.$route.params.code == 'LZS') {
       this.rules.attchment.push({ type: 'array', required: true, message: '请提交本人签字的辞职报告', trigger: 'blur,change' })
     }
@@ -285,6 +290,7 @@ export default {
     },
     updatePath(list) {
       this.ruleForm.path = this.clone(list);
+      console.log(this.ruleForm.path)
       this.pathDialogVisible = false;
     },
     handlePath(list) {
@@ -307,24 +313,42 @@ export default {
               typeId: child.typeId,
               typeIdName: child.typeIdName,
               type: child.type,
-              docType: this.options.docType
+              docType: this.$route.params.code
             })
           })
         } else {
-
           _list.push({
             nodeId: index + 1,
             nodeName: nodeName,
             typeId: item.typeId,
             typeIdName: item.typeIdName,
             type: item.type,
-            docType: this.options.docType
+            docType: this.$route.params.code
           })
         }
       })
       console.log(_list)
       return _list
-    }
+    },
+    getSuggestTemp() {
+      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            this.handleSuggestTemp(res.data);
+          } else {
+
+          }
+        })
+    },
+    handleSuggestTemp(arr) {
+      arr.forEach(s => {
+        if (s.type == 4 || s.type == 5) {
+          s.nodeName = 'sign';
+          s.children=[];
+        }
+      })
+      this.ruleForm.path = arr;
+    },
   }
 }
 

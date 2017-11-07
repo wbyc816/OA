@@ -43,7 +43,7 @@
               <el-col :span="24" style="border-bottom:none">
                 <h1 class="title">附加公文</h1>
                 <p class="attch textContent">
-                  <router-link :to="'/doc/docDetail/'+file.id" v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</router-link>
+                  <router-link :to="{path:'/doc/docInfo/'+file.quoteDocId,query:{code:file.docType}}" v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</router-link>
                 </p>
               </el-col>
             </el-collapse-item>
