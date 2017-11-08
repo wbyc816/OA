@@ -46,7 +46,8 @@
         </template>
       </el-table-column>
     </el-table>
-
+    <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
+    
     <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog>
   </div>
 </template>
@@ -118,6 +119,17 @@ export default {
     }
   },
   computed: {
+       totalMoney() {
+      var num = 0;
+      if (this.budgetTable.length != 0) {
+        this.budgetTable.forEach(b => {
+          if (b.budgetMoney) {
+            num += Number(b.budgetMoney);
+          }
+        })
+      }
+      return num
+    },
     ...mapGetters([
       'submitLoading',
       'baseURL'
@@ -204,6 +216,7 @@ export default {
               // "budgetDeptCode": dep.budgetDeptCode, //报销部门
               // "budgetDeptName": dep.budgetDeptName, //报销部门名称
               "finBudget":{
+                "totalMoney":this.totalMoney,
                 "finBudgetItems": this.budgetTable.map(function(tabel) {
                   return {
                     "budgetDeptId": tabel.budgetDeptId, //预算部门id
@@ -329,6 +342,7 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
+
  .change_data{
     width:calc(100% - 18px);
     height:54px;
@@ -360,7 +374,18 @@ $main:#0460AE;
   .el-input {
     width: 100%;
   }
-
+  .totalMoney {
+    text-align: right;
+    font-size: 15px;
+    line-height: 38px;
+    padding-right: 30px;
+    margin:-20px 0 30px 18px;
+    border: 1px solid #D5DADF;
+    border-top: none;
+    span {
+      color: $main;
+    }
+    }
   .budgetMoney{
     .input{
       width:252px

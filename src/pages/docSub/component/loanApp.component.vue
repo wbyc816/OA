@@ -107,7 +107,7 @@ export default {
         person: [],
         // budgetDept: [],
         budgetDate:{},
-        selectMoney:"",
+        selectMoney:"人民币",
 
       
       },
