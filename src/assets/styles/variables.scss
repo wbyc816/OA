@@ -852,6 +852,9 @@ ul {
     &.pr70 {
       padding-right: 70px;
     }
+    &.opeartBox{
+      width:100%;
+    }
   }
   .el-form-item__label {
     color: $main;
@@ -1120,5 +1123,52 @@ ul {
   }
   tbody:nth-child(even) {
     background: #F7F7F7;
+  }
+}
+.commonApp {
+  .deptArea,
+  .arrArea {
+    float: left;
+    width: 50%;
+  }
+  .arrArea {
+    .el-form-item__label {
+      padding-left: 18px;
+    }
+  }
+  .reciverWrap {
+    clear: both;
+    .el-form-item__content {
+      display: flex;
+    }
+    .reciverList {
+      flex: 1;
+      .el-tag {
+        margin-right: 5px;
+      }
+    }
+    .addButton {
+      right: 0;
+    }
+  }
+  .saveButton {
+    float: right;
+    margin-right: 150px;
+    height: 46px;
+    font-size: 16px;
+    border-radius: 3px;
+    i {
+      font-size: 23px;
+      vertical-align: sub;
+      margin-right: 3px;
+    }
+  }
+  .submitButton {
+    height: 46px;
+    width: 200px;
+    margin-left: 134px;
+    font-size: 16px;
+    border-radius: 3px;
+    background-color: $main;
   }
 }

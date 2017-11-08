@@ -187,6 +187,7 @@ export default {
       if (this.budgetTable.length != 0) {
         this.budgetTable.forEach(b => {
           if (b.rmb) {
+            console.log(b.rmb)
             num += b.rmb;
           }
         })
@@ -376,7 +377,7 @@ export default {
                     "accurencyName": currency.currencyName, //币种
                     "currencyCode": currency.currencyCode,
                     "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
-                    "rmb": "0", //对应的人民币
+                    "rmb": 0, //对应的人民币
                     "appMoney": "0",
                     "budgetYear": this.year
                   }

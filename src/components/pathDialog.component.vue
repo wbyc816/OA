@@ -37,11 +37,11 @@
             <i class="el-icon-close" @click="close"></i>
           </div>
           <ul class="nodeWrap" ref="nodeWrap">
-            <li v-for="(node,nodeIndex) in pathList" class="nodeBox" :class="{'isEdit':nodeIndex===activeNode}">
+            <li v-for="(node,nodeIndex) in pathList" class="nodeBox" :class="{'isEdit':nodeIndex===activeNode,'isSign':node.type==4||node.type==5}">
               <i class="el-icon-close nodeClose" @click="deleteNode(node,nodeIndex)"></i>
               <i class="nodeEdit" :class="{'el-icon-check':nodeIndex===activeNode,'el-icon-edit':nodeIndex!==activeNode }" @click="editNode(node,nodeIndex)"></i>
               <span class="nodeIndex">{{nodeIndex+1}}</span>
-              <span :style="{color:(node.type==4||node.type==5)?'#0460AE':''}">{{node.typeIdName}}</span>
+              <span>{{node.typeIdName}}</span>
               <template v-if="node.children&&node.children.length!=0">
                 <p v-for="(child,childIndex) in node.children" class="childPath" :class="{'isEdit':nodeIndex===activeNode&&childIndex===activeNodeChild}">
                   <i class="el-icon-close childClose" @click="deleteChild(node,nodeIndex,childIndex)"></i>
@@ -122,19 +122,35 @@ export default {
         })
     },
     submit() {
-      var last = this.pathList[this.pathList.length - 1];
-      if (last.nodeName == 'sign') {
-        if (last.children.length == 0) {
-          this.$message.warning('会签列表不能为空')
+      // var last = this.pathList[this.pathList.length - 1];
+      // if (last.nodeName == 'sign') {
+      //   if (last.children.length == 0) {
+      //     this.$message.warning('会签列表不能为空')
+      //   } else {
+
+      //   }
+      // }
+      var success = true;
+      this.pathList.forEach((p, i) => {
+        if (p.type == 4 || p.type == 5) { //判断会签不能为空
+          if (!p.children || p.children.length == 0) {
+            this.editNode(p, i);
+            this.$message.warning('会签列表不能为空！');
+            success = false
+            return
+          }
         } else {
-          this.pathList.push({
-            typeId: 'secretary',
-            typeIdName: '发起会签人',
-            type: 3
-          })
+          if (p.state && p.state == 1) {
+            this.editNode(p, i);
+            this.$message.warning(p.typeIdName + '需替换！');
+            success = false
+            return
+          }
         }
+      })
+      if (success) {
+        this.$emit('updatePath', this.pathList);
       }
-      this.$emit('updatePath', this.pathList);
     },
     close() {
       this.$emit('update:visible', false)
@@ -154,29 +170,35 @@ export default {
       if (this.activeNode !== '') { //编辑
         var activeNode = this.pathList[this.activeNode];
         if (this.activeNodeChild === '') { //普通编辑
-          if (activeNode.type == 4) {
+          if (activeNode.type == 4) { //会签添加
             if (type == 1) {
               activeNode.children.push(node);
             }
-          } else if (activeNode.type == 5) {
+          } else if (activeNode.type == 5) { //会签添加
             if (type == 2) {
               activeNode.children.push(node);
             }
-          } else {
+          } else if (activeNode.nodeName == 'sign') {
+            activeNode.typeIdName = type == 1 ? '#部门会签#' : '#人员会签#';
+            activeNode.type = type == 1 ? 4 : 5;
+            activeNode.children.push(node);
+          } else { //普通替换
             this.pathList.splice(this.activeNode, 1, node);
           }
         } else { //会签编辑
           if (activeNode.type == 4) {
             if (type == 1) {
-              activeNode.children.splice(this.activeNodeChild,1,node);
+              activeNode.children.splice(this.activeNodeChild, 1, node);
+              activeNode.state = 0;
             }
           } else if (activeNode.type == 5) {
             if (type == 2) {
-              activeNode.children.splice(this.activeNodeChild,1,node);
+              activeNode.children.splice(this.activeNodeChild, 1, node);
+              activeNode.state = 0;
             }
           }
         }
-      } else {
+      } else { //添加
         if (this.type == '0') { //审批
           if (this.pathList.length == 0 ? true : this.pathList[this.pathList.length - 1].typeId != node.typeId) {
             this.pathList.push(node);
@@ -185,12 +207,14 @@ export default {
           if (type != 3) { //角色无会签
             var last = this.pathList[this.pathList.length - 1]
             var children = last.children;
-            if (children.length == 0 ? true : (children[0].type == type)) {
-              if (!last.type) {
-                last.typeIdName = type == 1 ? '#部门会签#' : '#人员会签#';
-                last.type = type == 1 ? 4 : 5;
-              }
-              children.push(node)
+            if (!last.type) {
+              last.typeIdName = type == 1 ? '#部门会签#' : '#人员会签#';
+              last.type = type == 1 ? 4 : 5;
+              children.push(node);
+            } else if (last.type == 4 && type == 1) {
+              children.push(node);
+            } else if (last.type == 5 && type == 2) {
+              children.push(node);
             }
           }
 
@@ -222,13 +246,13 @@ export default {
       if (this.pathList.length == 0) {
         this.type = '0';
       }
-      this.activeNode='';
-      this.activeNodeChild='';
+      this.activeNode = '';
+      this.activeNodeChild = '';
     },
     deleteChild(node, nodeIndex, childIndex) {
       node.children.splice(childIndex, 1);
-      this.activeNode='';
-      this.activeNodeChild='';
+      this.activeNode = '';
+      this.activeNodeChild = '';
     },
     typeChange(val) {
       if (val == 0) { //审批
@@ -247,10 +271,12 @@ export default {
       } else {
         this.pathList.push({
           nodeName: 'sign',
-          typeIdName:'#会签#',
+          typeIdName: '#会签#',
           children: []
         })
       }
+      this.activeNode = '';
+      this.activeNodeChild = '';
     },
     getRoleList() {
       if (this.roleList.length == 0) {
@@ -382,10 +408,28 @@ $sub:#1465C0;
           position: relative;
           color: #151515;
           &.isEdit {
-            background: #93ebf7;
+            background: #FF9300;
+            color: #fff;
             .nodeClose,
             .nodeEdit {
-              display: block
+              display: block;
+              color: #fff;
+            }
+            .nodeIndex {
+              color: #fff;
+            }
+            &.isSign {
+              background: #D8EAFF;
+              color: $main;
+              >span {
+                color: $main;
+              }
+              >i {
+                color: #ccc;
+                &:hover {
+                  color: $main;
+                }
+              }
             }
           }
           .nodeClose {
@@ -429,10 +473,10 @@ $sub:#1465C0;
             padding-left: 17px;
             position: relative;
             &:first-of-type {
-              padding-top: 7px;
+              margin-top: 5px;
               .childClose,
               .childEdit {
-                top: 16px;
+                top: 9px;
               }
             }
             &:hover {
@@ -442,7 +486,11 @@ $sub:#1465C0;
               }
             }
             &.isEdit {
-              background: #fff;
+              background: #FF9300;
+              color: #fff;
+              i {
+                color: #fff;
+              }
               .childClose,
               .childEdit {
                 display: block;

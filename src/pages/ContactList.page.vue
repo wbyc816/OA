@@ -139,6 +139,7 @@ export default {
   watch: {
     'isReady': function(newValue) {
       if (newValue) {
+        console.log(1111)
         this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
         this.$store.dispatch('queryEmpList', {});
       }
@@ -148,7 +149,7 @@ export default {
     this.$store.dispatch('getDeptList');
 
     if (this.$route.params.name) {
-
+      this.$store.dispatch('setQueryDepId', '')
       this.searchForm.name = this.$route.params.name;
       this.$store.dispatch('queryEmpList', this.searchForm);
     } else {

@@ -8,7 +8,7 @@
         <subject class='doc-section' :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject>
         <description class='doc-section' ref="description" @submitEnd="submitEnd" @saveEnd="saveEnd" :options="options">
           <!-- <manuscript-app  @submitMiddle="submitMiddle"></manuscript-app> -->
-          <component v-bind:is="$route.params.code" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'">
+          <component v-bind:is="$route.params.code" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'" @updateSuggest="updateSuggest">
             <!-- 组件在 vm.currentview 变化时改变！ -->
           </component>
         </description>
@@ -246,6 +246,9 @@ export default {
 
           }
         })
+    },
+    updateSuggest(val){
+      this.$refs.description.getSuggestTemp(val);
     }
   }
 }
@@ -253,52 +256,52 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.commonApp {
-  .deptArea,
-  .arrArea {
-    float: left;
-    width: 50%;
-  }
-  .arrArea {
-    .el-form-item__label {
-      padding-left: 18px;
-    }
-  }
-  .reciverWrap {
-    clear: both;
-    .el-form-item__content {
-      display: flex;
-    }
-    .reciverList {
-      flex: 1;
-      .el-tag {
-        margin-right: 5px;
-      }
-    }
-    .addButton {
-      right: 0;
-    }
-  }
-  .saveButton {
-    float: right;
-    margin-right: 150px;
-    height: 46px;
-    font-size: 16px;
-    border-radius: 3px;
-    i {
-      font-size: 23px;
-      vertical-align: sub;
-      margin-right: 3px;
-    }
-  }
-  .submitButton {
-    height: 46px;
-    width: 200px;
-    margin-left: 134px;
-    font-size: 16px;
-    border-radius: 3px;
-    background-color: $main;
-  }
-}
+// .commonApp {
+//   .deptArea,
+//   .arrArea {
+//     float: left;
+//     width: 50%;
+//   }
+//   .arrArea {
+//     .el-form-item__label {
+//       padding-left: 18px;
+//     }
+//   }
+//   .reciverWrap {
+//     clear: both;
+//     .el-form-item__content {
+//       display: flex;
+//     }
+//     .reciverList {
+//       flex: 1;
+//       .el-tag {
+//         margin-right: 5px;
+//       }
+//     }
+//     .addButton {
+//       right: 0;
+//     }
+//   }
+//   .saveButton {
+//     float: right;
+//     margin-right: 150px;
+//     height: 46px;
+//     font-size: 16px;
+//     border-radius: 3px;
+//     i {
+//       font-size: 23px;
+//       vertical-align: sub;
+//       margin-right: 3px;
+//     }
+//   }
+//   .submitButton {
+//     height: 46px;
+//     width: 200px;
+//     margin-left: 134px;
+//     font-size: 16px;
+//     border-radius: 3px;
+//     background-color: $main;
+//   }
+// }
 
 </style>

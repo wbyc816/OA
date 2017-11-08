@@ -107,7 +107,8 @@ export default {
         mobileNumber: [{ validator: this.validatePhone, trigger: 'blur,change' }],
         workEmail: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }]
       },
-      submitLoading: false
+      submitLoading: false,
+      first: true
     }
   },
   computed: {
@@ -124,7 +125,10 @@ export default {
       }
     },
     getData: function(newVal, oldVal) {
-      this.$store.dispatch('getResumeInfo');
+      if (this.first) {
+        this.$store.dispatch('getResumeInfo');
+        this.first = false;
+      }
     }
   },
   created() {
@@ -172,8 +176,8 @@ export default {
       }
     },
     updateInfo() {
-      var params=Object.assign({ createUser: this.userInfo.name, oldId: this.resumeInfo.id, empId: this.userInfo.empId}, this.personForm)
-      this.$emit('submit',{emp:params})
+      var params = Object.assign({ createUser: this.userInfo.name, oldId: this.resumeInfo.id, empId: this.userInfo.empId }, this.personForm)
+      this.$emit('submit', { emp: params })
     },
     nextClick() {
       this.$refs['personForm'].validate((valid) => {

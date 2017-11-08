@@ -81,6 +81,9 @@ export default {
       'submitLoading'
     ])
   },
+  mounted() {
+    this.$emit('updateSuggest','DOC1101');
+  },
   methods: {
     saveForm() {
       this.$emit('saveMiddle', JSON.stringify(this.materials));

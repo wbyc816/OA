@@ -440,7 +440,9 @@ export default {
     this.getArea(); //逗留城市
     this.getAddTax() //增值税进项税额
   },
-  mounted() {},
+  mounted() {
+    this.$emit('updateSuggest','DOC0601');
+  },
   methods: {
     saveForm() {
       var params = JSON.stringify({

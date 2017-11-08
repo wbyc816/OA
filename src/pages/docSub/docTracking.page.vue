@@ -100,15 +100,23 @@ export default {
       this.$store.dispatch('getTaskDetail', id);
     },
     doBack(id) {
-      this.$http.post('/doc/docTaskBack', { empId: this.userInfo.empId, docId: id }, )
-        .then(res => {
-          if (res.status == 0) {
-            this.$message.success('撤回成功！');
-            this.getData();
-          } else {
-            this.$message.error(res.message);
-          }
-        })
+      this.$confirm('是否撤回此公文?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/doc/docTaskBack', { empId: this.userInfo.empId, docId: id }, )
+          .then(res => {
+            if (res.status == 0) {
+              this.$message.success('撤回成功！');
+              this.getData();
+            } else {
+              this.$message.error(res.message);
+            }
+          })
+      }).catch(() => {
+
+      });
     },
     formatter(row, column, cellValue) {
       switch (cellValue) {

@@ -92,6 +92,9 @@ export default {
     this.getTypes();
     this.getEmpVacation();
   },
+  mounted() {
+    this.$emit('updateSuggest','DOC1001');
+  },
   methods: {
     saveForm() {
       this.$emit('saveMiddle',JSON.stringify(this.vacationForm));

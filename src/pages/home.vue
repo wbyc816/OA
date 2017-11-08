@@ -960,7 +960,7 @@ $sub:#1465C0;
         top: 23px;
         right: 19px;
         position: absolute;
-        z-index: 10;
+        z-index: 1;
         .el-carousel__indicator button {
           width: 8px;
           height: 8px;

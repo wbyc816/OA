@@ -54,7 +54,7 @@
               <td>{{doc.readTime}}</td>
               <td>{{doc.startTime}}</td>
               <td>{{doc.endTime}}</td>
-              <td :class="{overTime:doc.isOvertime==1}">{{doc.isOvertime==0?'准时':'超时'}}</td>
+              <td :class="{overTime:doc.isOvertime==1}"><template v-if="doc.isOvertime!=2">{{doc.isOvertime==0?'准时':'超时'}}</template></td>
               <td>{{doc.nodeName}}</td>
               <td>{{doc.taskDeptMajorName}}</td>
             </tr>

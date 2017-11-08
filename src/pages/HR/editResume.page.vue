@@ -12,16 +12,16 @@
           <contract-edit ref="contract" :getData="tabList.contract" @nextClick="nextClick" @submit="handleSub"></contract-edit>
         </el-tab-pane>
         <el-tab-pane label="教育经历" name="edu" :disabled="true">
-          <common-edit ref="edu" :getData="tabList.edu" nextTabName="postExp" :dataList="eduInfo" @nextClick="nextClick" @submit="handleSub"></common-edit>
+          <common-edit ref="edu" :getData="tabList.edu" preTabName="contract" nextTabName="postExp" :dataList="eduInfo" @nextClick="nextClick" @submit="handleSub"></common-edit>
         </el-tab-pane>
         <el-tab-pane label="任职经历" name="postExp" :disabled="true">
-          <common-edit ref="postExp" :getData="tabList.postExp" nextTabName="assessre" :dataList="postExperienceInfo" @nextClick="nextClick" @submit="handleSub"></common-edit>
+          <common-edit ref="postExp" :getData="tabList.postExp" preTabName="edu" nextTabName="assessre" :dataList="postExperienceInfo" @nextClick="nextClick" @submit="handleSub"></common-edit>
         </el-tab-pane>
         <el-tab-pane label="考核奖惩" name="assessre" :disabled="true">
-          <common-edit ref="assessre" :getData="tabList.assessre" nextTabName="contact" :dataList="assessreCordInfo" @nextClick="nextClick" @submit="handleSub"></common-edit>
+          <common-edit ref="assessre" :getData="tabList.assessre" preTabName="postExp" nextTabName="contact" :dataList="assessreCordInfo" @nextClick="nextClick" @submit="handleSub"></common-edit>
         </el-tab-pane>
         <el-tab-pane label="家庭信息" name="contact" :disabled="true">
-          <common-edit ref="contact" :getData="tabList.contact" nextTabName="last" :dataList="contactInfo" @nextClick="nextClick" @submit="handleSub"></common-edit>
+          <common-edit ref="contact" :getData="tabList.contact" preTabName="assessre" nextTabName="last" :dataList="contactInfo" @nextClick="nextClick" @submit="handleSub"></common-edit>
         </el-tab-pane>
       </el-tabs>
     </el-card>

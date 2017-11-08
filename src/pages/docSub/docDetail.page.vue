@@ -50,53 +50,7 @@
           </el-collapse>
         </el-row>
       </div>
-      <div class='history commonBox'>
-        <h4 class='doc-form_title'>历史审批意见</h4>
-        <ul v-for="(task,index) in docDetialInfo.taskDetail" v-if="index!=0&&task.isFlag!=1" :class="{'hasSign':task.signInfo!=''}" v-show="index<(!moreFlag?4:999)">
-          <li class="personAdvice" :class="{disAgree:task.state==2}">
-            <span class="isAgree"><i :class="task.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
-            <span class="userName">{{task.taskUserName}}</span>
-            <span class="taskContent">{{task.taskContent}}</span>
-            <span class="taskTime">{{task.startTime}}</span>
-          </li>
-          <ul class="signBox" v-if="task.signInfo.length!=0">
-            <li class="signStart"><i class="el-icon-caret-right"></i>会签开始</li>
-            <template v-if="task.signType==1">
-              <el-collapse class="depSignBox">
-                <el-collapse-item v-for="signBox in task.signInfo">
-                  <template slot="title">
-                    <li class="personAdvice" :class="{disAgree:signBox.deptSigns[signBox.deptSigns.length-1].state==2}">
-                      <span class="isAgree"><i :class="signBox.deptSigns[signBox.deptSigns.length-1].state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
-                      <span class="depName"><i class="el-icon-arrow-down"></i><span>{{signBox.deptName}}</span></span>
-                      <span class="userName">{{signBox.deptSigns[signBox.deptSigns.length-1].signUserName}}</span>
-                      <span class="taskContent">{{signBox.deptSigns[signBox.deptSigns.length-1].signContent}}</span>
-                      <span class="taskTime">{{signBox.deptSigns[signBox.deptSigns.length-1].signTime}}</span>
-                    </li>
-                  </template>
-                  <li class="personAdvice" :class="{disAgree:sign.state==2}" v-for="sign in signBox.deptSigns">
-                    <span class="isAgree"><i :class="sign.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
-                    <span class="userName">{{sign.signUserName}}</span>
-                    <span class="taskContent">{{sign.signContent}}</span>
-                    <span class="taskTime">{{sign.signTime}}</span>
-                  </li>
-                </el-collapse-item>
-              </el-collapse>
-            </template>
-            <template v-if="task.signType==2">
-              <li class="personAdvice" :class="{disAgree:sign.state==2}" v-for="sign in task.signInfo[0].deptSigns">
-                <span class="isAgree"><i :class="sign.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
-                <span class="userName">{{sign.signUserName}}</span>
-                <span class="taskContent">{{sign.signContent}}</span>
-                <span class="taskTime">{{sign.signTime}}</span>
-              </li>
-            </template>
-            <li class="signEnd"><i class="el-icon-caret-right"></i>会签结束</li>
-          </ul>
-        </ul>
-        <div class="moreHistory" v-if="docDetialInfo.taskDetail.length>4" :class="{isActive:moreFlag}" @click="moreFlag=!moreFlag">
-          <i class="el-icon-arrow-down"></i> 查看更多审批意见
-        </div>
-      </div>
+      <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
       <div v-if="distData.length!=0" style="margin-bottom:20px;">
         <h4 class='doc-form_title'>分发意见</h4>
         <el-table :data="topDistData" style="width: 100%" class="distTable" :stripe="true">
@@ -111,104 +65,18 @@
           </el-collapse-item>
         </el-collapse>
       </div>
-      <div class="operateBox" v-if="docDetialInfo.doc.isSecretary==1&&docDetialInfo.task[0].state==3">
+      <div class="operateBox" v-if="docDetialInfo.task[0].state==3">
         <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
+        <el-button class="myButton" v-if="docDetialInfo.doc.isPay" @click="changePay">付款</el-button>
         <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank">
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
         </a>
       </div>
-      <div class='myAdvice' v-if="docDetialInfo.doc.isTask==1&&docDetialInfo.doc.isSign!=1">
-        <h4 class='doc-form_title'>我的审批意见</h4>
-        <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
-          <el-form-item label="审批意见" class="textarea" prop="state">
-            <el-col :span='18'>
-              <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
-                <el-radio-button label="1">同意<i></i></el-radio-button>
-                <el-radio-button label="2">不同意<i></i></el-radio-button>
-              </el-radio-group>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="审批类型" class="textarea" v-if="showSignType">
-            <el-col :span='18'>
-              <el-radio-group class="myRadio" v-model="signType" @change="signTypeChange">
-                <el-radio-button label="0">审批<i></i></el-radio-button>
-                <el-radio-button label="1" v-if="docDetialInfo.doc.isDept==1">部门会签<i></i></el-radio-button>
-                <el-radio-button label="2" v-if="docDetialInfo.doc.isPerson==1">人员会签<i></i></el-radio-button>
-              </el-radio-group>
-            </el-col>
-          </el-form-item>
-          <el-form-item class="textarea signWrap" label="接收人" prop="sign" v-if="!(currentView=='LZS'&&docDetialInfo.doc.isDept==1)">
-            <el-col :span='18' class="clearfix">
-              <el-input class="search" :value="ruleForm.sign[0]?ruleForm.sign[0].signUserName:''" :readonly="true" v-show="signType==0">
-                <el-button slot="append" @click="selSignPerson" :disabled="chooseDisable">选择</el-button>
-              </el-input>
-              <div class="signList" v-show="signType!=0">
-                <el-tag :key="person.id" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==1">
-                  {{person.signDeptMajorName}}
-                </el-tag>
-                <el-tag :key="person.empId" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==2">
-                  {{person.signUserName}}
-                </el-tag>
-              </div>
-              <el-button class="addButton" @click="selSignPerson" v-show="signType==1||signType==2"><i class="el-icon-plus"></i></el-button>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="建议路径" class="textarea">
-            <el-col :span='18'>
-              <p class="textContent suggestHtml" v-html="suggestHtml" style="padding-top: 5px;"></p>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="审批内容" class="textarea">
-            <el-col :span='18'>
-              <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="约定离职日期" class="textarea" prop="planDate" v-if="currentView=='LZS'&&docDetialInfo.doc.isDept==1">
-            <el-col :span='18'>
-              <el-date-picker v-model="ruleForm.planDate" type="date" placeholder="选择离职日期" :picker-options="pickerOptions0" style="width:100%">
-              </el-date-picker>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span='18'>
-              <el-button type="primary" size="large" class="submitButton" @click="submit">提交</el-button>
-              <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isFied==1"><i class="iconfont icon-archive"></i>归档</el-button>
-            </el-col>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="myAdvice" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'">
-        <h4 class='doc-form_title'>我的会签意见</h4>
-        <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
-          <el-form-item label="会签意见" class="textarea" prop="state">
-            <el-col :span='18'>
-              <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
-                <el-radio-button label="1">同意<i></i></el-radio-button>
-                <el-radio-button label="2">不同意<i></i></el-radio-button>
-              </el-radio-group>
-            </el-col>
-          </el-form-item>
-          <el-form-item class="textarea signWrap" label="接收人" prop="sign" v-if="docDetialInfo.doc.signDoc==1">
-            <el-col :span='18' class="clearfix">
-              <el-input class="search" :value="ruleForm.sign[0]?ruleForm.sign[0].signUserName:''" :readonly="true">
-                <el-button slot="append" @click="selSignPerson">选择</el-button>
-              </el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="会签内容" class="textarea">
-            <el-col :span='18'>
-              <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span='18'>
-              <el-button type="primary" size="large" class="submitButton" @click="submitSign">提交</el-button>
-              <el-button size="large" class="docArchiveButton" @click="endDepSign" v-if="docDetialInfo.doc.isManager==1&&docDetialInfo.doc.signDoc==1">结束会签</el-button>
-            </el-col>
-          </el-form-item>
-        </el-form>
-      </div>
-      <quit-advice  :info="docDetialInfo" v-if="docDetialInfo.doc.isSign==1&&$route.query.code=='LZS'">
+      <my-advice :docDetail="docDetialInfo.doc" :suggests="docDetialInfo.suggests" v-if="showMyadvice">
+        <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
+      </my-advice>
+      <sign-advice :docDetail="docDetialInfo.doc"  v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
+      <quit-advice :info="docDetialInfo" v-if="(docDetialInfo.doc.isSign==1||docDetialInfo.doc.isFied==1)&&$route.query.code=='LZS'">
       </quit-advice>
     </el-card>
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
@@ -235,16 +103,15 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <person-dialog @updatePerson="updatePerson" :admin="docDetialInfo.doc.isAdmin==1?'1':'0'" :visible.sync="dialogTableVisible" :dialogType="personDialogType"></person-dialog>
     <person-dialog @updatePerson="updateArchivePerson" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog>
-    <person-dialog @updatePerson="updateSignPerson" :admin="docDetialInfo.doc.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi"></person-dialog>
-    <dep-dialog :dialogVisible.sync="signDepVisible" dialogType="multi" @updateDep="updateSignDep"></dep-dialog>
   </div>
 </template>
 <script>
-import DepDialog from '../../components/depDialog.component'
 import PersonDialog from '../../components/personDialog.component'
-import QuitAdvice from './component/empQuitAdvice.component'
+import QuitAdvice from './detailComponent/empQuitAdvice.component'
+import historyAdvice from './detailComponent/historyAdvice.component'
+import signAdvice from './detailComponent/signAdvice.component'
+import myAdvice from './detailComponent/myAdvice.component'
 import YCS from './component/vehicleDetail.component' //用车详情
 import CLS from './component/materialDetail.component' //材料详情
 import FWG from './component/manuscriptDetail.component' //材料详情
@@ -275,8 +142,10 @@ const signFlag = '<i class="signFlag">#</i>'
 export default {
   components: {
     PersonDialog,
-    DepDialog,
     QuitAdvice,
+    historyAdvice,
+    signAdvice,
+    myAdvice,
     YCS,
     CLS,
     FWG,
@@ -301,63 +170,22 @@ export default {
     LZS
   },
   data() {
-    var checkSign = (rule, value, callback) => {
-      if (this.signType == 1 || this.signType == 2) {
-        if (value.length > 1) {
-          callback();
-        } else {
-          callback(new Error('请选择至少两个会签接收人'))
-        }
-      } else {
-        if (value.length != 0) {
-          callback();
-        } else {
-          callback(new Error('请选择接收人'))
-        }
-      }
-    };
     return {
-      dialogTableVisible: false,
       DialogArchiveVisible: false,
       DialogSubmitVisible: false,
-      signPersonVisible: false,
-      signDepVisible: false,
       dialogArchivePersonVisible: false,
       currentView: '',
-      ruleForm: {
-        taskContent: '',
-        state: '',
-        rec: '',
-        sign: [],
-        planDate:''
-      },
-      signType: '0',
       archiveForm: {
         res: '',
         persons: []
       },
-      docDetialInfo: { doc: {}, task: [], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [] },
-      rules: {
-        sign: [{ type: 'array', validator: checkSign, required: true }],
-        state: [{ required: true, message: '请选择审批意见' }],
-        planDate: [{ required: true, type: 'date', message: '请选择离职日期' }]
-      },
-      reciver: '',
+      docDetialInfo: { doc: {}, task: [{state:''}], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [],suggests:'' },
       archiveFormRule: {},
-      personDialogType: 'radio',
       activeNames: [],
       topDistData: [],
       distData: [],
       isSuccessSubmit: false,
-      chooseDisable: false,
       suggestHtml: '',
-      moreFlag: false,
-      workState: '',
-      pickerOptions0: {
-        disabledDate(time) {
-          return time.getTime() < Date.now() - 8.64e7;
-        }
-      },
     }
   },
   created() {
@@ -368,17 +196,17 @@ export default {
     next();
   },
   computed: {
-    showSignType() {
-      if (this.docDetialInfo.doc != {}) {
-        if (this.currentView == 'LZS'&&this.docDetialInfo.doc.isDept == 1) {
-          return false
-        } else {
-          return this.docDetialInfo.doc.isDept == 1 || this.docDetialInfo.doc.isPerson == 1 && this.docDetialInfo.doc.signDoc == 0
+    showMyadvice(){
+      if(this.docDetialInfo.doc != {}){
+        if(this.currentView=='LZS'){
+          return this.docDetialInfo.doc.isTask==1&&this.docDetialInfo.doc.isSign!=1&&this.docDetialInfo.doc.isFied!=1
+        }else{
+          return this.docDetialInfo.doc.isTask==1&&this.docDetialInfo.doc.isSign!=1
         }
-      } else {
+        
+      }else{
         return false
       }
-
     },
     ...mapGetters([
       'userInfo',
@@ -402,12 +230,8 @@ export default {
             if (this.docDetialInfo.doc.pageCode != 'CPD') {
               this.currentView = this.docDetialInfo.doc.pageCode;
             }
-            console.log(this.currentView)
             if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
               this.getDistInfo();
-            }
-            if (this.docDetialInfo.doc.defaultSuggestVo.reciUserId) {
-              this.handleReciver(this.docDetialInfo.doc.defaultSuggestVo); //设置收件人，固定流
             }
             this.handleSuggest();
           }
@@ -438,209 +262,12 @@ export default {
         this.suggestHtml = html;
       }
     },
-    handleReciver(vo) {
-      this.reciver = vo;
-      this.ruleForm.sign.push({
-        signUserName: vo.reciUserName
-      });
-      this.workState = vo.workState;
-      this.chooseDisable = true;
-    },
-    adviceChange(val) {
-      if (val == 1) {
-        this.ruleForm.taskContent = '同意。'
-      } else {
-        this.ruleForm.taskContent = "不同意。"
-      }
-    },
-    signTypeChange(val) {
-      this.ruleForm.sign = []
-    },
-    selSignPerson() {
-      if (this.signType == 0) {
-        this.selectPerson('radio');
-      } else if (this.signType == 1) {
-        this.signDepVisible = true;
-      } else {
-        this.signPersonVisible = true;
-      }
-    },
-    selectPerson(val) {
-      this.dialogTableVisible = true;
-      this.personDialogType = val;
-    },
     selectArchivePerson() {
       this.dialogArchivePersonVisible = true;
-    },
-    updateSignDep(payLoad) {
-      this.signDepVisible = false;
-      this.ruleForm.sign = [];
-      payLoad.forEach(p => {
-        this.ruleForm.sign.push({
-          "signDeptMajorName": p.name,
-          "signDeptMajorId": p.id,
-        })
-      })
     },
     updateArchivePerson(payLoad) {
       this.dialogArchivePersonVisible = false;
       this.archiveForm.persons = payLoad;
-    },
-    updateSignPerson(payLoad) {
-      this.signPersonVisible = false;
-      this.ruleForm.sign = [];
-      payLoad.forEach(p => {
-        this.ruleForm.sign.push({
-          "signDeptMajorName": p.deptName,
-          "signDeptMajorId": p.deptParentId,
-          "signDeptName": p.depts,
-          "signDeptId": p.deptId,
-          "signUserName": p.name,
-          "signUserId": p.empId,
-        })
-      })
-    },
-    updatePerson(payLoad) {
-      this.dialogTableVisible = false;
-      if (this.personDialogType == 'radio') {
-        var person = {
-          "signDeptMajorName": payLoad.reciDeptMajorName,
-          "signDeptMajorId": payLoad.reciDeptMajorId,
-          "signDeptName": payLoad.reciDeptName,
-          "signDeptId": payLoad.reciDeptId,
-          "signUserName": payLoad.reciUserName,
-          "signUserId": payLoad.reciUserId,
-        }
-        if (this.ruleForm.sign.length != 0) {
-          this.ruleForm.sign.splice(0, 1, person)
-        } else {
-          this.ruleForm.sign.push(person);
-        }
-        this.reciver = payLoad;
-      }
-    },
-    closeSign(index) {
-      this.ruleForm.sign.splice(index, 1);
-    },
-    submit() {
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          this.docTask();
-        } else {
-          return false;
-        }
-      });
-    },
-    submitSign() { //会签审批
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          if (this.docDetialInfo.doc.signDoc == 1) { //部门会签
-            this.docTask(4);
-          } else { //人员会签
-            var params = {
-              "state": this.ruleForm.state,
-              "signContent": this.ruleForm.taskContent,
-              "signUserId": this.userInfo.empId,
-              "docId": this.docDetialInfo.doc.id,
-              "operateType": 1,
-            }
-            this.$http.post('/doc/empSignTask', params, { body: true })
-              .then(res => {
-                if (res.status == '0') {
-                  this.$message.success('会签成功');
-                  this.$router.push('/doc/docPending');
-                } else {
-                  this.$message.error('会签失败，请重试');
-                }
-              }, res => {
-
-              })
-          }
-        } else {
-          return false;
-        }
-      });
-    },
-    endDepSign() { //部门结束会签
-      this.$refs.ruleForm.validateField('state', (errorMessage) => {
-        if (errorMessage == '') {
-          var params = {
-            docId: this.docDetialInfo.doc.id,
-            "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
-            "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
-            "taskDeptName": this.userInfo.deptVo.dept,
-            "taskDeptId": this.userInfo.deptVo.deptId,
-            "taskUserName": this.userInfo.name,
-            "taskUserId": this.userInfo.empId,
-            taskContent: this.ruleForm.taskContent,
-            state: this.ruleForm.state,
-            submitType: 3,
-            operateType: '1'
-          }
-          this.$http.post('/doc/docTask', params, { body: true })
-            .then(res => {
-              if (res.status == '0') {
-                this.$message.success('会签成功');
-                this.$router.push('/doc/docTracking');
-              } else {
-                this.$message.error('会签失败，请重试');
-              }
-            }, res => {
-
-            })
-        } else {
-          return false
-        }
-      })
-
-    },
-    docTask(submitType) {
-      var subType = submitType ? submitType : this.signType;  
-      if (this.currentView == 'LZS') {   //
-        if (this.docDetialInfo.doc.isDept == 1) {
-          subType = 1
-        } else if (this.docDetialInfo.doc.isSign == 1) {
-          subType = 2
-        }
-      }
-      var params = {
-        docId: this.docDetialInfo.doc.id,
-        "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
-        "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
-        "taskDeptName": this.userInfo.deptVo.dept,
-        "taskDeptId": this.userInfo.deptVo.deptId,
-        "taskUserName": this.userInfo.name,
-        "taskUserId": this.userInfo.empId,
-        taskContent: this.ruleForm.taskContent,
-        state: this.ruleForm.state,
-        submitType: subType,
-        operateType: '1',
-        workState: this.workState
-      }
-      if (this.currentView == 'LZS'&&this.docDetialInfo.doc.isDept == 1) {
-        params.dimissionDate=this.timeFilter(+this.ruleForm.planDate,'date');
-      }
-      if (this.signType == '0') {
-        params.nextUserId = this.reciver.reciUserId;
-        params.nextUserName = this.reciver.reciUserName;
-      } else {
-        params.signs = this.ruleForm.sign;
-      }
-      var url = "/doc/docTask";
-      if (this.$route.query.code == 'LZS') { //离职审批
-        url = '/doc/docDimissionTask'
-      }
-      this.$http.post(url, params, { body: true })
-        .then(res => {
-          if (res.status == '0') {
-            this.$message.success('审批成功');
-            this.$router.push('/doc/docTracking');
-          } else {
-            this.$message.error('审批失败，请重试');
-          }
-        }, res => {
-
-        })
     },
     docArchive(isEnd) {
       var params = {
@@ -672,6 +299,17 @@ export default {
     },
     removePerson(index) {
       this.archiveForm.persons.splice(index, 1);
+    },
+    changePay(){
+      this.$http.post('/doc/updateFinPayState',{docId:this.$route.params.id})
+      .then(res=>{
+        if(res.status==0){
+          this.$message.success('操作成功!');
+          this.getDetail(this.$route);
+        }else{
+          this.$message.error('操作失败!'+res.message);
+        }
+      })
     },
     dialogSubmit() {
       if (this.archiveForm.persons.length > 0) {
@@ -726,16 +364,6 @@ export default {
           }
         }, res => {
 
-        })
-    },
-    print() {
-      this.$http.get('/pdf/exportPdf?docId=' + this.$route.params.id)
-        .then(res => {
-          if (res.status == 0) {
-
-          } else {
-
-          }
         })
     }
   }
@@ -900,171 +528,7 @@ $sub:#1465C0;
   .timeRight {
     text-align: right;
   }
-  .history {
-    padding-bottom: 0;
-    border-bottom: none;
-    li {
-      min-height: 50px;
-      padding: 0 20px;
-    }
-    .hasSign {
-      border-bottom: none;
-    }
-    >ul {
-      border-bottom: 1px solid #D5DADF;
-      &:first-of-type {
-        border-top: 1px solid #D5DADF;
-      }
-      .personAdvice {
-        display: table;
-        span {
-          display: table-cell;
-          vertical-align: middle;
-        }
-        $widths: (1: 4%, 2: 12%, 3: 72%, 4: 12%);
-        @each $num,
-        $width in $widths {
-          span:nth-child(#{$num}) {
-            width: $width;
-          }
-        }
-        .isAgree {
-          i {
-            color: #00A0DC;
-            font-size: 20px;
-            vertical-align: middle;
-          }
-        }
-        &.disAgree {
-          background: #FFF0F0;
-          .isAgree {
-            i {
-              color: #F06666;
-            }
-          }
-        }
-        .userName {
-          color: $main;
-        }
-        .taskTime {
-          color: #9B9B9B;
-        }
-      }
-      .depSignBox {
-        .el-collapse-item__header {
-          padding-left: 0;
-          min-height: 50px;
-          height: auto;
-          line-height: 1;
-          font-size: 15px;
-          background: #EAECF7;
-          .el-collapse-item__header__arrow {
-            display: none;
-          }
-          .personAdvice {
-            width: 100%;
-            $widths: (1: 4%, 2:24%, 3: 12%, 4: 48%, 5: 12%);
-            @each $num,
-            $width in $widths {
-              span:nth-child(#{$num}) {
-                width: $width;
-              }
-            }
-            .depName {
-              font-size: 15px;
-              color: $main;
-              span {
-                display: inline-block;
-                width: auto;
-                padding-left: 10px;
-                max-width: 80%;
-              }
-              i {
-                font-size: 18px;
-                vertical-align: middle;
-                transition: transform .3s;
-              }
-            }
-          }
-        }
-        .el-collapse-item.is-active {
-          .el-collapse-item__header .personAdvice .depName i {
-            transform: rotate(180deg);
-          }
-        }
-        .el-collapse-item__wrap {
-          background: #EAECF7;
-          .el-collapse-item__content {
-            padding: 0;
-            font-size: 15px;
-            line-height: 1;
-          }
-        }
-      }
-      &.isAgree {
-        background: #FFF0F0;
-        position: relative;
-        &:before {
-          font-weight: normal;
-          content: "\e743";
-          font-family: "iconfont" !important;
-          font-size: 70px;
-          font-style: normal;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          position: absolute;
-          top: 9px;
-          right: 16px;
-          color: #F4B8B2;
-        }
-        li {
-          position: relative;
-          z-index: 2;
-        }
-      }
-    }
-    .moreHistory {
-      padding-left: 20px;
-      line-height: 40px;
-      color: $main;
-      border-bottom: 1px dashed #D5DADF;
-      cursor: pointer;
-      i {
-        transition: transform .3s;
-      }
-      &.isActive {
-        i {
-          transform: rotate(180deg);
-        }
-      }
-    }
-    .signBox {
-      background: #EAECF7;
-      .signStart,
-      .signEnd {
-        color: #fff;
-        padding: 0 20px;
-        min-height: 25px;
-        line-height: 25px;
-        background: $main;
-        i {
-          padding-right: 10px;
-        }
-      } // .signStart {
-      //   border-bottom: 1px solid #D5DADF;
-      //   border-top: 1px dashed #D5DADF;
-      // }
-      // .signEnd {
-      //   border-bottom: 1px dashed #D5DADF;
-      // }
-      .depTip {
-        color: $main;
-      }
-      .childSign {
-        border-bottom: 1px solid #D5DADF;
-      }
-    }
-  }
+
   .myAdvice {
     .myRadio {
       line-height: 45px;

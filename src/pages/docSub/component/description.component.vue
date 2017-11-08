@@ -159,15 +159,19 @@ export default {
     submitForm() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          if (this.ruleForm.attchment.length != 0) {
-            this.$refs.myUpload.submit();
-          } else {
-            this.$emit('submitEnd', {
-              taskContent: this.ruleForm.des,
-              qutoes: this.docs[0].quoteDocId ? this.docs : [],
-              fileId: [],
-              suggests: this.handlePath(this.ruleForm.path)
-            });
+          if (this.checkSuggest()) {
+            if (this.ruleForm.attchment.length != 0) {
+              this.$refs.myUpload.submit();
+            } else {
+              this.$emit('submitEnd', {
+                taskContent: this.ruleForm.des,
+                qutoes: this.docs[0].quoteDocId ? this.docs : [],
+                fileId: [],
+                suggests: this.handlePath(this.ruleForm.path)
+              });
+            }
+          }else{
+            this.$emit('submitEnd', false);
           }
         } else {
           this.$message.warning('请检查填写字段')
@@ -175,6 +179,23 @@ export default {
           return false;
         }
       });
+    },
+    checkSuggest() {
+      var success=true;
+      this.ruleForm.path.forEach((p, i) => {
+        if (p.type == 4 || p.type == 5) { //判断会签不能为空
+          if (!p.children || p.children.length == 0) {
+            this.$message.warning('会签列表不能为空！');
+            success=false
+          }
+        } else {
+          if (p.state && p.state == 1) {
+            this.$message.warning(p.typeIdName + '需替换！');
+            success=false
+          }
+        }
+      })
+      return success
     },
     saveForm() {
       var params = {
@@ -330,8 +351,8 @@ export default {
       console.log(_list)
       return _list
     },
-    getSuggestTemp() {
-      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.userInfo.empId })
+    getSuggestTemp(param) {
+      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.userInfo.empId,docTypeSubCode:param })
         .then(res => {
           if (res.status == 0) {
             this.handleSuggestTemp(res.data);
@@ -344,7 +365,7 @@ export default {
       arr.forEach(s => {
         if (s.type == 4 || s.type == 5) {
           s.nodeName = 'sign';
-          s.children=[];
+          s.children = [];
         }
       })
       this.ruleForm.path = arr;
