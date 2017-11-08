@@ -12,7 +12,8 @@
       <el-table-column property="budgetRate" label="执行比例" width="80"></el-table-column>
       <el-table-column property="money" label="申报额度(元)" :formatter="formatMoney" width="130"></el-table-column>
     </el-table>
-    <!-- <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p> -->
+    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p>
+
   </div>
 </template>
 <script>
@@ -30,15 +31,7 @@ export default {
   },
   computed: {
     totalPrice:function(){
-      if(this.info.length!=0){
-        var num=0;
-        this.info.forEach(m=>{
-          num+=m.plannedUnitPrice*m.quantity
-        })
-        return num
-      }else{
-        return 0
-      }
+        return this.info[0].totalMoney
     },
     ...mapGetters([
       'submitLoading'
@@ -59,6 +52,7 @@ $main:#0460AE;
   clear:both;
   border-bottom: 1px solid #D5DADF;
   .totalPrice {
+
     line-height: 40px;
     padding-left: 15px;
     border: 1px solid #D5DADF;
