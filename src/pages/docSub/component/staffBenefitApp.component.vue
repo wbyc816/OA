@@ -11,8 +11,8 @@
 
     <el-form label-position="left" :model="staffBenefitAppFormFirst" :rules="rules" ref="staffBenefitAppFormFirst" label-width="128px" >
 
-      <el-form-item label="联系电话" prop="contactPhone" class="contactPhone">
-          <el-input v-model="staffBenefitAppFormFirst.contactPhone" ></el-input>
+      <el-form-item label="联系电话" prop="contactPhone" class="contactPhone" >
+          <el-input v-model="staffBenefitAppFormFirst.contactPhone" :maxlength="11"></el-input>
       </el-form-item>
       <div class="clearBoth"></div>
       <el-form-item label="乘机人" prop="flightPersonSelect">
@@ -41,7 +41,7 @@
 
       <div class="clearBoth"></div>
       <el-form-item label="证件信息" prop="documentType"  class="documentType">
-        <el-input placeholder="请输入内容" v-model="staffBenefitAppFormFirst.documentType" class="input-with-select " >
+        <el-input placeholder="请输入内容" v-model="staffBenefitAppFormFirst.documentType" class="input-with-select " :maxlength="50">
           <el-select v-model="staffBenefitAppFormFirst.documentTypeSelect" ref="documentTypeSelect" slot="prepend" placeholder="请选择" class="w130">
            <el-option v-for="documentType in documentTypes"  :label="documentType.dictName" :value="documentType.dictCode">
           </el-option>
@@ -69,12 +69,12 @@
       </el-form>
 
         <el-form label-position="left" :model="staffBenefitAppFormSecond" :rules="rules" ref="staffBenefitAppFormSecond" label-width="128px" >
-        <el-form-item label="起始站" prop="start"  class="flw50">
+        <el-form-item label="起始站" prop="start"  class="flw50" :maxlength="25">
           <el-input   v-model="staffBenefitAppFormSecond.start">
             
             </el-input>
           </el-form-item>
-        <el-form-item label="目的站" prop="end" class="flw50">
+        <el-form-item label="目的站" prop="end" class="flw50" :maxlength="25">
           <el-input   v-model="staffBenefitAppFormSecond.end">
             
           </el-input>
@@ -100,7 +100,7 @@
             
         </el-form-item>
 
-        <el-form-item label="航班号" prop="flightNumber" class="flw50">
+        <el-form-item label="航班号" prop="flightNumber" class="flw50" :maxlength="20">
             <el-input placeholder="请输入内容" v-model="staffBenefitAppFormSecond.flightNumber"  >
                
             </el-input>
@@ -157,7 +157,18 @@ import PersonDialog from '../../../components/personDialog.component'
   import util from '../../../common/util'
 export default {
   components: { PersonDialog },
-  data() {
+    data() {
+     var validatePhone = (rule, value, callback) => {
+      if (value && value.length != 0) {
+        if (!(/^1[34578]\d{9}$/.test(value))) {
+          callback(new Error("手机号码格式有误"));
+        } else {
+          callback();
+        }
+      } else {
+        callback();
+      }
+    };
     var checkDate = (rule, value, callback) => {
       if (value) {
         callback();
@@ -234,8 +245,8 @@ export default {
    
       
       rules: {
-        flightPerson: [{ required: true, message: '请选择乘机人', trigger: 'blur' }],
-         ticketWays: [{ required: true, message: '请选择出票方式', trigger: 'blur' }],
+        contactPhone: [{ required: true, message: '请填写联系电话', trigger: 'blur' },{ validator: this.validatePhone, trigger: 'blur,change' }],
+        ticketWays: [{ required: true, message: '请选择出票方式', trigger: 'blur' }],
         flightPersonSelect: [{ required: true, message: '请选择乘机人', trigger: 'blur' }],
         flightPersonTypeSelect: [{ required: true, message: '请选择乘机人类型', trigger: 'blur' }],
         genger: [{ required: true, message: '请选择性别', trigger: 'blur' }],
