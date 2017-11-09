@@ -81,6 +81,14 @@
     </el-card>
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
       <span slot="title">公文归档</span>
+      <el-form :inline="true" class="archiveState">
+        <el-form-item label="归档状态" class="textarea" prop="state">
+          <el-radio-group class="myRadio" v-model="archiveState">
+            <el-radio-button label="1">通过<i></i></el-radio-button>
+            <el-radio-button label="2">不通过<i></i></el-radio-button>
+          </el-radio-group>
+      </el-form-item>
+      </el-form>
       <div class="buttonBox">
         <el-button size="large" type="primary" @click="docArchive(true)">归档并结束</el-button>
         <el-button size="large" @click="docArchive(false)"><i class="iconfont icon-archive"></i>归档并分发</el-button>
@@ -186,6 +194,7 @@ export default {
       distData: [],
       isSuccessSubmit: false,
       suggestHtml: '',
+      archiveState:'1'
     }
   },
   created() {
@@ -278,6 +287,7 @@ export default {
         "taskDeptId": this.userInfo.deptVo.deptId,
         "taskUserName": this.userInfo.name,
         "taskUserId": this.userInfo.empId,
+        "state":this.archiveState
       }
       this.$http.post('/doc/docArchive', params, { body: true })
         .then(res => {
@@ -336,6 +346,7 @@ export default {
           Object.assign(temp, dist);
           params.push(temp);
         })
+        console.log(params)
         this.$store.dispatch('docDistribution', params);
       } else {
         this.$message.warning('请选择收件人！');
@@ -562,12 +573,25 @@ $sub:#1465C0;
     }
   }
   .archiveDialog {
+    width:500px;
     .el-dialog__body {
       padding: 35px 0;
       text-align: center;
       button {
         width: 180px;
         border-radius: 3px;
+      }
+      .archiveState{
+        .el-form-item__label{
+          padding-right:20px;
+          font-size:15px;
+        }
+        .el-radio-button__inner{
+          width:100px;
+          height:45px;
+          line-height:45px;
+          padding:0;
+        }
       }
     }
   }

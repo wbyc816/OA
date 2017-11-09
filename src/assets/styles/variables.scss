@@ -98,7 +98,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   background: #EEEEEE;
   color: #393939;
-  padding-right: 0!important;
+  // padding-right: 0!important;
   &::-webkit-scrollbar-track {
     border-radius: 10px;
     background-color: transparent;
@@ -441,15 +441,13 @@ ul {
 }
 
 .myDialog {
+  
+    overflow-y: hidden;
   .el-dialog--large {
     display: table;
     width: 1200px;
-    top: 0 !important;
-    bottom: 0;
-    margin: auto !important;
-    left: 0;
-    right: 0;
-    transform: none;
+    top:50%!important;
+    transform:translate(-50%,-50%);
     border-radius: 0;
   }
   .el-dialog__body {
@@ -1087,6 +1085,9 @@ ul {
         margin-left: 5px;
         vertical-align: middle;
         color: #fff;
+      }
+      &.linkTitle{
+        cursor:pointer;
       }
       .title {
         display: inline-block;

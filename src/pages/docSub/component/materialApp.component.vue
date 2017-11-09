@@ -13,7 +13,7 @@
         </money-input>
       </el-form-item>
       <el-form-item label="数量" class="inlinItem" prop="quantity">
-        <el-input v-model.number="materialForm.quantity"></el-input>
+        <el-input v-model.number="materialForm.quantity" :maxlength="5"></el-input>
       </el-form-item>
       <el-form-item label="备注" class="clearBoth">
         <el-col :span="19">
@@ -29,7 +29,7 @@
       <el-table-column type="index" label=" " width="40"></el-table-column>
       <el-table-column property="productName" label="品名" width="160"></el-table-column>
       <el-table-column property="specification" label="规格" width="65"></el-table-column>
-      <el-table-column property="plannedUnitPrice" label="计划单价" width="100"></el-table-column>
+      <el-table-column property="plannedUnitPrice" label="计划单价" width="110"></el-table-column>
       <el-table-column property="quantity" label="数量" width="100"></el-table-column>
       <el-table-column property="remark" label="备注"></el-table-column>
       <el-table-column label="操作" width="55">

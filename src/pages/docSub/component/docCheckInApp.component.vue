@@ -73,7 +73,6 @@ export default {
     this.getType();
     this.getSendType();
     this.getFileCatalogue();
-    console.log(this.$route.params)
   },
   methods: {
     saveForm() {

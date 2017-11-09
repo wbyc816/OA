@@ -15,7 +15,9 @@
               </el-col>
             </el-row>
           </div>
-          <canvas id="newsCanvas"></canvas>
+          <div class="pdfScrollBox" ref="pdfScroll"  v-loading="loading">
+            <canvas :id="'newsCanvas'+num" v-for="num in pafParam.total"></canvas>
+          </div>
           <el-pagination :current-page="pafParam.pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="pafParam.total" v-on:current-change="changePage">
           </el-pagination>
         </el-card>
@@ -49,16 +51,17 @@ export default {
         pageRendering: false,
         total: 0
       },
+      loading: false,
       pdfDoc: null,
       pageNumPending: null,
-      detail:{
-        title:'',
-        url:'',
+      detail: {
+        title: '',
+        url: '',
       }
     }
 
   },
-  computed:{
+  computed: {
     ...mapGetters([
       'userInfo'
     ])
@@ -69,6 +72,7 @@ export default {
   mounted() {},
   methods: {
     initPdf() {
+      this.loading = true;
       pdfjsLib.PDFJS.workerSrc = '../pdf.worker.js';
       console.log(this.detail)
       var loadingTask = pdfjsLib.getDocument(decodeURI(this.detail.url));
@@ -77,8 +81,12 @@ export default {
         that.pdfDoc = pdfDoc_;
         console.log(pdfDoc_);
         that.pafParam.total = pdfDoc_.numPages;
-
-        that.renderPage(that.pafParam.pageNum);
+        that.$nextTick(function() {
+          
+          for (var i = 0; i < that.pafParam.total; i++) {
+            that.renderPage(i + 1);
+          }
+        })
       }).catch(function(reason) {
         console.error('Error: ' + reason);
       });
@@ -88,7 +96,7 @@ export default {
       var that = this;
       that.pdfDoc.getPage(num).then(function(page) {
         var viewport = page.getViewport(1.4);
-        var canvas = document.getElementById('newsCanvas');
+        var canvas = document.getElementById('newsCanvas' + num);
         canvas.height = viewport.height;
         canvas.width = viewport.width;
 
@@ -104,6 +112,9 @@ export default {
 
             that.renderPage(that.pageNumPending);
             that.pageNumPending = null;
+          }
+          if (num == that.pafParam.total) {
+            that.loading = false;
           }
         });
       });
@@ -130,21 +141,12 @@ export default {
       this.queueRenderPage(this.pafParam.pageNum);
     },
     changePage(newPage) {
-      console.log(newPage);
-      console.log(this.pafParam.pageNum);
-      if (newPage - this.pafParam.pageNum == 1) {
-        this.onNextPage();
-      } else if (newPage - this.pafParam.pageNum == -1) {
-        this.onPrevPage();
-      } else {
-        this.renderPage(newPage);
-      }
-      this.pafParam.pageNum = newPage;
+      this.$refs.pdfScroll.scrollTop = 1070 * (newPage - 1);
     },
     getDetail() {
-      this.$http.post('/doc/selectFileDetail', { Id: this.$route.params.id,empId:this.userInfo.empId })
+      this.$http.post('/doc/selectFileDetail', { Id: this.$route.params.id, empId: this.userInfo.empId })
         .then(res => {
-          if (res.status == 0&&res.data) {
+          if (res.status == 0 && res.data) {
             this.detail = res.data;
             this.initPdf();
           }
@@ -218,14 +220,20 @@ $sub:#1465C0;
     box-shadow: none;
     .el-card__body {
       padding: 0;
-      height: 1150px;
       position: relative;
       text-align: center;
       padding-top: 10px;
-      #newsCanvas {
+      padding-bottom: 70px;
+      .pdfScrollBox {
+        width: 100%;
+        overflow-y: auto;
         height: 1070px;
-        max-width: 800px;
+        canvas {
+          height: 1070px;
+          max-width: 800px;
+        }
       }
+
       .el-pagination {
         position: absolute;
         margin: 0 auto;

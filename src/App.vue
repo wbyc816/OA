@@ -49,15 +49,6 @@
       </nav>
     </div>
     <el-carousel height="382px" arrow="never" v-if="$route.path=='/home'">
-      <!--       <el-carousel-item>
-        <img src="./assets/images/bg4.jpg">
-      </el-carousel-item>
-      <el-carousel-item>
-        <img src="./assets/images/bg2.jpg">
-      </el-carousel-item>
-      <el-carousel-item>
-        <img src="./assets/images/bg5.jpg">
-      </el-carousel-item> -->
       <el-carousel-item v-for="pic in homePics">
         <img :src="pic">
       </el-carousel-item>
@@ -122,7 +113,8 @@ export default {
       breadcrumbShow: false,
       scrollBanner: false,
       baseUrl: '',
-      login: false
+      login: false,
+      pdR: ''
     }
   },
   computed: {
@@ -249,7 +241,7 @@ export default {
       this.getHomePics();
       this.outBreadcrumbs();
       window.scrollTo(0, 0);
-    }
+    },
   }
 }
 
@@ -289,7 +281,7 @@ $brown: #985D55;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   z-index: 999;
 
   &.active {
@@ -542,10 +534,10 @@ $brown: #985D55;
 
 footer {
   position: absolute;
-  width: 100%;
   bottom: 0;
   left: 0;
   background: #fff;
+  width:100%;
   .container {
     .links {
       font-size: 0;

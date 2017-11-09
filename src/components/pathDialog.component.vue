@@ -38,14 +38,23 @@
           </div>
           <ul class="nodeWrap" ref="nodeWrap">
             <li v-for="(node,nodeIndex) in pathList" class="nodeBox" :class="{'isEdit':nodeIndex===activeNode,'isSign':node.type==4||node.type==5}">
-              <i class="el-icon-close nodeClose" @click="deleteNode(node,nodeIndex)"></i>
-              <i class="nodeEdit" :class="{'el-icon-check':nodeIndex===activeNode,'el-icon-edit':nodeIndex!==activeNode }" @click="editNode(node,nodeIndex)"></i>
+              <el-tooltip :enterable="false" effect="dark" content="删除" placement="top">
+                <i class="el-icon-close nodeClose" @click="deleteNode(node,nodeIndex)"></i>
+              </el-tooltip>
+              <el-tooltip :enterable="false" effect="dark" :content="nodeIndex!==activeNode?'编辑':'完成'" placement="top">
+                <i class="nodeEdit" :class="{'el-icon-check':nodeIndex===activeNode,'el-icon-edit':nodeIndex!==activeNode }" @click="editNode(node,nodeIndex)"></i>
+              </el-tooltip>
               <span class="nodeIndex">{{nodeIndex+1}}</span>
               <span>{{node.typeIdName}}</span>
               <template v-if="node.children&&node.children.length!=0">
                 <p v-for="(child,childIndex) in node.children" class="childPath" :class="{'isEdit':nodeIndex===activeNode&&childIndex===activeNodeChild}">
-                  <i class="el-icon-close childClose" @click="deleteChild(node,nodeIndex,childIndex)"></i>
-                  <i class="childEdit" :class="{'el-icon-check':nodeIndex===activeNode&&childIndex===activeNodeChild,'el-icon-edit':nodeIndex!==activeNode||childIndex!==activeNodeChild }" @click="editChild(node,nodeIndex,childIndex)"></i> {{child.typeIdName}}
+                  <el-tooltip :enterable="false" effect="dark" content="删除" placement="top">
+                    <i class="el-icon-close childClose" @click="deleteChild(node,nodeIndex,childIndex)"></i>
+                  </el-tooltip>
+                  <el-tooltip :enterable="false" effect="dark" :content="nodeIndex!==activeNode||childIndex!==activeNodeChild?'编辑':'完成'" placement="top">
+                    <i class="childEdit" :class="{'el-icon-check':nodeIndex===activeNode&&childIndex===activeNodeChild,'el-icon-edit':nodeIndex!==activeNode||childIndex!==activeNodeChild }" @click="editChild(node,nodeIndex,childIndex)"></i>
+                  </el-tooltip>
+                  {{child.typeIdName}}
                 </p>
               </template>
             </li>
@@ -217,12 +226,12 @@ export default {
               children.push(node);
             }
           }
-
         }
+        this.$nextTick(function() {
+          this.$refs.nodeWrap.scrollTop = this.$refs.nodeWrap.scrollHeight;
+        })
       }
-      this.$nextTick(function() {
-        this.$refs.nodeWrap.scrollTop = this.$refs.nodeWrap.scrollHeight;
-      })
+
     },
     editNode(node, index) {
       this.activeNodeChild = '';

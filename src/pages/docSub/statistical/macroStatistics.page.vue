@@ -78,21 +78,33 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo',
+      'staticsPower'
     ])
   },
   created() {
-    this.getTypes();
-    this.getDepList();
-    this.timeline.push(new Date().setDate(1), new Date());
-    this.getData();
+    if (this.staticsPower != 1) {
+      this.$router.replace('/doc/docSub');
+    } else {
+      this.getTypes();
+      this.getDepList();
+      this.timeline.push(new Date().setDate(1), new Date());
+      this.getData();
+    }
+  },
+  watch: {
+    staticsPower: function(newVal) {
+      if (newVal != 1) {
+        this.$router.replace('/doc/docSub');
+      }
+    }
   },
   methods: {
     getData() {
       this.searchLoading = true;
       this.searchParams.docType = this.docTypes[this.docTypes.length - 1];
       if (this.timeline && this.timeline.length != 0) {
-        this.searchParams.startTime = this.timeFilter(+this.timeline[0],'date');
-        this.searchParams.endTime = this.timeFilter(+this.timeline[1],'date');
+        this.searchParams.startTime = this.timeFilter(+this.timeline[0], 'date');
+        this.searchParams.endTime = this.timeFilter(+this.timeline[1], 'date');
       } else {
         this.searchParams.startTime = '';
         this.searchParams.endTime = '';

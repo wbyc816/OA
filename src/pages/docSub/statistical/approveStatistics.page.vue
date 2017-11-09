@@ -96,17 +96,28 @@ export default {
     ])
   },
   created() {
-    this.getTypes();
-    this.getDepList();
-    this.timeline.push(new Date().setDate(1), new Date());
-    this.searchParams.docManageLevel = this.staticsPower
-    this.getData();
+    if (this.staticsPower == 0) {
+      this.$router.replace('/doc/docSub');
+    } else {
+      this.getTypes();
+      this.getDepList();
+      this.timeline.push(new Date().setDate(1), new Date());
+      this.searchParams.docManageLevel = this.staticsPower
+      this.getData();
+    }
+  },
+  watch: {
+    staticsPower: function(newVal) {
+      if (newVal == 0) {
+        this.$router.replace('/doc/docSub');
+      }
+    }
   },
   methods: {
     getData() {
       this.searchLoading = true;
       this.searchParams.docType = this.docTypes[this.docTypes.length - 1];
-      var params=this.clone(this.searchParams);
+      var params = this.clone(this.searchParams);
       if (this.timeline && this.timeline.length != 0) {
         params.startTime = this.timeFilter(+this.timeline[0], 'date');
         params.endTime = this.timeFilter(+this.timeline[1], 'date');
@@ -114,7 +125,7 @@ export default {
         params.startTime = '';
         params.endTime = '';
       }
-      if(params.isAdmin===''){
+      if (params.isAdmin === '') {
         delete params.isAdmin
       }
       this.$http.post("/doc/approveDocStatistics", params, { body: true }).then(res => {
@@ -219,8 +230,8 @@ $sub:#1465C0;
         }
       }
       .el-select {
-        >.el-input input{
-          
+        >.el-input input {
+
           min-height: 46px;
         }
       }

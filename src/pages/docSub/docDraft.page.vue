@@ -12,16 +12,19 @@
       <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">
         <tr>
           <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
-          <td>
+          <router-link tag="td"  :to="{path:'/doc/docCommonApp/'+doc.docTypeCode,query:{id:doc.id}}" class="linkTitle">
             <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
             <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
             <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
-          </td>
+          </router-link>
           <td>{{doc.taskTime}}</td>
           <td><span>{{doc.currentUser}}</span></td>
           <td>
             <el-tooltip content="查看" placement="top" :enterable="false" effect="light">
               <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docCommonApp/'+doc.docTypeCode,query:{id:doc.id}}"></router-link>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top" :enterable="false" effect="light">
+              <i class="link el-icon-delete" @click="deleteDraft(doc.id)"></i>
             </el-tooltip>
           </td>
         </tr>
@@ -111,6 +114,25 @@ export default {
         default:
           return cellValue;
       }
+    },
+    deleteDraft(id){
+      this.$confirm('是否删除此公文草稿?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/doc/deleteDraftsById', {  docId: id }, )
+          .then(res => {
+            if (res.status == 0) {
+              this.$message.success('删除成功！');
+              this.getData();
+            } else {
+              this.$message.error(res.message);
+            }
+          })
+      }).catch(() => {
+
+      });
     },
     handleCurrentChange(page) {
       this.params.pageNumber = page;

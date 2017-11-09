@@ -31,7 +31,7 @@
         </money-input>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="dialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :data="trainingForm.person" dialogType="multi" :visible.sync="dialogVisible"></person-dialog>
   </div>
 </template>
 <script>

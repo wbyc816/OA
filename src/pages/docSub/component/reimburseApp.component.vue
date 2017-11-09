@@ -90,7 +90,7 @@
         </el-form-item>
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'BXS',finType:2,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
+        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'BXS',finType:2,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :before-upload="beforeInvoiceUpload" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
           <el-button size="small" type="primary">上传发票<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -224,7 +224,7 @@ export default {
       if (this.budgetTable.length != 0) {
         this.$refs.paymentForm.validate((valid) => {
           if (valid) {
-            this.$refs.invoiceUpload.submit();
+            this.submitAll();
           } else {
             this.$message.warning('请检查填写字段')
             this.$emit('submitMiddle', false);
@@ -232,6 +232,7 @@ export default {
           }
         });
       } else {
+        this.$emit('submitMiddle', false);
         this.$message.warning('未添加付款项');
       }
     },
@@ -258,7 +259,7 @@ export default {
         "tDocFinReimbursementItems": tDocFinReimbursementItems
       }
       // console.log(this.clone(this.budgetTable));
-      var finFileIds = this.invoiceAttach;
+      var finFileIds = this.paymentForm.invoiceAttach.map(c => c.response.data);
       console.log(tDocFinReimbursement, finFileIds);
       this.$emit('submitMiddle', { tDocFinReimbursement: tDocFinReimbursement, finFileIds: finFileIds })
     },
@@ -302,27 +303,26 @@ export default {
       }
       this.isDraft = false;
     },
-    handleInvoiceSuccess(res, file) {
-      this.invoiceAttach.push(res.data);
-      if (this.invoiceAttach.length == this.paymentForm.invoiceAttach.length) {
-        this.submitAll();
-      }
-    },
-    handleInvoiceError(res, file) {
-      this.$emit('submitMiddle', false);
-      this.$message.error('附件上传失败，请重试');
-    },
-    handleInvoiceChange(file, fileList) {
+    beforeInvoiceUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
       const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isLt10M) {
-        this.$message.error('上传发票大小不能超过 10MB!');
-      }
-      if (isLt10M) {
-        this.paymentForm.invoiceAttach = fileList;
-      }
-    },
-    handleInvoiceRemove() {
 
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 JPG或PDF 格式!');
+      }
+      if (!isLt10M) {
+        this.$message.error('上传文件大小不能超过 10MB!');
+      }
+      return isJPG && isLt10M;
+    },
+    handleInvoiceSuccess(res, file, fileList) {
+      this.paymentForm.invoiceAttach = fileList;
+    },
+    handleInvoiceError(res, file, fileList) {
+      this.paymentForm.invoiceAttach = fileList;
+    },
+    handleInvoiceRemove(file, fileList) {
+      this.paymentForm.invoiceAttach = fileList;
     },
     addBudget() {
       this.$refs.budgetForm.validate((valid) => {

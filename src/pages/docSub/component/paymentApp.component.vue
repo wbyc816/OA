@@ -90,12 +90,12 @@
         </el-input>
       </el-form-item>
       <el-form-item label="合同" prop="contractAttach" class="clearBoth">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:1}" :on-success="handleContractSuccess" :on-error="handleContractError" :on-change="handleContractChange" ref="contractUpload" :on-remove="handleContractRemove">
+        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:1}" :on-success="handleContractSuccess" :on-error="handleContractError" ref="contractUpload" :on-remove="handleContractRemove" :before-upload="beforeContractUpload">
           <el-button size="small" type="primary">上传合同<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
       <el-form-item label="上传发票" prop="invoiceAttach">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
+        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" ref="invoiceUpload" :before-upload="beforeInvoiceUpload" :on-remove="handleInvoiceRemove">
           <el-button size="small" type="primary">上传发票<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -172,8 +172,6 @@ export default {
         payTypeCode: [{ required: true, message: '请选择付款类型', trigger: 'blur' }],
         invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票' }],
       },
-      invoiceAttach: [],
-      contractAttach: [],
       payMthods: [],
       types: [],
       payMthod: '',
@@ -236,7 +234,7 @@ export default {
       if (this.budgetTable.length != 0) {
         this.$refs.paymentForm.validate((valid) => {
           if (valid) {
-            this.$refs.contractUpload.submit();
+            this.submitAll();
           } else {
             this.$message.warning('请检查填写字段')
             this.$emit('submitMiddle', false);
@@ -277,7 +275,7 @@ export default {
         b.invoiceCode = b.invoiceCode.join();
         return b;
       });
-      var finFileIds = this.contractAttach.concat(this.invoiceAttach);
+      var finFileIds = this.paymentForm.contractAttach.map(c=>c.response.data).concat(this.paymentForm.invoiceAttach.map(c=>c.response.data));
       console.log(finPayment, paymentItems, finFileIds);
       this.$emit('submitMiddle', { finPayment: finPayment, paymentItems: paymentItems, finFileIds: finFileIds })
     },
@@ -286,50 +284,49 @@ export default {
         this.budgetForm.invoiceNum = '';
       }
     },
-    handleContractSuccess(res, file) {
-      this.contractAttach.push(res.data);
-      if (this.contractAttach.length == this.paymentForm.contractAttach.length) {
-        this.$refs.invoiceUpload.submit();
-      }
-    },
-    handleContractError(res, file) {
-      this.$emit('submitMiddle', false);
-      this.$message.error('合同上传失败，请重试');
-    },
-    handleContractChange(file, fileList) {
+    beforeContractUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf'||file.type==='application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       const isLt10M = file.size / 1024 / 1024 < 10;
+
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 JPG、DOCX、PDF 格式!');
+      }
       if (!isLt10M) {
-        this.$message.error('上传合同大小不能超过 10MB!');
+        this.$message.error('上传文件大小不能超过 10MB!');
       }
-      if (isLt10M) {
-        this.paymentForm.contractAttach = fileList;
-      }
+      return isJPG && isLt10M;
     },
-
-    handleContractRemove() {
-
+    handleContractSuccess(res, file,fileList) {
+      this.paymentForm.contractAttach=fileList;
     },
-    handleInvoiceSuccess(res, file) {
-      this.invoiceAttach.push(res.data);
-      if (this.invoiceAttach.length == this.paymentForm.invoiceAttach.length) {
-        this.submitAll();
-      }
+    handleContractError(res, file,fileList) {
+      this.paymentForm.contractAttach=fileList;
     },
-    handleInvoiceError(res, file) {
-      this.$emit('submitMiddle', false);
-      this.$message.error('附件上传失败，请重试');
+    
+    handleContractRemove(file, fileList) {
+      this.paymentForm.contractAttach=fileList;
     },
-    handleInvoiceChange(file, fileList) {
+    beforeInvoiceUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
       const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isLt10M) {
-        this.$message.error('上传发票大小不能超过 10MB!');
-      }
-      if (isLt10M) {
-        this.paymentForm.invoiceAttach = fileList;
-      }
-    },
-    handleInvoiceRemove() {
 
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 JPG或PDF 格式!');
+      }
+      if (!isLt10M) {
+        this.$message.error('上传文件大小不能超过 10MB!');
+      }
+      return isJPG && isLt10M;
+    },
+    handleInvoiceSuccess(res, file,fileList) {
+      console.log(fileList);
+      this.paymentForm.invoiceAttach=fileList;
+    },
+    handleInvoiceError(res, file,fileList) {
+      this.paymentForm.invoiceAttach=fileList;
+    },
+    handleInvoiceRemove(file, fileList) {
+      this.paymentForm.invoiceAttach=fileList;
     },
     addBudget() {
       this.$refs.budgetForm.validate((valid) => {
@@ -669,11 +666,12 @@ $main:#0460AE;
     margin-bottom: 20px;
     li {
       float: left;
-      width: 60%;
+      width: 50%;
       text-align: center;
-      line-height: 54px;
+      min-height: 54px;
+      padding-top:16px;
       &:nth-child(2) {
-        width: 40%;
+        // width: 40%;
         border-left: 1px solid #D5DADF;
       }
     }

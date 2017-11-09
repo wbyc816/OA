@@ -107,12 +107,12 @@ export default {
       ruleForm: {
         taskContent: '',
         state: '',
-        sign: [{ type: 'array', validator: checkSign, required: true }],
+        sign: [],
         planDate: ''
       },
       rules: {
-        signUserName: [{ required: true, message: '请选择会签接收人' }],
-        state: [{ required: true, message: '请选择会签意见' }],
+        sign: [{ type: 'array', validator: checkSign, required: true }],
+        state: [{ required: true, message: '请选择审批意见' }],
         planDate: [{ required: true, type: 'date', message: '请选择离职日期' }]
       },
       dialogTableVisible: false,
@@ -260,7 +260,7 @@ export default {
         workState: this.workState
       }
       if (this.currentView == 'LZS' && this.docDetail.isDept == 1) {
-        params.dimissionDate = this.timeFilter(+this.ruleForm.planDate, 'date');
+        params.dimissionDate = +this.ruleForm.planDate;
       }
       if (this.signType == '0') {
         params.nextUserId = this.reciver.reciUserId;

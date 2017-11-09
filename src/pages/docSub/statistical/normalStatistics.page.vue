@@ -108,10 +108,22 @@ export default {
     ])
   },
   created() {
-    this.getTypes();
-    this.getDepList();
-    this.timeline.push(new Date(new Date().setHours(0, 0, 0, 0)), new Date());
-    this.getData();
+    if (this.staticsPower == 0) {
+      this.$router.replace('/doc/docSub');
+    } else {
+      this.getTypes();
+      this.getDepList();
+      this.timeline.push(new Date(new Date().setHours(0, 0, 0, 0)), new Date());
+      this.getData();
+    }
+
+  },
+  watch: {
+    staticsPower: function(newVal) {
+      if (newVal == 0) {
+        this.$router.replace('/doc/docSub');
+      }
+    }
   },
   methods: {
     getData() {

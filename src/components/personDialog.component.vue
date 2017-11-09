@@ -1,6 +1,6 @@
 <template>
   <div class="personDialogBox">
-    <el-dialog size="large" class="personDialog" :visible.sync="personVisible" @close="close">
+    <el-dialog size="large" class="personDialog" :visible.sync="personVisible" @close="close" @open="open">
       <el-row>
         <el-col :span='6'>
           <organ-list @reset="reset1"></organ-list>
@@ -55,9 +55,9 @@ export default {
       name: '',
       selPerson: '',
       multipleSelection: [],
-      initialReady: false,
+      initialReady: true,
       searchButton: false,
-      personVisible: false
+      personVisible: false,
     }
   },
   props: {
@@ -77,9 +77,15 @@ export default {
       type: Boolean,
       default: true
     },
-    selText:{
-      type:String,
+    selText: {
+      type: String,
       default: '收件人'
+    },
+    data:{
+      type: Array,
+      default:function () {
+        return []
+      }
     }
   },
   watch: {
@@ -108,6 +114,13 @@ export default {
         this.$store.dispatch('setQueryPage', 1);
         this.$store.dispatch('queryEmpList', {});
       }
+    },
+    searchRes(newVal) {
+        if(this.$refs.multipleTable&&this.dialogType=='multi'&&this.initialReady){
+          this.initialReady=false;
+          this.$refs.multipleTable.store.states.selection=this.data;
+          this.multipleSelection=this.data;
+        }
     }
   },
   computed: {
@@ -123,8 +136,8 @@ export default {
 
   },
   methods: {
-    submitRefdoc: function() {
-
+    open() {
+      // console.log(this.$refs.multipleTable);
     },
     handleCurrentChange(page) {
       if (this.searchRes.empVoList) {
@@ -197,7 +210,7 @@ export default {
             "reciDeptId": this.selPerson.deptId,
             "reciUserName": this.selPerson.name,
             "reciUserId": this.selPerson.empId,
-            "mobileNumber":this.selPerson.mobileNumber
+            "mobileNumber": this.selPerson.mobileNumber
           }
           this.$emit('updatePerson', reciver);
           this.$emit('update:visible', false)
@@ -223,6 +236,7 @@ export default {
 
     },
     handleSelectionChange(val) {
+      console.log(this.$refs.multipleTable)
       this.multipleSelection = val;
     },
     reset1() {

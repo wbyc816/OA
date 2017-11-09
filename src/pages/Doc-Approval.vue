@@ -6,23 +6,19 @@
       </el-col>
       <el-col :span='7' class="sideBox">
         <side-Person-Search></side-Person-Search>
-        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-show="!/Statistics/.test($route.path)">
+        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-if="!/Statistics/.test($route.path)">
           <el-menu-item-group title="公文流转">
             <template v-for='(item,index) in navMenu'>
               <el-menu-item v-if='item.path' :index='index.toString()' :route="{path:item.path}">{{item.title}}
                 <el-badge class="mark" :value="tips[index]" />
                 <i class="el-icon-arrow-right"></i>
               </el-menu-item>
-              <!-- <el-submenu v-if='item.child' :index='index.toString()' >
-                    <template slot="title" >{{item.title}}</template>
-                    <el-menu-item v-for='(i,key) in item.child' :index='index.toString()+key.toString()' :route="{path:i.path}">&nbsp;{{i.title}}</el-menu-item>
-                </el-submenu> -->
             </template>
           </el-menu-item-group>
         </el-menu>
-        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-show="/Statistics/.test($route.path)" v-if="staticsPower">
+        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-if="/Statistics/.test($route.path)&&staticsPower">
           <el-menu-item-group title="公文流转">
-            <el-menu-item index='/doc/macroStatistics'>宏观统计<i class="el-icon-arrow-right"></i>
+            <el-menu-item index='/doc/macroStatistics' v-if="staticsPower==1">宏观统计<i class="el-icon-arrow-right"></i>
             </el-menu-item>
             <el-menu-item index='/doc/normalStatistics'>公文统计<i class="el-icon-arrow-right"></i>
             </el-menu-item>
@@ -193,10 +189,10 @@ export default {
           .then(res => {
             if (res.status == 0) {
               this.$store.commit('setStaticsPower', res.data);
-              if (res.data !== 0) {
+              if (res.data != 0) {
                 this.navMenu.push({
                   title: '公文统计',
-                  path: '/doc/macroStatistics'
+                  path: '/doc/normalStatistics'
                 })
               }
             } else {
@@ -226,7 +222,6 @@ export default {
       this.tips.push(newVal.toReadNum);
     },
     'processData' (newValue) {
-      console.log(newValue);
       this.$nextTick(() => {
         this.getStepH();
       })

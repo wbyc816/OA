@@ -61,7 +61,7 @@
       <div class="borderBox"></div>
       <el-form-item label="个人照片" class="uploadBox" :rules="[{ required: false, message: '头像未上传'}]" prop="picUrl">
         <el-upload ref="upload" class="avatar-uploader" :auto-upload="false" :action="baseURL+'/emp/updatePic'" :data="{id:userInfo.empId}" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange">
-          <img v-if="personForm.picUrl" :src="personForm.picUrl" class="avatar">
+          <img v-if="personForm.url" :src="personForm.url" class="avatar">
           <img v-else src="../../../assets/images/blankHead1.png" alt="">
         </el-upload>
       </el-form-item>
@@ -101,7 +101,8 @@ export default {
         bloodType: '',
         idNumber: '',
         joinDate: '',
-        picUrl: ''
+        picUrl: '',
+        url:''
       },
       rules: {
         mobileNumber: [{ validator: this.validatePhone, trigger: 'blur,change' }],
@@ -172,7 +173,7 @@ export default {
       }
       if (isJPG && isLt2M) {
         this.picChangeStatus = true;
-        this.personForm.picUrl = file.url
+        this.personForm.url = file.url
       }
     },
     updateInfo() {

@@ -185,7 +185,7 @@ export default {
       this.ruleForm.path.forEach((p, i) => {
         if (p.type == 4 || p.type == 5) { //判断会签不能为空
           if (!p.children || p.children.length == 0) {
-            this.$message.warning('会签列表不能为空！');
+            this.$message.warning('建议路径内会签列表不能为空！');
             success=false
           }
         } else {
@@ -311,7 +311,6 @@ export default {
     },
     updatePath(list) {
       this.ruleForm.path = this.clone(list);
-      console.log(this.ruleForm.path)
       this.pathDialogVisible = false;
     },
     handlePath(list) {
