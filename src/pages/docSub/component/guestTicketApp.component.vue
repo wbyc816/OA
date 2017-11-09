@@ -3,17 +3,17 @@
     <el-form label-position="left" :model="guestTicketAppFormFirst" :rules="rules" ref="guestTicketAppFormFirst" label-width="128px" >
        
       <el-form-item label="乘机人公司" prop="flightCompany" class="flw50"> 
-           <el-input v-model="guestTicketAppFormFirst.flightCompany" ></el-input>
+           <el-input v-model="guestTicketAppFormFirst.flightCompany" :maxlength="50"></el-input>
       </el-form-item>
 
       <el-form-item label="联系电话" prop="contactPhone" class="flw50">
-          <el-input v-model="guestTicketAppFormFirst.contactPhone" ></el-input>
+          <el-input v-model="guestTicketAppFormFirst.contactPhone" :maxlength="11"></el-input>
       </el-form-item>
       <div class="clearBoth"></div>
       <el-form-item label="乘机人" prop="flightPerson" >
           <el-row>
             <el-col :span="17">
-              <el-input class="w380" placeholder="请输入" v-model="guestTicketAppFormFirst.flightPerson" >
+              <el-input class="w380" placeholder="请输入" v-model="guestTicketAppFormFirst.flightPerson" :maxlength="50">
             <el-select  class="w100" ref="flightPersonTypeSelect" v-model="guestTicketAppFormFirst.flightPersonTypeSelect" slot="append" placeholder="请选择">
             <el-option  v-for="flightPersonType in flightPersonTypes"  :label="flightPersonType.dictName" :value="flightPersonType.dictCode">
             </el-option>
@@ -30,7 +30,7 @@
       </el-form-item>
       <div class="clearBoth"></div>
       <el-form-item label="证件信息" prop="documentType" class="documentType">
-        <el-input placeholder="请输入内容" v-model="guestTicketAppFormFirst.documentType" class="input-with-select">
+        <el-input placeholder="请输入内容" v-model="guestTicketAppFormFirst.documentType" class="input-with-select" :maxlength="50">
           <el-select v-model="guestTicketAppFormFirst.documentTypeSelect" ref="documentTypeSelect" slot="prepend" placeholder="请选择" class="w130">
            <el-option v-for="documentType in documentTypes"  :label="documentType.dictName" :value="documentType.dictCode">
           </el-option>
@@ -60,12 +60,12 @@
 
         <el-form label-position="left" :model="guestTicketAppFormSecond" :rules="rules" ref="guestTicketAppFormSecond" label-width="128px" >
         <el-form-item label="起始站" prop="start"  class="flw50">
-          <el-input   v-model="guestTicketAppFormSecond.start">
+          <el-input   v-model="guestTicketAppFormSecond.start" :maxlength="25">
             
             </el-input>
           </el-form-item>
         <el-form-item label="目的站" prop="end" class="flw50">
-          <el-input   v-model="guestTicketAppFormSecond.end">
+          <el-input   v-model="guestTicketAppFormSecond.end" :maxlength="25">
             
           </el-input>
         </el-form-item>
@@ -91,7 +91,7 @@
         </el-form-item>
 
         <el-form-item label="航班号" prop="flightNumber" class="flw50">
-            <el-input placeholder="请输入内容" v-model="guestTicketAppFormSecond.flightNumber"  >
+            <el-input placeholder="请输入内容" v-model="guestTicketAppFormSecond.flightNumber"  :maxlength="20">
                
             </el-input>
         </el-form-item>
@@ -124,7 +124,7 @@
     </el-form>
     <el-form label-position="left" :model="guestTicketAppFormThird" :rules="rules" ref="guestTicketAppFormThird" label-width="128px" >
 
-       <el-form-item label="申请票种" prop="ticketType" class="flw50">
+       <el-form-item label="申请票种" prop="ticketType" class="flw50"  :maxlength="25">
             <el-input placeholder="请输入内容" v-model="guestTicketAppFormThird.ticketType"  >
                
             </el-input>
@@ -147,6 +147,7 @@ import PersonDialog from '../../../components/personDialog.component'
 export default {
   components: { PersonDialog },
   data() {
+
     var checkDate = (rule, value, callback) => {
       if (value) {
         callback();
@@ -202,7 +203,7 @@ export default {
    
       
       rules: {
-        contactPhone: [{ required: true, message: '请输入联系电话', trigger: 'blur' }],
+        contactPhone: [{ required: true, message: '请输入联系电话', trigger: 'blur' },{ validator: this.validatePhone, trigger: 'blur,change' }],
         ticketWays: [{ required: true, message: '请选择出票方式', trigger: 'blur' }],
         flightPerson: [{ required: true, message: '请输入乘机人', trigger: 'blur' }],
         flightPersonTypeSelect: [{ required: true, message: '请选择乘机人类型', trigger: 'blur' }],
