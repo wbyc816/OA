@@ -23,7 +23,7 @@
           <td><span>{{doc.currentUser}}</span></td>
           <td>
             <el-tooltip content="查看" placement="top" :enterable="false" effect="light">
-              <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
+              <router-link tag="i" class="link iconfont icon-eye" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
             </el-tooltip>
           </td>
         </tr>
@@ -40,7 +40,7 @@ import SearchOptions from '../../components/searchOptions.component'
 import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
 
-const tableTitle = ['', '公文名称', '分发人', '分发时间', '状态', '']
+const tableTitle = ['', '公文名称', '分发人', '分发时间', '状态', '操作']
 export default {
   components: {
     SearchOptions

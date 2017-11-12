@@ -18,7 +18,7 @@
         </el-form-item>
         <!-- 住宿 -->
         <el-form-item label="逗留城市" prop="city" class="clearBoth" key="city" v-if="feeTypeCode=='FIN0601'||feeTypeCode=='FIN0603'">
-          <el-input v-model="feeForm.city">
+          <el-input v-model="feeForm.city" :maxlength="25">
             <el-select v-model="feeForm.area" slot="prepend" style="width:130px" v-if="feeTypeCode=='FIN0601'" @change="areaChange">
               <el-option v-for="item in areaList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
             </el-select>
@@ -240,7 +240,7 @@
           <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
         </el-form-item>
         <el-form-item label="收款账户" prop="bankAccount" class="arrArea" label-width="100px" style="width:49%">
-          <el-input v-model="paymentForm.bankAccount"></el-input>
+          <el-input v-model="paymentForm.bankAccount" :maxlength="25"></el-input>
         </el-form-item>
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">

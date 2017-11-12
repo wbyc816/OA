@@ -20,6 +20,7 @@
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="fileList" :on-remove="handleRemove" ref="myUpload">
           <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
+        <p class="uploadInfo">单个附件不能超过10MB</br>最多上传5个附件</p>
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
         <el-col :span='21' class="docs" style="left: -6px;position: relative;">
@@ -99,7 +100,7 @@ export default {
       var html = '';
       if (this.ruleForm.path.length != 0) {
         this.ruleForm.path.forEach((node, index) => {
-          if (node.nodeName == 'sign') {
+          if (node.nodeName == 'sign'||'trans') {
             if (!node.children || node.children.length == 0) {
               html += node.typeIdName + ' ' + arrowHtml
             } else {
@@ -326,6 +327,9 @@ export default {
         }
         if (item.nodeName == 'sign') {
           nodeName = 'sign';
+          if(item.type==4){
+            nodeName='trans';
+          }
           item.children.forEach((child, i) => {
             _list.push({
               nodeId: index + 1 + '-' + i,

@@ -42,7 +42,7 @@
       </el-form-item>
       <el-form-item label="审批内容" class="textarea">
         <el-col :span='18'>
-          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8"></el-input>
+          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="500"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item label="约定离职日期" class="textarea" prop="planDate" v-if="currentView=='LZS'&&docDetail.isDept==1">
@@ -59,8 +59,8 @@
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updatePerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="dialogTableVisible" dialogType="radio"></person-dialog>
-    <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi"></person-dialog>
-    <dep-dialog :dialogVisible.sync="signDepVisible" dialogType="multi" @updateDep="updateSignDep"></dep-dialog>
+    <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :data="signPersons"></person-dialog>
+    <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep"></dep-dialog>
   </div>
 </template>
 <script>
@@ -85,13 +85,13 @@ export default {
   data() {
     var checkSign = (rule, value, callback) => {
       if (this.signType == 1 || this.signType == 2) {
-        if (value.length > 1) {
+        if (value.length != 0) {
           callback();
         } else {
           if (this.signType == 1) {
-            callback(new Error('请选择至少两个会签部门'))
+            callback(new Error('请选择至少一个会签部门'))
           } else {
-            callback(new Error('请选择至少两个会签接收人'))
+            callback(new Error('请选择至少一个会签接收人'))
 
           }
         }
@@ -124,11 +124,13 @@ export default {
       chooseDisable: false,
       workState: '',
       suggestHtml: '',
+      signPersons:[],
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7;
         }
       },
+      signDeps:[]
     }
   },
   computed: {
@@ -158,6 +160,9 @@ export default {
   methods: {
     closeSign(index) {
       this.ruleForm.sign.splice(index, 1);
+      if(this.signType==1){
+        this.signDeps.splice(index, 1)
+      }
     },
     handleReciver(vo) {
       this.reciver = vo;
@@ -175,7 +180,9 @@ export default {
       }
     },
     signTypeChange(val) {
-      this.ruleForm.sign = []
+      this.ruleForm.sign = [];
+      this.signDeps=[];
+      this.$refs.ruleForm.validateField('sign')
     },
     updatePerson(payLoad) {
       this.dialogTableVisible = false;
@@ -197,6 +204,7 @@ export default {
     updateSignPerson(payLoad) {
       this.signPersonVisible = false;
       this.ruleForm.sign = [];
+      this.signPersons=payLoad;
       payLoad.forEach(p => {
         this.ruleForm.sign.push({
           "signDeptMajorName": p.deptName,
@@ -211,6 +219,7 @@ export default {
     updateSignDep(payLoad) {
       this.signDepVisible = false;
       this.ruleForm.sign = [];
+      this.signDeps=payLoad;
       payLoad.forEach(p => {
         this.ruleForm.sign.push({
           "signDeptMajorName": p.name,
@@ -293,6 +302,14 @@ export default {
             if (arr[i - 1].nodeName != 'sign') {
               html += signFlag + ' ' + s.typeIdName + ' ';
             } else if (arr[i + 1].nodeName != 'sign') {
+              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+            } else {
+              html += s.typeIdName + ' ';
+            }
+          }else if (s.nodeName == 'trans') {
+            if (arr[i - 1].nodeName != 'trans') {
+              html += signFlag + ' ' + s.typeIdName + ' ';
+            } else if (arr[i + 1].nodeName != 'trans') {
               html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
             } else {
               html += s.typeIdName + ' ';

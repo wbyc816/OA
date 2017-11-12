@@ -111,7 +111,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <person-dialog @updatePerson="updateArchivePerson" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog>
+    <person-dialog @updatePerson="updateArchivePerson" :data="archiveForm.persons" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog>
   </div>
 </template>
 <script>
@@ -256,6 +256,14 @@ export default {
             if (arr[i - 1].nodeName != 'sign') {
               html += signFlag + ' ' + s.typeIdName + ' ';
             } else if (arr[i + 1].nodeName != 'sign') {
+              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+            } else {
+              html += s.typeIdName + ' ';
+            }
+          }else if (s.nodeName == 'trans') {
+            if (arr[i - 1].nodeName != 'trans') {
+              html += signFlag + ' ' + s.typeIdName + ' ';
+            } else if (arr[i + 1].nodeName != 'trans') {
               html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
             } else {
               html += s.typeIdName + ' ';

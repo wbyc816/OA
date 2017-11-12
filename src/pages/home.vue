@@ -6,7 +6,7 @@
         <el-card class="messageCenter">
           <p slot="header">消息中心</p>
           <el-row :gutter="10">
-            <el-col :span="8" :xs='12' v-for="msg in msgs">
+            <el-col :span="8" v-for="msg in msgs">
               <message-center :data="msg">
               </message-center>
             </el-col>
@@ -126,12 +126,12 @@
               <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
             </el-select>
             <el-input class="search">
-              <el-button slot="append" @click="searchFlight">搜索</el-button>
+              <el-button slot="append" @click="searchFlight"  :maxlength="10">搜索</el-button>
             </el-input>
           </div>
           <div class="route" v-show="flightStatusType=='route'">
-            <el-autocomplete class="inline-input" v-model="tripFrom.cityName" :fetch-suggestions="querySearch" placeholder="出发地" @select="handleFrom"></el-autocomplete>
-            <el-autocomplete class="inline-input" v-model="tripTo.cityName" :fetch-suggestions="querySearch" placeholder="目的地" @select="handleTo"></el-autocomplete>
+            <el-autocomplete class="inline-input" v-model="tripFrom.cityName" :fetch-suggestions="querySearch" placeholder="出发地" @select="handleFrom"  :maxlength="10"></el-autocomplete>
+            <el-autocomplete class="inline-input" v-model="tripTo.cityName" :fetch-suggestions="querySearch" placeholder="目的地" @select="handleTo"  :maxlength="10"></el-autocomplete>
             <el-button @click="searchFlight">搜索</el-button>
           </div>
         </el-card>
@@ -559,20 +559,16 @@ $sub:#1465C0;
         }
       }
     }
-    @media (max-width: 768px) {
-      & {
-        margin-bottom: 1px;
-      }
-    }
+    
   }
-  .wrapRow {
-    @media (max-width: 1200px) {
-      margin:0!important;
-      .el-col:first-child {
-        padding: 0!important
-      }
-    }
-  }
+  // .wrapRow {
+  //   @media (max-width: 1200px) {
+  //     margin:0!important;
+  //     .el-col:first-child {
+  //       padding: 0!important
+  //     }
+  //   }
+  // }
   .news {
     padding: 0;
     .el-card__header {
@@ -823,27 +819,27 @@ $sub:#1465C0;
         left: 30px;
       }
     }
-    @media (max-width: 768px) {
-      .el-col {
-        min-height: 0;
-        .bottom {
-          position: relative;
-        }
-      }
-      .daily {
-        padding: 10px 0 0;
-        .bottom div {
-          margin-left: 0;
-        }
-      }
-      .crew {
-        min-height: 200px;
-        padding: 20px 0 0;
-        &>div:last-child {
-          right: 30px;
-        }
-      }
-    }
+    // @media (max-width: 768px) {
+    //   .el-col {
+    //     min-height: 0;
+    //     .bottom {
+    //       position: relative;
+    //     }
+    //   }
+    //   .daily {
+    //     padding: 10px 0 0;
+    //     .bottom div {
+    //       margin-left: 0;
+    //     }
+    //   }
+    //   .crew {
+    //     min-height: 200px;
+    //     padding: 20px 0 0;
+    //     &>div:last-child {
+    //       right: 30px;
+    //     }
+    //   }
+    // }
   }
   .shareBox {
     .el-card__body {
@@ -1083,11 +1079,11 @@ $sub:#1465C0;
               display: table-cell;
             }
           }
-          @media (max-width:768px) {
-            & {
-              display: block;
-            }
-          }
+          // @media (max-width:768px) {
+          //   & {
+          //     display: block;
+          //   }
+          // }
         }
       }
     }
@@ -1199,15 +1195,15 @@ $sub:#1465C0;
             height: 45px;
           }
         }
-        @media (max-width:1200px) {
-          & {
-            float: initial;
-            margin-top: 10px;
-            .el-radio-button:first-child {
-              margin-left: 0;
-            }
-          }
-        }
+        // @media (max-width:1200px) {
+        //   & {
+        //     float: initial;
+        //     margin-top: 10px;
+        //     .el-radio-button:first-child {
+        //       margin-left: 0;
+        //     }
+        //   }
+        // }
       }
     }
     .flightNo {

@@ -97,8 +97,7 @@ body {
   font-size: 14px;
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   background: #EEEEEE;
-  color: #393939;
-  // padding-right: 0!important;
+  color: #393939; // padding-right: 0!important;
   &::-webkit-scrollbar-track {
     border-radius: 10px;
     background-color: transparent;
@@ -441,13 +440,13 @@ ul {
 }
 
 .myDialog {
-  
-    overflow-y: hidden;
+
+  overflow-y: hidden;
   .el-dialog--large {
     display: table;
     width: 1200px;
-    top:50%!important;
-    transform:translate(-50%,-50%);
+    top: 50%!important;
+    transform: translate(-50%, -50%);
     border-radius: 0;
   }
   .el-dialog__body {
@@ -850,8 +849,8 @@ ul {
     &.pr70 {
       padding-right: 70px;
     }
-    &.opeartBox{
-      width:100%;
+    &.opeartBox {
+      width: 100%;
     }
   }
   .el-form-item__label {
@@ -1028,13 +1027,12 @@ ul {
     .link {
       color: $main;
       cursor: pointer;
-      font-size: 22px;
-      // display: none;
-      padding-right:5px;
+      font-size: 22px; // display: none;
+      padding-right: 10px;
     }
-    tr:hover{
-      .link{
-        display:inline-block;
+    tr:hover {
+      .link {
+        display: inline-block;
       }
     }
     td {
@@ -1086,8 +1084,8 @@ ul {
         vertical-align: middle;
         color: #fff;
       }
-      &.linkTitle{
-        cursor:pointer;
+      &.linkTitle {
+        cursor: pointer;
       }
       .title {
         display: inline-block;
@@ -1126,6 +1124,7 @@ ul {
     background: #F7F7F7;
   }
 }
+
 .commonApp {
   .deptArea,
   .arrArea {
@@ -1163,6 +1162,15 @@ ul {
       vertical-align: sub;
       margin-right: 3px;
     }
+  }
+  .uploadInfo {
+    position: absolute;
+    left: 101%;
+    font-size: 13px;
+    color: #9a9a9a;
+    line-height: 15px;
+    top: 7px;
+    white-space: nowrap;
   }
   .submitButton {
     height: 46px;

@@ -1,44 +1,39 @@
 <template>
   <div class="budgetApp">
     <el-form label-position="left" :model="budgetForm" :rules="rules" ref="budgetForm" label-width="128px">
-
       <el-form-item label="预算年份" prop="year">
         <el-input v-model="budgetForm.year" class="budgetYear" :readonly="true"></el-input>
       </el-form-item>
-
       <el-form-item label="预算机构/科目" prop="budgetDept">
-        <div >
-           <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept"  @active-item-change="handleItemChange" @change="changeDept"  popper-class="myCascader" class="budgetDept" ref="budgetDept"></el-cascader>
+        <div>
+          <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept" @active-item-change="handleItemChange" @change="changeDept" popper-class="myCascader" class="budgetDept" ref="budgetDept"></el-cascader>
         </div>
       </el-form-item>
-
-       <div class="change_data" v-show="showData==1">
-         <ul>
-           <li>年度预算{{yearBudget}}元</li>
-           <li>可用预算{{useBudget}}元</li>
-           <li>预算执行比例{{execRateStr}}</li>
-         </ul>
-        </div>
-       </el-form-item>
-     
+      <div class="change_data" v-show="showData==1">
+        <ul>
+          <li>年度预算{{yearBudget}}元</li>
+          <li>可用预算{{useBudget}}元</li>
+          <li>预算执行比例{{execRateStr}}</li>
+        </ul>
+      </div>
+      </el-form-item>
       <el-form-item label="申报金额" prop="budgetMoney" class="budgetMoney">
         <el-col :span="12" class="clearPadding input">
-           <el-input  ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
-           <template slot="append">元</template>
-           </el-input>
+          <el-input ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
+            <template slot="append">元</template>
+          </el-input>
         </el-col>
         <el-col :span="5" class="clearPadding btn">
           <el-button @click='addBudget' type="primary" class="addbutton1"><i class="el-icon-plus"></i> 添加</el-button>
         </el-col>
       </el-form-item>
     </el-form>
-
-    <el-table :data="budgetTable" :stripe="true" highlight-current-row   class="appTable">
+    <el-table :data="budgetTable" :stripe="true" highlight-current-row class="appTable">
       <el-table-column type="index" label=" " width="40"></el-table-column>
-      <el-table-column property="budgetDept" label="预算机构" ></el-table-column>
-      <el-table-column property="useBudget" label="可用额度（元）" ></el-table-column>
+      <el-table-column property="budgetDept" label="预算机构"></el-table-column>
+      <el-table-column property="useBudget" label="可用额度（元）"></el-table-column>
       <el-table-column property="execRateStr" label="执行比例" width="100"></el-table-column>
-      <el-table-column property="budgetMoney" label="申报额度（元）" ></el-table-column>
+      <el-table-column property="budgetMoney" label="申报额度（元）"></el-table-column>
       <el-table-column label="操作" width="55">
         <template scope="scope">
           <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
@@ -47,16 +42,13 @@
       </el-table-column>
     </el-table>
     <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
-    
-    <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import PersonDialog from '../../../components/personDialog.component'
-  import util from '../../../common/util'
+import util from '../../../common/util'
 export default {
-  components: { PersonDialog },
+  components: {},
   data() {
     var checkDate = (rule, value, callback) => {
       if (value) {
@@ -73,25 +65,24 @@ export default {
       }
     };
     return {
-      signDialogVisible: false,
-      bookTypes:[],
-      budgetDate:{},
-      showData:0,
-      yearBudget:0,
-      useBudget:0,
-      execRateStr:"0%",
+      bookTypes: [],
+      budgetDate: {},
+      showData: 0,
+      yearBudget: 0,
+      useBudget: 0,
+      execRateStr: "0%",
       budgetForm: {
         isBookFlight: '1',
         deptArea: '',
         arrArea: '',
         bookType: '',
         timeRange: "",
-        year:new Date(),
+        year: new Date(),
         budgetMoney: '',
         person: [],
         budgetDept: [],
-        budgetDate:{},
-      
+        budgetDate: {},
+
       },
       rules: {
         // isBookFlight: [{ required: true, trigger: 'blur' }],
@@ -100,7 +91,7 @@ export default {
         // arrArea: [{ required: true, message: '请输入目的地', trigger: 'blur' }],
         budgetMoney: [{ required: true, message: '请输入申报金额', trigger: 'blur' }],
         // year: [{  required: true, validator: checkDate, trigger: 'blur' }],
-        budgetDept: [{ type: 'array', required: true, message: '请输入预算机构/科目',  trigger: 'blur' }],
+        budgetDept: [{ type: 'array', required: true, message: '请输入预算机构/科目', trigger: 'blur' }],
       },
       budgetTable: [],
       pickerOptions0: {
@@ -119,7 +110,7 @@ export default {
     }
   },
   computed: {
-       totalMoney() {
+    totalMoney() {
       var num = 0;
       if (this.budgetTable.length != 0) {
         this.budgetTable.forEach(b => {
@@ -140,109 +131,104 @@ export default {
     this.getBudgetDeptList();
   },
   methods: {
-     saveForm() {
+    saveForm() {
       this.$emit('saveMiddle', JSON.stringify(this.budgetTable));
     },
     getDraft(obj) {
-      this.budgetTable=obj;
+      this.budgetTable = obj;
     },
     addBudget() {
       this.$refs.budgetForm.validate((valid) => {
         if (valid) {
-          var temp={};
-          temp.budgetDept=this.$refs.budgetDept.currentLabels[0]+"/"+this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length-1];
-          temp.budgetMoney=this.budgetForm.budgetMoney;
-          temp.useBudget=this.useBudget;
-          temp.execRateStr=this.execRateStr;
-          temp.budgetDeptId=this.budgetForm.budgetDept[0];
-          temp.budgetDeptName=this.$refs.budgetDept.currentLabels[0];
-          temp.budgetItemId=this.budgetForm.budgetDept[this.budgetForm.budgetDept.length-1];
-          temp.budgetItemName=this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length-1];
-          temp.budgetYear=this.budgetForm.year;
-         
+          var temp = {};
+          temp.budgetDept = this.$refs.budgetDept.currentLabels[0] + "/" + this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
+          temp.budgetMoney = this.budgetForm.budgetMoney;
+          temp.useBudget = this.useBudget;
+          temp.execRateStr = this.execRateStr;
+          temp.budgetDeptId = this.budgetForm.budgetDept[0];
+          temp.budgetDeptName = this.$refs.budgetDept.currentLabels[0];
+          temp.budgetItemId = this.budgetForm.budgetDept[this.budgetForm.budgetDept.length - 1];
+          temp.budgetItemName = this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
+          temp.budgetYear = this.budgetForm.year;
+
           this.budgetTable.push(temp);
 
-          this.isDisable=true;
+          this.isDisable = true;
           // this.budgetForm.year="";
-          this.$refs.budgetMoney.currentValue="";
+          this.$refs.budgetMoney.currentValue = "";
           this.$refs.budgetForm.resetFields();
-          this.showData=0;
+          this.showData = 0;
         } else {
           return false;
         }
       });
     },
-      deleteRow(index) {
-      this.budgetTable.splice(index,1)
+    deleteRow(index) {
+      this.budgetTable.splice(index, 1)
     },
     // fomatFloat(src, pos) {
     //   return Math.round(src * Math.pow(10, pos)) / Math.pow(10, pos);
     // },
-    checkEmpty(){
+    checkEmpty() {
       // console.log(this.budgetTable.length);
-      if(this.budgetTable.length!=0){
-        this.$emit('submitMiddle',{budgetTable:this.budgetTable});
-      }else{
+      if (this.budgetTable.length != 0) {
+        this.$emit('submitMiddle', { budgetTable: this.budgetTable });
+      } else {
         this.$message.warning('请添加预算')
-        this.$emit('submitMiddle',false);
+        this.$emit('submitMiddle', false);
       }
     },
-    updatePerson(list) {
-      // console.log(list)
-      this.budgetForm.person = list
-      this.signDialogVisible = false;
-    },
-    saveForm(){
+    saveForm() {
       // console.log(this.vehicleForm)
-      var param= {"budgetTable":this.budgetTable}
-      var params=JSON.stringify(param);
-      this.$emit('saveMiddle',params);
+      var param = { "budgetTable": this.budgetTable }
+      var params = JSON.stringify(param);
+      this.$emit('saveMiddle', params);
     },
-    getDraft(obj){
-      this.budgetTable=obj.budgetTable;
+    getDraft(obj) {
+      this.budgetTable = obj.budgetTable;
 
     },
     submitForm() {
-        console.log(this.budgetTable);
-        if (this.budgetTable.length!=0) {
-          var dep=this.getBudgetDep();
-          this.params = {
-              // "year":this.budgetForm.year,//预算年份
-              // "deptArea": this.budgetForm.budgetDept, //预算科目
-              // "budgetMoney": this.budgetForm.budgetMoney, //申报金额
-              
-              // "budgetItemCode": dep.budgetItemCode, //报销科目code
-              // "budgetItemName": dep.budgetItemName, //报销科目名称
-              // "budgetDeptCode": dep.budgetDeptCode, //报销部门
-              // "budgetDeptName": dep.budgetDeptName, //报销部门名称
-              "finBudget":{
-                "totalMoney":this.totalMoney,
-                "finBudgetItems": this.budgetTable.map(function(tabel) {
-                  return {
-                    "budgetDeptId": tabel.budgetDeptId, //预算部门id
-                    "budgetDeptName": tabel.budgetDeptName, //预算部门名字
-                    "budgetItemName": tabel.budgetItemName, //-预算科目名字
-                    "budgetItemId": tabel.budgetItemId, //预算科目id
-                    "money":tabel.budgetMoney,//预算钱数
-                    "budgetYear": tabel.budgetYear, //预算年数
-                  }
-                })
+      console.log(this.budgetTable);
+      if (this.budgetTable.length != 0) {
+        var dep = this.getBudgetDep();
+        this.params = {
+          // "year":this.budgetForm.year,//预算年份
+          // "deptArea": this.budgetForm.budgetDept, //预算科目
+          // "budgetMoney": this.budgetForm.budgetMoney, //申报金额
+
+          // "budgetItemCode": dep.budgetItemCode, //报销科目code
+          // "budgetItemName": dep.budgetItemName, //报销科目名称
+          // "budgetDeptCode": dep.budgetDeptCode, //报销部门
+          // "budgetDeptName": dep.budgetDeptName, //报销部门名称
+          "finBudget": {
+            "totalMoney": this.totalMoney,
+            "finBudgetItems": this.budgetTable.map(function(tabel) {
+              return {
+                "budgetDeptId": tabel.budgetDeptId, //预算部门id
+                "budgetDeptName": tabel.budgetDeptName, //预算部门名字
+                "budgetItemName": tabel.budgetItemName, //-预算科目名字
+                "budgetItemId": tabel.budgetItemId, //预算科目id
+                "money": tabel.budgetMoney, //预算钱数
+                "budgetYear": tabel.budgetYear, //预算年数
               }
-
-              
-
-
-
-
-            
+            })
           }
-          this.$emit('submitMiddle', this.params);
-        } else {
-          this.$message.warning('请检查填写字段')
-          this.$emit('submitMiddle', false);
-          return false;
+
+
+
+
+
+
+
         }
-      
+        this.$emit('submitMiddle', this.params);
+      } else {
+        this.$message.warning('请检查填写字段')
+        this.$emit('submitMiddle', false);
+        return false;
+      }
+
     },
     closePerson(index) {
       this.budgetForm.person.splice(index, 1);
@@ -258,19 +244,18 @@ export default {
       }
     },
     getBudgetDeptList() {
-      if(this.budgetForm.year){
-      this.budgetForm.year=util.formatTime(this.budgetForm.year.getTime(), 'yyyy');
-      this.showData="0";
-      this.$http.post('/doc/getItemTreeListofYear',{
-        year:this.budgetForm.year,
-      })
-        .then(res => {
-          if (res.status == 0) {
-            res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
-            this.budgetDeptList = res.data
-          } else {
-          }
-        }, res => {})
+      if (this.budgetForm.year) {
+        this.budgetForm.year = util.formatTime(this.budgetForm.year.getTime(), 'yyyy');
+        this.showData = "0";
+        this.$http.post('/doc/getItemTreeListofYear', {
+            year: this.budgetForm.year,
+          })
+          .then(res => {
+            if (res.status == 0) {
+              res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
+              this.budgetDeptList = res.data
+            } else {}
+          }, res => {})
       }
     },
     handleItemChange(val) {
@@ -294,45 +279,45 @@ export default {
           })
       }
     },
-    getBookType(){
-      this.$http.post('/api/getDict',{dictCode:'ADM05'})
-      .then(res=>{
-        if(res.status==0){
-          this.bookTypes=res.data;
-          this.budgetForm.bookType=this.bookTypes[0].dictCode
-        }
-      })
+    getBookType() {
+      this.$http.post('/api/getDict', { dictCode: 'ADM05' })
+        .then(res => {
+          if (res.status == 0) {
+            this.bookTypes = res.data;
+            this.budgetForm.bookType = this.bookTypes[0].dictCode
+          }
+        })
     },
-    getBudgetDep(){
-      var len=this.budgetForm.budgetDept.length;
-      var temp=this.budgetDeptList;
-      for(var i=0;i<len;i++){
-        temp=temp.find(dep=>dep.budgetItemCode==this.budgetForm.budgetDept[i]);
-        if(temp.items&&temp.items.length!=0){
-          temp=temp.items;
+    getBudgetDep() {
+      var len = this.budgetForm.budgetDept.length;
+      var temp = this.budgetDeptList;
+      for (var i = 0; i < len; i++) {
+        temp = temp.find(dep => dep.budgetItemCode == this.budgetForm.budgetDept[i]);
+        if (temp.items && temp.items.length != 0) {
+          temp = temp.items;
         }
       }
       return temp;
     },
-    blurInput(event){
-      var temp=event.target.value.split('.');
-      if(temp.length==2&&(temp[1]==undefined||temp[1]==''||temp[1]==null)){
+    blurInput(event) {
+      var temp = event.target.value.split('.');
+      if (temp.length == 2 && (temp[1] == undefined || temp[1] == '' || temp[1] == null)) {
         this.budgetForm.budgetMoney = temp[0];
         this.$refs.budgetMoney.setCurrentValue(temp[0]);
       }
     },
 
-    changeDept(){
-      this.$http.post('/doc/getExecStatisofItemId', { 
-        budgetItemCode:this.budgetForm.budgetDept[this.budgetForm.budgetDept.length-1],
-        budgetYear:this.budgetForm.year,
-         })
+    changeDept() {
+      this.$http.post('/doc/getExecStatisofItemId', {
+          budgetItemCode: this.budgetForm.budgetDept[this.budgetForm.budgetDept.length - 1],
+          budgetYear: this.budgetForm.year,
+        })
         .then(res => {
           if (res.status == 0) {
-          this.showData=1;
-          this.execRateStr=res.data.execRateStr;
-          this.yearBudget=res.data.budgetTotal;
-          this.useBudget=res.data.budgetRemain;
+            this.showData = 1;
+            this.execRateStr = res.data.execRateStr;
+            this.yearBudget = res.data.budgetTotal;
+            this.useBudget = res.data.budgetRemain;
           }
         })
     },
@@ -343,32 +328,33 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 
- .change_data{
-    width:calc(100% - 18px);
-    height:54px;
-    margin:0px 0 20px 18px;
-    background:#F7F7F7;
-    color:#0460AE;
+.change_data {
+  width: calc(100% - 18px);
+  height: 54px;
+  margin: 0px 0 20px 18px;
+  background: #F7F7F7;
+  color: #0460AE;
 
-    ul li{
-      font-size:15px;
-      border:1px solid transparent;
-      width:33.3%;
-      float:left;
-      height:54px;
-      line-height:54px;
-      text-align:center;
-    }
-    ul li:first-child{
-       border-right:1px solid #D5DADF;
-    }
-     ul li:last-child{
-       border-left:1px solid #D5DADF;
-    }
+  ul li {
+    font-size: 15px;
+    border: 1px solid transparent;
+    width: 33.3%;
+    float: left;
+    height: 54px;
+    line-height: 54px;
+    text-align: center;
   }
-  .clearPadding{
-      padding:0 !important;
-    }
+  ul li:first-child {
+    border-right: 1px solid #D5DADF;
+  }
+  ul li:last-child {
+    border-left: 1px solid #D5DADF;
+  }
+}
+
+.clearPadding {
+  padding: 0 !important;
+}
 
 .budgetApp {
   .el-input {
@@ -379,37 +365,36 @@ $main:#0460AE;
     font-size: 15px;
     line-height: 38px;
     padding-right: 30px;
-    margin:-20px 0 30px 18px;
+    margin: -20px 0 30px 18px;
     border: 1px solid #D5DADF;
     border-top: none;
     span {
       color: $main;
     }
-    }
-  .budgetMoney{
-    .input{
-      width:252px
-    }
-    .btn{
-      margin-left:5px;
-    }
-    
   }
-  .budgetYear .el-input__inner{
-    border:0px solid red;
+  .budgetMoney {
+    .input {
+      width: 252px
+    }
+    .btn {
+      margin-left: 5px;
+    }
   }
-  
+  .budgetYear .el-input__inner {
+    border: 0px solid red;
+  }
 
 
-  .appTable{
+
+  .appTable {
     width: calc(100% - 18px);
-    margin:0 0 20px 18px;
+    margin: 0 0 20px 18px;
   }
-  .year{
-    width:252px;
+  .year {
+    width: 252px;
   }
-  .budgetDept{
-     width:100%;
+  .budgetDept {
+    width: 100%;
   }
 
   .reciverWrap {
@@ -460,7 +445,6 @@ $main:#0460AE;
       }
     }
   }
-
 }
 
 </style>

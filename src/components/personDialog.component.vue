@@ -9,7 +9,7 @@
           <div class="topSearch clearfix">
             <p class="tips">选择{{selText}}<span v-show="dialogType=='radio'">请单击姓名选择</span></p>
             <el-input class="search" v-model="name" @keyup.enter.native="search">
-              <el-button slot="append" @click="search">搜索</el-button>
+              <el-button slot="append" @click="search" :maxlength="20">搜索</el-button>
             </el-input>
           </div>
           <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
@@ -58,6 +58,7 @@ export default {
       initialReady: true,
       searchButton: false,
       personVisible: false,
+      initData:true
     }
   },
   props: {
@@ -81,17 +82,15 @@ export default {
       type: String,
       default: '收件人'
     },
-    data:{
-      type: Array,
-      default:function () {
-        return []
-      }
+    data: {
+      type: [Array, Object, String]
     }
   },
   watch: {
     'visible': function(newVal) {
       this.personVisible = newVal;
       if (newVal) {
+        this.initData=true;
         if (this.admin !== '') {
           if (this.admin == '0') {
             this.$store.dispatch('getDepById');
@@ -116,11 +115,16 @@ export default {
       }
     },
     searchRes(newVal) {
-        if(this.$refs.multipleTable&&this.dialogType=='multi'&&this.initialReady){
-          this.initialReady=false;
-          this.$refs.multipleTable.store.states.selection=this.data;
-          this.multipleSelection=this.data;
+      if (this.$refs.multipleTable) {
+        if (this.dialogType == 'multi'&&this.initData) {
+          this.initData=false;
+          this.$refs.multipleTable.store.states.selection = this.clone(this.data);
+          this.multipleSelection = this.clone(this.data);
         }
+        // else{
+        //   this.selPerson=this.clone(this.data);
+        // }
+      }
     }
   },
   computed: {
@@ -198,7 +202,7 @@ export default {
       }
     },
     rowKey(row) {
-      return row.empId
+      return row.empId+row.deptId+row.jobtitle
     },
     submitPerson() {
       if (this.dialogType == 'radio') {
@@ -224,7 +228,7 @@ export default {
       } else {
         if (this.multipleSelection.length != 0) {
 
-          this.$emit('updatePerson', this.multipleSelection);
+          this.$emit('updatePerson', this.clone(this.multipleSelection));
           this.$emit('update:visible', false)
         } else {
           this.$message({
@@ -236,7 +240,6 @@ export default {
 
     },
     handleSelectionChange(val) {
-      console.log(this.$refs.multipleTable)
       this.multipleSelection = val;
     },
     reset1() {

@@ -1,28 +1,23 @@
 <template>
   <div class="loanApp">
-    <el-form label-position="left" :model="loanAppForm" :rules="rules" ref="loanAppForm" label-width="128px" >
-       
+    <el-form label-position="left" :model="loanAppForm" :rules="rules" ref="loanAppForm" label-width="128px" >      
       <el-form-item label="申请金额" prop="appMoney" class="flw50"> 
           <div>
             <el-input   v-model="loanAppForm.appMoney">
               <el-select v-model="loanAppForm.selectMoney" slot="prepend" placeholder="请选择" class="selectMoney" @change="chooseCurrency" ref="accurency">
-                <el-option v-for="currency in currencys" :label="currency.currencyName" :value="currency.currencyCode"></el-option>
-                
+                <el-option v-for="currency in currencys" :label="currency.currencyName" :value="currency.currencyCode"></el-option>               
               </el-select>
             <template slot="append">元</template>
             </el-input>
           </div>
         </el-form-item>
-
-
-
       <el-form-item label="付款方式" prop="choosePayType" class="flw50" >
         <el-select v-model="loanAppForm.choosePayType" @change="isCashType"  ref="paymentMethod">
           <el-option v-for="payType in payTypes"  :label="payType.dictName" :value="payType.dictCode">
           </el-option>
         </el-select>
       </el-form-item>
-      <div v-show="collectionInformation==1">
+      <div v-if="collectionInformation==1">
       <el-form-item label="收款人" prop="payee" class="flw50" >
         <el-autocomplete
            v-model="loanAppForm.payee"
@@ -35,7 +30,7 @@
       </el-form-item>
 
       <el-form-item label="收款账户" prop="bankAccount" class="flw50" >
-       <el-input v-model="loanAppForm.bankAccount" ></el-input>
+       <el-input v-model="loanAppForm.bankAccount" :maxlength="25"></el-input>
       </el-form-item>
       </div>
     </el-form>

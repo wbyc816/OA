@@ -18,11 +18,12 @@
         </el-cascader>
       </el-form-item>
       <el-form-item label="来文文号" prop="wordNo">
-        <el-input v-model="checkInForm.wordNo">
+        <el-input v-model="checkInForm.wordNo" :maxlength="25">
         </el-input>
       </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
         <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :on-remove="handleRemove" :before-upload="beforeUpload">
+        <!-- <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove" :disabled="noMore"> -->
           <el-button size="small" type="primary" :disabled="checkInForm.wordFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -58,9 +59,8 @@ export default {
         label: 'name',
         children: 'catalogues'
       },
-      wordFileId: '',
       sucessFlag: 0,
-      noMore: false
+      noMore: false,
     }
   },
   computed: {
@@ -79,7 +79,7 @@ export default {
       this.$emit('saveMiddle', JSON.stringify(this.checkInForm));
     },
     getDraft(obj) {
-      this.combineObj(this.checkInForm, obj,['wordFileId']);
+      this.combineObj(this.checkInForm, obj, ['wordFileId']);
     },
     handleAvatarSuccess(res, file) {
       this.checkInForm.wordFileId = res.data;

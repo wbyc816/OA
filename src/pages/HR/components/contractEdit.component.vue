@@ -12,10 +12,10 @@
           <el-button type="primary" icon="close" size="small" @click="delContract(index)">删除</el-button>
         </div>
         <el-form-item label="合同类型" :prop="'content.'+index+'.type'" :rules="{required: true, message: '合同类型不能为空', trigger: 'blur'}">
-          <el-input v-model="contract.type"></el-input>
+          <el-input v-model="contract.type" :maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="合同主体" :prop="'content.'+index+'.subject'" :rules="{required: true, message: '合同主体不能为空', trigger: 'blur'}">
-          <el-input v-model="contract.subject"></el-input>
+          <el-input v-model="contract.subject" :maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="合同开始日期" :prop="'content.'+index+'.startDate'" :rules="{type:'date',required: true, message: '合同开始日期不能为空', trigger: 'blur'}">
           <el-date-picker type="date" v-model="contract.startDate" style="width: 100%;" :editable="false" :clearable="false" :picker-options="dateOptions[index].start"></el-date-picker>

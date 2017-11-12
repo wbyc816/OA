@@ -5,7 +5,7 @@
         <span>运行生产</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in production" :key="item.toString()">
+        <el-col :span="6" v-for="item in production" :key="item.toString()">
           <doc-list :data='item' :fontSize="fontSize"></doc-list>
         </el-col>
       </el-row>
@@ -15,7 +15,7 @@
         <span>营销服务</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in saleService" :key="item.toString()">
+        <el-col :span="6" v-for="item in saleService" :key="item.toString()">
           <doc-list :data='item' :fontSize="fontSize"></doc-list>
         </el-col>
       </el-row>
@@ -25,7 +25,7 @@
         <span>综合管理</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in management" :key="item.toString()">
+        <el-col :span="6" v-for="item in management" :key="item.toString()">
           <doc-list :data='item' :fontSize="fontSize"></doc-list>
         </el-col>
       </el-row>
@@ -35,7 +35,7 @@
         <span>员工服务</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in staffService" :key="item.toString()">
+        <el-col :span="6" v-for="item in staffService" :key="item.toString()">
           <doc-list :data='item' :fontSize="fontSize"></doc-list>
         </el-col>
       </el-row>

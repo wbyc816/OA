@@ -22,7 +22,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="工作交接情况" prop="workHandover" class="clearBoth">
-        <el-input type="textarea" :rows="8" resize='none' v-model="vacationForm.workHandover"></el-input>
+        <el-input type="textarea" :rows="8" resize='none' v-model="vacationForm.workHandover" :maxlength="100"></el-input>
       </el-form-item>
     </el-form>
   </div>

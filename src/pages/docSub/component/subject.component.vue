@@ -158,7 +158,7 @@ export default {
       });
     },
     setDefault(person) {
-      this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId, taskDeptId: this.userInfo.deptId, reciId: person.reciUserId, reciDeptId: person.reciDeptMajorId })
+      this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId, taskDeptId: this.userInfo.deptId, reciId: person.reciUserId, reciDeptId: person.reciDeptId })
         .then(res => {
           if (res.status == 0) {
             this.$message.success('设置默认收件人成功！');

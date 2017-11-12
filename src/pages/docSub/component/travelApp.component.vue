@@ -5,11 +5,11 @@
         <el-date-picker v-model="travelForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
       <el-form-item label="出发地" prop="deptArea" class="deptArea">
-        <el-input v-model="travelForm.deptArea" :maxlength="10">
+        <el-input v-model="travelForm.deptArea" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="目的地" prop="arrArea" class="arrArea">
-        <el-input v-model="travelForm.arrArea" :maxlength="10">
+        <el-input v-model="travelForm.arrArea" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="出差人列表" prop="person" class="reciverWrap">

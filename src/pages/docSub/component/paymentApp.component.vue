@@ -89,6 +89,10 @@
         <el-input v-model="paymentForm.paymentOthers">
         </el-input>
       </el-form-item>
+      <el-form-item label="账号" class="arrArea" v-if="paymentForm.payMthodCode=='FIN0101'&&supplierInfo.accountCode" label-width="100px">
+        <el-input v-model="supplierInfo.accountCode" readonly>
+        </el-input>
+      </el-form-item>
       <el-form-item label="合同" prop="contractAttach" class="clearBoth">
         <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:1}" :on-success="handleContractSuccess" :on-error="handleContractError" ref="contractUpload" :on-remove="handleContractRemove" :before-upload="beforeContractUpload">
           <el-button size="small" type="primary">上传合同<i class="el-icon-upload el-icon--right"></i></el-button>

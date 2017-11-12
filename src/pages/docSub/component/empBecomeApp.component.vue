@@ -12,7 +12,7 @@
     </div>
     <el-form label-position="left" :model="becomeForm" :rules="rules" ref="becomeForm" label-width="128px">
       <el-form-item label="试用期自我评价" prop="evaluation">
-        <el-input type="textarea" :rows="8" resize='none' v-model="becomeForm.evaluation"></el-input>
+        <el-input type="textarea" :rows="8" resize='none' v-model="becomeForm.evaluation" :maxlength="100"></el-input>
       </el-form-item>
     </el-form>
   </div>

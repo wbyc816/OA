@@ -5,7 +5,7 @@
         <el-date-picker v-model="injuryForm.injuryDate" type="date" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
       </el-form-item>
       <el-form-item label="医院" prop="hospital">
-        <el-input v-model="injuryForm.hospital" >
+        <el-input v-model="injuryForm.hospital"  :maxlength="50">
         </el-input>
       </el-form-item>
     </el-form>

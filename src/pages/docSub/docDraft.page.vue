@@ -20,7 +20,7 @@
           <td>{{doc.taskTime}}</td>
           <td><span>{{doc.currentUser}}</span></td>
           <td>
-            <el-tooltip content="查看" placement="top" :enterable="false" effect="light">
+            <el-tooltip content="编辑" placement="top" :enterable="false" effect="light">
               <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docCommonApp/'+doc.docTypeCode,query:{id:doc.id}}"></router-link>
             </el-tooltip>
             <el-tooltip content="删除" placement="top" :enterable="false" effect="light">
@@ -40,7 +40,7 @@
 import SearchOptions from '../../components/searchOptions.component'
 import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
-const tableTitle = ['', '公文名称', '保存时间', '状态', '']
+const tableTitle = ['', '公文名称', '保存时间', '状态', '操作']
 
 
 export default {

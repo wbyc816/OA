@@ -22,11 +22,11 @@
         <el-col :span="12" v-for="(sign,index) in submitInfo">
           <div class="adviceBox">
             <span class="title">{{sign.taskName}}</span>
-            <el-input v-model="sign.signContent" type="textarea" resize="none" :rows="sign.isTaskNameOther==1?6:3"></el-input>
+            <el-input v-model="sign.signContent" type="textarea" resize="none" :rows="sign.isTaskNameOther==1?6:3" :maxlength="100"></el-input>
           </div>
           <div class="adviceBox">
             <span class="title">其他</span>
-            <el-input v-model="sign.remark" :readonly="sign.isView==0"></el-input>
+            <el-input v-model="sign.remark" :readonly="sign.isView==0" :maxlength="100"></el-input>
           </div>
           <div class="adviceBox" v-if="info.doc.isOwnDeptSign==1&&sign.isTaskNameOther!=1">
             <span class="title">交接人</span>
@@ -36,7 +36,7 @@
         <el-col :span='24' v-if="leaderAdvice">
           <div class="adviceBox">
             <span class="title">部门总经理意见</span>
-            <el-input v-model="leaderAdvice.signContent" type="textarea" resize="none" :rows="3"></el-input>
+            <el-input v-model="leaderAdvice.signContent" type="textarea" resize="none" :rows="3" :maxlength="100"></el-input>
           </div>
         </el-col>
       </el-row>

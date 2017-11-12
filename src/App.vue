@@ -3,6 +3,7 @@
     <div class="topBar" :class="{'active':scrollBanner}">
       <div class="topNavbar">
         <div class="container">
+          <span class="greetText">{{greetText}}好，欢迎您！</span>
           <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
           <a><i class="iconfont icon-1"></i> 简体</a>
           <a href="#/set"><i class="iconfont icon-shezhi"></i> 设置</a>
@@ -118,6 +119,10 @@ export default {
     }
   },
   computed: {
+    greetText:function(){
+      var now=new Date()
+      return now.getHours()<12?'上午':'下午'
+    },
     ...mapGetters([
       'userInfo'
     ])
@@ -345,6 +350,9 @@ $brown: #985D55;
 .topNavbar {
   background: #1465C0;
   text-align: right;
+  .greetText{
+    color: #fff;
+  }
   a {
     color: #fff;
     line-height: 25px;

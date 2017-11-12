@@ -1,7 +1,7 @@
 <template>
   <div id='doc-approval'>
     <el-row :gutter='12'>
-      <el-col :span='17' :xs="24">
+      <el-col :span='17'>
         <router-view></router-view>
       </el-col>
       <el-col :span='7' class="sideBox">

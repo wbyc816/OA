@@ -232,7 +232,7 @@ export default {
       this.$refs.multipleTable.toggleRowSelection(row);
     },
     rowKey(row) {
-      return row.empId
+      return row.empId+row.deptId+row.jobtitle
     },
     submitPerson() {
       this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList })

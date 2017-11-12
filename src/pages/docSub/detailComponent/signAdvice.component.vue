@@ -19,7 +19,7 @@
       </el-form-item>
       <el-form-item label="会签内容" class="textarea">
         <el-col :span='18'>
-          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8"></el-input>
+          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="100"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -66,6 +66,9 @@ export default {
     ])
   },
   created(){
+     if (this.docDetail.defaultSuggestVo.reciUserId) {
+      this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
+    }
   },
   methods: {
     adviceChange(val) {
@@ -74,6 +77,10 @@ export default {
       } else {
         this.ruleForm.taskContent = "不同意。"
       }
+    },
+    handleReciver(vo) {
+      this.reciver = vo;
+      this.ruleForm.signUserName=vo.reciUserName
     },
     updatePerson(payLoad) {
       this.dialogTableVisible = false;

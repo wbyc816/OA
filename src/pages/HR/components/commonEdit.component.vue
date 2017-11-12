@@ -18,7 +18,7 @@
               <el-radio-button :label="1">是<i></i></el-radio-button>
               <el-radio-button :label="0">否<i></i></el-radio-button>
             </el-radio-group>
-            <el-input v-model="info[item.name]" v-else :maxlength="item.maxlength||99"></el-input>
+            <el-input v-model="info[item.name]" v-else :maxlength="item.maxlength||20"></el-input>
           </el-form-item>
           <div class="borderBox"></div>
         </template>

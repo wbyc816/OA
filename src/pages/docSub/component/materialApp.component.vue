@@ -2,10 +2,10 @@
   <div class="materialApp clearfix">
     <el-form label-position="left" :model="materialForm" :rules="rules" ref="materialForm" label-width="128px">
       <el-form-item label="品名" class="inlinItem" prop="productName">
-        <el-input v-model="materialForm.productName"></el-input>
+        <el-input v-model="materialForm.productName" :maxlength="25"></el-input>
       </el-form-item>
       <el-form-item label="规格" class="inlinItem" prop="specification">
-        <el-input v-model="materialForm.specification"></el-input>
+        <el-input v-model="materialForm.specification" :maxlength="25"></el-input>
       </el-form-item>
       <el-form-item label="计划单价" class="inlinItem" prop="plannedUnitPrice">
         <money-input v-model="materialForm.plannedUnitPrice" :prepend="false">
@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item label="备注" class="clearBoth">
         <el-col :span="19">
-          <el-input v-model="materialForm.remark" class="fixF5">
+          <el-input v-model="materialForm.remark" class="fixF5" :maxlength="100">
           </el-input>
         </el-col>
         <el-col :span="5">

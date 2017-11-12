@@ -43,7 +43,7 @@ import SearchOptions from '../../components/searchOptions.component'
 import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
 
-const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '']
+const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '操作']
 
 export default {
   data() {

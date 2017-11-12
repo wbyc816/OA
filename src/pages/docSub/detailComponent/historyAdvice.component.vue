@@ -31,8 +31,8 @@
             </el-collapse-item>
           </el-collapse>
         </template>
-        <template v-if="task.signType==2">
-          <li class="personAdvice" :class="{disAgree:sign.state==2}" v-for="sign in task.signInfo[0].deptSigns">
+        <template v-if="task.signType==2" v-for="info in task.signInfo">
+          <li class="personAdvice" :class="{disAgree:sign.state==2}" v-for="sign in info.deptSigns">
             <span class="isAgree"><i :class="sign.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
             <span class="userName">{{sign.signUserName}}</span>
             <span class="taskContent">{{sign.signContent}}</span>

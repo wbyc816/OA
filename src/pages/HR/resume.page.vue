@@ -9,7 +9,7 @@
         <el-row :gutter="20" class="baseDetail">
           <el-col :span="6" class="leftDetail">
             <div class="photoBox">
-              <img :src="userInfo.picUrl" alt="" v-show="userInfo.picUrl">
+              <img :src="userPic" alt="" @error="userPic=blankHead" v-show="userInfo.picUrl">
               <img src="../../assets/images/blankHead.png" alt="" v-show="!userInfo.picUrl">
             </div>
           </el-col>
@@ -103,6 +103,7 @@
 <script>
 import MyTable from '../../components/myTable.component'
 import { postInfo, contractInfo, eduInfo, assessreCordInfo, postExperienceInfo, contactInfo } from '../../common/resumeConfig'
+import blankHead from '../../assets/images/blankHead.png'
 import { mapGetters } from 'vuex'
 export default {
   components: { MyTable },
@@ -122,7 +123,9 @@ export default {
         assessre: false,
         postExp: false,
         contact: false
-      }
+      },
+      blankHead,
+      userPic:''
     }
   },
   computed: {
@@ -136,7 +139,13 @@ export default {
     this.$store.dispatch('getResumeInfo');
     this.$store.dispatch('getEmpPostInfo');
     this.tabList.post = true;
+    this.userPic=this.userInfo.picUrl;
     // this.$store.dispatch('getEmergencyContactInfo', this.userInfo.empId);
+  },
+  watch:{
+    userInfo:function(newval){
+      this.userPic=newval.picUrl;
+    }
   },
   // beforeRouteLeave(to, from, next) {
   //   // this.$store.dispatch('setEditStatus', false);

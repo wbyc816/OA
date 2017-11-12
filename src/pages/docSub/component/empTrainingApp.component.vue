@@ -17,7 +17,7 @@
         <el-date-picker v-model="trainingForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
       <el-form-item label="培训科目" prop="trainSubjects" class="arrArea" label-width="100px">
-        <el-input v-model="trainingForm.trainSubjects">
+        <el-input v-model="trainingForm.trainSubjects" :maxlength="25">
         </el-input>
       </el-form-item>
       <el-form-item label="培训总预算" prop="trainTotalCost" class="deptArea">
