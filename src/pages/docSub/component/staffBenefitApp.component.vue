@@ -418,7 +418,8 @@ export default {
       .then(res => {
         if (res.status == 0) {
          this.classLevels=res.data;
-         this.staffBenefitAppFormSecond.classLevelsSelect=res.data[0].dictCode;
+         this.staffBenefitAppFormSecond.classLevelsSelect=res.data[1].dictCode;
+
         }
       })
 
