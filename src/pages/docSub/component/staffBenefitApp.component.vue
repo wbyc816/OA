@@ -42,7 +42,7 @@
       <div class="clearBoth"></div>
       <el-form-item label="证件信息" prop="documentType"  class="documentType">
         <el-input placeholder="请输入内容" v-model="staffBenefitAppFormFirst.documentType" class="input-with-select " :maxlength="50">
-          <el-select v-model="staffBenefitAppFormFirst.documentTypeSelect" ref="documentTypeSelect" slot="prepend" placeholder="请选择" class="w130">
+          <el-select v-model="staffBenefitAppFormFirst.documentTypeSelect" ref="documentTypeSelect" slot="prepend" placeholder="请选择" @change="changeVaild"  class="w130">
            <el-option v-for="documentType in documentTypes"  :label="documentType.dictName" :value="documentType.dictCode">
           </el-option>
         </el-select>
@@ -158,6 +158,55 @@ import PersonDialog from '../../../components/personDialog.component'
 export default {
   components: { PersonDialog },
     data() {
+       var checkIdCard = (rule, value, callback) => {
+      
+      if(value) {
+        if(this.staffBenefitAppFormFirst.documentTypeSelect=="EMP0801"){
+          var reg = /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}[0-9Xx]$)/; 
+          if (reg.test(value) == true) {
+            callback();
+          } else {
+            callback(new Error('身份证号码格式不正确'))
+          }
+        }else if(this.staffBenefitAppFormFirst.documentTypeSelect=="EMP0802"){
+          var reg = /^1[45][0-9]{7}|([P|p|S|s]\d{7})|([S|s|G|g]\d{8})|([Gg|Tt|Ss|Ll|Qq|Dd|Aa|Ff]\d{8})|([H|h|M|m]\d{8，10})$/; 
+          if (reg.test(value) == true) {
+            callback();
+          } else {
+            callback(new Error('护照号码格式不正确'))
+          }
+
+        }else if(this.staffBenefitAppFormFirst.documentTypeSelect=="EMP0803"){
+          var reg = /^[HMhm]{1}([0-9]{10}|[0-9]{8})$/; 
+          if (reg.test(value) == true) {
+            callback();
+          } else {
+            callback(new Error('港澳通行证号码格式不正确'))
+          }
+
+        }else if(this.staffBenefitAppFormFirst.documentTypeSelect=="EMP0804"){
+          var reg = /^[HMhm]{1}([0-9]{10})$/; 
+          if (reg.test(value) == true) {
+            callback();
+          } else {
+            callback(new Error('回乡证号码格式不正确'))
+          }
+
+        }else if(this.staffBenefitAppFormFirst.documentTypeSelect=="EMP0805"){
+          var reg = /^[a-zA-Z]([0-9]{9})$/; 
+          if (reg.test(value) == true) {
+            callback();
+          } else {
+            callback(new Error('台胞证号码格式不正确'))
+          }
+        }
+
+
+      }else {
+        callback(new Error('请输入证件信息'))
+      }
+      
+    };
      var validatePhone = (rule, value, callback) => {
       if (value && value.length != 0) {
         if (!(/^1[34578]\d{9}$/.test(value))) {
@@ -251,7 +300,7 @@ export default {
         flightPersonTypeSelect: [{ required: true, message: '请选择乘机人类型', trigger: 'blur' }],
         genger: [{ required: true, message: '请选择性别', trigger: 'blur' }],
         documentTypeSelect: [{ required: true, message: '请选择证件类型', trigger: 'blur' }],
-        documentType: [{ required: true, message: '请输入证件内容', trigger: 'blur' }],
+        documentType: [{ required: true,  validator: checkIdCard, trigger: 'blur' }],
 
         carrier: [{ required: true, message: '请输入承运人', trigger: 'blur' }],
         start: [{ required: true, message: '请输入起始站', trigger: 'blur' }],
@@ -295,6 +344,9 @@ export default {
  
   },
   methods: {
+    changeVaild(){
+      this.staffBenefitAppFormFirst.documentType="";
+    },
     default(){
        this.$http.post('/emp/selectEmpTicket', { //二五折
           typeId:"EMP0301",
@@ -366,7 +418,8 @@ export default {
       .then(res => {
         if (res.status == 0) {
          this.classLevels=res.data;
-         this.staffBenefitAppFormSecond.classLevelsSelect=res.data[0].dictCode;
+         this.staffBenefitAppFormSecond.classLevelsSelect=res.data[1].dictCode;
+
         }
       })
 
