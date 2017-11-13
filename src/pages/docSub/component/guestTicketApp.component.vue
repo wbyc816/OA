@@ -30,7 +30,7 @@
       </el-form-item>
       <div class="clearBoth"></div>
       <el-form-item label="证件信息" prop="documentType" class="documentType">
-        <el-input placeholder="请输入内容"  v-model="guestTicketAppFormFirst.documentType" class="input-with-select" :maxlength="50">
+        <el-input placeholder="请输入内容"  v-model="guestTicketAppFormFirst.documentType" class="input-with-select" :maxlength="guestTicketAppFormFirst.maxLength">
           <el-select v-model="guestTicketAppFormFirst.documentTypeSelect" ref="documentTypeSelect" slot="prepend" placeholder="请选择" @change="changeVaild" class="w130">
            <el-option v-for="documentType in documentTypes"  :label="documentType.dictName" :value="documentType.dictCode">
           </el-option>
@@ -232,7 +232,8 @@ export default {
         flightPersonTypeSelect:"",
         contactPhone:"",
         documentTypeSelect:"",
-        genger:"M"
+        genger:"M",
+        maxLength:18
       },
        guestTicketAppFormSecond: {
         carrier:"东海航空",
@@ -303,6 +304,11 @@ export default {
   methods: {
     changeVaild(){
       this.guestTicketAppFormFirst.documentType="";
+      if(this.guestTicketAppFormFirst.documentTypeSelect=="EMP0801"){
+        this.guestTicketAppFormFirst.maxLength=18;
+      }else{
+         this.guestTicketAppFormFirst.maxLength=50;
+       }
     },
     classLevel(){
       this.$http.post('/api/getDict', { //出票方式

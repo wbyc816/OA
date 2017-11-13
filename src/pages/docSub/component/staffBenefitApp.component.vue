@@ -41,7 +41,7 @@
 
       <div class="clearBoth"></div>
       <el-form-item label="证件信息" prop="documentType"  class="documentType">
-        <el-input placeholder="请输入内容" v-model="staffBenefitAppFormFirst.documentType" class="input-with-select " :maxlength="50">
+        <el-input placeholder="请输入内容" v-model="staffBenefitAppFormFirst.documentType" class="input-with-select " :maxlength="staffBenefitAppFormFirst.maxLength">
           <el-select v-model="staffBenefitAppFormFirst.documentTypeSelect" ref="documentTypeSelect" slot="prepend" placeholder="请选择" @change="changeVaild"  class="w130">
            <el-option v-for="documentType in documentTypes"  :label="documentType.dictName" :value="documentType.dictCode">
           </el-option>
@@ -261,6 +261,7 @@ export default {
         contactPhone:"",
         documentTypeSelect:"",
         genger:"M",
+        maxLength:18,
       },
        staffBenefitAppFormSecond: {
         carrier:"东海航空",
@@ -346,6 +347,11 @@ export default {
   methods: {
     changeVaild(){
       this.staffBenefitAppFormFirst.documentType="";
+       if(this.staffBenefitAppFormFirst.documentTypeSelect=="EMP0801"){
+        this.staffBenefitAppFormFirst.maxLength=18;
+      }else{
+         this.staffBenefitAppFormFirst.maxLength=50;
+       }
     },
     default(){
        this.$http.post('/emp/selectEmpTicket', { //二五折
