@@ -233,7 +233,7 @@ export default {
         contactPhone:"",
         documentTypeSelect:"",
         genger:"M",
-        maxLength:"18"
+        maxLength:18
       },
        guestTicketAppFormSecond: {
         carrier:"东海航空",
