@@ -140,23 +140,28 @@ export default {
       //   }
       // }
       var success = true;
-      this.pathList.forEach((p, i) => {
+      for (var i = 0; i < this.pathList.length; i++) {
+        var p = this.pathList[i];
         if (p.type == 4 || p.type == 5) { //判断会签不能为空
-          if (!p.children || p.children.length == 0) {
+          if (i == 0) {
+            this.$message.warning('建议路径不能以会签开始！');
+            success = false;
+            break;
+          } else if (!p.children || p.children.length == 0) {
             this.editNode(p, i);
             this.$message.warning('会签列表不能为空！');
-            success = false
-            return
+            success = false;
+            break;
           }
         } else {
           if (p.state && p.state == 1) {
             this.editNode(p, i);
             this.$message.warning(p.typeIdName + '需替换！');
-            success = false
-            return
+            success = false;
+            break;
           }
         }
-      })
+      }
       if (success) {
         this.$emit('updatePath', this.pathList);
       }

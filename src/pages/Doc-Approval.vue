@@ -66,7 +66,7 @@
                   <td>{{sign.signUserName}}</td>
                   <td>{{sign.readTime}}</td>
                   <td>{{sign.signTime}}</td>
-                  <td>{{sign.isOverTime}}</td>
+                  <td>{{sign.endTime}}</td>
                   <td :class="{overTime:sign.isOverTime==1}">{{sign.isOverTime==0?'准时':'超时'}}</td>
                   <td>{{sign.docState}}</td>
                   <td>{{sign.signDeptMajorName}}</td>

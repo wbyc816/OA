@@ -124,13 +124,13 @@ export default {
       chooseDisable: false,
       workState: '',
       suggestHtml: '',
-      signPersons:[],
+      signPersons: [],
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7;
         }
       },
-      signDeps:[]
+      signDeps: []
     }
   },
   computed: {
@@ -154,13 +154,28 @@ export default {
     this.currentView = this.docDetail.pageCode;
     if (this.docDetail.defaultSuggestVo.reciUserId) {
       this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
+    } else {
+      this.getDefaultReciver()
     }
     this.handleSuggest();
   },
   methods: {
+    getDefaultReciver() {
+      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            this.reciver = res.data;
+            this.ruleForm.sign.push({
+              signUserName: res.data.reciUserName
+            });
+          } else {
+
+          }
+        })
+    },
     closeSign(index) {
       this.ruleForm.sign.splice(index, 1);
-      if(this.signType==1){
+      if (this.signType == 1) {
         this.signDeps.splice(index, 1)
       }
     },
@@ -181,7 +196,7 @@ export default {
     },
     signTypeChange(val) {
       this.ruleForm.sign = [];
-      this.signDeps=[];
+      this.signDeps = [];
       this.$refs.ruleForm.validateField('sign')
     },
     updatePerson(payLoad) {
@@ -204,7 +219,7 @@ export default {
     updateSignPerson(payLoad) {
       this.signPersonVisible = false;
       this.ruleForm.sign = [];
-      this.signPersons=payLoad;
+      this.signPersons = payLoad;
       payLoad.forEach(p => {
         this.ruleForm.sign.push({
           "signDeptMajorName": p.deptName,
@@ -219,7 +234,7 @@ export default {
     updateSignDep(payLoad) {
       this.signDepVisible = false;
       this.ruleForm.sign = [];
-      this.signDeps=payLoad;
+      this.signDeps = payLoad;
       payLoad.forEach(p => {
         this.ruleForm.sign.push({
           "signDeptMajorName": p.name,
@@ -306,7 +321,7 @@ export default {
             } else {
               html += s.typeIdName + ' ';
             }
-          }else if (s.nodeName == 'trans') {
+          } else if (s.nodeName == 'trans') {
             if (arr[i - 1].nodeName != 'trans') {
               html += signFlag + ' ' + s.typeIdName + ' ';
             } else if (arr[i + 1].nodeName != 'trans') {

@@ -33,8 +33,8 @@
           {{scope.row.budgetItemName}}
         </template>
       </el-table-column>
-      <el-table-column property="budgetInitMoney" label="年度预算(元)" :formatter="formatMoney" width="130"></el-table-column>
-      <el-table-column property="remainMoney" label="可用额度(元)" :formatter="formatMoney" width="130"></el-table-column>
+      <el-table-column property="budgetInitMoney" label="年度预算(元)" :formatter="formatMoney" width="140"></el-table-column>
+      <el-table-column property="remainMoney" label="可用额度(元)" :formatter="formatMoney" width="140"></el-table-column>
       <el-table-column property="cExecRate" label="执行比例" width="100"></el-table-column>
     </el-table>
     <!-- <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p> -->

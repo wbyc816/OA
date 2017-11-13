@@ -21,11 +21,11 @@
           </el-col>
           <el-col :span="24" style="min-height:90px">
             <h1 class="title">请示内容</h1>
-            <p class="textContent" style="white-space:pre-wrap">{{docDetialInfo.doc.taskContent}}</p>
+            <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
           </el-col>
           <el-collapse class="clearfix clearBoth">
             <el-collapse-item title="附加内容" name="1">
-              <component v-bind:is="currentView" :info="docDetialInfo.otherInfo">
+              <component v-bind:is="currentView" :info="docDetialInfo.otherInfo" :state="docDetialInfo.task[0].state">
                 <!-- 组件在 vm.currentview 变化时改变！ -->
               </component>
               <el-col :span="24">
@@ -75,19 +75,33 @@
       <my-advice :docDetail="docDetialInfo.doc" :suggests="docDetialInfo.suggests" v-if="showMyadvice">
         <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
-      <sign-advice :docDetail="docDetialInfo.doc"  v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
+      <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
       <quit-advice :info="docDetialInfo" v-if="(docDetialInfo.doc.isSign==1||docDetialInfo.doc.isFied==1)&&$route.query.code=='LZS'">
       </quit-advice>
     </el-card>
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
       <span slot="title">公文归档</span>
-      <el-form :inline="true" class="archiveState">
+      <el-form :model="fileForm" :inline="!isRedFile" :rules="fileRules" ref="fileForm" class="fileForm" :class="{fileRed:isRedFile}">
+        <el-table :data="fileRedData" style="width: 100%" max-height="200" v-if="isRedFile">
+          <el-table-column prop="fileName" label="模板名称" width="">
+          </el-table-column>
+          <el-table-column prop="name" label="操作" width="100">
+            <template scope="scope">
+              <a :href="scope.row.fileUrl" target="_blank" style="color:#0460AE">下载</a>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-form-item label="正文" prop="taskFileId" v-if="isRedFile">
+          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
+            <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
+          </el-upload>
+        </el-form-item>
         <el-form-item label="归档状态" class="textarea" prop="state">
           <el-radio-group class="myRadio" v-model="archiveState">
             <el-radio-button label="1">通过<i></i></el-radio-button>
             <el-radio-button label="2">不通过<i></i></el-radio-button>
           </el-radio-group>
-      </el-form-item>
+        </el-form-item>
       </el-form>
       <div class="buttonBox">
         <el-button size="large" type="primary" @click="docArchive(true)">归档并结束</el-button>
@@ -187,14 +201,22 @@ export default {
         res: '',
         persons: []
       },
-      docDetialInfo: { doc: {}, task: [{state:''}], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [],suggests:'' },
+      docDetialInfo: { doc: {}, task: [{ state: '' }], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [], suggests: '' },
       archiveFormRule: {},
+      fileRules: {
+        taskFileId: [{ required: true, message: '请上传正文！' }]
+      },
+      fileForm: {
+        taskFileId: ''
+      },
       activeNames: [],
       topDistData: [],
       distData: [],
       isSuccessSubmit: false,
       suggestHtml: '',
-      archiveState:'1'
+      archiveState: '1',
+      fileRedData: [],
+      isRedFile: false
     }
   },
   created() {
@@ -205,15 +227,15 @@ export default {
     next();
   },
   computed: {
-    showMyadvice(){
-      if(this.docDetialInfo.doc != {}){
-        if(this.currentView=='LZS'){
-          return this.docDetialInfo.doc.isTask==1&&this.docDetialInfo.doc.isSign!=1&&this.docDetialInfo.doc.isFied!=1
-        }else{
-          return this.docDetialInfo.doc.isTask==1&&this.docDetialInfo.doc.isSign!=1
+    showMyadvice() {
+      if (this.docDetialInfo.doc != {}) {
+        if (this.currentView == 'LZS') {
+          return this.docDetialInfo.doc.isTask == 1 && this.docDetialInfo.doc.isSign != 1 && this.docDetialInfo.doc.isFied != 1
+        } else {
+          return this.docDetialInfo.doc.isTask == 1 && this.docDetialInfo.doc.isSign != 1
         }
-        
-      }else{
+
+      } else {
         return false
       }
     },
@@ -242,6 +264,10 @@ export default {
             if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
               this.getDistInfo();
             }
+            if (this.docDetialInfo.doc.isConfidential == 1 && route.query.code == 'FWG') {
+              this.isRedFile = true;
+              this.initFileData();
+            }
             this.handleSuggest();
           }
         }, res => {
@@ -260,7 +286,7 @@ export default {
             } else {
               html += s.typeIdName + ' ';
             }
-          }else if (s.nodeName == 'trans') {
+          } else if (s.nodeName == 'trans') {
             if (arr[i - 1].nodeName != 'trans') {
               html += signFlag + ' ' + s.typeIdName + ' ';
             } else if (arr[i + 1].nodeName != 'trans') {
@@ -287,47 +313,56 @@ export default {
       this.archiveForm.persons = payLoad;
     },
     docArchive(isEnd) {
-      var params = {
-        docId: this.docDetialInfo.doc.id,
-        "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
-        "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
-        "taskDeptName": this.userInfo.deptVo.dept,
-        "taskDeptId": this.userInfo.deptVo.deptId,
-        "taskUserName": this.userInfo.name,
-        "taskUserId": this.userInfo.empId,
-        "state":this.archiveState
-      }
-      this.$http.post('/doc/docArchive', params, { body: true })
-        .then(res => {
-          if (res.status == '0') {
-            this.$message.success('归档成功');
-            if (isEnd) {
-              this.$router.push('/doc/docSearch');
-            } else {
-              this.DialogArchiveVisible = false;
-              this.DialogSubmitVisible = true;
-              this.isSuccessSubmit = true;
-            }
-          } else {
-            this.$message.error('归档失败，请重试');
+      this.$refs.fileForm.validate((valid) => {
+        if (valid) {
+          var params = {
+            docId: this.docDetialInfo.doc.id,
+            "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
+            "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
+            "taskDeptName": this.userInfo.deptVo.dept,
+            "taskDeptId": this.userInfo.deptVo.deptId,
+            "taskUserName": this.userInfo.name,
+            "taskUserId": this.userInfo.empId,
+            "state": this.archiveState,
+            "taskFileId": this.fileForm.taskFileId
           }
-        }, res => {
+          this.$http.post('/doc/docArchive', params, { body: true })
+            .then(res => {
+              if (res.status == '0') {
+                this.$message.success('归档成功');
+                if (isEnd) {
+                  this.$router.push('/doc/docSearch');
+                } else {
+                  this.DialogArchiveVisible = false;
+                  this.DialogSubmitVisible = true;
+                  this.isSuccessSubmit = true;
+                }
+              } else {
+                this.$message.error('归档失败，请重试');
+              }
+            }, res => {
 
-        })
+            })
+        } else {
+
+          return false;
+        }
+      });
+
     },
     removePerson(index) {
       this.archiveForm.persons.splice(index, 1);
     },
-    changePay(){
-      this.$http.post('/doc/updateFinPayState',{docId:this.$route.params.id})
-      .then(res=>{
-        if(res.status==0){
-          this.$message.success('操作成功!');
-          this.getDetail(this.$route);
-        }else{
-          this.$message.error('操作失败!'+res.message);
-        }
-      })
+    changePay() {
+      this.$http.post('/doc/updateFinPayState', { docId: this.$route.params.id })
+        .then(res => {
+          if (res.status == 0) {
+            this.$message.success('操作成功!');
+            this.getDetail(this.$route);
+          } else {
+            this.$message.error('操作失败!' + res.message);
+          }
+        })
     },
     dialogSubmit() {
       if (this.archiveForm.persons.length > 0) {
@@ -383,6 +418,34 @@ export default {
           }
         }, res => {
 
+        })
+    },
+    handleAvatarSuccess(res, file) {
+      this.fileForm.taskFileId = res.data;
+    },
+    beforeUpload(file) {
+      const isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      const isLt10M = file.size / 1024 / 1024 < 10;
+
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 DOCX 格式!');
+      }
+      if (!isLt10M) {
+        this.$message.error('上传文件大小不能超过 10MB!');
+      }
+      return isJPG && isLt10M;
+    },
+    handleRemove() {
+      this.fileForm.taskFileId = '';
+    },
+    initFileData() {
+      this.$http.post('/doc/getRedFrom')
+        .then(res => {
+          if (res.status == 0) {
+            this.fileRedData = res.data;
+          } else {
+
+          }
         })
     }
   }
@@ -581,7 +644,10 @@ $sub:#1465C0;
     }
   }
   .archiveDialog {
-    width:500px;
+    width: 700px;
+    .el-dialog__header {
+      font-size: 18px;
+    }
     .el-dialog__body {
       padding: 35px 0;
       text-align: center;
@@ -589,16 +655,28 @@ $sub:#1465C0;
         width: 180px;
         border-radius: 3px;
       }
-      .archiveState{
-        .el-form-item__label{
-          padding-right:20px;
-          font-size:15px;
+      .fileForm {
+        padding: 0 20px;
+        margin-bottom: 20px;
+        &.fileRed {
+          text-align: left;
+          margin-bottom: 50px;
+          .el-table {
+            margin-bottom: 20px;
+          }
+          .myUpload {
+            width: inherit!important;
+          }
         }
-        .el-radio-button__inner{
-          width:100px;
-          height:45px;
-          line-height:45px;
-          padding:0;
+        .el-form-item__label {
+          padding-right: 20px;
+          font-size: 15px;
+        }
+        .el-radio-button__inner {
+          width: 100px;
+          height: 45px;
+          line-height: 45px;
+          padding: 0;
         }
       }
     }

@@ -3,13 +3,12 @@
     <h4 class='doc-form_title'>详情信息</h4>
     <slot></slot>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
-      <el-form-item :label="options.desTitle||'请示内容'" prop="des" :rules="[
-      { required: true, message: '请输入'+(options.desTitle||'请示内容'), trigger: 'blur,change' }]">
-        <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des" :maxlength="5000"></el-input>
-        <div class="tempBox" @click="ruleForm.des=tempText"><span></span>
+      <el-form-item :label="options.desTitle||'请示内容'" prop="des" :rules="[{ required: true,validator:checkDes,trigger: 'blur,change' }]">
+        <!-- <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des" :maxlength="5000"></el-input> -->
+        <!-- <div class="tempBox" @click="ruleForm.des=tempText"><span></span>
           <div><i class="iconfont icon-moban"></i>模板</div>
-        </div>
-        <p class="remainNum">还能输入<span>{{remainNum}}</span>个字</p>
+        </div> -->
+        <editor @input="desChange" @updateLen="updateLen"></editor>
       </el-form-item>
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
         <div class="pathBox clearfix" v-html="pathHtml">
@@ -58,9 +57,15 @@
 <script>
 import SearchOptions from '../../../components/searchOptions.component'
 import PathDialog from '../../../components/pathDialog.component'
+import Editor from '../../../components/editor.component'
 import { mapGetters, mapMutations } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 export default {
+  components: {
+    SearchOptions,
+    PathDialog,
+    Editor
+  },
   props: {
     options: {
       type: Object
@@ -91,8 +96,8 @@ export default {
       totalSize: 0,
       searchOptions: '',
       searchLoading: false,
-      tempText: '',
-      fileList: []
+      fileList: [],
+      desLenth:0
     }
   },
   computed: {
@@ -100,7 +105,7 @@ export default {
       var html = '';
       if (this.ruleForm.path.length != 0) {
         this.ruleForm.path.forEach((node, index) => {
-          if (node.nodeName == 'sign'||'trans') {
+          if (node.nodeName == 'sign' || node.nodeName == 'trans') {
             if (!node.children || node.children.length == 0) {
               html += node.typeIdName + ' ' + arrowHtml
             } else {
@@ -125,38 +130,43 @@ export default {
       }
       return html;
     },
-    remainNum() {
-      var num = 5000;
-      if (this.ruleForm.des !== '') {
-        num -= this.ruleForm.des.length
-      }
-      return parseInt(num)
-    },
+    // remainNum() {
+    //   var num = 5000;
+    //   if (this.ruleForm.des !== '') {
+    //     num -= this.ruleForm.des.length
+    //   }
+    //   return parseInt(num)
+    // },
     ...mapGetters([
       'baseURL',
       'docType',
       'userInfo'
     ])
   },
-  watch: {
-    docType: function(newval) {
-      if (newval.length != 0) {
-        this.handleTemp();
-      }
-    }
-  },
-  components: {
-    SearchOptions,
-    PathDialog
-  },
   created() {
-    this.handleTemp();
     this.getSuggestTemp();
     if (this.$route.params.code == 'LZS') {
       this.rules.attchment.push({ type: 'array', required: true, message: '请提交本人签字的辞职报告', trigger: 'blur,change' })
     }
   },
   methods: {
+    desChange(html){
+      this.ruleForm.des=html;
+    },
+    updateLen(num){
+      this.desLenth=num;
+      this.$refs.ruleForm.validateField('des')
+    },
+    checkDes(rule, value, callback){
+      if(this.desLenth==0){
+        callback(new Error('请输入'+(this.options.desTitle||'请示内容')))
+      }
+      else if(this.desLenth>5000){
+        callback(new Error('超出最大输入长度'))
+      }else{
+        callback();
+      }
+    },
     submitForm() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
@@ -171,7 +181,7 @@ export default {
                 suggests: this.handlePath(this.ruleForm.path)
               });
             }
-          }else{
+          } else {
             this.$emit('submitEnd', false);
           }
         } else {
@@ -182,17 +192,21 @@ export default {
       });
     },
     checkSuggest() {
-      var success=true;
+      var success = true;
       this.ruleForm.path.forEach((p, i) => {
         if (p.type == 4 || p.type == 5) { //判断会签不能为空
           if (!p.children || p.children.length == 0) {
             this.$message.warning('建议路径内会签列表不能为空！');
-            success=false
+            success = false
+          } else if (i == 0) {
+            this.$message.warning('建议路径不能以会签开始！');
+            success = false
           }
+
         } else {
           if (p.state && p.state == 1) {
             this.$message.warning(p.typeIdName + '需替换！');
-            success=false
+            success = false
           }
         }
       })
@@ -205,12 +219,6 @@ export default {
         suggests: this.handlePath(this.ruleForm.path)
       }
       this.$emit('saveEnd', params);
-    },
-    handleTemp() {
-      if (this.docType.length != 0) {
-        var doc = this.docType.find(d => d.docTypeCode == this.$route.params.code);
-        this.tempText = doc.temPlate.replace(/↵/g, "\n");
-      }
     },
     clearDoc(index) {
       if (this.docs.length == 1) {
@@ -327,8 +335,8 @@ export default {
         }
         if (item.nodeName == 'sign') {
           nodeName = 'sign';
-          if(item.type==4){
-            nodeName='trans';
+          if (item.type == 4) {
+            nodeName = 'trans';
           }
           item.children.forEach((child, i) => {
             _list.push({
@@ -355,7 +363,7 @@ export default {
       return _list
     },
     getSuggestTemp(param) {
-      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.userInfo.empId,docTypeSubCode:param })
+      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.userInfo.empId, docTypeSubCode: param })
         .then(res => {
           if (res.status == 0) {
             this.handleSuggestTemp(res.data);
@@ -436,50 +444,50 @@ $sub:#1465C0;
       }
     }
   }
-  .tempBox {
-    // background :$sub;
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 25px;
-    color: $sub; // transform:rotate(45deg);
-    cursor: pointer;
-    &:before {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-    span {
-      display: inline-block;
-      border-left: 25px solid transparent;
-      border-top: 25px solid $sub;
-    }
-    div {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 25px;
-      height: 25px;
-      transition: all .3s;
-      background: $sub;
-      padding-left: 10px;
-      line-height: 28px;
-      color: #fff;
-      border-bottom-left-radius: 15px;
-      color: #fff;
-      opacity: 0;
-      &:hover {
-        width: 65px;
-        height: 28px;
-        opacity: 1;
-      }
-    }
-    i {
-      margin-right: 3px;
-      font-size: 12px;
-    }
-  }
+  // .tempBox {
+  //   // background :$sub;
+  //   position: absolute;
+  //   right: 0;
+  //   top: 0;
+  //   height: 25px;
+  //   color: $sub; // transform:rotate(45deg);
+  //   cursor: pointer;
+  //   &:before {
+  //     content: '';
+  //     position: absolute;
+  //     right: 0;
+  //     top: 0;
+  //   }
+  //   span {
+  //     display: inline-block;
+  //     border-left: 25px solid transparent;
+  //     border-top: 25px solid $sub;
+  //   }
+  //   div {
+  //     position: absolute;
+  //     right: 0;
+  //     top: 0;
+  //     width: 25px;
+  //     height: 25px;
+  //     transition: all .3s;
+  //     background: $sub;
+  //     padding-left: 10px;
+  //     line-height: 28px;
+  //     color: #fff;
+  //     border-bottom-left-radius: 15px;
+  //     color: #fff;
+  //     opacity: 0;
+  //     &:hover {
+  //       width: 65px;
+  //       height: 28px;
+  //       opacity: 1;
+  //     }
+  //   }
+  //   i {
+  //     margin-right: 3px;
+  //     font-size: 12px;
+  //   }
+  // }
   .remainNum {
     position: absolute;
     right: -121px;

@@ -33,9 +33,9 @@
           <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
         </el-input>
       </el-form-item>
-      <el-form-item label="正文" prop="docFileId">
+      <el-form-item label="待套红文件" prop="docFileId">
         <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
-          <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''">上传待套红文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -131,11 +131,12 @@ export default {
       this.manuscriptForm.docFileId = res.data;
     },
     beforeUpload(file) {
-      const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
+      // console.log(file)
+      const isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       const isLt10M = file.size / 1024 / 1024 < 10;
 
       if (!isJPG) {
-        this.$message.error('上传文件只能是 JPG或PDF 格式!');
+        this.$message.error('上传文件只能是 DOCX 格式!');
       }
       if (!isLt10M) {
         this.$message.error('上传文件大小不能超过 10MB!');
