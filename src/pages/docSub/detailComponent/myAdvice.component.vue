@@ -22,7 +22,10 @@
       <el-form-item class="textarea signWrap" label="接收人" prop="sign" v-if="!(currentView=='LZS'&&docDetail.isDept==1)">
         <el-col :span='18' class="clearfix">
           <el-input class="search" :value="ruleForm.sign[0]?ruleForm.sign[0].signUserName:''" :readonly="true" v-show="signType==0">
-            <el-button slot="append" @click="selSignPerson" :disabled="chooseDisable">选择</el-button>
+            <template slot="append">
+            <el-button @click="selSignPerson" :disabled="chooseDisable">选择</el-button>
+            <i class="iconfont icon-renyuanshezhi defaultPerson" @click="defaultVisible=true" v-if="!chooseDisable"></i>
+          </template>
           </el-input>
           <div class="signList" v-show="signType!=0">
             <el-tag :key="person.id" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==1">
@@ -60,6 +63,7 @@
     </el-form>
     <person-dialog @updatePerson="updatePerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="dialogTableVisible" dialogType="radio"></person-dialog>
     <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :data="signPersons"></person-dialog>
+    <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="$route.query.code=='LZS'?'0':''"></person-dialog>
     <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep"></dep-dialog>
   </div>
 </template>
@@ -116,6 +120,7 @@ export default {
         planDate: [{ required: true, type: 'date', message: '请选择离职日期' }]
       },
       dialogTableVisible: false,
+      defaultVisible:false,
       reciver: '',
       signType: '0',
       currentView: '',
@@ -198,6 +203,24 @@ export default {
       this.ruleForm.sign = [];
       this.signDeps = [];
       this.$refs.ruleForm.validateField('sign')
+    },
+    updateDefaultPerson(payLoad){
+      this.defaultVisible = false;
+      var person = {
+        "signDeptMajorName": payLoad.reciDeptMajorName,
+        "signDeptMajorId": payLoad.reciDeptMajorId,
+        "signDeptName": payLoad.reciDeptName,
+        "signDeptId": payLoad.reciDeptId,
+        "signUserName": payLoad.reciUserName,
+        "signUserId": payLoad.reciUserId,
+      }
+      if (this.ruleForm.sign.length != 0) {
+        this.ruleForm.sign.splice(0, 1, person)
+      } else {
+        this.ruleForm.sign.push(person);
+      }
+      this.reciver = payLoad;
+      this.setDefault(person);
     },
     updatePerson(payLoad) {
       this.dialogTableVisible = false;
@@ -340,6 +363,16 @@ export default {
         this.suggestHtml = html;
       }
     },
+    setDefault(person) {
+      this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId, taskDeptId: this.userInfo.deptId, reciId: person.signUserId, reciDeptId: person.signDeptId })
+        .then(res => {
+          if (res.status == 0) {
+            this.$message.success('设置默认收件人成功！');
+          } else {
+            this.$message.error('设置默认收件人失败,' + res.message);
+          }
+        })
+    },
   }
 }
 
@@ -375,6 +408,16 @@ $main:#0460AE;
     }
     .addButton {
       float: right;
+    }
+    .defaultPerson {
+      position: absolute;
+      right: 109px;
+      top: 7px;
+      font-size: 30px;
+      cursor: pointer;
+      &:hover {
+        color: $main;
+      }
     }
   }
   .submitButton {

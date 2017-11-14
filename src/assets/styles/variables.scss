@@ -1181,3 +1181,28 @@ ul {
     background-color: $main;
   }
 }
+
+.contentTip {
+  max-width: 350px;
+}
+
+.el-select .el-input__inner {
+  font-size: 14px;
+}
+.el-input__inner::placeholder{
+  font-size:14px;
+}
+.el-input-group__prepend div.el-select {
+  .el-input__inner {
+    color: #1f2c3d;
+    cursor: pointer;
+    &:hover {
+      color: #1f2c3d;
+    }
+  }
+  &:hover {
+    .el-input__inner {
+      color: #1f2c3d;
+    }
+  }
+}

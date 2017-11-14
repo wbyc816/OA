@@ -57,7 +57,7 @@ export default {
       docData: [],
       totalSize: 0,
       searchLoading: false,
-      searchOptions: ''
+      searchOptions: {isOverTime:''}
     }
   },
   computed: {
@@ -72,7 +72,9 @@ export default {
     SearchOptions
   },
   created() {
-
+    if(this.$route.params.isOverTime){
+      this.searchOptions.isOverTime='1'
+    }
     this.getData();
   },
   methods: {

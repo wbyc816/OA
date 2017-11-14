@@ -24,7 +24,7 @@
           <el-date-picker v-model="timeline" placeholder="呈报日期" type="daterange" :editable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
         </el-col>
         <el-col :span="12">
-          <el-input v-model="searchParams.keyWords" placeholder="公文标题"></el-input>
+          <el-input v-model.trim="searchParams.keyWords" placeholder="公文标题"></el-input>
         </el-col>
         <el-col :span="4">
           <el-button type="primary" @click="search" :disabled="searchLoading">搜索</el-button>

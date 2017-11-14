@@ -4,10 +4,17 @@
       <ul class="clearfix">
         <li><span class="itemTitle">部门</span><span class="text">{{emp.deptName}}</span></li>
         <li><span class="itemTitle">岗位</span><span class="text">{{emp.jobTitle}}</span></li>
-        <li><span class="itemTitle">签订合同日期</span><span class="text">{{emp.conStartDate}}</span></li>
-        <li><span class="itemTitle">试用期</span><span class="text">{{emp.pribationMonths}}</span></li>
-        <li><span class="itemTitle">入职日期</span><span class="text">{{emp.probationTime}}</span></li>
-        <li><span class="itemTitle">试用期结束日期</span><span class="text">{{emp.probationEndTime}}</span></li>
+        <!-- <li><span class="itemTitle">签订合同日期</span><span class="text">{{emp.conStartDate}}</span></li> -->
+        <li>
+          <span class="itemTitle">试用期</span>
+          <span class="text">
+            <template v-if="emp.pribationMonths">
+            {{emp.pribationMonths}}个月
+          </template>
+        </span>
+        </li>
+        <li><span class="itemTitle">试用期开始日期</span><span class="text">{{emp.probationTime | time('ch')}}</span></li>
+        <li><span class="itemTitle">试用期结束日期</span><span class="text">{{emp.probationEndTime | time('ch')}}</span></li>
       </ul>
     </div>
     <el-form label-position="left" :model="becomeForm" :rules="rules" ref="becomeForm" label-width="128px">
@@ -30,7 +37,7 @@ export default {
         evaluation: [{ required: true, message: '请填写试用期自我评价', trigger: 'blur' }],
       },
       params: '',
-      emp:'',
+      emp: '',
     }
   },
   computed: {
@@ -45,10 +52,10 @@ export default {
   },
   methods: {
     saveForm() {
-      this.$emit('saveMiddle',JSON.stringify(this.becomeForm));
+      this.$emit('saveMiddle', JSON.stringify(this.becomeForm));
     },
     getDraft(obj) {
-      this.becomeForm=obj;
+      this.becomeForm = obj;
     },
     submitForm() {
       this.$refs.becomeForm.validate((valid) => {
@@ -68,7 +75,7 @@ export default {
       this.$http.post('/doc/empBecomeInfo', { empId: this.userInfo.empId }) //东航ID
         .then(res => {
           if (res.status == 0) {
-            this.emp=res.data
+            this.emp = res.data
           }
         })
     }
@@ -98,7 +105,6 @@ $main:#0460AE;
         }
         &:nth-child(odd) {
           width: 55%;
-          
         }
       }
     }

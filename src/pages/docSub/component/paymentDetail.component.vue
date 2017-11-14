@@ -2,7 +2,6 @@
   <div class="reimburseDetail clearfix">
     <el-table :data="info[0].paymentItems" :stripe="true" highlight-current-row style="width: 100%" class="appTable">
       <el-table-column label="预算年度" property="budgetYear" width="80"></el-table-column>
-      <el-table-column label="付款类型" property="paymentTypeName" width="120"></el-table-column>
       <el-table-column property="budgetDeptName" label="预算机构/科目">
         <template scope="scope">
           {{scope.row.budgetDeptName+'/'+scope.row.budgetItemName}}
@@ -41,28 +40,29 @@
     <!-- <p class="borderBox clearBoth"></p> -->
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
       <el-col :span="12" class="rightBorder">
+        <h1 class="title">付款类型</h1>
+        <p v-if="info" class="textContent">{{info[0].finPayment.paymentTypeName}}</p>
+      </el-col>
+      <el-col :span="12">
         <h1 class="title">付款金额</h1>
         <p v-if="info" class="textContent">人民币 {{info[0].finPayment.totalMoney | toThousands}}</p>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="12" class="rightBorder">
         <h1 class="title">付款方式</h1>
         <p v-if="info[0].finPayment.paymentMethodCode!='FIN0104'" class="textContent">{{info[0].finPayment.paymentMethodName}}</p>
         <p class="textContent" v-else>{{info[0].finPayment.paymentOthers}}</p>
       </el-col>
-      <el-col :span="12" class="rightBorder">
+      <el-col :span="12">
         <h1 class="title">收款供应商</h1>
         <p v-if="info" class="textContent">{{info[0].finPayment.supplierName}}</p>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="12" class="rightBorder">
         <h1 class="title">收款账户</h1>
         <p v-if="info" class="textContent">{{info[0].finPayment.supplierBankAccountName}}</p>
       </el-col>
-      <el-col :span="12" class="rightBorder">
+      <el-col :span="12">
         <h1 class="title">开户行</h1>
         <p v-if="info" class="textContent">{{info[0].finPayment.supplierBank}}</p>
-      </el-col>
-      <el-col :span="12" class="blank">
-        <h1 class="title"></h1>
       </el-col>
       <el-col :span="24">
         <h1 class="title">发票</h1>

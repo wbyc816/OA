@@ -7,7 +7,7 @@
       <el-col :span="7" class="sideBar">
         <el-card class="borderCard searchBox" v-show="$route.name=='newsListHr'||$route.name=='clildHR'">
           <!-- <div slot="header">新闻查询</div> -->
-          <el-input class="search searchFile" v-model="searchTitle" @keyup.enter.native="searchFile">
+          <el-input class="search searchFile" v-model.trim="searchTitle" @keyup.enter.native="searchFile">
             <el-select v-model="selFile" slot="prepend" placeholder="请选择">
               <el-option :label="item.dictName" :value="item.dictCode" v-for="item in fileLink"></el-option>
             </el-select>

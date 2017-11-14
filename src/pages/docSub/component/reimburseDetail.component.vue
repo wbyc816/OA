@@ -2,7 +2,6 @@
   <div class="reimburseDetail clearfix">
     <el-table :data="info[0].tDocFinReimbursement.tDocFinReimbursementItems" :stripe="true" highlight-current-row style="width: 100%" class="appTable">
       <el-table-column label="预算年度" property="budgetYear" width="80"></el-table-column>
-      <el-table-column label="报销类型" property="docTypeName" width="120"></el-table-column>
       <el-table-column property="budgetDeptName" label="预算机构/科目">
         <template scope="scope">
           {{scope.row.budgetDeptName+'/'+scope.row.budgetItemName}}
@@ -39,6 +38,10 @@
     </el-table>
     <!-- <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p> -->
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
+      <el-col :span="24">
+        <h1 class="title">报销类型</h1>
+        <p v-if="info" class="textContent">{{info[0].tDocFinReimbursement.docTypeName}}</p>
+      </el-col>
       <el-col :span="12" class="rightBorder">
         <h1 class="title">申请金额</h1>
         <p v-if="info" class="textContent">人民币 {{info[0].tDocFinReimbursement.totalMoney | toThousands}}</p>

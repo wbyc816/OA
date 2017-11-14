@@ -13,10 +13,10 @@
           </el-select>
         </el-col>
         <el-col :span="6" v-if="!notype">
-          <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false"></el-cascader>
+          <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
         </el-col>
         <el-col :span="notype?18:12">
-          <el-input placeholder="公文标题" v-model="params.keyWords" @keyup.enter.native="submitParam"  :maxlength="50"></el-input>
+          <el-input placeholder="公文标题" v-model.trim="params.keyWords" @keyup.enter.native="submitParam"  :maxlength="50"></el-input>
         </el-col>
         <el-col :span="6">
           <el-input placeholder="公文编号" v-model="params.docNo" @keyup.enter.native="submitParam" :maxlength="25"></el-input>

@@ -10,7 +10,7 @@
             <el-form :model="searchForm" label-position="left" :rules="rules" ref="searchForm" label-width="100px" class="searchForm">
               <el-col :span="9">
                 <el-form-item label="员工姓名" prop="name">
-                  <el-input :maxlength="20" v-model="searchForm.name"  @keyup.enter.native="submitForm">
+                  <el-input :maxlength="20" v-model.trim="searchForm.name"  @keyup.enter.native="submitForm">
                   </el-input>
                 </el-form-item>
               </el-col>
@@ -22,7 +22,7 @@
               </el-col>
               <el-col :span="9">
                 <el-form-item label="工号" prop="workNo">
-                  <el-input v-model="searchForm.workNo" :maxlength="10"  @keyup.enter.native="submitForm">
+                  <el-input v-model.trim="searchForm.workNo" :maxlength="10"  @keyup.enter.native="submitForm">
                   </el-input>
                 </el-form-item>
               </el-col>

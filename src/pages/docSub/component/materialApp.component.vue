@@ -13,7 +13,7 @@
         </money-input>
       </el-form-item>
       <el-form-item label="数量" class="inlinItem" prop="quantity">
-        <el-input v-model.number="materialForm.quantity" :maxlength="5"></el-input>
+        <money-input v-model="materialForm.quantity" :maxlength="5" :prepend="false" :append="false" :hasDot="false"></money-input>
       </el-form-item>
       <el-form-item label="备注" class="clearBoth">
         <el-col :span="19">
@@ -39,7 +39,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p>
+    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice | toThousands}}元</span></p>
   </div>
 </template>
 <script>
@@ -59,7 +59,7 @@ export default {
       rules: {
         productName: [{ required: true, message: '请输入品名', trigger: 'blur' }],
         specification: [{ required: true, message: '请输入规格', trigger: 'blur' }],
-        quantity: [{ required: true, message: '请输入数量' }, { type: 'number', message: '数量必须为数字值' }],
+        quantity: [{ required: true, message: '请输入数量' }],
         plannedUnitPrice: [{ required: true, message: '请输入单价' }],
       },
       materials: []

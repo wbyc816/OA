@@ -29,7 +29,7 @@
             <p class="tips">请选择<span v-show="isAll">所有人安全级别</span>
               <span v-show="type=='dep'&&!isAll">部门安全级别</span><span v-show="type=='person'&&!isAll">人员</span>
             </p>
-            <el-input class="search" v-model="name" v-show="type=='person'">
+            <el-input class="search" v-model.trim="name" v-show="type=='person'">
               <el-button slot="append" @click="search">搜索</el-button>
             </el-input>
           </div>

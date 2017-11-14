@@ -8,7 +8,7 @@
         <!-- <div class="tempBox" @click="ruleForm.des=tempText"><span></span>
           <div><i class="iconfont icon-moban"></i>模板</div>
         </div> -->
-        <editor @input="desChange" @updateLen="updateLen"></editor>
+        <editor @input="desChange" @updateLen="updateLen" :data="ruleForm.des" ref="editor"></editor>
       </el-form-item>
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
         <div class="pathBox clearfix" v-html="pathHtml">

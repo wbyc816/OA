@@ -74,9 +74,9 @@ export default {
             if (res.data.tBasicFileList) {
               this.newList = res.data.tBasicFileList;
               this.totalSize = res.data.totalSize;
-            }else{
-              this.newList=[];
-              this.totalSize=1;
+            } else {
+              this.newList = [];
+              this.totalSize = 1;
             }
 
           }
@@ -131,6 +131,8 @@ $brown: #985D55;
           border-top: 1px solid #E9E9E9;
           color: #676767;
           cursor: pointer;
+          display: inline-block;
+          width: 100%;
           .new {
             font-size: 12px;
             font-weight: normal;

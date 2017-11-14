@@ -15,25 +15,25 @@ import { mapGetters } from 'vuex'
 export default {
   props: {
     value: '',
-    prepend:{
+    prepend: {
       type: Boolean,
       default: true
     },
-    append:{
+    append: {
       type: Boolean,
       default: true
     },
-    maxlength:{
-      type:Number,
-      default:10,
+    maxlength: {
+      type: Number,
+      default: 10,
     },
-    hasDot:{
-      type:Boolean,
-      default:true
+    hasDot: {
+      type: Boolean,
+      default: true
     },
-    readonly:{
-      type:Boolean,
-      default:false
+    readonly: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -55,8 +55,11 @@ export default {
   },
   methods: {
     fomat(val) {
-      val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
-
+      if (this.hasDot) {
+        val = val.toString().match(/^[1-9]([0-9]{0,})+(?:\.\d{0,2})?/);
+      } else {
+        val = val.toString().match(/^[1-9][0-9]{0,}/)
+      }
       if (val) {
         this.$emit('input', val[0]);
         this.$emit('change', val[0]);

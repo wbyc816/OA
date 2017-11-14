@@ -56,9 +56,15 @@
         <el-table :data="topDistData" style="width: 100%" class="distTable" :stripe="true">
           <el-table-column prop="distUserName" label="分发人" width="100"></el-table-column>
           <el-table-column prop="reciveUserName" label="被分发人" width="100"></el-table-column>
-          <el-table-column prop="content" label="分发人意见"></el-table-column>
-          <el-table-column prop="distTime" label="分发时间" width="180"></el-table-column>
-          <el-table-column prop="readTime" label="阅读时间" width="180"></el-table-column>
+          <el-table-column prop="content" label="分发人意见">
+            <template scope="scope">
+              <el-tooltip popper-class="contentTip" :enterable="false" effect="dark" :content="scope.row.content" placement="top" :disabled="scope.row.content.length<=20">
+                <span style="display: inline-block;">{{scope.row.content | dotdotdot}}</span>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column prop="distTime" label="分发时间" width="120"></el-table-column>
+          <el-table-column prop="readTime" label="阅读时间" width="120"></el-table-column>
         </el-table>
         <el-collapse v-model="activeNames" @change="handleChange" class="moreButton" v-if="distData.length>3">
           <el-collapse-item title="查看更多记录" name="1">
@@ -82,18 +88,12 @@
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
       <span slot="title">公文归档</span>
       <el-form :model="fileForm" :inline="!isRedFile" :rules="fileRules" ref="fileForm" class="fileForm" :class="{fileRed:isRedFile}">
-        <el-table :data="fileRedData" style="width: 100%" max-height="200" v-if="isRedFile">
-          <el-table-column prop="fileName" label="模板名称" width="">
-          </el-table-column>
-          <el-table-column prop="name" label="操作" width="100">
-            <template scope="scope">
-              <a :href="scope.row.fileUrl" target="_blank" style="color:#0460AE">下载</a>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-form-item label="正文" prop="taskFileId" v-if="isRedFile">
+        <el-form-item label="建议发文号" v-if="isRedFile">
+          {{docDetialInfo.doc.fwNo}}
+        </el-form-item>
+        <el-form-item label="发布正文" prop="taskFileId" v-if="isRedFile">
           <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
-            <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
+            <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''">上传发布正文<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
         </el-form-item>
         <el-form-item label="归档状态" class="textarea" prop="state">
@@ -118,7 +118,7 @@
           <el-button class="addButton" @click="selectArchivePerson"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="分发意见" prop="res">
-          <el-input type="textarea" :rows="6" resize='none' v-model="archiveForm.res"></el-input>
+          <el-input type="textarea" :rows="6" resize='none' v-model="archiveForm.res" :maxlength="100"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="dialogSubmitButton" @click="dialogSubmit">分发</el-button>
@@ -156,7 +156,6 @@ import CLB from './component/travelRemibDetail.component' //预付款详情
 import BKY from './component/guestTicketDetail.component.vue' //宾客机票详情
 import YGY from './component/staffBenefitDetail.component.vue' //员工优惠机票
 import LZS from './component/empQuitDetail.component.vue' //离职详情
-
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -215,7 +214,6 @@ export default {
       isSuccessSubmit: false,
       suggestHtml: '',
       archiveState: '1',
-      fileRedData: [],
       isRedFile: false
     }
   },
@@ -266,7 +264,6 @@ export default {
             }
             if (this.docDetialInfo.doc.isConfidential == 1 && route.query.code == 'FWG') {
               this.isRedFile = true;
-              this.initFileData();
             }
             this.handleSuggest();
           }
@@ -326,6 +323,7 @@ export default {
             "state": this.archiveState,
             "taskFileId": this.fileForm.taskFileId
           }
+          // console.log(params)
           this.$http.post('/doc/docArchive', params, { body: true })
             .then(res => {
               if (res.status == '0') {
@@ -438,16 +436,7 @@ export default {
     handleRemove() {
       this.fileForm.taskFileId = '';
     },
-    initFileData() {
-      this.$http.post('/doc/getRedFrom')
-        .then(res => {
-          if (res.status == 0) {
-            this.fileRedData = res.data;
-          } else {
 
-          }
-        })
-    }
   }
 }
 

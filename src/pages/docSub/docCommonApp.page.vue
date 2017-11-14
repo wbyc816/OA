@@ -232,7 +232,7 @@ export default {
             // this.$store.commit('setDocTtile', res.data.docTtile);
             this.reciverName = res.data.receiver.reciUserName;
             this.$refs.subject.updateTitle(res.data.docTtile);
-            this.$refs.description.ruleForm.des = res.data.des.replace(/↵/g, "\n");
+            this.$refs.description.$refs.editor.setContent(res.data.des);
             if (res.data.path) {
               this.$refs.description.updatePath(res.data.path);
             }

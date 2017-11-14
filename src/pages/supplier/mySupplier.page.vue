@@ -23,7 +23,7 @@
           <el-input v-model="searchParams.supplierNo" placeholder="客户编码"></el-input>
         </el-col>
         <el-col :span="21">
-          <el-input v-model="searchParams.supplierName" placeholder="客户名称"></el-input>
+          <el-input v-model.trim="searchParams.supplierName" placeholder="客户名称"></el-input>
         </el-col>
         <el-col :span="3">
           <el-button type="primary" @click="search" :disabled="searchLoading">搜索</el-button>

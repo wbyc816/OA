@@ -2,7 +2,7 @@
   <div class="editorWrap" :class="{'isFocus':isFocus}">
     <div v-html="content" @input="result" ref="editor" style="height:400px" @focus="isFocus=true" @blur="isFocus=false">
     </div>
-    <div class="tempBox" @click="setContent">
+    <div class="tempBox" @click="setContent(tempText)">
       <i class="iconfont icon-moban"></i>模板
     </div>
     <p class="remainNum" :style="{color:isOver?'#ff4949':''}">
@@ -69,11 +69,11 @@ export default {
     handleTemp() {
       if (this.docType.length != 0) {
         var doc = this.docType.find(d => d.docTypeCode == this.$route.params.code);
-        this.tempText = "<p>" + doc.temPlate.replace(/↵/g, "<br>") + "</p>";
+        this.tempText = doc.temPlate;
       }
     },
-    setContent() {
-      this.editor.$txt.html(this.tempText);
+    setContent(val) {
+      this.editor.$txt.html(val);
       this.$emit('input', this.editor.$txt.html());
       this.calcNum();
     },

@@ -7,8 +7,8 @@
         </el-col>
         <el-col :span='18'>
           <div class="topSearch clearfix">
-            <p class="tips">选择部门<span v-show="dialogType=='radio'">请双击部门选择</span></p>
-            <el-input class="search" v-model="params.name">
+            <p class="tips">选择部门<span v-show="dialogType=='radio'">请单击部门选择</span></p>
+            <el-input class="search" v-model.trim="params.name">
               <el-button slot="append" @click="search" :maxlength="20">搜索</el-button>
             </el-input>
           </div>

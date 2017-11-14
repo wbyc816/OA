@@ -8,7 +8,7 @@
         <el-col :span='18'>
           <div class="topSearch clearfix">
             <p class="tips">选择{{selText}}<span v-show="dialogType=='radio'">请单击姓名选择</span></p>
-            <el-input class="search" v-model="name" @keyup.enter.native="search">
+            <el-input class="search" v-model.trim="name" @keyup.enter.native="search">
               <el-button slot="append" @click="search" :maxlength="20">搜索</el-button>
             </el-input>
           </div>
@@ -190,7 +190,7 @@ export default {
             this.selPerson = row;
           } else {
             this.$message({
-              message: '请重新选择收件人！',
+              message: '收件人不能为本人！',
               type: 'warning'
             })
           }

@@ -7,7 +7,7 @@
       </div>
       <el-row :gutter="12">
         <el-col :span="8">
-          <el-input v-model="searchParams.conferenceTitle" placeholder="会议名称"  :maxlength="50"></el-input>
+          <el-input v-model.trim="searchParams.conferenceTitle" placeholder="会议名称"  :maxlength="50"></el-input>
         </el-col>
         <el-col :span="5">
           <el-date-picker v-model="searchParams.reserveDate" type="date" :editable="false" style="width:100%" placeholder="日期"></el-date-picker>

@@ -33,9 +33,18 @@
           <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
         </el-input>
       </el-form-item>
-      <el-form-item label="待套红文件" prop="docFileId">
+      <el-table :data="fileRedData" style="width: 100%;margin-bottom:20px;" max-height="200">
+        <el-table-column prop="fileName" label="模板名称" width="">
+        </el-table-column>
+        <el-table-column prop="name" label="操作" width="100">
+          <template scope="scope">
+            <a :href="scope.row.fileUrl" target="_blank" style="color:#0460AE">下载</a>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-form-item label="正文" prop="docFileId">
         <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
-          <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''">上传待套红文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -96,6 +105,7 @@ export default {
         label: 'name',
         children: 'catalogues'
       },
+      fileRedData: [],
     }
   },
   computed: {
@@ -108,6 +118,7 @@ export default {
     this.getType();
     this.getSendType();
     this.getFileCatalogue();
+    this.initFileData();
   },
   methods: {
     saveForm() {
@@ -259,6 +270,16 @@ export default {
             this.catalogueList = res.data;
           } else {
             console.log('获取发文目录失败')
+          }
+        })
+    },
+    initFileData() {
+      this.$http.post('/doc/getRedFrom')
+        .then(res => {
+          if (res.status == 0) {
+            this.fileRedData = res.data;
+          } else {
+
           }
         })
     }

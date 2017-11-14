@@ -183,7 +183,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="增值税税费总额" prop="taxMoney" v-if="activeInvoice=='FIN0201'" class="taxMoney">
-          <money-input v-model="budgetForm.taxMoney" style="width:50%" class="hasUnit" :maxlength="7" @change="tranMoney">
+          <money-input v-model="budgetForm.taxMoney" style="width:50%" class="hasUnit" :maxlength="10" @change="tranMoney">
             <el-select v-model="activeCurrency" style="width:100px" slot="prepend" @change="tranMoney">
               <el-option :label="item.currencyName" :value="item.currencyCode" v-for="item in currencyList"></el-option>
             </el-select>
@@ -291,6 +291,8 @@ export default {
 
         if (this.taxRmb >= this.totalFee) {
           callback(new Error('增值税税费总额必须小于报销金额总和'))
+        } else if (this.taxRmb > this.addTax.remainMoney) {
+          callback(new Error('增值税税费总额必须小于增值税税费可用预算'))
         } else {
           callback();
         }
@@ -817,7 +819,12 @@ export default {
                             item.rmb = res.data.amount;
                             item.exchangeRateId = res.data.rateId;
                             item.exchangeRate = res.data.rateReverse;
-                            this.budgetTable.unshift(item);
+                            if (this.budgetInfo.budgetRemain<=0||item.rmb > this.budgetInfo.budgetRemain) {
+                              this.$message.warning('报销金额不能大于可用预算');
+                              this.budgetTable=[];
+                            } else {
+                              this.budgetTable.unshift(item);
+                            }
                           }
                         })
                     } else {

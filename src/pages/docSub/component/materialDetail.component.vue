@@ -4,7 +4,7 @@
       <el-table-column type="index" label=" " width="40"></el-table-column>
       <el-table-column property="productName" label="品名" width="180"></el-table-column>
       <el-table-column property="specification" label="规格" width="90"></el-table-column>
-      <el-table-column property="plannedUnitPriceL" label="计划单价" width="100"></el-table-column>
+      <el-table-column property="plannedUnitPrice" label="计划单价" width="100"></el-table-column>
       <el-table-column property="quantity" label="数量" width="90"></el-table-column>
       <el-table-column property="remark" label="备注"></el-table-column>
     </el-table>

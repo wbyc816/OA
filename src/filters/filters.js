@@ -6,6 +6,7 @@ Vue.filter('didDate', didDate);
 Vue.filter('percent', percent);
 Vue.filter('toThousands', toThousands);
 Vue.filter('nodeNameFormatter', nodeNameFormatter);
+Vue.filter('dotdotdot', dotdotdot);
 
 function timeFilter(value, type) { //value为13位的时间戳
   function t(s) {
@@ -102,7 +103,7 @@ function toThousands(val) {
     }  
     if (num) { result = num + result; }  
     if(arr[1]){
-      result=result+'.'+arr[1];
+      result=result+'.'+arr[1].substr(0, 2);
     }
     return result;  
 }  
@@ -118,6 +119,15 @@ function sexFilter(val) {
 
     default:
       return val;
+  }
+}
+
+function dotdotdot(val){
+  var max=45;
+  if(val.length>max){
+    return val.substr(0,max-3)+'...'
+  }else{
+    return val
   }
 }
 export { timeFilter,toThousands }

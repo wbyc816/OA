@@ -19,7 +19,7 @@
           <li>可用预算{{budgetInfo.budgetRemain | toThousands}}元</li>
           <li>预算执行比例{{budgetInfo.execRateStr}}</li>
         </ul>
-        <el-form-item label="申请金额" class="arrArea" prop="appMoney">
+        <el-form-item label="申请金额" class="deptArea" prop="appMoney" style="width:60%">
           <money-input v-model="budgetForm.appMoney" class="hasUnit">
             <el-select v-model="activeCurrency" slot="prepend" style="width:90px">
               <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
@@ -54,13 +54,22 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column property="appMoney" label="报销金额(元)" width="130">
+          <el-table-column property="money" label="报销金额(元)" width="140">
             <template scope="scope">
-              <money-input v-model="scope.row.appMoney" :prepend="false" :append="false" @change="tranMoney(scope.row)"></money-input>
+              <money-input v-model="scope.row.money" :prepend="false" :append="false" @change="tranMoney(scope.row)"></money-input>
             </template>
           </el-table-column>
           <el-table-column property="accurencyName" label="币种" width="75"></el-table-column>
-          <el-table-column property="rmb" label="人民币(元)" width="125">
+          <el-table-column property="rmb" label="人民币(元)" width="135" class-name="columnAppMoney">
+            <template scope="scope">
+              {{scope.row.rmb}}
+              <transition name="el-zoom-in-bottom">
+                <span class="warnInfo" v-show="!scope.row.rmb">报销金额不能为空</span>
+              </transition>
+              <transition name="el-zoom-in-bottom">
+                <span class="warnInfo" v-show="parseFloat(scope.row.rmb)>scope.row.budegetRemain">不能大于预算可用金额</span>
+              </transition>
+            </template>
           </el-table-column>
           <el-table-column label=" " width="55">
             <template scope="scope">
@@ -69,7 +78,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
+        <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}} 元</span></p>
       </div>
       <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea" style="width:51%">
         <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType" @change="payMthodChange">
@@ -221,7 +230,7 @@ export default {
       this.budgetTable = obj.budgetTable;
     },
     submitForm() {
-      if (this.budgetTable.length != 0) {
+      if (this.checkBudgetTable()) {
         this.$refs.paymentForm.validate((valid) => {
           if (valid) {
             this.submitAll();
@@ -231,9 +240,6 @@ export default {
             return false;
           }
         });
-      } else {
-        this.$emit('submitMiddle', false);
-        this.$message.warning('未添加付款项');
       }
     },
     submitAll() {
@@ -241,8 +247,8 @@ export default {
       var payType = this.payTypes.find(i => i.dictCode == this.paymentForm.payTypeCode);
       var tDocFinReimbursementItems = this.clone(this.budgetTable).map(function(b) {
         delete b.currencyCode;
-        delete b.appMoney;
         b.receiptTicket = b.invoiceCode.join();
+        delete b.budegetRemain;
         delete b.invoiceCode;
         return b;
       });
@@ -262,6 +268,33 @@ export default {
       var finFileIds = this.paymentForm.invoiceAttach.map(c => c.response.data);
       console.log(tDocFinReimbursement, finFileIds);
       this.$emit('submitMiddle', { tDocFinReimbursement: tDocFinReimbursement, finFileIds: finFileIds })
+    },
+    checkBudgetTable() {
+      if (this.budgetTable.length != 0) {
+        var totalTAX = 0;
+        for (var i = 0; i < this.budgetTable.length; i++) {
+          var temp = this.budgetTable[i];
+          if(temp.budgetItemId==this.addTax.budgetItemId){
+            totalTAX += temp.rmb;
+          }
+          if (temp.money == '' || temp.rmb > temp.budegetRemain) {
+            this.$message.warning('请检查付款项');
+            this.$emit('submitMiddle', false);
+            return false
+          }
+        }
+        if (totalTAX > this.addTax.remainMoney) {
+          this.$message.warning('付款项所有增值税进项税额不能大于增值税进项税额可用预算( ' + this.addTax.remainMoney + ' 元)');
+          this.$emit('submitMiddle', false);
+          return false
+        } else {
+          return true
+        }
+      } else {
+        this.$message.warning('未添加付款项');
+        this.$emit('submitMiddle', false);
+        return false
+      }
     },
     invoiceTypeChange(code) {
       if (code != 'FIN0201') {
@@ -342,10 +375,10 @@ export default {
             "currencyCode": currency.currencyCode,
             "invoiceCode": [], //发票票号, 可以为多个, 用英文逗号分隔
             "rmb": "", //对应的人民币
-            "appMoney": this.budgetForm.appMoney,
             "budgetYear": this.year,
             "exchangeRateId": "", //汇率id
             "exchangeRate": "", //汇率
+            "budegetRemain": this.budgetInfo.budgetRemain
           }
           this.$http.post('/doc/getRmbByExchangeRate', { currencyId: currency.currencyCode, amount: this.budgetForm.appMoney })
             .then(res => {
@@ -353,37 +386,61 @@ export default {
                 item.rmb = res.data.amount;
                 item.exchangeRateId = res.data.rateId;
                 item.exchangeRate = res.data.rateReverse;
-                this.budgetTable.push(item);
-                if (this.activeInvoice == 'FIN0201') {
-                  var taxItem = {
-                    "budgetDeptId": this.addTax.deptId, //预算部门id
-                    "budgetDeptName": this.addTax.budgetDeptName, //预算部门名
-                    "budgetItemId": this.addTax.budgetItemId, //预算科目id
-                    "budgetItemName": this.addTax.budgetName, //预算科目名
-                    "money": "0", //申报金额
-                    "receiptTypeCode": invoice.dictCode, //发票类型code, FIN02中
-                    "receiptTypeName": invoice.dictName, //发票类型名
-                    "accurencyName": currency.currencyName, //币种
-                    "currencyCode": currency.currencyCode,
-                    "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
-                    "rmb": 0, //对应的人民币
-                    "appMoney": "0",
-                    "budgetYear": this.year,
-                    "exchangeRateId": res.data.rateId, //汇率id
-                    "exchangeRate": res.data.rateReverse, //汇率
+                if (this.checkBuudget(item.rmb)) {
+                  this.budgetTable.push(item);
+                  if (this.activeInvoice == 'FIN0201') {
+                    var taxItem = {
+                      "budgetDeptId": this.addTax.deptId, //预算部门id
+                      "budgetDeptName": this.addTax.budgetDeptName, //预算部门名
+                      "budgetItemId": this.addTax.budgetItemId, //预算科目id
+                      "budgetItemName": this.addTax.budgetName, //预算科目名
+                      "money": "0", //申报金额
+                      "receiptTypeCode": invoice.dictCode, //发票类型code, FIN02中
+                      "receiptTypeName": invoice.dictName, //发票类型名
+                      "accurencyName": currency.currencyName, //币种
+                      "currencyCode": currency.currencyCode,
+                      "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
+                      "rmb": 0, //对应的人民币
+                      "budgetYear": this.year,
+                      "exchangeRateId": res.data.rateId, //汇率id
+                      "exchangeRate": res.data.rateReverse, //汇率
+                      "budegetRemain": this.addTax.remainMoney
+                    }
+                    this.budgetTable.push(taxItem);
                   }
-                  this.budgetTable.push(taxItem);
+                  this.budgetItemReset();
                 }
               } else {
                 console.log('货币兑换失败')
               }
             })
-
-
         } else {
 
         }
       })
+    },
+    checkBuudget(rmb) {
+      var dep = this.getBudgetDep();
+      var temp = this.budgetTable.find(b => b.budgetDeptId == dep.budgetDeptCode && b.budgetItemId == dep.budgetItemCode)
+      if (temp == undefined) {
+        if (this.budgetInfo.budgetRemain <= 0 || rmb > this.budgetInfo.budgetRemain) {
+          this.$message.warning('申请金额不能大于可用预算金额');
+          return false
+        } else {
+          return true
+        }
+      } else {
+        this.$message.warning('不能添加相同的预算科目')
+        return false
+      }
+    },
+    budgetItemReset() {
+      this.budgetForm.budgetDept = [];
+      this.budgetForm.invoiceNum = '';
+      this.budgetForm.appMoney = '';
+      this.budgetInfo = '';
+      this.activeInvoice = this.invoiceList[0].dictCode;
+      this.activeCurrency = this.currencyList[0].currencyCode;
     },
     deleteBudget(index) {
       if (this.budgetTable[index].receiptTypeCode == 'FIN0201') {
@@ -393,12 +450,12 @@ export default {
       }
     },
     tranMoney: _.debounce(function(row) {
-      this.$http.post('/doc/getRmbByExchangeRate', { currencyId: row.currencyCode, amount: row.appMoney })
+      this.$http.post('/doc/getRmbByExchangeRate', { currencyId: row.currencyCode, amount: row.money })
         .then(res => {
           if (res.status == 0) {
             row.rmb = res.data.amount;
           } else {
-            console.log('货币兑换失败')
+            row.rmb = 0;
           }
         })
     }, 500),
@@ -632,6 +689,24 @@ $main:#0460AE;
     margin-bottom: 20px;
     td {
       height: 60px;
+      &.columnAppMoney {
+        .cell {
+          height: 60px;
+          line-height: 60px;
+        }
+        .el-input__inner {
+          height: 30px;
+        }
+        .warnInfo {
+          position: absolute;
+          bottom: 0;
+          left: 18px;
+          color: #ff4949;
+          font-size: 12px;
+          line-height: 1;
+          white-space: nowrap;
+        }
+      }
     }
   }
   .totalMoney {

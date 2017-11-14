@@ -29,7 +29,7 @@
       <p v-if="info" class="textContent">{{info[0].verifyId}}</p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">待套红文件</h1>
+      <h1 class="title">正文</h1>
       <p v-if="info" class="textContent" style="color:#0460AE">
         <a :href="info[0].toRedUrl" target="_blank" v-if="state!=3">{{info[0].fielName}}</a>
         <a :href="info[0].url" target="_blank" v-else>{{info[0].fielName}}</a>
