@@ -178,7 +178,7 @@ export default {
           }
 
         }else if(this.staffBenefitAppFormFirst.documentTypeSelect=="EMP0803"){
-          var reg = /^[HMhm]{1}([0-9]{10}|[0-9]{8})$/; 
+          var reg = /^[HMhmcC]{1}([0-9]{10}|[0-9]{8})$/; 
           if (reg.test(value) == true) {
             callback();
           } else {

@@ -4,12 +4,11 @@
        
       <el-form-item label="申请金额" prop="appMoney" class="flw50"> 
           <div>
-            <el-input   v-model="loanAppForm.appMoney">
-              <el-select v-model="loanAppForm.selectMoney" slot="prepend" placeholder="请选择" class="selectMoney" @change="chooseCurrency" ref="accurency">
+            <el-input   v-model="loanAppForm.appMoney" :maxlength="10" @change="fomatMoney" @blur="blurInput" ref="appMoney">
+              <el-select v-model="loanAppForm.selectMoney" slot="prepend" placeholder="请选择" class="selectMoney" @change="chooseCurrency" ref="accurency" >
                 <el-option v-for="currency in currencys" :label="currency.currencyName" :value="currency.currencyCode"></el-option>
                 
               </el-select>
-            <template slot="append">元</template>
             </el-input>
           </div>
         </el-form-item>
@@ -154,6 +153,16 @@ export default {
     this.loadCollectionInformation();
   },
   methods: {
+    fomatMoney(val) {
+      val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
+      if (val) {
+        this.loanAppForm.appMoney = val[0];
+        this.$refs.appMoney.setCurrentValue(val[0]);
+      } else {
+        this.loanAppForm.appMoney = ''
+        this.$refs.appMoney.setCurrentValue('')
+      }
+    },
      changePayee(){
         var that = this;
         document.getElementsByClassName("el-input__inner")[5].addEventListener("keyup",function(){
@@ -295,16 +304,6 @@ export default {
     },
     closePerson(index) {
       this.budgetForm.person.splice(index, 1);
-    },
-    fomatMoney(val) {
-      val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
-      if (val) {
-        this.budgetForm.budgetMoney = val[0];
-        this.$refs.budgetMoney.setCurrentValue(val[0]);
-      } else {
-        this.budgetForm.budgetMoney = ''
-        this.$refs.budgetMoney.setCurrentValue('')
-      }
     },
     getBudgetDeptList() {
       if(this.budgetForm.year){
