@@ -31,8 +31,9 @@
           
             </el-col>
             <el-col :span="7">
-               <el-radio-group   v-model="staffBenefitAppFormFirst.genger"  @input="updateCon" class="myRadio gender w153" >
-                <el-radio-button :label="item.value"  v-for="item in genders">{{item.dictName}}<i></i></el-radio-button>
+               <el-radio-group   v-model="staffBenefitAppFormFirst.genger"  class="myRadio gender w153" >
+              <el-radio-button label="M">男<i></i></el-radio-button>
+                <el-radio-button label="F" >女<i></i></el-radio-button>
               </el-radio-group>
             </el-col>
           </el-row>
@@ -456,11 +457,6 @@ export default {
 
     },
 
- updateCon(val) {
-      var confident= this.genders.find(ele => ele.value == val);
-      this.genger=confident.value;
-      this.$store.commit('setConfident', { docDenseType: confident.dictName, value: confident.value });
-          },
   ticketTypeChange(){
     
     if(this.staffBenefitAppFormThird.ticketTypes){
