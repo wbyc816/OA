@@ -10,7 +10,7 @@
             <div class="grid-content bg-purple-light">
               <div class="reminder_title"><span class="title_font">生日提醒</span> <span class="birthday_date">{{startDate | time('birthday')}}-{{endDate | time('birthday')}} 共{{total}}人过生日</span></div>
               <el-table :data="tableData" stripe style="width: 100%">
-                <el-table-column prop="empName" label="员工姓名" width="90">
+                <el-table-column prop="empName" label="员工姓名" >
                 </el-table-column>
                 <el-table-column prop="deptName" label="部门" width="160">
                 </el-table-column>
