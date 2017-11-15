@@ -30,7 +30,7 @@
           <span>{{selectDay | time('date')}}</span><span>{{selectDay | time('week')}}</span>
           <i class="el-icon-arrow-right flRight" :class="{'Invalid':selectDay>=lastDay}" @click="changeDay(1)"></i>
         </div>
-        <div class="flRight note"><span>内部会议</span><span>外部会议</span></div>
+        <div class="flRight note"><span v-for="item in conferenceType">{{item.typeName}}</span></div>
       </div>
       <el-row class="roomIntro" v-show="roomId!=''">
         <el-col :span="4">{{roomInfo.roomPlace}}{{roomInfo.roomName}}</el-col>
@@ -51,7 +51,7 @@
               <el-tooltip class="item" effect="dark" :content="timeFilter(plan.beginTime,'hours')+'-'+timeFilter(plan.endTime,'hours')" placement="top">
                 <p>{{plan.beginTime | time('hours')}}-{{plan.endTime | time('hours')}}</p>
               </el-tooltip>
-              <p :style="{background:plan.isInside==1?'#1465C0':'#BE3B7F'}"></p>
+              <p :style="{background:handleBg(plan)}"></p>
               <el-tooltip class="item" effect="dark" :content="plan.dep" placement="bottom">
                 <p>{{plan.dep}}</p>
               </el-tooltip>
@@ -66,13 +66,16 @@
           <span>{{selectDay | time('date')}}</span><span>{{selectDay | time('week')}}</span>
           <i class="el-icon-arrow-right flRight" :class="{'Invalid':selectDay>=lastDay}" @click="changeDay(1)"></i>
         </div>
-        <div class="flRight note"><span>内部会议</span><span>外部会议</span></div>
+        <div class="flRight note"><span v-for="item in conferenceType">{{item.typeName}}</span></div>
       </div>
     </el-card>
   </div>
 </template>
 <script>
 const times = ['22:00', '20:00', '18:00', '16:00', '14:00', '12:00', '10:00', '08:00'];
+const colors = [{ type: '05d06a2d21f24d91aad56c1388308085', color: '#0460AE' }, { type: 'cbb01e09e33e4ade809b05d898a9b19a', color: '#BE3B7F' }, { type: '4bb396cbc6cf40ebb994e7d1a5a656f6', color: '#673ab7' }, { type: '05a82dcd2b72453cb86d011a44c712ee', color: '#2196f3' }]
+
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
 
@@ -89,7 +92,7 @@ export default {
       // timeList,
       reserveList: [],
       roomId: '',
-      roomInfo:{}
+      roomInfo: {}
     };
   },
   computed: {
@@ -110,16 +113,23 @@ export default {
                   start: this.calWidth(p.beginTime),
                   width: this.calWidth(p.endTime) - this.calWidth(p.beginTime),
                   isInside: p.isInside,
-                  dep: p.deptName + '-' + p.reserveName
+                  dep: p.deptName + '-' + p.reserveName,
+                  type: p.conferenceTypeId
                 })
               }
             })
+            list.push(temp);
           }
-          list.push(temp);
+
         })
       }
       return list;
-    }
+    },
+    ...mapGetters([
+      'userInfo',
+      'roomList',
+      'conferenceType'
+    ])
   },
   created() {
     if (this.$route.params.id == 'all') {
@@ -213,15 +223,20 @@ export default {
       width = parseInt(tempTime) / (14 * 60 * 60 * 1000);
       return width * 100;
     },
-    getRoomInfo(){
-      this.$http.post('conference/findByid',{roomId:this.roomId})
-      .then(res=>{
-        if(res.status==0){
-          this.roomInfo=res.data;
-        }else{
+    getRoomInfo() {
+      this.$http.post('conference/findByid', { roomId: this.roomId })
+        .then(res => {
+          if (res.status == 0) {
+            this.roomInfo = res.data;
+          } else {
 
-        }
-      })
+          }
+        })
+    },
+    handleBg(plan) {
+      console.log(plan);
+      var temp = colors.find(c => c.type == plan.type) || { color: '#0460AE' };
+      return temp.color;
     }
   },
 
@@ -345,12 +360,12 @@ $brown: #BE3B7F;
     }
     .note {
       line-height: 55px;
-      padding-right: 20px;
       span {
         position: relative;
         font-size: 15px;
         color: $main;
         padding-left: 25px;
+        margin-right: 15px;
         &:before {
           content: '';
           display: block;
@@ -365,20 +380,23 @@ $brown: #BE3B7F;
           margin: auto 0;
         }
       }
-      span:last-child {
-        color: $brown;
-        margin-left: 15px;
-        &:before {
-          background: $brown;
+      $widths: (1: $main, 2: $brown, 3: #673ab7, 4: #2196f3);
+      @each $num,
+      $width in $widths {
+        span:nth-child(#{$num}) {
+          color: $width;
+          &:before {
+            background: $width;
+          }
         }
       }
     }
   }
-  .roomIntro{
-    background:$main;
-    line-height:70px;
-    color:#fff;
-    padding-left:20px;
+  .roomIntro {
+    background: $main;
+    line-height: 70px;
+    color: #fff;
+    padding-left: 20px;
   }
   .timeLine {
     padding-left: 21px;

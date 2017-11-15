@@ -79,33 +79,35 @@
     </el-table>
     <p class="totalMoney">合计金额 人民币 <span>{{info[0].travelpay.totalMoney | toThousands}} 元</span></p>
     <p class="borderBox clearBoth"></p>
-    <el-col :span="12" class="rightBorder">
-      <h1 class="title">报销申请人</h1>
-      <p v-if="info" class="textContent">{{info[0].travelpay.travelpayUser}}</p>
-    </el-col>
-    <el-col :span="12">
-      <h1 class="title">申请金额</h1>
-      <p v-if="info" class="textContent">人民币 {{info[0].travelpay.totalMoney | toThousands}}元</p>
-    </el-col>
-    <el-col :span="12" class="rightBorder">
-      <h1 class="title">收款人</h1>
-      <p v-if="info" class="textContent">{{info[0].travelpay.payeeUser}}</p>
-    </el-col>
-    <el-col :span="12">
-      <h1 class="title">付款方式</h1>
-      <p v-if="info[0].travelpay.paymentMethodCode!='FIN0104'" class="textContent">{{info[0].travelpay.paymentMethodName}}</p>
-      <p class="textContent" v-else>{{info[0].travelpay.paymentOthers}}</p>
-    </el-col>
-    <el-col :span="24">
-      <h1 class="title">收款账户</h1>
-      <p v-if="info" class="textContent">{{info[0].travelpay.payeeAccount}}</p>
-    </el-col>
-    <el-col :span="24">
-      <h1 class="title">发票</h1>
-      <p v-if="info" class="textContent">
-        <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
-      </p>
-    </el-col>
+    
+      <el-col :span="12" class="rightBorder">
+        <h1 class="title">报销申请人</h1>
+        <p v-if="info" class="textContent">{{info[0].travelpay.travelpayUser}}</p>
+      </el-col>
+      <el-col :span="12">
+        <h1 class="title">申请金额</h1>
+        <p v-if="info" class="textContent">人民币 {{info[0].travelpay.totalMoney | toThousands}}元</p>
+      </el-col>
+      <el-col :span="12" class="rightBorder">
+        <h1 class="title">收款人</h1>
+        <p v-if="info" class="textContent">{{info[0].travelpay.payeeUser}}</p>
+      </el-col>
+      <el-col :span="12">
+        <h1 class="title">付款方式</h1>
+        <p v-if="info[0].travelpay.paymentMethodCode!='FIN0104'" class="textContent">{{info[0].travelpay.paymentMethodName}}</p>
+        <p class="textContent" v-else>{{info[0].travelpay.paymentOthers}}</p>
+      </el-col>
+      <el-col :span="24">
+        <h1 class="title">收款账户</h1>
+        <p v-if="info" class="textContent">{{info[0].travelpay.payeeAccount}}</p>
+      </el-col>
+      <el-col :span="24">
+        <h1 class="title">发票</h1>
+        <p v-if="info" class="textContent">
+          <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
+        </p>
+      </el-col>
+    
   </div>
 </template>
 <script>
@@ -119,7 +121,7 @@ export default {
   data() {
     return {
       tableData: [],
-      budgetTable:[],
+      budgetTable: [],
     }
   },
   computed: {
@@ -146,11 +148,11 @@ export default {
     formatMoney(row, column, cellValue) {
       return this.toThousands(cellValue)
     },
-    handleBudget(){
-      console.log( this.info[0]);
+    handleBudget() {
+      console.log(this.info[0]);
       console.log(6666);
-      this.info[0].travelpayItemList.forEach((item,i)=>{
-        this.budgetTable.push(Object.assign(item,this.info[0].budgetExeststisVoList[i]))
+      this.info[0].travelpayItemList.forEach((item, i) => {
+        this.budgetTable.push(Object.assign(item, this.info[0].budgetExeststisVoList[i]))
       })
     },
     handleInfo() {
@@ -197,20 +199,20 @@ export default {
             startDate: i.startDate,
             endDate: i.endDate,
             typeName: i.dictTravelName,
-            acurrencyName: i.acurrencyName,            
+            acurrencyName: i.acurrencyName,
             des: i.remark
           }
           if (i.dictTravelId == 'FIN0603') {
             item.city = i.stayCity;
-            item.money=i.allowanceTotalMoney;
+            item.money = i.allowanceTotalMoney;
             item.rmb = i.allowanceMoney;
             item.allowanceDays = i.allowanceDays;
           } else {
-            item.money=i.allowanceMoney;
+            item.money = i.allowanceMoney;
             item.rmb = i.allowanceMoney;
             item.isSendCar = i.isSendCar;
-            item.startTime=i.startTime;
-            item.endTime=i.endTime;
+            item.startTime = i.startTime;
+            item.endTime = i.endTime;
           }
           this.tableData.push(item);
         })

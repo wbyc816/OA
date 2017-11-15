@@ -1,7 +1,7 @@
 <template>
   <div id="docDraft">
     <search-options title="公文草稿箱" @search="setOptions"></search-options>
-    <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0" v-loading.body="searchLoading">
+    <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>
       <thead align="left">
@@ -9,14 +9,23 @@
           <th v-for="title in tableTitle">{{title}}</th>
         </tr>
       </thead>
-      <tbody v-for="doc in docData">
+      <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">
         <tr>
-          <td>{{doc.docTitle}}</td>
-          <td>{{doc.docTypeName}}</td>
+          <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
+          <router-link tag="td"  :to="{path:'/doc/docCommonApp/'+doc.docTypeCode,query:{id:doc.id}}" class="linkTitle">
+            <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
+            <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
+            <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
+          </router-link>
           <td>{{doc.taskTime}}</td>
-          <td></td>
+          <td><span>{{doc.currentUser}}</span></td>
           <td>
-            <router-link tag="span" :to="{path:'/doc/docCommonApp/'+doc.docTypeCode,query:{id:doc.id}}" style="color:#0460AE">查看</router-link>
+            <el-tooltip content="编辑" placement="top" :enterable="false" effect="light">
+              <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docCommonApp/'+doc.docTypeCode,query:{id:doc.id}}"></router-link>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top" :enterable="false" effect="light">
+              <i class="link el-icon-delete" @click="deleteDraft(doc.id)"></i>
+            </el-tooltip>
           </td>
         </tr>
       </tbody>
@@ -29,9 +38,10 @@
 </template>
 <script>
 import SearchOptions from '../../components/searchOptions.component'
+import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
+const tableTitle = ['', '公文名称', '保存时间', '状态', '操作']
 
-const tableTitle = ['标题', '公文类型', '保存时间', '状态', '操作']
 
 export default {
   data() {
@@ -105,6 +115,25 @@ export default {
           return cellValue;
       }
     },
+    deleteDraft(id){
+      this.$confirm('是否删除此公文草稿?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/doc/deleteDraftsById', {  docId: id }, )
+          .then(res => {
+            if (res.status == 0) {
+              this.$message.success('删除成功！');
+              this.getData();
+            } else {
+              this.$message.error(res.message);
+            }
+          })
+      }).catch(() => {
+
+      });
+    },
     handleCurrentChange(page) {
       this.params.pageNumber = page;
       this.getData()
@@ -113,6 +142,22 @@ export default {
       this.searchOptions = options;
       this.params.pageNumber = 1;
       this.getData();
+    },
+    handDocType(val) {
+      return docConfig.find(d => d.code == val.docTypeCode)||{color: '',shortName: '',}
+    },
+    calWidth(doc) {
+      var width = 1;
+      if (doc.isOvertime) {
+        width -= 0.16
+      }
+      if (doc.docImprotType != '普通' && doc.docImprotType != '') {
+        width -= 0.13
+      }
+      if (doc.docDenseType != '平件' && doc.docDenseType != '') {
+        width -= 0.13
+      }
+      return parseInt(width * 100) + '%'
     }
   }
 }
@@ -126,74 +171,12 @@ $purple: #0460AE;
     margin-top: 20px;
   }
   margin-bottom:30px;
-  &>table {
-    $widths: (1: 35%, 2: 15%, 3: 20%, 4: 15%, 5: 15%);
-    table-layout: fixed;
-    thead {
-      background: $purple;
-      color: #fff;
-      font-size: 13px;
-      th {
-        padding: 6px 13px;
-      }
-
-      @each $num,
-      $width in $widths {
-        th:nth-child(#{$num}) {
-          width: $width;
-        }
-      }
-    }
-    td {
-      padding: 4px 13px;
-      font-size: 14px;
-      word-wrap: break-word;
-    }
-    tbody {
-      background: #fff;
-      tr:first-child {
-        td {
-          border-bottom: 1px dashed #D5DADF;
-        }
-      }
-      tr {
-        // @each $num,
-        // $width in $widths {
-        //   td:nth-child(#{$num}) {
-        //     width: $width;
-        //   }
-        // }
-      }
-      tr:last-child {
-        td {
-          border-bottom: 1px solid #D5DADF;
-          vertical-align: middle;
-        }
-        height: 76px;
-        td {
-          font-size: 15px;
-        }
-        td:nth-child(2) {
-          color: #151515;
-        }
-        td:last-child {
-          color: $purple;
-          span {
-
-            cursor: pointer;
-          }
-        }
-        td:last-child {
-          cursor: pointer;
-        }
-      }
-    }
-    tbody:nth-child(even) {
-      background: #F7F7F7;
-    }
-    tfoot {
-      td {
-        color: #95989A;
+  .myDocList{
+    $widths: (1: 5%, 2: 40%, 3: 21%,  4: 10%, 5: 10%);
+    @each $num,
+    $width in $widths {
+      th:nth-child(#{$num}) {
+        width: $width;
       }
     }
   }

@@ -47,6 +47,12 @@ export default {
   created() {
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.upGradeForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.upGradeForm, obj);
+    },
     submitForm() {
       this.$refs.upGradeForm.validate((valid) => {
         if (valid) {

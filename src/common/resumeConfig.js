@@ -2,7 +2,7 @@ import {validatePhone} from './validate.js'
 // console.log(validatePhone)
 export const postInfo = [{
   head: '职务信息',
-  prop: [{ name: 'companyName', label: '公司', width: '170px' }, { name: 'deptName', label: '职务', width: '' }, { name: 'deptFatherName', label: '部门', width: '' }, { name: 'joinCompany', label: '首次进入成员公司名称', width: '200' }, { name: 'joinDate', label: '入职时间', width: '', type: 'date' }],
+  prop: [{ name: 'companyName', label: '公司', width: '170px' }, { name: 'jobTitle', label: '职务', width: '' }, { name: 'deptFatherName', label: '部门', width: '' }, { name: 'joinCompany', label: '首次进入成员公司名称', width: '200' }, { name: 'joinDate', label: '入职时间', width: '', type: 'date' }],
   url: '/resume/getEmpPostInfo'
 }]
 export const contractInfo = [{

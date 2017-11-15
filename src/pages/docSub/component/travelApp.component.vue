@@ -5,11 +5,11 @@
         <el-date-picker v-model="travelForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
       <el-form-item label="出发地" prop="deptArea" class="deptArea">
-        <el-input v-model="travelForm.deptArea" :maxlength="10">
+        <el-input v-model="travelForm.deptArea" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="目的地" prop="arrArea" class="arrArea">
-        <el-input v-model="travelForm.arrArea" :maxlength="10">
+        <el-input v-model="travelForm.arrArea" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="出差人列表" prop="person" class="reciverWrap">
@@ -42,7 +42,7 @@
         <span class="usge" v-show="budgetInfo.execRateStr">預算已使用率 {{budgetInfo.execRateStr}}</span>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :data="travelForm.person" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog>
   </div>
 </template>
 <script>
@@ -101,7 +101,8 @@ export default {
         value: 'budgetItemCode',
         children: 'items'
       },
-      budgetInfo: {}
+      budgetInfo: {},
+      count: 1
     }
   },
   computed: {
@@ -115,6 +116,15 @@ export default {
     this.getBookType();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.travelForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.travelForm, obj, ['timeRange']);
+      obj.timeRange.forEach(t => {
+        this.travelForm.timeRange.push(new Date(t));
+      })
+    },
     updatePerson(list) {
       // console.log(list)
       this.travelForm.person = list
@@ -165,11 +175,16 @@ export default {
         .then(res => {
           if (res.status == 0) {
             res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
-            this.budgetDeptList = res.data
+            this.budgetDeptList = res.data;
+            if (this.$route.query.id && this.travelForm.budgetDept.length != 0) {
+              this.handleItemChange(this.travelForm.budgetDept.slice(0, this.count));
+              this.count++;
+            }
           } else {
             console.log(res)
           }
         }, res => {})
+
     },
     handleItemChange(val) {
       var len = val.length;
@@ -188,6 +203,10 @@ export default {
                 i.isParent == 1 ? i.items = [] : i.items = null
                 temp.push(i)
               })
+              if (this.$route.query.id && this.travelForm.budgetDept.length != this.count) {
+                this.handleItemChange(this.travelForm.budgetDept.slice(0, this.count));
+                this.count++;
+              }
             }
           })
       }
@@ -213,7 +232,7 @@ export default {
       return temp;
     },
     depChange(val) {
-      if (val.length>0) {
+      if (val.length > 0) {
         this.$http.post('/doc/getExecStatisofItemId', { budgetYear: this.year, budgetItemCode: val[val.length - 1] })
           .then(res => {
             if (res.status == 0) {
@@ -222,8 +241,8 @@ export default {
 
             }
           })
-      }else{
-        this.budgetInfo={}
+      } else {
+        this.budgetInfo = {}
       }
     },
   }

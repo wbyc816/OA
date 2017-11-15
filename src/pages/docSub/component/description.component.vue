@@ -3,30 +3,23 @@
     <h4 class='doc-form_title'>详情信息</h4>
     <slot></slot>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
-      <el-form-item label="请示内容" prop="des">
-        <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des"></el-input>
-        <div class="tempBox" @click="ruleForm.des=tempText"><span></span>
+      <el-form-item :label="options.desTitle||'请示内容'" prop="des" :rules="[{ required: true,validator:checkDes,trigger: 'blur,change' }]">
+        <!-- <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des" :maxlength="5000"></el-input> -->
+        <!-- <div class="tempBox" @click="ruleForm.des=tempText"><span></span>
           <div><i class="iconfont icon-moban"></i>模板</div>
-        </div>
+        </div> -->
+        <editor @input="desChange" @updateLen="updateLen"></editor>
       </el-form-item>
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
         <div class="pathBox clearfix" v-html="pathHtml">
-          <!-- <template v-for="(node,index) in ruleForm.path">
-            <div class="nodeBox">
-              <span v-if="node.nodeName=='sign'" class="signList">
-                #<span v-for="child in node.children">{{child.typeIdName}}</span>#
-              </span>
-              <span v-else>{{node.typeIdName}}</span>
-            </div>
-            <i class="iconfont icon-jiantouyou"></i>
-          </template> -->
         </div>
         <el-button size="small" type="text" @click="pathDialogVisible=true"><i class="iconfont icon-edit"></i>编辑</el-button>
       </el-form-item>
-      <el-form-item label="附件">
+      <el-form-item label="附件" prop="attchment">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="fileList" :on-remove="handleRemove" ref="myUpload">
-          <el-button size="small" type="primary" :disabled="attchment.length>4">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
+        <p class="uploadInfo">单个附件不能超过10MB</br>最多上传5个附件</p>
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
         <el-col :span='21' class="docs" style="left: -6px;position: relative;">
@@ -48,7 +41,7 @@
       </div>
       <search-options @search="setOptions"></search-options>
       <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="250" :row-class-name="tableRowClassName" v-loading="searchLoading">
-        <el-table-column prop="docTypeCode" label="公文类型" width="110"></el-table-column>
+        <el-table-column prop="docTypeName" label="公文类型" width="110"></el-table-column>
         <el-table-column prop="docTitle" label="标题" width="310"></el-table-column>
         <el-table-column prop="taskUser" label="呈报人" width="150"></el-table-column>
         <el-table-column prop="taskTime" label="呈报时间"></el-table-column>
@@ -64,9 +57,15 @@
 <script>
 import SearchOptions from '../../../components/searchOptions.component'
 import PathDialog from '../../../components/pathDialog.component'
+import Editor from '../../../components/editor.component'
 import { mapGetters, mapMutations } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 export default {
+  components: {
+    SearchOptions,
+    PathDialog,
+    Editor
+  },
   props: {
     options: {
       type: Object
@@ -76,19 +75,17 @@ export default {
     return {
       ruleForm: {
         des: '',
+        attchment: [],
         path: []
       },
       rules: {
-        des: [
-          { required: true, message: '请输入请示内容', trigger: 'blur,change' }
-        ],
         path: [{ type: 'array', required: true, message: '请选择建议路径', trigger: 'blur,change' }],
+        attchment: []
       },
       dialogTableVisible: false,
       pathDialogVisible: false,
       docs: [{ quoteDocTitle: '', quoteDocId: '' }],
       activeDoc: '',
-      attchment: [],
       uploadOver: false,
       fileIds: [],
       extraDocs: [],
@@ -99,8 +96,8 @@ export default {
       totalSize: 0,
       searchOptions: '',
       searchLoading: false,
-      tempText: '',
-      fileList:[]
+      fileList: [],
+      desLenth:0
     }
   },
   computed: {
@@ -108,16 +105,20 @@ export default {
       var html = '';
       if (this.ruleForm.path.length != 0) {
         this.ruleForm.path.forEach((node, index) => {
-          if (node.nodeName == 'sign') {
-            node.children.forEach((child, childIndex) => {
-              if (childIndex == 0) {
-                html += '#' + child.typeIdName + ' ';
-              } else if (childIndex == node.children.length - 1) {
-                html += child.typeIdName + '# ' + arrowHtml;
-              } else {
-                html += child.typeIdName + ' '
-              }
-            })
+          if (node.nodeName == 'sign' || node.nodeName == 'trans') {
+            if (!node.children || node.children.length == 0) {
+              html += node.typeIdName + ' ' + arrowHtml
+            } else {
+              node.children.forEach((child, childIndex) => {
+                if (childIndex == 0) {
+                  html += '#' + child.typeIdName + ' ';
+                } else if (childIndex == node.children.length - 1) {
+                  html += child.typeIdName + '# ' + arrowHtml;
+                } else {
+                  html += child.typeIdName + ' '
+                }
+              })
+            }
           } else {
             if (index != this.ruleForm.path.length - 1) {
               html += node.typeIdName + arrowHtml
@@ -129,39 +130,59 @@ export default {
       }
       return html;
     },
+    // remainNum() {
+    //   var num = 5000;
+    //   if (this.ruleForm.des !== '') {
+    //     num -= this.ruleForm.des.length
+    //   }
+    //   return parseInt(num)
+    // },
     ...mapGetters([
       'baseURL',
       'docType',
       'userInfo'
     ])
   },
-  watch: {
-    docType: function(newval) {
-      if (newval.length != 0) {
-        this.handleTemp();
-      }
+  created() {
+    this.getSuggestTemp();
+    if (this.$route.params.code == 'LZS') {
+      this.rules.attchment.push({ type: 'array', required: true, message: '请提交本人签字的辞职报告', trigger: 'blur,change' })
     }
   },
-  components: {
-    SearchOptions,
-    PathDialog
-  },
-  created() {
-    this.handleTemp();
-  },
   methods: {
+    desChange(html){
+      this.ruleForm.des=html;
+    },
+    updateLen(num){
+      this.desLenth=num;
+      this.$refs.ruleForm.validateField('des')
+    },
+    checkDes(rule, value, callback){
+      if(this.desLenth==0){
+        callback(new Error('请输入'+(this.options.desTitle||'请示内容')))
+      }
+      else if(this.desLenth>5000){
+        callback(new Error('超出最大输入长度'))
+      }else{
+        callback();
+      }
+    },
     submitForm() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          if (this.attchment.length != 0) {
-            this.$refs.myUpload.submit();
+          if (this.checkSuggest()) {
+            if (this.ruleForm.attchment.length != 0) {
+              this.$refs.myUpload.submit();
+            } else {
+              this.$emit('submitEnd', {
+                taskContent: this.ruleForm.des,
+                qutoes: this.docs[0].quoteDocId ? this.docs : [],
+                fileId: [],
+                suggests: this.handlePath(this.ruleForm.path)
+              });
+            }
           } else {
-            this.$emit('submitEnd', {
-              taskContent: this.ruleForm.des,
-              qutoes: this.docs[0].quoteDocId ? this.docs : [],
-              fileId: [],
-              suggests: this.handlePath(this.ruleForm.path)
-            });
+            this.$emit('submitEnd', false);
           }
         } else {
           this.$message.warning('请检查填写字段')
@@ -170,6 +191,27 @@ export default {
         }
       });
     },
+    checkSuggest() {
+      var success = true;
+      this.ruleForm.path.forEach((p, i) => {
+        if (p.type == 4 || p.type == 5) { //判断会签不能为空
+          if (!p.children || p.children.length == 0) {
+            this.$message.warning('建议路径内会签列表不能为空！');
+            success = false
+          } else if (i == 0) {
+            this.$message.warning('建议路径不能以会签开始！');
+            success = false
+          }
+
+        } else {
+          if (p.state && p.state == 1) {
+            this.$message.warning(p.typeIdName + '需替换！');
+            success = false
+          }
+        }
+      })
+      return success
+    },
     saveForm() {
       var params = {
         taskContent: this.ruleForm.des, //请示内容
@@ -177,12 +219,6 @@ export default {
         suggests: this.handlePath(this.ruleForm.path)
       }
       this.$emit('saveEnd', params);
-    },
-    handleTemp() {
-      if (this.docType.length != 0) {
-        var doc = this.docType.find(d => d.docTypeCode == this.$route.params.code);
-        this.tempText = doc.temPlate.replace(/↵/g, "\n");
-      }
     },
     clearDoc(index) {
       if (this.docs.length == 1) {
@@ -211,7 +247,7 @@ export default {
     },
     handleAvatarSuccess(res, file) {
       this.fileIds.push(res.data);
-      if (this.fileIds.length == this.attchment.length) {
+      if (this.fileIds.length == this.ruleForm.attchment.length) {
         var params = {
           fileId: this.fileIds,
           taskContent: this.ruleForm.des,
@@ -234,14 +270,14 @@ export default {
       if (!isLt10M) {
         this.$message.error('上传附件大小不能超过 10MB!');
       }
-      if ( isLt10M) {
-        this.attchment = fileList;
-      }else{
-        this.$refs.myUpload.uploadFiles.splice(this.$refs.myUpload.uploadFiles.length-1,1)
+      if (isLt10M) {
+        this.ruleForm.attchment = fileList;
+      } else {
+        this.$refs.myUpload.uploadFiles.splice(this.$refs.myUpload.uploadFiles.length - 1, 1)
       }
     },
-    handleRemove(file, fileList){
-      this.attchment = fileList;
+    handleRemove(file, fileList) {
+      this.ruleForm.attchment = fileList;
     },
     tableRowClassName(row, index) {
       if (this.docs.find(doc => doc.quoteDocId == row.id)) {
@@ -299,6 +335,9 @@ export default {
         }
         if (item.nodeName == 'sign') {
           nodeName = 'sign';
+          if (item.type == 4) {
+            nodeName = 'trans';
+          }
           item.children.forEach((child, i) => {
             _list.push({
               nodeId: index + 1 + '-' + i,
@@ -306,24 +345,42 @@ export default {
               typeId: child.typeId,
               typeIdName: child.typeIdName,
               type: child.type,
-              docType: this.options.docType
+              docType: this.$route.params.code
             })
           })
         } else {
-
           _list.push({
             nodeId: index + 1,
             nodeName: nodeName,
             typeId: item.typeId,
             typeIdName: item.typeIdName,
             type: item.type,
-            docType: this.options.docType
+            docType: this.$route.params.code
           })
         }
       })
       console.log(_list)
       return _list
-    }
+    },
+    getSuggestTemp(param) {
+      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.userInfo.empId, docTypeSubCode: param })
+        .then(res => {
+          if (res.status == 0) {
+            this.handleSuggestTemp(res.data);
+          } else {
+
+          }
+        })
+    },
+    handleSuggestTemp(arr) {
+      arr.forEach(s => {
+        if (s.type == 4 || s.type == 5) {
+          s.nodeName = 'sign';
+          s.children = [];
+        }
+      })
+      this.ruleForm.path = arr;
+    },
   }
 }
 
@@ -387,48 +444,58 @@ $sub:#1465C0;
       }
     }
   }
-  .tempBox {
-    // background :$sub;
+  // .tempBox {
+  //   // background :$sub;
+  //   position: absolute;
+  //   right: 0;
+  //   top: 0;
+  //   height: 25px;
+  //   color: $sub; // transform:rotate(45deg);
+  //   cursor: pointer;
+  //   &:before {
+  //     content: '';
+  //     position: absolute;
+  //     right: 0;
+  //     top: 0;
+  //   }
+  //   span {
+  //     display: inline-block;
+  //     border-left: 25px solid transparent;
+  //     border-top: 25px solid $sub;
+  //   }
+  //   div {
+  //     position: absolute;
+  //     right: 0;
+  //     top: 0;
+  //     width: 25px;
+  //     height: 25px;
+  //     transition: all .3s;
+  //     background: $sub;
+  //     padding-left: 10px;
+  //     line-height: 28px;
+  //     color: #fff;
+  //     border-bottom-left-radius: 15px;
+  //     color: #fff;
+  //     opacity: 0;
+  //     &:hover {
+  //       width: 65px;
+  //       height: 28px;
+  //       opacity: 1;
+  //     }
+  //   }
+  //   i {
+  //     margin-right: 3px;
+  //     font-size: 12px;
+  //   }
+  // }
+  .remainNum {
     position: absolute;
-    right: 0;
-    top: 0;
-    height: 25px;
-    color: $sub; // transform:rotate(45deg);
-    cursor: pointer;
-    &:before {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
+    right: -121px;
+    bottom: 0;
+    color: #9a9a9a;
+    font-size: 14px;
     span {
-      display: inline-block;
-      border-left: 25px solid transparent;
-      border-top: 25px solid $sub;
-    }
-    div {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 25px;
-      height: 25px;
-      transition: all .3s;
-      background: $sub;
-      padding-left: 10px;
-      line-height: 28px;
-      color: #fff;
-      border-bottom-left-radius: 15px;
-      color: #fff;
-      opacity: 0;
-      &:hover {
-        width: 65px;
-        height: 28px;
-        opacity: 1;
-      }
-    }
-    i {
-      margin-right: 3px;
-      font-size: 12px;
+      color: $main;
     }
   }
   .el-form-item__error {

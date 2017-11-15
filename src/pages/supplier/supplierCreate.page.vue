@@ -2,7 +2,7 @@
   <div id='supplierApp' class="commonApp" v-loading.fullscreen="submitLoading">
     <el-card>
       <div slot="header" class='doc_title'>
-        <span>新建客户</span>
+        <span>{{$route.params.id == 'all'?'新建客户':'编辑客户'}}</span>
       </div>
       <div class="docBaseBox doc-section">
         <h4 class='doc-form_title'>基本信息</h4>
@@ -134,19 +134,19 @@
           <h4 class='doc-form_title clearBoth'>证件信息</h4>
           <template v-if="appForm.classifyCompanyCode!='ADM1208'">
             <el-form-item label="营业执照" prop="supplierLicense">
-              <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'LicenseCard'}" :on-success="licenseSuccess" :on-remove="licenseRemove" :before-upload="beforeUpload">
-                <el-button size="small" type="primary" :disabled="appForm.supplierLicense!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+              <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'LicenseCard'}" :file-list="licenseList" :on-success="licenseSuccess" :on-remove="licenseRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
+                <el-button size="small" type="primary" :disabled="appForm.supplierLicense!=''">上传执照<i class="el-icon-upload el-icon--right"></i></el-button>
               </el-upload>
             </el-form-item>
             <el-form-item label="开户许可证" prop="accountLicense">
-              <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:' AccountPermit'}" :on-success="permitsSuccess" :on-remove="permitsRemove" :before-upload="beforeUpload">
-                <el-button size="small" type="primary" :disabled="appForm.accountLicense!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+              <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'AccountPermit'}" :file-list="permitsList" :on-success="permitsSuccess" :on-remove="permitsRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
+                <el-button size="small" type="primary" :disabled="appForm.accountLicense!=''">上传许可证<i class="el-icon-upload el-icon--right"></i></el-button>
               </el-upload>
             </el-form-item>
           </template>
           <el-form-item label="身份证" prop="contactIdcards" v-else>
-            <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'Idcard'}" :on-success="IdcardSuccess" :on-remove="IdcardRemove" :before-upload="beforeUpload">
-              <el-button size="small" type="primary" :disabled="appForm.contactIdcards!=''">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+            <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'Idcard'}" :on-success="IdcardSuccess" :file-list="IdcardsList" :on-remove="IdcardRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
+              <el-button size="small" type="primary" :disabled="appForm.contactIdcards!=''">上传身份证<i class="el-icon-upload el-icon--right"></i></el-button>
             </el-upload>
           </el-form-item>
         </el-form>
@@ -179,7 +179,7 @@ export default {
       }
     };
     var checkName = (rule, value, callback) => {
-      if (value) {
+      if (value&&value!=this.oldName) {
         this.$http.post('/Supplier/checkSupplierName', { supplierName: value })
           .then(res => {
             if (res.status == 0) {
@@ -266,6 +266,9 @@ export default {
       mediumList: [],
       superList: [],
       titleList: [],
+      licenseList: [],
+      permitsList: [],
+      IdcardsList: [],
       meTimeout: null,
       superTimeout: null,
       mediumLoading: false,
@@ -274,7 +277,9 @@ export default {
         label: 'fullname',
         value: 'id',
         children: 'trades'
-      }
+      },
+      supplierId: '',
+      oldName:''
     }
   },
   computed: {
@@ -287,7 +292,6 @@ export default {
     ])
   },
   created() {
-    this.getIndustryList(); //行业
     if (this.$route.params.id != 'all') {
       this.getSupplierTypes();
       this.getTitleList();
@@ -297,6 +301,7 @@ export default {
       this.getGains();
       this.getDetail();
     } else {
+      this.getIndustryList(); //行业      
       this.appForm.classifyManagerEmpId = this.userInfo.empId;
       this.classifyManagerName = this.userInfo.name;
     }
@@ -331,7 +336,13 @@ export default {
           params.contactTitleName = this.$refs.contactTitle.selectedLabel;
           params.createUser = this.userInfo.empId;
           delete params.timeline;
-          this.$http.post('/Supplier/addSupplier', params, { body: true })
+          var postPath = "/Supplier/addSupplier"
+          if (this.$route.params.id != 'all') {
+            params.id = this.$route.params.id;
+            params.updateUser=this.userInfo.empId;
+            postPath = "/Supplier/updateSupplier";
+          }
+          this.$http.post(postPath, params, { body: true })
             .then(res => {
               this.submitLoading = false;
               if (res.status == 0) {
@@ -346,16 +357,40 @@ export default {
         }
       })
     },
-    getDetail(){
-      this.$http.post('/Supplier/getSupplierInfo',{id:this.$route.params.id})
-      .then(res=>{
-        if(res.status==0){
-          this.combineObj(this.appForm,res.data);
-          this.classifyManagerName=res.data.classifyManagerName;
-        }else{
+    getDetail() {
+      this.submitLoading = true;
+      this.$http.post('/Supplier/getSupplierInfo', { id: this.$route.params.id })
+        .then(res => {
+          if (res.status == 0) {
+            this.combineObj(this.appForm, res.data, ['classifyIndustryCode']);
+            console.log(this.appForm)
+            this.classifyManagerName = res.data.classifyManagerName;
+            this.oldName=res.data.supplierName;
+            if (res.data.accountFrom) {
+              this.appForm.timeline.push(new Date(res.data.accountFrom));
+              this.appForm.timeline.push(new Date(res.data.accountTo));
+            }
+            if (res.data.classifyMediumCode) {
+              this.mediumList = [{ id: res.data.classifyMediumCode, supplierName: res.data.classifyMediumName }]
+            }
+            if (res.data.classifySuperiorCode) {
+              this.superList = [{ id: res.data.classifySuperiorCode, supplierName: res.data.classifySuperiorName }]
+            }
+            if (res.data.accountLicense) {
+              this.permitsList.push({ name: res.data.accountLicenseFileName, url: res.data.accountLicensePath })
+            }
+            if (res.data.supplierLicense) {
+              this.licenseList.push({ name: res.data.supplierLicenseFileName, url: res.data.supplierLicensePath })
+            }
+            if (res.data.contactIdcards) {
+              this.IdcardsList.push({ name: res.data.contactIdcardsFileName, url: res.data.contactIdcardsPath })
+            }
+            this.getIndustryList(res.data.classifyIndustryCode); //行业
+          } else {
 
-        }
-      })
+          }
+          this.submitLoading = false;
+        })
     },
     licenseSuccess(response, file, fileList) {
       this.appForm.supplierLicense = response.data
@@ -383,9 +418,12 @@ export default {
         this.$message.error('上传文件只能是 JPG或PDF 格式!');
       }
       if (!isLt10M) {
-        this.$message.error('上传文件大小不能超过 2MB!');
+        this.$message.error('上传文件大小不能超过 10MB!');
       }
       return isJPG && isLt10M;
+    },
+    previewUpload(file) {
+      window.open(file.url);
     },
     updatePerson(reciver) {
       this.dialogTableVisible = false;
@@ -506,7 +544,7 @@ export default {
           })
       }
     },
-    getIndustryList() { //行业
+    getIndustryList(val) { //行业
       this.$http.post('/Supplier/getSupplierTrade')
         .then(res => {
           if (res.status == 0) {
@@ -515,10 +553,26 @@ export default {
               r.id = index.toString();
             })
             this.industryList = res.data;
+            if (this.$route.params.id != 'all') {
+              this.handIndustry(val);
+            }
           } else {
 
           }
         })
+    },
+    handIndustry(val) {
+      var arr = [];
+      this.industryList.forEach(item => {
+        item.trades.forEach(child => {
+          if (child.id == val) {
+            arr.push(item.id);
+            arr.push(child.id);
+            this.appForm.classifyIndustryCode = arr;
+            return
+          }
+        })
+      })
     }
   }
 

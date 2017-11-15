@@ -1,15 +1,15 @@
 <template>
   <div class="personDialogBox">
-    <el-dialog size="large" class="personDialog" :visible.sync="personVisible" @close="close">
+    <el-dialog size="large" class="personDialog" :visible.sync="personVisible" @close="close" @open="open">
       <el-row>
         <el-col :span='6'>
           <organ-list @reset="reset1"></organ-list>
         </el-col>
         <el-col :span='18'>
           <div class="topSearch clearfix">
-            <p class="tips">选择收件人<span v-show="dialogType=='radio'">请单击姓名选择</span></p>
-            <el-input class="search" v-model="name">
-              <el-button slot="append" @click="search" @keyup.enter.native="search">搜索</el-button>
+            <p class="tips">选择{{selText}}<span v-show="dialogType=='radio'">请单击姓名选择</span></p>
+            <el-input class="search" v-model="name" @keyup.enter.native="search">
+              <el-button slot="append" @click="search" :maxlength="20">搜索</el-button>
             </el-input>
           </div>
           <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
@@ -31,7 +31,7 @@
             </el-pagination>
           </div>
           <div class="selInfoBox">
-            <p>{{ dialogType=='radio'?'已选中的收件人':' '}}</p>
+            <p>{{ dialogType=='radio'?'已选中的'+selText:' '}}</p>
             <div class="clearfix selInfo">
               <span v-if="selPerson&&dialogType=='radio'">{{selPerson.name}} - {{selPerson.depts}}</span>
               <span v-for="person in multipleSelection" class="nameBox">{{person.name}}</span>
@@ -55,9 +55,10 @@ export default {
       name: '',
       selPerson: '',
       multipleSelection: [],
-      initialReady: false,
+      initialReady: true,
       searchButton: false,
-      personVisible: false
+      personVisible: false,
+      initData:true
     }
   },
   props: {
@@ -76,14 +77,22 @@ export default {
     selfDisable: {
       type: Boolean,
       default: true
+    },
+    selText: {
+      type: String,
+      default: '收件人'
+    },
+    data: {
+      type: [Array, Object, String]
     }
   },
   watch: {
     'visible': function(newVal) {
       this.personVisible = newVal;
       if (newVal) {
-        if (this.admin != '') {
-          if (this.admin == 0) {
+        this.initData=true;
+        if (this.admin !== '') {
+          if (this.admin == '0') {
             this.$store.dispatch('getDepById');
           } else {
             this.$store.dispatch('getDeptList');
@@ -95,10 +104,26 @@ export default {
             this.$store.dispatch('getDepById');
           }
         }
-        this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+        if (this.userInfo.levelNum == 30) {
+          this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+        } else {
+          this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+        }
         this.name = "";
         this.$store.dispatch('setQueryPage', 1);
         this.$store.dispatch('queryEmpList', {});
+      }
+    },
+    searchRes(newVal) {
+      if (this.$refs.multipleTable) {
+        if (this.dialogType == 'multi'&&this.initData) {
+          this.initData=false;
+          this.$refs.multipleTable.store.states.selection = this.clone(this.data);
+          this.multipleSelection = this.clone(this.data);
+        }
+        // else{
+        //   this.selPerson=this.clone(this.data);
+        // }
       }
     }
   },
@@ -115,8 +140,8 @@ export default {
 
   },
   methods: {
-    submitRefdoc: function() {
-
+    open() {
+      // console.log(this.$refs.multipleTable);
     },
     handleCurrentChange(page) {
       if (this.searchRes.empVoList) {
@@ -130,9 +155,13 @@ export default {
     },
     search() {
       this.searchButton = true;
-      if (this.admin != '') {
+      if (this.admin !== '') {
         if (this.admin == 0) {
-          this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          if (this.userInfo.levelNum == 30) {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+          } else {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          }
           this.$store.dispatch('getDepById');
         } else {
           this.$store.dispatch('setQueryDepId', '');
@@ -143,7 +172,11 @@ export default {
           this.$store.dispatch('setQueryDepId', '');
           this.$store.dispatch('getDeptList');
         } else {
-          this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          if (this.userInfo.levelNum == 30) {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+          } else {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          }
           this.$store.dispatch('getDepById');
         }
       }
@@ -161,7 +194,7 @@ export default {
               type: 'warning'
             })
           }
-        }else{
+        } else {
           this.selPerson = row;
         }
       } else {
@@ -169,7 +202,7 @@ export default {
       }
     },
     rowKey(row) {
-      return row.empId
+      return row.empId+row.deptId+row.jobtitle
     },
     submitPerson() {
       if (this.dialogType == 'radio') {
@@ -181,6 +214,7 @@ export default {
             "reciDeptId": this.selPerson.deptId,
             "reciUserName": this.selPerson.name,
             "reciUserId": this.selPerson.empId,
+            "mobileNumber": this.selPerson.mobileNumber
           }
           this.$emit('updatePerson', reciver);
           this.$emit('update:visible', false)
@@ -194,7 +228,7 @@ export default {
       } else {
         if (this.multipleSelection.length != 0) {
 
-          this.$emit('updatePerson', this.multipleSelection);
+          this.$emit('updatePerson', this.clone(this.multipleSelection));
           this.$emit('update:visible', false)
         } else {
           this.$message({

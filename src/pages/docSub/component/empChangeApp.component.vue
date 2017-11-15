@@ -6,11 +6,11 @@
         </el-cascader>
       </el-form-item>
       <el-form-item label="拟调入岗位" prop="jobtitle">
-        <el-input v-model="changeForm.jobtitle">
+        <el-input v-model="changeForm.jobtitle" :maxlength="50">
         </el-input>
       </el-form-item>
       <el-form-item label="工作经历" prop="workExperience">
-        <el-input type="textarea" :rows="8" resize='none' v-model="changeForm.workExperience"></el-input>
+        <el-input type="textarea" :rows="8" resize='none' v-model="changeForm.workExperience" :maxlength="100"></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -58,7 +58,13 @@ export default {
   created() {
     this.getDepList();
   },
-  methods: {
+  methods: { 
+    saveForm() {
+      this.$emit('saveMiddle',JSON.stringify(this.changeForm));
+    },
+    getDraft(obj) {
+      this.changeForm=obj;
+    },
     submitForm() {
       this.$refs.changeForm.validate((valid) => {
         if (valid) {

@@ -68,18 +68,18 @@
   }
 }
 
-@media screen and (max-width: 992px) {
-  .message {
-    border-radius: 0;
-    .text {
-      padding-left: 0;
-      margin-left: 0;
-    }
-    .logo {
-      display: none;
-    }
-  }
-}
+// @media screen and (max-width: 992px) {
+//   .message {
+//     border-radius: 0;
+//     .text {
+//       padding-left: 0;
+//       margin-left: 0;
+//     }
+//     .logo {
+//       display: none;
+//     }
+//   }
+// }
 
 </style>
 <script>

@@ -2,7 +2,7 @@
   <div class="injuryDetail">
     <el-col :span="12" class="rightBorder">
       <h1 class="title">申请时间</h1>
-      <p v-if="info" class="textContent">{{info[0].beganWorkDate}}</p>
+      <p v-if="info" class="textContent">{{info[0].taskTime.slice(0,4)}}年{{info[0].taskTime.slice(5,7)}}月{{info[0].taskTime.slice(8,10)}}日</p>
     </el-col>
     <el-col :span="12">
       <h1 class="title">受伤时间</h1>

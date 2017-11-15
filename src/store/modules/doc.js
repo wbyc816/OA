@@ -36,7 +36,8 @@ const state = {
     "birthdayNum": 0,
     "conferenceNum": 0,
     "pendingNum": 0
-  }
+  },
+  staticsPower:''
 }
 
 const actions = {
@@ -250,6 +251,8 @@ const getters = {
   processView: state => state.processView,
   processData: state => state.processData,
   docTips: state => state.docTips,
+  staticsPower: state => state.staticsPower,
+
 }
 
 const mutations = {
@@ -292,6 +295,9 @@ const mutations = {
   },
   setReciver(state, payLoad) {
     state.reciver = payLoad;
+  },
+  setStaticsPower(state,payLoad){
+    state.staticsPower=payLoad;
   }
 }
 

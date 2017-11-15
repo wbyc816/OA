@@ -93,7 +93,7 @@ export default {
       name: '',
       type: 'person',
       personList: [],
-      initialReady: false,
+      initialReady: true,
       searchButton: false,
       dialogVisible: false,
       depList: [],
@@ -129,6 +129,12 @@ export default {
         this.$store.dispatch('queryEmpList', {});
         this.checkParams();
       }
+    },
+    searchRes(newVal) {
+        if(this.$refs.multipleTable&&this.initialReady){
+          this.initialReady=false;
+          this.$refs.multipleTable.store.states.selection=this.params.personList;
+        }
     }
   },
   computed: {
@@ -146,15 +152,14 @@ export default {
   },
   methods: {
     checkParams() {
-      console.log(this.params)
       if (this.params.all) {
         this.all = this.params.all;
       }
       if (this.params.personList.length != 0) {
-        this.all = this.params.personList;
+        this.personList = this.params.personList;
       }
       if (this.params.depList.length != 0) {
-        this.all = this.params.depList;
+        this.depList = this.params.depList;
       }
     },
     selAll() {
@@ -227,7 +232,7 @@ export default {
       this.$refs.multipleTable.toggleRowSelection(row);
     },
     rowKey(row) {
-      return row.empId
+      return row.empId+row.deptId+row.jobtitle
     },
     submitPerson() {
       this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList })

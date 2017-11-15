@@ -22,7 +22,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="工作交接情况" prop="workHandover" class="clearBoth">
-        <el-input type="textarea" :rows="8" resize='none' v-model="vacationForm.workHandover"></el-input>
+        <el-input type="textarea" :rows="8" resize='none' v-model="vacationForm.workHandover" :maxlength="100"></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -92,7 +92,19 @@ export default {
     this.getTypes();
     this.getEmpVacation();
   },
+  mounted() {
+    this.$emit('updateSuggest','DOC1001');
+  },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle',JSON.stringify(this.vacationForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.vacationForm,obj,['timeRange']);
+      obj.timeRange.forEach(t=>{
+        this.vacationForm.timeRange.push(new Date(t));
+      })
+    },
     submitForm() {
       this.$refs.vacationForm.validate((valid) => {
         if (valid) {
@@ -113,11 +125,6 @@ export default {
           return false;
         }
       });
-    },
-    saveForm(){
-      var params={
-
-      }
     },
     fomatDays(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,1})?/);

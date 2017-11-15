@@ -13,7 +13,7 @@
           </p>
           <ul>
             <li v-for="(hr,index) in hr1" v-if="index<3" @click="goTo(hr)">
-              <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
+              <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==='0'">NEW</span></p>
               <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
             </li>
           </ul>
@@ -24,7 +24,7 @@
           </p>
           <ul>
             <li v-for="(hr,index) in hr2" v-if="index<3" @click="goTo(hr)">
-              <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
+              <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==='0'">NEW</span></p>
               <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
             </li>
           </ul>
@@ -43,7 +43,7 @@
         <template>
           <el-col :span="12" v-for="(hr,index) in hr3" v-if="index<6">
             <div @click="goTo(hr)">
-              <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
+              <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==='0'">NEW</span></p>
               <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
             </div>
           </el-col>
@@ -59,10 +59,10 @@ export default {
   data() {
     return {
       pics: [],
-      childPic:'',
-      hr1:[],
-      hr2:[],
-      hr3:[]
+      childPic: '',
+      hr1: [],
+      hr2: [],
+      hr3: []
     }
   },
   computed: {
@@ -86,7 +86,7 @@ export default {
           }
         })
     },
-    getChildPic(){
+    getChildPic() {
       this.$http.post('/index/getBasicImage', { imageType: 'ADM0603' })
         .then(res => {
           if (res.status == 0) {
@@ -94,22 +94,22 @@ export default {
           }
         })
     },
-    getOtherNews(classify){
-      this.$http.post('/index/selectFileList', { classify2: classify,empId:this.userInfo.empId })
-      .then(res1 => {
-        if (res1.status == 0) {
-          if(classify=='FIL0301'){
-            this.hr1=res1.data;
-          }else if(classify=='FIL0302'){
-            this.hr2=res1.data;
-          }else{
-            this.hr3=res1.data;
+    getOtherNews(classify) {
+      this.$http.post('/index/selectFileList', { classify2: classify, empId: this.userInfo.empId })
+        .then(res1 => {
+          if (res1.status == 0) {
+            if (classify == 'FIL0301') {
+              this.hr1 = res1.data;
+            } else if (classify == 'FIL0302') {
+              this.hr2 = res1.data;
+            } else {
+              this.hr3 = res1.data;
+            }
           }
-        }
-      })
+        })
     },
-    goTo(data){
-      this.$router.push('/HR/newsDetailHr/'+data.fileId);
+    goTo(data) {
+      this.$router.push('/HR/newsDetailHr/' + data.fileId);
     }
   }
 }
@@ -152,8 +152,9 @@ $brown: #985D55;
             font-size: 16px;
             line-height: 30px;
             white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            ;
             img {
               vertical-align: sub;
               padding-right: 5px;
@@ -183,6 +184,22 @@ $brown: #985D55;
     img {
       width: 100%;
     }
+  }
+  .new {
+    font-size: 12px;
+    font-weight: normal;
+    background: #FF9300;
+    color: #fff;
+    border-radius: 2px;
+    padding: 0 2px;
+    vertical-align: top;
+  }
+  .title {
+    display: inline-block;
+    max-width: 90%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .shareBox {
     .el-card__body {
@@ -221,22 +238,6 @@ $brown: #985D55;
             img {
               vertical-align: sub;
               padding-right: 5px;
-            }
-            .title {
-              display:inline-block;
-              max-width: 90%;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-            }
-            .new {
-              font-size: 12px;
-              font-weight: normal;
-              background: #FF9300;
-              color: #fff;
-              border-radius: 2px;
-              padding: 0 2px;
-              vertical-align: top;
             }
           }
           p:last-child {

@@ -1,23 +1,29 @@
 <template>
   <div id='doc-approval'>
     <el-row :gutter='12'>
-      <el-col :span='17' :xs="24">
+      <el-col :span='17'>
         <router-view></router-view>
       </el-col>
       <el-col :span='7' class="sideBox">
         <side-Person-Search></side-Person-Search>
-        <el-menu mode="vertical" v-bind:router="true" class="mySideLink">
+        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-if="!/Statistics/.test($route.path)">
           <el-menu-item-group title="公文流转">
             <template v-for='(item,index) in navMenu'>
               <el-menu-item v-if='item.path' :index='index.toString()' :route="{path:item.path}">{{item.title}}
                 <el-badge class="mark" :value="tips[index]" />
                 <i class="el-icon-arrow-right"></i>
               </el-menu-item>
-              <!-- <el-submenu v-if='item.child' :index='index.toString()' >
-                    <template slot="title" >{{item.title}}</template>
-                    <el-menu-item v-for='(i,key) in item.child' :index='index.toString()+key.toString()' :route="{path:i.path}">&nbsp;{{i.title}}</el-menu-item>
-                </el-submenu> -->
             </template>
+          </el-menu-item-group>
+        </el-menu>
+        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-if="/Statistics/.test($route.path)&&staticsPower">
+          <el-menu-item-group title="公文流转">
+            <el-menu-item index='/doc/macroStatistics' v-if="staticsPower==1">宏观统计<i class="el-icon-arrow-right"></i>
+            </el-menu-item>
+            <el-menu-item index='/doc/normalStatistics'>公文统计<i class="el-icon-arrow-right"></i>
+            </el-menu-item>
+            <el-menu-item index='/doc/approveStatistics'>审批者统计<i class="el-icon-arrow-right"></i>
+            </el-menu-item>
           </el-menu-item-group>
         </el-menu>
       </el-col>
@@ -44,7 +50,7 @@
               <td>{{doc.readTime}}</td>
               <td>{{doc.startTime}}</td>
               <td>{{doc.endTime}}</td>
-              <td :class="{overTime:doc.isOvertime==1}">{{doc.isOvertime==0?'准时':'超时'}}</td>
+              <td :class="{overTime:doc.isOvertime==1}"><template v-if="doc.isOvertime!=2">{{doc.isOvertime==0?'准时':'超时'}}</template></td>
               <td>{{doc.nodeName}}</td>
               <td>{{doc.taskDeptMajorName}}</td>
             </tr>
@@ -60,7 +66,7 @@
                   <td>{{sign.signUserName}}</td>
                   <td>{{sign.readTime}}</td>
                   <td>{{sign.signTime}}</td>
-                  <td>{{sign.isOverTime}}</td>
+                  <td>{{sign.endTime}}</td>
                   <td :class="{overTime:sign.isOverTime==1}">{{sign.isOverTime==0?'准时':'超时'}}</td>
                   <td>{{sign.docState}}</td>
                   <td>{{sign.signDeptMajorName}}</td>
@@ -108,11 +114,7 @@ export default {
         {
           title: '公文草稿箱',
           path: '/doc/docDraft'
-        },
-        // {
-        //   title: '公文统计',
-        //   path: '#'
-        // }
+        }
       ],
       processDialogView: false,
       tips: [],
@@ -128,7 +130,8 @@ export default {
       'isAdmin',
       'processView',
       'processData',
-      'docTips'
+      'docTips',
+      'staticsPower'
     ])
   },
   components: { SidePersonSearch },
@@ -136,6 +139,7 @@ export default {
     this.$store.dispatch('getAdminStatus');
     this.$store.dispatch('getDocTips');
     this.$store.dispatch('getDocForm');
+    this.getPower();
   },
   mounted: function() {
     this.breadcrumbItem = this.$route.meta.breadcrumb;
@@ -178,6 +182,24 @@ export default {
         this.stepHeight.push(h)
       }
       console.log(this.stepHeight)
+    },
+    getPower() {
+      if (this.staticsPower === '') {
+        this.$http.post('/doc/checkStatisticsPower', { userId: this.userInfo.empId })
+          .then(res => {
+            if (res.status == 0) {
+              this.$store.commit('setStaticsPower', res.data);
+              if (res.data != 0) {
+                this.navMenu.push({
+                  title: '公文统计',
+                  path: '/doc/normalStatistics'
+                })
+              }
+            } else {
+
+            }
+          })
+      }
     }
   },
   watch: {
@@ -200,7 +222,6 @@ export default {
       this.tips.push(newVal.toReadNum);
     },
     'processData' (newValue) {
-      console.log(newValue);
       this.$nextTick(() => {
         this.getStepH();
       })
@@ -254,8 +275,8 @@ $main: #0460AE;
             padding: 4px 13px;
           }
         }
-        .overTime{
-          color:#BE3B7F;
+        .overTime {
+          color: #BE3B7F;
         }
         tbody {
           background: #fff;

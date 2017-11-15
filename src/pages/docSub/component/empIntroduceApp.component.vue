@@ -2,7 +2,7 @@
   <div class="empIntroduceApp">
     <el-form label-position="left" :model="introduceForm" :rules="rules" ref="introduceForm" label-width="128px">
       <el-form-item label="姓名" prop="name" class="deptArea">
-        <el-input v-model="introduceForm.name">
+        <el-input v-model="introduceForm.name" :maxlength="25">
         </el-input>
       </el-form-item>
       <el-form-item label="性别" prop="gender" class="arrArea" label-width="100px">
@@ -19,7 +19,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="毕业学校" prop="graduationSchool" class="clearBoth">
-        <el-input v-model="introduceForm.graduationSchool">
+        <el-input v-model="introduceForm.graduationSchool" :maxlength="15">
         </el-input>
       </el-form-item>
       <el-form-item label="学历" prop="education" class="deptArea">
@@ -28,7 +28,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="专业" prop="major" class="arrArea" label-width="100px">
-        <el-input v-model="introduceForm.major">
+        <el-input v-model="introduceForm.major" :maxlength="25">
         </el-input>
       </el-form-item>
       <el-form-item label="参加工作时间" prop="beginWorkDate" class="deptArea">
@@ -36,11 +36,11 @@
         </el-input>
       </el-form-item>
       <el-form-item label="外语水平" prop="languageLevel" class="arrArea" label-width="100px">
-        <el-input v-model="introduceForm.languageLevel">
+        <el-input v-model="introduceForm.languageLevel" :maxlength="25">
         </el-input>
       </el-form-item>
       <el-form-item label="邮箱" prop="email" class="clearBoth">
-        <el-input v-model="introduceForm.email">
+        <el-input v-model="introduceForm.email" :maxlength="25">
         </el-input>
       </el-form-item>
       <el-form-item label="个人照片" class="uploadBox" prop="picUrl">
@@ -61,7 +61,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="合同主体" :prop="'introduceContract'+'.'+index+'.'+'contractMajor'">
-          <el-input v-model="introduceForm.introduceContract[index].contractMajor"></el-input>
+          <el-input v-model="introduceForm.introduceContract[index].contractMajor" :maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="合同开始日期" :prop="'introduceContract'+'.'+index+'.'+'contractStart'" class="deptArea">
           <el-date-picker type="date" v-model="introduceForm.introduceContract[index].contractStart" style="width: 100%;" :editable="false"></el-date-picker>
@@ -74,14 +74,14 @@
         <span class="title">上次离职信息</span>
       </div>
       <el-form-item label="离职原因" prop="leaveReason">
-        <el-input v-model="introduceForm.leaveReason">
+        <el-input v-model="introduceForm.leaveReason" :maxlength="100">
         </el-input>
       </el-form-item>
       <el-form-item label="离职时间" prop="leaveDate" class="deptArea">
         <el-date-picker type="date" v-model="introduceForm.leaveDate" style="width: 100%;" :editable="false" :clearable="false"></el-date-picker>
       </el-form-item>
       <el-form-item label="离职办理地点" prop="leavePlace" class="arrArea">
-        <el-input v-model="introduceForm.leavePlace">
+        <el-input v-model="introduceForm.leavePlace" :maxlength="100">
         </el-input>
       </el-form-item>
       <div class="header clearBoth">
@@ -129,7 +129,7 @@ export default {
         education: [{ required: true, message: '请选择学历', trigger: 'blur' }],
         major: [{ required: true, message: '请输入专业', trigger: 'blur' }],
         picUrl: [{ required: true, message: '请上传照片', trigger: 'blur' }],
-        email:[{type:'email',message:'请输入正确的邮箱',trigger: 'blur,change'}]
+        email: [{ type: 'email', message: '请输入正确的邮箱', trigger: 'blur,change' }]
       },
       params: '',
       edus: [],
@@ -150,6 +150,28 @@ export default {
     this.getTypes();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.introduceForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.introduceForm, obj, ['birthday', 'beginWorkDate', 'picUrl', 'leaveDate', 'introduceContract']);
+      ['birthday', 'beginWorkDate', 'leaveDate'].forEach(s => {
+        if (obj[s]) {
+          this.introduceForm[s] = new Date(obj[s])
+        }
+      })
+      this.introduceForm.introduceContract = this.clone(obj).introduceContract.map(function(s) {
+        // console.log(s)
+        if (s.contractStart) {
+          s.contractStart = new Date(s.contractStart)
+        }
+        if (s.contractEnd) {
+          s.contractEnd = new Date(s.contractEnd)
+        }
+        return s;
+      })
+      console.log(this.clone(obj).introduceContract)
+    },
     submitForm() {
       this.$refs.introduceForm.validate((valid) => {
         if (valid) {

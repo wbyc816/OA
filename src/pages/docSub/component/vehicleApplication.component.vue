@@ -73,6 +73,9 @@ export default {
     },
     updatePerson(reciver) {
       this.vehicleForm.contactUserName = reciver.reciUserName;
+      this.vehicleForm.contactPhone=reciver.mobileNumber;
+      this.selDep={name:reciver.reciDeptMajorName||reciver.reciDeptName,id:reciver.reciDeptMajorId||reciver.reciDeptId};
+      this.vehicleForm.contactDeptName=reciver.reciDeptMajorName||reciver.reciDeptName;
       this.personDialogVisible = false;
     },
     updateDep(dep){

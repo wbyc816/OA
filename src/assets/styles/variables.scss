@@ -97,8 +97,7 @@ body {
   font-size: 14px;
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   background: #EEEEEE;
-  color: #393939;
-  padding-right: 0!important;
+  color: #393939; // padding-right: 0!important;
   &::-webkit-scrollbar-track {
     border-radius: 10px;
     background-color: transparent;
@@ -441,15 +440,13 @@ ul {
 }
 
 .myDialog {
+
+  overflow-y: hidden;
   .el-dialog--large {
     display: table;
     width: 1200px;
-    top: 0 !important;
-    bottom: 0;
-    margin: auto !important;
-    left: 0;
-    right: 0;
-    transform: none;
+    top: 50%!important;
+    transform: translate(-50%, -50%);
     border-radius: 0;
   }
   .el-dialog__body {
@@ -852,6 +849,9 @@ ul {
     &.pr70 {
       padding-right: 70px;
     }
+    &.opeartBox {
+      width: 100%;
+    }
   }
   .el-form-item__label {
     color: $main;
@@ -1002,5 +1002,182 @@ ul {
         width: 50%;
       }
     }
+  }
+}
+
+.myDocList {
+  table-layout: fixed;
+  thead {
+    background: $main;
+    color: #fff;
+    font-size: 13px;
+    th {
+      padding: 6px 13px;
+    }
+    $widths: (1: 5%, 2: 40%, 3: 10%, 4: 11%, 5: 10%, 6: 10%);
+    @each $num,
+    $width in $widths {
+      th:nth-child(#{$num}) {
+        width: $width;
+      }
+    }
+  }
+  tbody {
+    background: #fff;
+    .link {
+      color: $main;
+      cursor: pointer;
+      font-size: 22px; // display: none;
+      padding-right: 10px;
+    }
+    tr:hover {
+      .link {
+        display: inline-block;
+      }
+    }
+    td {
+      padding: 4px 0 4px 13px;
+      font-size: 15px;
+      word-wrap: break-word;
+      height: 55px;
+      vertical-align: middle;
+      &:first-child {
+        padding-left: 0;
+      }
+
+      .docType {
+        color: #fff;
+        width: 42px;
+        height: 42px;
+        display: inline-block;
+        text-align: center;
+        font-size: 13px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 3px;
+      }
+      .overTime {
+        background: #ED854E;
+        height: 19px;
+        display: inline-block;
+        font-size: 13px;
+        line-height: 19px;
+        color: #fff;
+        border-radius: 2px;
+        margin-right: 5px;
+        width: 50px;
+        text-align: center;
+        i {
+          margin-right: 1px;
+          vertical-align: text-bottom;
+        }
+      }
+      .improtType {
+        display: inline-block;
+        width: 40px;
+        line-height: 19px;
+        height: 19px;
+        border-radius: 2px;
+        text-align: center;
+        font-size: 13px;
+        margin-left: 5px;
+        vertical-align: middle;
+        color: #fff;
+      }
+      &.linkTitle {
+        cursor: pointer;
+      }
+      .title {
+        display: inline-block;
+        vertical-align: middle;
+        max-width: 70%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+    &.disAgree {
+      background: #FFF0F0 !important;
+      td:nth-child(5) {
+        position: relative;
+        span {
+          z-index: 2;
+          position: relative;
+        }
+        &:before {
+          font-weight: normal;
+          content: "\e743";
+          font-family: "iconfont" !important;
+          font-size: 70px;
+          font-style: normal;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          position: absolute;
+          top: -15px;
+          right: 14px;
+          color: #F4B8B2;
+        }
+      }
+    }
+  }
+  tbody:nth-child(even) {
+    background: #F7F7F7;
+  }
+}
+
+.commonApp {
+  .deptArea,
+  .arrArea {
+    float: left;
+    width: 50%;
+  }
+  .arrArea {
+    .el-form-item__label {
+      padding-left: 18px;
+    }
+  }
+  .reciverWrap {
+    clear: both;
+    .el-form-item__content {
+      display: flex;
+    }
+    .reciverList {
+      flex: 1;
+      .el-tag {
+        margin-right: 5px;
+      }
+    }
+    .addButton {
+      right: 0;
+    }
+  }
+  .saveButton {
+    float: right;
+    margin-right: 150px;
+    height: 46px;
+    font-size: 16px;
+    border-radius: 3px;
+    i {
+      font-size: 23px;
+      vertical-align: sub;
+      margin-right: 3px;
+    }
+  }
+  .uploadInfo {
+    position: absolute;
+    left: 101%;
+    font-size: 13px;
+    color: #9a9a9a;
+    line-height: 15px;
+    top: 7px;
+    white-space: nowrap;
+  }
+  .submitButton {
+    height: 46px;
+    width: 200px;
+    margin-left: 134px;
+    font-size: 16px;
+    border-radius: 3px;
+    background-color: $main;
   }
 }

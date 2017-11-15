@@ -23,6 +23,12 @@
                 <li v-for="emp in list.empsVos" @click="addNode(emp,2)">{{emp.empName}}</li>
               </ul>
             </div>
+            <div class="selArea">
+              <p class="header">选择角色</p>
+              <ul>
+                <li v-for="role in roleList" @click="addNode(role,3)">{{role.dictName}}</li>
+              </ul>
+            </div>
           </div>
         </el-col>
         <el-col :span='8' class="rightBox">
@@ -31,14 +37,24 @@
             <i class="el-icon-close" @click="close"></i>
           </div>
           <ul class="nodeWrap" ref="nodeWrap">
-            <li v-for="(node,nodeIndex) in pathList" class="nodeBox">
-              <i class="el-icon-close nodeClose" @click="deleteNode(node,nodeIndex)" v-if="node.type!=3"></i>
+            <li v-for="(node,nodeIndex) in pathList" class="nodeBox" :class="{'isEdit':nodeIndex===activeNode,'isSign':node.type==4||node.type==5}">
+              <el-tooltip :enterable="false" effect="dark" content="删除" placement="top">
+                <i class="el-icon-close nodeClose" @click="deleteNode(node,nodeIndex)"></i>
+              </el-tooltip>
+              <el-tooltip :enterable="false" effect="dark" :content="nodeIndex!==activeNode?'编辑':'完成'" placement="top">
+                <i class="nodeEdit" :class="{'el-icon-check':nodeIndex===activeNode,'el-icon-edit':nodeIndex!==activeNode }" @click="editNode(node,nodeIndex)"></i>
+              </el-tooltip>
               <span class="nodeIndex">{{nodeIndex+1}}</span>
-              <span v-if="!node.nodeName" :class="{'end':node.type==3}"><span v-if="node.type==3">#会签结束#</span>{{node.typeIdName}}</span>
-              <template v-else>
-                <span style="color:#0460AE">#会签#</span>
-                <p v-for="(child,childIndex) in node.children" class="childPath">
-                  <i class="el-icon-close childClose" @click="deleteChild(node,nodeIndex,childIndex)"></i> {{child.typeIdName}}
+              <span>{{node.typeIdName}}</span>
+              <template v-if="node.children&&node.children.length!=0">
+                <p v-for="(child,childIndex) in node.children" class="childPath" :class="{'isEdit':nodeIndex===activeNode&&childIndex===activeNodeChild}">
+                  <el-tooltip :enterable="false" effect="dark" content="删除" placement="top">
+                    <i class="el-icon-close childClose" @click="deleteChild(node,nodeIndex,childIndex)"></i>
+                  </el-tooltip>
+                  <el-tooltip :enterable="false" effect="dark" :content="nodeIndex!==activeNode||childIndex!==activeNodeChild?'编辑':'完成'" placement="top">
+                    <i class="childEdit" :class="{'el-icon-check':nodeIndex===activeNode&&childIndex===activeNodeChild,'el-icon-edit':nodeIndex!==activeNode||childIndex!==activeNodeChild }" @click="editChild(node,nodeIndex,childIndex)"></i>
+                  </el-tooltip>
+                  {{child.typeIdName}}
                 </p>
               </template>
             </li>
@@ -68,8 +84,11 @@ export default {
         deptsVos: [],
         empsVos: []
       },
+      roleList: [],
       pathList: [],
-      isPermission: 1
+      isPermission: 1,
+      activeNode: '',
+      activeNodeChild: ''
     }
   },
   props: {
@@ -85,7 +104,7 @@ export default {
     'visible': function(newVal) {
       this.pathVisible = newVal;
       this.type = '0';
-      this.pathList=this.clone(this.paths);
+      this.pathList = this.clone(this.paths);
     }
   },
   computed: {
@@ -99,6 +118,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getRoleList();
   },
   methods: {
     getList() {
@@ -111,87 +131,177 @@ export default {
         })
     },
     submit() {
-      var last = this.pathList[this.pathList.length - 1];
-      if (last.nodeName == 'sign') {
-        if (last.children.length == 0) {
-          this.$message.warning('会签列表不能为空')
+      // var last = this.pathList[this.pathList.length - 1];
+      // if (last.nodeName == 'sign') {
+      //   if (last.children.length == 0) {
+      //     this.$message.warning('会签列表不能为空')
+      //   } else {
+
+      //   }
+      // }
+      var success = true;
+      for (var i = 0; i < this.pathList.length; i++) {
+        var p = this.pathList[i];
+        if (p.type == 4 || p.type == 5) { //判断会签不能为空
+          if (i == 0) {
+            this.$message.warning('建议路径不能以会签开始！');
+            success = false;
+            break;
+          } else if (!p.children || p.children.length == 0) {
+            this.editNode(p, i);
+            this.$message.warning('会签列表不能为空！');
+            success = false;
+            break;
+          }
         } else {
-          this.pathList.push({
-            typeId: 'secretary',
-            typeIdName: '发起会签人',
-            type: 3
-          })
+          if (p.state && p.state == 1) {
+            this.editNode(p, i);
+            this.$message.warning(p.typeIdName + '需替换！');
+            success = false;
+            break;
+          }
         }
       }
-      this.$emit('updatePath', this.pathList);
+      if (success) {
+        this.$emit('updatePath', this.pathList);
+      }
     },
     close() {
       this.$emit('update:visible', false)
     },
     addNode(val, type) {
+      var node = { type: type };
       if (type == 1) {
-        var node = {
-          typeId: val.deptId,
-          typeIdName: val.deptName,
-          type: type,
+        node.typeId = val.deptId;
+        node.typeIdName = val.deptName;
+      } else if (type == 2) {
+        node.typeId = val.empId;
+        node.typeIdName = val.empName;
+      } else if (type == 3) {
+        node.typeId = val.dictCode;
+        node.typeIdName = val.dictName;
+      }
+      if (this.activeNode !== '') { //编辑
+        var activeNode = this.pathList[this.activeNode];
+        if (this.activeNodeChild === '') { //普通编辑
+          if (activeNode.type == 4) { //会签添加
+            if (type == 1) {
+              activeNode.children.push(node);
+            }
+          } else if (activeNode.type == 5) { //会签添加
+            if (type == 2) {
+              activeNode.children.push(node);
+            }
+          } else if (activeNode.nodeName == 'sign') {
+            activeNode.typeIdName = type == 1 ? '#部门会签#' : '#人员会签#';
+            activeNode.type = type == 1 ? 4 : 5;
+            activeNode.children.push(node);
+          } else { //普通替换
+            this.pathList.splice(this.activeNode, 1, node);
+          }
+        } else { //会签编辑
+          if (activeNode.type == 4) {
+            if (type == 1) {
+              activeNode.children.splice(this.activeNodeChild, 1, node);
+              activeNode.state = 0;
+            }
+          } else if (activeNode.type == 5) {
+            if (type == 2) {
+              activeNode.children.splice(this.activeNodeChild, 1, node);
+              activeNode.state = 0;
+            }
+          }
         }
+      } else { //添加
+        if (this.type == '0') { //审批
+          if (this.pathList.length == 0 ? true : this.pathList[this.pathList.length - 1].typeId != node.typeId) {
+            this.pathList.push(node);
+          }
+        } else { //会签
+          if (type != 3) { //角色无会签
+            var last = this.pathList[this.pathList.length - 1]
+            var children = last.children;
+            if (!last.type) {
+              last.typeIdName = type == 1 ? '#部门会签#' : '#人员会签#';
+              last.type = type == 1 ? 4 : 5;
+              children.push(node);
+            } else if (last.type == 4 && type == 1) {
+              children.push(node);
+            } else if (last.type == 5 && type == 2) {
+              children.push(node);
+            }
+          }
+        }
+        this.$nextTick(function() {
+          this.$refs.nodeWrap.scrollTop = this.$refs.nodeWrap.scrollHeight;
+        })
+      }
+
+    },
+    editNode(node, index) {
+      this.activeNodeChild = '';
+      if (this.activeNode === index) {
+        this.activeNode = ''
       } else {
-        var node = {
-          typeId: val.empId,
-          typeIdName: val.empName,
-          type: type,
-        }
+        this.activeNode = index;
       }
-      if (this.type == '0') { //审批
-        if (this.pathList.length == 0 ? true : this.pathList[this.pathList.length - 1].typeId != node.typeId) {
-          this.pathList.push(node)
-        }
-      } else { //会签
-        var children = this.pathList[this.pathList.length - 1].children;
-        if (children.length == 0 ? true : (children[0].type == type && children.find(c => c.typeId == node.typeId) == undefined)) {
-          children.push(node)
-        }
+    },
+    editChild(node, nodeIndex, childIndex) {
+      if (this.activeNode === nodeIndex && this.activeNodeChild === childIndex) {
+        this.activeNode = '';
+        this.activeNodeChild = ''
+      } else {
+        this.activeNode = nodeIndex;
+        this.activeNodeChild = childIndex;
       }
-      this.$nextTick(function(){
-        this.$refs.nodeWrap.scrollTop=this.$refs.nodeWrap.scrollHeight;
-      })
     },
     deleteNode(node, index) {
       this.pathList.splice(index, 1);
       if (this.pathList.length == 0) {
         this.type = '0';
       }
-      if (node.nodeName == 'sign') {
-        this.pathList.splice(index, 1);
-        this.type = '0';
-      }
-      console.log(this.paths);
+      this.activeNode = '';
+      this.activeNodeChild = '';
     },
     deleteChild(node, nodeIndex, childIndex) {
       node.children.splice(childIndex, 1);
-      if (node.children.length == 0) {
-        this.deleteNode(node, nodeIndex);
-      }
+      this.activeNode = '';
+      this.activeNodeChild = '';
     },
     typeChange(val) {
       if (val == 0) { //审批
-        var last = this.pathList[this.pathList.length - 1];
-        if (last.nodeName == 'sign') {
-          if (last.children.length != 0) {
-            this.pathList.push({
-              typeId: 'secretary',
-              typeIdName: '发起会签人',
-              type: 3
-            })
-          } else {
-            this.pathList.splice(this.pathList.length - 1, 1);
-          }
-        }
+        // var last = this.pathList[this.pathList.length - 1];
+        // if (last.nodeName == 'sign') {
+        //   if (last.children.length != 0) {
+        //     this.pathList.push({
+        //       typeId: 'secretary',
+        //       typeIdName: '发起会签人',
+        //       type: 3
+        //     })
+        //   } else {
+        //     this.pathList.splice(this.pathList.length - 1, 1);
+        //   }
+        // }
       } else {
         this.pathList.push({
           nodeName: 'sign',
+          typeIdName: '#会签#',
           children: []
         })
+      }
+      this.activeNode = '';
+      this.activeNodeChild = '';
+    },
+    getRoleList() {
+      if (this.roleList.length == 0) {
+        this.$http.post('/api/getDict', { dictCode: 'DOC13' })
+          .then(res => {
+            if (res.status == 0) {
+              this.roleList = res.data;
+            } else {
+
+            }
+          })
       }
     }
   }
@@ -208,7 +318,7 @@ $sub:#1465C0;
   .personDialog {
     .el-dialog {
 
-      width: 800px;
+      width: 1000px;
       height: 600px;
     }
     .el-dialog__body {
@@ -228,7 +338,15 @@ $sub:#1465C0;
           position: absolute;
           height: 100%;
           border-left: 1px solid #D5DADF;
-          left: 50%;
+          left: 33.33%;
+          top: 55px;
+        }
+        &:after {
+          content: '';
+          position: absolute;
+          height: 100%;
+          border-left: 1px solid #D5DADF;
+          left: 66.66%;
           top: 55px;
         }
       }
@@ -270,7 +388,7 @@ $sub:#1465C0;
       }
       .selWrap {
         .selArea {
-          width: 50%;
+          width: 33.33%;
           float: left;
           .header {
             line-height: 40px;
@@ -303,6 +421,31 @@ $sub:#1465C0;
           padding: 10px 8px;
           position: relative;
           color: #151515;
+          &.isEdit {
+            background: #FF9300;
+            color: #fff;
+            .nodeClose,
+            .nodeEdit {
+              display: block;
+              color: #fff;
+            }
+            .nodeIndex {
+              color: #fff;
+            }
+            &.isSign {
+              background: #D8EAFF;
+              color: $main;
+              >span {
+                color: $main;
+              }
+              >i {
+                color: #ccc;
+                &:hover {
+                  color: $main;
+                }
+              }
+            }
+          }
           .nodeClose {
             position: absolute;
             top: 16px;
@@ -315,8 +458,21 @@ $sub:#1465C0;
               color: #393939;
             }
           }
+          .nodeEdit {
+            position: absolute;
+            top: 16px;
+            right: 35px;
+            display: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 14px;
+            &:hover {
+              color: #393939;
+            }
+          }
           &:hover {
-            .nodeClose {
+            .nodeClose,
+            .nodeEdit {
               display: block;
             }
           }
@@ -331,20 +487,45 @@ $sub:#1465C0;
             padding-left: 17px;
             position: relative;
             &:first-of-type {
-              padding-top: 7px;
-              .childClose {
-                top: 16px;
+              margin-top: 5px;
+              .childClose,
+              .childEdit {
+                top: 9px;
               }
             }
             &:hover {
-              .childClose {
+              .childClose,
+              .childEdit {
+                display: block;
+              }
+            }
+            &.isEdit {
+              background: #FF9300;
+              color: #fff;
+              i {
+                color: #fff;
+              }
+              .childClose,
+              .childEdit {
                 display: block;
               }
             }
             .childClose {
               position: absolute;
               top: 9px;
-              right: 20px;
+              right: 10px;
+              display: none;
+              color: #ccc;
+              cursor: pointer;
+              font-size: 12px;
+              &:hover {
+                color: #393939;
+              }
+            }
+            .childEdit {
+              position: absolute;
+              top: 9px;
+              right: 30px;
               display: none;
               color: #ccc;
               cursor: pointer;
@@ -363,7 +544,7 @@ $sub:#1465C0;
         }
       }
       .submit {
-        width: 267px;
+        width: 100%;
         position: absolute;
         bottom: 0;
         left: 0;

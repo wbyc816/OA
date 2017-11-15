@@ -5,7 +5,7 @@
         <span>行政申请</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in adminData">
+        <el-col :span="6" v-for="item in adminData">
           <doc-list :data='item'></doc-list>
         </el-col>
       </el-row>
@@ -15,7 +15,7 @@
         <span>财务申请</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in financeData">
+        <el-col :span="6" v-for="item in financeData">
           <doc-list :data='item'></doc-list>
         </el-col>
       </el-row>
@@ -25,7 +25,7 @@
         <span>人事申请 </span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in contrastData">
+        <el-col :span="6" v-for="item in contrastData">
           <doc-list :data='item'></doc-list>
         </el-col>
       </el-row>
@@ -35,7 +35,7 @@
         <span>优惠机票申请</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in ticketData">
+        <el-col :span="6" v-for="item in ticketData">
           <doc-list :data='item'></doc-list>
         </el-col>
       </el-row>
@@ -68,7 +68,7 @@ const contrastData = [
   { 'logo': 'icon-hetong', 'color': '#FF5F88', 'text': '培训申请', 'link': '#/doc/docCommonApp/PXS' },
   { 'logo': 'icon-file1', 'color': '#5BB5FC', 'text': '人事变动', 'link': '#/doc/docCommonApp/RSB' },
   { 'logo': 'icon-gongwen', 'color': '#FF754F', 'text': '工伤申请', 'link': '#/doc/docCommonApp/GSS' },
-  { 'logo': 'icon-contract', 'color': '#FFE066', 'text': '离职申请', 'link': '#' },
+  { 'logo': 'icon-contract', 'color': '#FFE066', 'text': '离职申请', 'link': '#/doc/docCommonApp/LZS' },
   { 'logo': 'icon-biaodan', 'color': '#9FD867', 'text': '晋升申请', 'link': '#/doc/docCommonApp/JJS' },
 ];
 const ticketData = [

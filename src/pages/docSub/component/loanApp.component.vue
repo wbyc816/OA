@@ -22,7 +22,7 @@
         </el-select>
       </el-form-item>
       <div v-show="collectionInformation==1">
-      <el-form-item label="收款人" prop="payee" class="flw50" >
+      <el-form-item label="收款人" prop="payee" class="flw50 " >
         <el-autocomplete
            v-model="loanAppForm.payee"
             :fetch-suggestions="querySearchAsync"
@@ -30,7 +30,7 @@
             @select="handleSelect"
             :props="testprops"
              ref="payee"
-            ></el-autocomplete>
+            class="payee"></el-autocomplete>
       </el-form-item>
 
       <el-form-item label="收款账户" prop="bankAccount" class="flw50" >
@@ -398,6 +398,7 @@ $main:#0460AE;
   .flw50{
     width:50%;
     float:left;
+    height:50px;
   }
   .selectMoney{
     width: 95px;
@@ -431,7 +432,9 @@ $main:#0460AE;
   .clearPadding{
       padding:0 !important;
     }
-
+ .payee{
+    width:200px;
+   }
 .loanApplication {
 
   .budgetMoney{

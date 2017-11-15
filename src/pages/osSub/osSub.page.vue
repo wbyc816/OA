@@ -5,7 +5,7 @@
         <span>运行生产</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in production" :key="item.toString()">
+        <el-col :span="6" v-for="item in production" :key="item.toString()">
           <doc-list :data='item' :fontSize="fontSize"></doc-list>
         </el-col>
       </el-row>
@@ -15,7 +15,7 @@
         <span>营销服务</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in saleService" :key="item.toString()">
+        <el-col :span="6" v-for="item in saleService" :key="item.toString()">
           <doc-list :data='item' :fontSize="fontSize"></doc-list>
         </el-col>
       </el-row>
@@ -25,7 +25,7 @@
         <span>综合管理</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in management" :key="item.toString()">
+        <el-col :span="6" v-for="item in management" :key="item.toString()">
           <doc-list :data='item' :fontSize="fontSize"></doc-list>
         </el-col>
       </el-row>
@@ -35,7 +35,7 @@
         <span>员工服务</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" :xs='12' v-for="item in staffService" :key="item.toString()">
+        <el-col :span="6" v-for="item in staffService" :key="item.toString()">
           <doc-list :data='item' :fontSize="fontSize"></doc-list>
         </el-col>
       </el-row>
@@ -70,6 +70,7 @@ const management = [
   // { 'logo': 'icon-Group13', 'color': '#9FD867', 'text': '财务预算系统', 'link': '#' },
   // { 'logo': 'icon-Group16', 'color': '#FF5F88', 'text': '食堂管理系统', 'link': '#' },
   { 'logo': 'icon-Group15', 'font': '19px','color': '#5BB5FC', 'text': '邮箱', 'link': 'http://mail.donghaiair.cn/' },
+   { 'logo': 'icon-gongwen', 'font': '34px','color': '#FFE066', 'text': '泛微OA', 'link': 'http://oa.donghaiair.cn/wui/main.jsp' },
   // { 'logo': 'icon-Group18', 'color': '#FF754F', 'text': '短信平台', 'link': '#' }
 ];
 const staffService = [

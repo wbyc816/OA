@@ -17,7 +17,7 @@
         <el-date-picker v-model="trainingForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
       <el-form-item label="培训科目" prop="trainSubjects" class="arrArea" label-width="100px">
-        <el-input v-model="trainingForm.trainSubjects">
+        <el-input v-model="trainingForm.trainSubjects" :maxlength="25">
         </el-input>
       </el-form-item>
       <el-form-item label="培训总预算" prop="trainTotalCost" class="deptArea">
@@ -31,7 +31,7 @@
         </money-input>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="dialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :data="trainingForm.person" dialogType="multi" :visible.sync="dialogVisible"></person-dialog>
   </div>
 </template>
 <script>
@@ -100,6 +100,15 @@ export default {
     this.getDepList();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle',JSON.stringify(this.trainingForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.trainingForm,obj,['timeRange']);
+      obj.timeRange.forEach(t=>{
+        this.trainingForm.timeRange.push(new Date(t));
+      })
+    },
     updatePerson(list) {
       // console.log(list)
       this.trainingForm.person = list

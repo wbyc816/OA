@@ -25,9 +25,7 @@
       </el-table-column>
       <el-table-column property="rmb" label="人民币(元)" :formatter="formatMoney" width="110"></el-table-column>
     </el-table>
-
     <p class="totalMoney">合计金额 人民币 <span>{{info[0].tDocFinReimbursement.totalMoney | toThousands}} 元</span></p>
-
     <el-table :data="info[0].budgetExeststisVoList" :stripe="true" highlight-current-row style="width: 100%" class="appTable budgetTable ">
       <el-table-column label="预算年度" property="budgetYear" width="80"></el-table-column>
       <el-table-column property="budgetDeptName" label="预算机构/科目">
@@ -40,30 +38,31 @@
       <el-table-column property="cExecRate" label="执行比例" width="80"></el-table-column>
     </el-table>
     <!-- <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p> -->
-    <p class="borderBox clearBoth"></p>
-    <el-col :span="12" class="rightBorder">
-      <h1 class="title">申请金额</h1>
-      <p v-if="info" class="textContent">人民币 {{info[0].tDocFinReimbursement.totalMoney | toThousands}}</p>
-    </el-col>
-    <el-col :span="12">
-      <h1 class="title">付款方式</h1>
-      <p v-if="info[0].tDocFinReimbursement.paymentMethodCode!='FIN0104'" class="textContent">{{info[0].tDocFinReimbursement.paymentMethodName}}</p>
-      <p class="textContent" v-else>{{info[0].tDocFinReimbursement.paymentOthers}}</p>
-    </el-col>
-    <el-col :span="12" class="rightBorder" v-if="info[0].tDocFinReimbursement.payeeName">
-      <h1 class="title">收款人</h1>
-      <p v-if="info" class="textContent">{{info[0].tDocFinReimbursement.payeeName}}</p>
-    </el-col>
-    <el-col :span="12" v-if="info[0].tDocFinReimbursement.payeeAccount">
-      <h1 class="title">收款账户</h1>
-      <p v-if="info" class="textContent">{{info[0].tDocFinReimbursement.payeeAccount}}</p>
-    </el-col>
-    <el-col :span="24">
-      <h1 class="title">发票</h1>
-      <p v-if="info" class="textContent">
-        <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
-      </p>
-    </el-col>
+    <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
+      <el-col :span="12" class="rightBorder">
+        <h1 class="title">申请金额</h1>
+        <p v-if="info" class="textContent">人民币 {{info[0].tDocFinReimbursement.totalMoney | toThousands}}</p>
+      </el-col>
+      <el-col :span="12">
+        <h1 class="title">付款方式</h1>
+        <p v-if="info[0].tDocFinReimbursement.paymentMethodCode!='FIN0104'" class="textContent">{{info[0].tDocFinReimbursement.paymentMethodName}}</p>
+        <p class="textContent" v-else>{{info[0].tDocFinReimbursement.paymentOthers}}</p>
+      </el-col>
+      <el-col :span="12" class="rightBorder" v-if="info[0].tDocFinReimbursement.payeeName">
+        <h1 class="title">收款人</h1>
+        <p v-if="info" class="textContent">{{info[0].tDocFinReimbursement.payeeName}}</p>
+      </el-col>
+      <el-col :span="12" v-if="info[0].tDocFinReimbursement.payeeAccount">
+        <h1 class="title">收款账户</h1>
+        <p v-if="info" class="textContent">{{info[0].tDocFinReimbursement.payeeAccount}}</p>
+      </el-col>
+      <el-col :span="24">
+        <h1 class="title">发票</h1>
+        <p v-if="info" class="textContent">
+          <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
+        </p>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
@@ -107,8 +106,7 @@ export default {
 $main:#0460AE;
 .reimburseDetail {
   padding: 20px 0 0;
-  clear: both;
-  // border-bottom: 1px solid #D5DADF;
+  clear: both; // border-bottom: 1px solid #D5DADF;
   .totalPrice {
     line-height: 40px;
     padding-left: 15px;
@@ -135,19 +133,19 @@ $main:#0460AE;
       color: $main;
     }
   }
-  .borderBox{
+  .borderBox {
     padding-bottom: 20px;
-    border-bottom:1px solid #D5DADF;
+    border-bottom: 1px solid #D5DADF;
   }
-  .budgetTable{
-    margin-top:20px;
-    // padding-bottom:20px;
+  .budgetTable {
+    margin-top: 20px; // padding-bottom:20px;
     // border-bottom: 1px solid #D5DADF;
-    .el-table__header th{
-      background:#939393;
+    .el-table__header th {
+      background: #939393;
     }
-    .el-table__header-wrapper thead div, .el-table__footer-wrapper thead div{
-      background:#939393;
+    .el-table__header-wrapper thead div,
+    .el-table__footer-wrapper thead div {
+      background: #939393;
     }
   }
 }

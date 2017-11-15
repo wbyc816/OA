@@ -11,7 +11,7 @@
             <el-select v-model="selFile" slot="prepend" placeholder="请选择">
               <el-option :label="item.dictName" :value="item.dictCode" v-for="item in fileLink"></el-option>
             </el-select>
-            <el-button slot="append" @click="searchFile">搜索</el-button>
+            <el-button slot="append" @click="searchFile" :maxlength="20">搜索</el-button>
           </el-input>
         </el-card>
         <el-card class="borderCard searchBox" v-show="$route.name=='salary' || $route.name =='salaryHistory'">

@@ -21,12 +21,12 @@
                 <el-select v-model="flightNoTitle">
                   <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-                <el-input v-model="flightNoValue"  @keyup.enter.native="getData"></el-input>
+                <el-input v-model="flightNoValue" :maxlength="10"  @keyup.enter.native="getData"></el-input>
               </div>
               <div class="route" v-show="flightStatusType=='route'">
                 <!-- <el-input v-model="tripFrom" placeholder="出发地"></el-input> -->
-                <el-autocomplete class="inline-input" v-model="tripFrom.cityName" :fetch-suggestions="querySearch" placeholder="出发地" @select="handleFrom"></el-autocomplete>
-                <el-autocomplete class="inline-input" v-model="tripTo.cityName" :fetch-suggestions="querySearch" placeholder="目的地" @select="handleTo"></el-autocomplete>
+                <el-autocomplete class="inline-input" v-model="tripFrom.cityName" :fetch-suggestions="querySearch" placeholder="出发地" :maxlength="10" @select="handleFrom"></el-autocomplete>
+                <el-autocomplete class="inline-input" v-model="tripTo.cityName" :fetch-suggestions="querySearch" placeholder="目的地" :maxlength="10" @select="handleTo"></el-autocomplete>
                 </el-input>
               </div>
             </el-col>
@@ -158,7 +158,6 @@ export default {
       var results = queryString ? airPortList.filter(this.createFilter(queryString)) : airPortList;
       // 调用 callback 返回建议列表的数据
       results.forEach(e => e.value = e.cityName);
-      console.log(results)
       cb(results);
     },
     createFilter(queryString) {

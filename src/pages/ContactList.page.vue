@@ -84,8 +84,9 @@
         </el-col>
         <el-col :span="6">
           <div class="photoBox">
-            <img :src="empDetial.picUrl" alt="" v-show="empDetial.picUrl">
-            <img src="../assets/images/blankHead.png" alt="" v-show="!empDetial.picUrl">
+            <img :src="empDetial.picUrl" alt="" @error="imgError=true" v-show="empDetial.picUrl&&!imgError">
+            <img src="../assets/images/blankHead.png" alt="" v-show="!empDetial.picUrl&&!imgError">
+            <img src="../assets/images/blankHead.png" alt="" v-show="imgError">
           </div>
         </el-col>
       </el-row>
@@ -121,7 +122,8 @@ export default {
       },
       dialogVisible: false,
       empDetial: { deptNames: [] },
-      searchButton: false
+      searchButton: false,
+      imgError:false,
     }
   },
   computed: {
@@ -148,7 +150,7 @@ export default {
     this.$store.dispatch('getDeptList');
 
     if (this.$route.params.name) {
-
+      this.$store.dispatch('setQueryDepId', '')
       this.searchForm.name = this.$route.params.name;
       this.$store.dispatch('queryEmpList', this.searchForm);
     } else {

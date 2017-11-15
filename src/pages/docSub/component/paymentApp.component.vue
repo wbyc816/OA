@@ -1,76 +1,76 @@
 <template>
   <div class="paymentApp">
-    <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px">
+    <el-form label-position="left" :model="paymentForm" :rules="paymentRule" ref="paymentForm" label-width="128px">
       <el-form-item label="预算年份" class="widthLeft40 year">
         {{year}}
       </el-form-item>
-      <el-form-item label="预算机构/科目" prop="budgetDept" class="widthRight60">
-        <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%"></el-cascader>
-      </el-form-item>
-      <ul class="budgetInfo clearfix clearBoth" v-show="budgetInfo">
-        <li>年度预算{{budgetInfo.budgetTotal | toThousands}}元</li>
-        <li>可用预算{{budgetInfo.budgetRemain | toThousands}}元</li>
-        <li>预算执行比例{{budgetInfo.execRateStr}}</li>
-      </ul>
-      <el-form-item label="付款类型" prop="payTypeCode" placeholder="" class="deptArea" style="width:51%">
-        <el-select v-model="budgetForm.payTypeCode" style="width:100%" ref="contractType">
+      <el-form-item label="付款类型" prop="payTypeCode" placeholder="" class="widthRight60">
+        <el-select v-model="paymentForm.payTypeCode" style="width:100%" ref="contractType" @change="changePayType">
           <el-option v-for="item in payTypes" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="申请金额" label-width="100px" class="arrArea" style="width:49%" prop="appMoney">
-        <money-input v-model="budgetForm.appMoney">
-          <el-select v-model="activeCurrency" slot="prepend" style="width:90px">
-            <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
-          </el-select>
-          <template slot="append">元</template>
-        </money-input>
-      </el-form-item>
-      <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
-        <el-input v-model="budgetForm.invoiceNum" class="hasUnit" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号">
-          <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange">
-            <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
-          </el-select>
-        </el-input>
-      </el-form-item>
-      <el-form-item label="">
-        <el-button type="primary" @click="addBudget" class="addBudget"><i class="el-icon-plus"></i> 添加付款项</el-button>
-      </el-form-item>
-    </el-form>
-    <div class="appTable">
-      <el-table :data="budgetTable" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加付款项">
-        <el-table-column property="budgetDeptName" label="预算机构/科目">
-          <template scope="scope">
-            {{scope.row.budgetDeptName}}/{{scope.row.budgetItemName}}
-          </template>
-        </el-table-column>
-        <el-table-column property="invoiceCode" label="增值税票号" width="150">
-          <template scope="scope">
-            <el-tooltip effect="dark" :content="scope.row.invoiceCode.join()" placement="top">
-              <div>
-                <p v-for="(code,index) in scope.row.invoiceCode" v-if="index<3" class="invoiceNum">{{index==2?'...':code}}</p>
-              </div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column property="appMoney" label="报销金额(元)" width="130">
-          <template scope="scope">
-            <money-input v-model="scope.row.appMoney" :prepend="false" :append="false" @change="tranMoney(scope.row)"></money-input>
-          </template>
-        </el-table-column>
-        <el-table-column property="accurencyName" label="币种" width="75"></el-table-column>
-        <el-table-column property="rmb" label="人民币(元)" width="125">
-        </el-table-column>
-        <el-table-column label=" " width="55">
-          <template scope="scope">
-            <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete"  v-if="scope.row.budgetItemId!=addTax.budgetItemId||scope.row.invoiceTypeCode != 'FIN0201'">
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
-    </div>
-    <el-form label-position="left" :model="paymentForm" :rules="paymentRule" ref="paymentForm" label-width="128px">
+      <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px" class="clearBoth">
+        <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
+          <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%"></el-cascader>
+        </el-form-item>
+        <ul class="budgetInfo clearfix clearBoth" v-show="budgetInfo">
+          <li>年度预算{{budgetInfo.budgetTotal | toThousands}}元</li>
+          <li>可用预算{{budgetInfo.budgetRemain | toThousands}}元</li>
+          <li>预算执行比例{{budgetInfo.execRateStr}}</li>
+        </ul>
+        <el-form-item label="申请金额" class="deptArea" prop="appMoney">
+          <money-input v-model="budgetForm.appMoney">
+            <el-select v-model="activeCurrency" slot="prepend" style="width:90px">
+              <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
+            </el-select>
+            <template slot="append">元</template>
+          </money-input>
+        </el-form-item>
+        <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
+          <el-input v-model="budgetForm.invoiceNum" class="hasUnit" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号">
+            <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange">
+              <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
+            </el-select>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="">
+          <el-button type="primary" @click="addBudget" class="addBudget"><i class="el-icon-plus"></i> 添加付款项</el-button>
+        </el-form-item>
+      </el-form>
+      <div class="appTable clearBoth">
+        <el-table :data="budgetTable" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加付款项">
+          <el-table-column property="budgetDeptName" label="预算机构/科目">
+            <template scope="scope">
+              {{scope.row.budgetDeptName}}/{{scope.row.budgetItemName}}
+            </template>
+          </el-table-column>
+          <el-table-column property="invoiceCode" label="增值税票号" width="150">
+            <template scope="scope">
+              <el-tooltip effect="dark" :content="scope.row.invoiceCode.join()" placement="top">
+                <div>
+                  <p v-for="(code,index) in scope.row.invoiceCode" v-if="index<3" class="invoiceNum">{{index==2?'...':code}}</p>
+                </div>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column property="appMoney" label="报销金额(元)" width="130">
+            <template scope="scope">
+              <money-input v-model="scope.row.appMoney" :prepend="false" :append="false" @change="tranMoney(scope.row)"></money-input>
+            </template>
+          </el-table-column>
+          <el-table-column property="accurencyName" label="币种" width="75"></el-table-column>
+          <el-table-column property="rmb" label="人民币(元)" width="125">
+          </el-table-column>
+          <el-table-column label=" " width="55">
+            <template scope="scope">
+              <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete" v-if="scope.row.budgetItemId!=addTax.budgetItemId||scope.row.invoiceTypeCode != 'FIN0201'">
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
+      </div>
       <el-form-item label="收款供应商" prop="supplierIds">
         <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="paymentProp" v-model="paymentForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier">
         </el-cascader>
@@ -89,14 +89,18 @@
         <el-input v-model="paymentForm.paymentOthers">
         </el-input>
       </el-form-item>
+      <el-form-item label="账号" class="arrArea" v-if="paymentForm.payMthodCode=='FIN0101'&&supplierInfo.accountCode" label-width="100px">
+        <el-input v-model="supplierInfo.accountCode" readonly>
+        </el-input>
+      </el-form-item>
       <el-form-item label="合同" prop="contractAttach" class="clearBoth">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:1}" :on-success="handleContractSuccess" :on-error="handleContractError" :on-change="handleContractChange" ref="contractUpload" :on-remove="handleContractRemove">
-          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:1}" :on-success="handleContractSuccess" :on-error="handleContractError" ref="contractUpload" :on-remove="handleContractRemove" :before-upload="beforeContractUpload">
+          <el-button size="small" type="primary">上传合同<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
       <el-form-item label="上传发票" prop="invoiceAttach">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :on-change="handleInvoiceChange" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
-          <el-button size="small" type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" ref="invoiceUpload" :before-upload="beforeInvoiceUpload" :on-remove="handleInvoiceRemove">
+          <el-button size="small" type="primary">上传发票<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
       <el-form-item label="费用类型" prop="feeType" placeholder="" class="width60">
@@ -134,13 +138,11 @@ export default {
     return {
       budgetForm: {
         budgetDept: [],
-        payTypeCode: '',
         invoiceNum: '',
         appMoney: ''
       },
       budgetRule: {
         budgetDept: [{ type: 'array', required: true, message: '请选择预算机构/科目', trigger: 'blur' }],
-        payTypeCode: [{ required: true, message: '请选择付款类型', trigger: 'blur' }],
         invoiceNum: [{ required: true, message: '请输入发票号', validator: checkNum, trigger: 'blur' }],
         appMoney: [{ required: true, message: '请输入申请金额', trigger: 'blur' }],
       },
@@ -158,6 +160,7 @@ export default {
         payMthodCode: '',
         paymentOthers: '',
         contractAttach: [],
+        payTypeCode: '',
         invoiceAttach: [],
         feeType: [],
         isAdvancePayment: '0'
@@ -170,10 +173,9 @@ export default {
         feeType: [{ type: 'array', required: true, trigger: 'blur', message: '请选费用类型' }],
         isAdvancePayment: [{ required: true, trigger: 'blur' }],
         contractAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择合同' }],
+        payTypeCode: [{ required: true, message: '请选择付款类型', trigger: 'blur' }],
         invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票' }],
       },
-      invoiceAttach: [],
-      contractAttach: [],
       payMthods: [],
       types: [],
       payMthod: '',
@@ -229,11 +231,14 @@ export default {
     this.getAddTax() //增值税进项税额
   },
   methods: {
+    changePayType(val) {
+      this.$emit('updateSuggest',val)
+    },
     submitForm() {
       if (this.budgetTable.length != 0) {
         this.$refs.paymentForm.validate((valid) => {
           if (valid) {
-            this.$refs.contractUpload.submit();
+            this.submitAll();
           } else {
             this.$message.warning('请检查填写字段')
             this.$emit('submitMiddle', false);
@@ -242,12 +247,16 @@ export default {
         });
       } else {
         this.$message.warning('未添加付款项');
+        this.$emit('submitMiddle', false);
       }
     },
     submitAll() {
       var payMthod = this.payMthods.find(i => i.dictCode == this.paymentForm.payMthodCode);
+      var payType = this.payTypes.find(i => i.dictCode == this.paymentForm.payTypeCode);
       var feeType = this.getFeeType();
       var finPayment = {
+        "paymentTypeCode": payType.dictCode, //付款申请类型code, DOC04中
+        "paymentTypeName": payType.dictName, //付款申请类型名
         "budgetYear": this.year, //预算年份
         "supplierId": this.supplierInfo.id, //供应商id
         "supplierName": this.supplierInfo.supplierName, //供应商名
@@ -270,7 +279,7 @@ export default {
         b.invoiceCode = b.invoiceCode.join();
         return b;
       });
-      var finFileIds = this.contractAttach.concat(this.invoiceAttach);
+      var finFileIds = this.paymentForm.contractAttach.map(c=>c.response.data).concat(this.paymentForm.invoiceAttach.map(c=>c.response.data));
       console.log(finPayment, paymentItems, finFileIds);
       this.$emit('submitMiddle', { finPayment: finPayment, paymentItems: paymentItems, finFileIds: finFileIds })
     },
@@ -279,61 +288,57 @@ export default {
         this.budgetForm.invoiceNum = '';
       }
     },
-    handleContractSuccess(res, file) {
-      this.contractAttach.push(res.data);
-      if (this.contractAttach.length == this.paymentForm.contractAttach.length) {
-        this.$refs.invoiceUpload.submit();
-      }
-    },
-    handleContractError(res, file) {
-      this.$emit('submitMiddle', false);
-      this.$message.error('合同上传失败，请重试');
-    },
-    handleContractChange(file, fileList) {
+    beforeContractUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf'||file.type==='application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       const isLt10M = file.size / 1024 / 1024 < 10;
+
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 JPG、DOCX、PDF 格式!');
+      }
       if (!isLt10M) {
-        this.$message.error('上传合同大小不能超过 10MB!');
+        this.$message.error('上传文件大小不能超过 10MB!');
       }
-      if (isLt10M) {
-        this.paymentForm.contractAttach = fileList;
-      }
+      return isJPG && isLt10M;
     },
-
-    handleContractRemove() {
-
+    handleContractSuccess(res, file,fileList) {
+      this.paymentForm.contractAttach=fileList;
     },
-    handleInvoiceSuccess(res, file) {
-      this.invoiceAttach.push(res.data);
-      if (this.invoiceAttach.length == this.paymentForm.invoiceAttach.length) {
-        this.submitAll();
-      }
+    handleContractError(res, file,fileList) {
+      this.paymentForm.contractAttach=fileList;
     },
-    handleInvoiceError(res, file) {
-      this.$emit('submitMiddle', false);
-      this.$message.error('附件上传失败，请重试');
+    
+    handleContractRemove(file, fileList) {
+      this.paymentForm.contractAttach=fileList;
     },
-    handleInvoiceChange(file, fileList) {
+    beforeInvoiceUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
       const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isLt10M) {
-        this.$message.error('上传发票大小不能超过 10MB!');
-      }
-      if (isLt10M) {
-        this.paymentForm.invoiceAttach = fileList;
-      }
-    },
-    handleInvoiceRemove() {
 
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 JPG或PDF 格式!');
+      }
+      if (!isLt10M) {
+        this.$message.error('上传文件大小不能超过 10MB!');
+      }
+      return isJPG && isLt10M;
+    },
+    handleInvoiceSuccess(res, file,fileList) {
+      console.log(fileList);
+      this.paymentForm.invoiceAttach=fileList;
+    },
+    handleInvoiceError(res, file,fileList) {
+      this.paymentForm.invoiceAttach=fileList;
+    },
+    handleInvoiceRemove(file, fileList) {
+      this.paymentForm.invoiceAttach=fileList;
     },
     addBudget() {
       this.$refs.budgetForm.validate((valid) => {
         if (valid) {
           var dep = this.getBudgetDep();
           var invoice = this.invoiceList.find(i => i.dictCode == this.activeInvoice);
-          var payType = this.payTypes.find(i => i.dictCode == this.budgetForm.payTypeCode);
           var currency = this.currencyList.find(c => c.currencyCode == this.activeCurrency)
           var item = {
-            "paymentTypeCode": payType.dictCode, //付款申请类型code, DOC04中
-            "paymentTypeName": payType.dictName, //付款申请类型名
             "budgetDeptId": dep.budgetDeptCode, //预算部门id
             "budgetDeptName": dep.budgetDeptName, //预算部门名
             "budgetItemId": dep.budgetItemCode, //预算科目id
@@ -359,8 +364,6 @@ export default {
                 this.budgetTable.push(item);
                 if (this.activeInvoice == 'FIN0201') {
                   var taxItem = {
-                    "paymentTypeCode": payType.dictCode, //付款申请类型code, DOC04中
-                    "paymentTypeName": payType.dictName, //付款申请类型名
                     "budgetDeptId": this.addTax.deptId, //预算部门id
                     "budgetDeptName": this.addTax.budgetDeptName, //预算部门名
                     "budgetItemId": this.addTax.budgetItemId, //预算科目id
@@ -373,7 +376,7 @@ export default {
                     "exchangeRateId": res.data.rateId, //汇率id
                     "exchangeRate": res.data.rateReverse, //汇率
                     "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
-                    "rmb": "0", //对应的人民币
+                    "rmb": 0, //对应的人民币
                     "appMoney": '0',
                     "budgetYear": this.year
                   }
@@ -632,7 +635,6 @@ $main:#0460AE;
 
       font-size: 16px;
       line-height: 45px;
-      padding-left: 10px;
     }
   }
   .invoiceNum {
@@ -668,11 +670,12 @@ $main:#0460AE;
     margin-bottom: 20px;
     li {
       float: left;
-      width: 60%;
+      width: 50%;
       text-align: center;
-      line-height: 54px;
+      min-height: 54px;
+      padding-top:16px;
       &:nth-child(2) {
-        width: 40%;
+        // width: 40%;
         border-left: 1px solid #D5DADF;
       }
     }

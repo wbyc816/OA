@@ -8,13 +8,13 @@
         <subject class='doc-section' :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject>
         <description class='doc-section' ref="description" @submitEnd="submitEnd" @saveEnd="saveEnd" :options="options">
           <!-- <manuscript-app  @submitMiddle="submitMiddle"></manuscript-app> -->
-          <component v-bind:is="$route.params.code" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'">
+          <component v-bind:is="$route.params.code" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'" @updateSuggest="updateSuggest">
             <!-- 组件在 vm.currentview 变化时改变！ -->
           </component>
         </description>
         <div class='clearfix'>
           <el-button type="primary" @click="submitDoc" class="submitButton">提交</el-button>
-          <el-button @click="saveStart" class="saveButton"><i class="iconfont icon-caogao"></i> 保存至草稿箱</el-button>
+          <el-button @click="saveDoc" class="saveButton"><i class="iconfont icon-caogao"></i> 保存至草稿箱</el-button>
         </div>
       </div>
     </el-card>
@@ -46,13 +46,14 @@ import CLS from './component/materialApp.component.vue'
 import CLB from './component/travelRemibApp.component.vue'
 import BKY from './component/guestTicketApp.component.vue'
 import YGY from './component/staffBenefitApp.component.vue'
+import LZS from './component/empQuitApp.component.vue'
 
 export default {
   data() {
     return {
       docConfig,
       middleParams: '',
-      options: { docType: '' },
+      options: { docType: '', desTitle: '' },
       doc: '',
       saveStartPara: '',
       saveMiddlePara: '',
@@ -96,7 +97,8 @@ export default {
     CLS,
     CLB,
     BKY,
-    YGY
+    YGY,
+    LZS
   },
   mounted() {
     this.initDoc();
@@ -105,6 +107,7 @@ export default {
     initDoc() {
       this.doc = this.docConfig.find(doc => doc.code == this.$route.params.code);
       this.options.docType = this.doc.code;
+      this.options.desTitle = this.doc.code == 'LZS' ? '离职理由说明' : '';
       if (this.$route.query.id) {
         this.getDraft();
       } else {
@@ -137,6 +140,9 @@ export default {
     },
     submitEnd(params) {
       console.log(params)
+      if (this.$route.query.id) {
+        params.id = this.$route.query.id
+      }
       if (params) {
         this.$store.dispatch('submitDoc', { params: Object.assign(params, this.middleParams), docTypeCode: this.doc.code, url: this.doc.url });
         this.middleParams = '';
@@ -144,16 +150,15 @@ export default {
         this.$store.commit('SET_SUBMIT_LOADING', false)
       }
     },
+    saveDoc() {
+      this.$store.commit('SET_SUBMIT_LOADING', true)
+      this.$refs.subject.saveForm();
+    },
     saveStart() {
-      if (this.docTitle) {
-        this.$store.commit('SET_SUBMIT_LOADING', true)
-        if (this.doc.code == 'CPD') {
-          this.$refs.description.saveForm();
-        } else {
-          this.$refs.middleCom.saveForm();
-        }
+      if (this.doc.code == 'CPD') {
+        this.$refs.description.saveForm();
       } else {
-        this.$message.warning('公文标题不能为空！')
+        this.$refs.middleCom.saveForm();
       }
     },
     saveMiddle(params) {
@@ -175,6 +180,9 @@ export default {
           "draftContent": this.saveMiddlePara
         },
         "fileId": []
+      }
+      if (this.$route.query.id) {
+        temp.id = this.$route.query.id
       }
       this.$http.post(this.doc.url, Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency), { body: true })
         .then(res => {
@@ -198,16 +206,16 @@ export default {
         .then(res => {
           if (res.status == 0) {
             if (res.data.length != 0) {
-              var reciver = {
-                "reciDeptMajorName": res.data[0].reciDeptMajorName,
-                "reciDeptMajorId": res.data[0].reciDeptMajorId,
-                "reciDeptName": res.data[0].reciDeptName,
-                "reciDeptId": res.data[0].reciDeptId,
-                "reciUserName": res.data[0].reciUserName,
-                "reciUserId": res.data[0].reciUserId,
+              var receiver = {
+                "reciDeptMajorName": res.data.reciDeptMajorName,
+                "reciDeptMajorId": res.data.reciDeptMajorId,
+                "reciDeptName": res.data.reciDeptName,
+                "reciDeptId": res.data.reciDeptId,
+                "reciUserName": res.data.reciUserName,
+                "reciUserId": res.data.reciUserId,
               }
-              this.$store.commit('setReciver', reciver);
-              this.reciverName = res.data[0].reciUserName;
+              this.$store.commit('setReciver', receiver);
+              this.reciverName = res.data.reciUserName;
             }
           } else {
 
@@ -218,12 +226,13 @@ export default {
       this.$http.post('/doc/getDocDraftsDetail', { docId: this.$route.query.id })
         .then(res => {
           if (res.status == 0) {
-            this.$store.commit('setReciver', res.data.reciver);
+            this.$store.commit('setReciver', res.data.receiver);
             this.$store.commit('setConfident', res.data.selConfident);
             this.$store.commit('setUrgency', res.data.selUrgency);
             // this.$store.commit('setDocTtile', res.data.docTtile);
             this.reciverName = res.data.receiver.reciUserName;
             this.$refs.subject.updateTitle(res.data.docTtile);
+            this.$refs.description.ruleForm.des = res.data.des.replace(/↵/g, "\n");
             if (res.data.path) {
               this.$refs.description.updatePath(res.data.path);
             }
@@ -237,6 +246,9 @@ export default {
 
           }
         })
+    },
+    updateSuggest(val){
+      this.$refs.description.getSuggestTemp(val);
     }
   }
 }
@@ -244,52 +256,52 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.commonApp {
-  .deptArea,
-  .arrArea {
-    float: left;
-    width: 50%;
-  }
-  .arrArea {
-    .el-form-item__label {
-      padding-left: 18px;
-    }
-  }
-  .reciverWrap {
-    clear: both;
-    .el-form-item__content {
-      display: flex;
-    }
-    .reciverList {
-      flex: 1;
-      .el-tag {
-        margin-right: 5px;
-      }
-    }
-    .addButton {
-      right: 0;
-    }
-  }
-  .saveButton {
-    float: right;
-    margin-right: 150px;
-    height: 46px;
-    font-size: 16px;
-    border-radius: 3px;
-    i {
-      font-size: 23px;
-      vertical-align: sub;
-      margin-right: 3px;
-    }
-  }
-  .submitButton {
-    height: 46px;
-    width: 200px;
-    margin-left: 134px;
-    font-size: 16px;
-    border-radius: 3px;
-    background-color: $main;
-  }
-}
+// .commonApp {
+//   .deptArea,
+//   .arrArea {
+//     float: left;
+//     width: 50%;
+//   }
+//   .arrArea {
+//     .el-form-item__label {
+//       padding-left: 18px;
+//     }
+//   }
+//   .reciverWrap {
+//     clear: both;
+//     .el-form-item__content {
+//       display: flex;
+//     }
+//     .reciverList {
+//       flex: 1;
+//       .el-tag {
+//         margin-right: 5px;
+//       }
+//     }
+//     .addButton {
+//       right: 0;
+//     }
+//   }
+//   .saveButton {
+//     float: right;
+//     margin-right: 150px;
+//     height: 46px;
+//     font-size: 16px;
+//     border-radius: 3px;
+//     i {
+//       font-size: 23px;
+//       vertical-align: sub;
+//       margin-right: 3px;
+//     }
+//   }
+//   .submitButton {
+//     height: 46px;
+//     width: 200px;
+//     margin-left: 134px;
+//     font-size: 16px;
+//     border-radius: 3px;
+//     background-color: $main;
+//   }
+// }
 
 </style>

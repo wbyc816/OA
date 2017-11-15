@@ -1,40 +1,25 @@
 <template>
   <div id="home">
-    <!-- <el-carousel height="347px" arrow="never">
-      <el-carousel-item v-for="o in 4">
-        <img src="../assets/images/Intersection16.png">
-      </el-carousel-item>
-    </el-carousel> -->
     <el-row :gutter="20" class="wrapRow">
       <el-col :span="16">
-        <!-- <ul class="list-group" v-sortable="optionsDragLeft">
-          <li class="list-group-item" :class="{'dragActive':showDrag[0]}">
-            <p class="dragHead" v-on:mouseover="dragShow(0)" v-on:mouseleave="dragHide(0)">
-              <span v-show="showInfo[0]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[0]=true" v-on:mouseleave="showInfo[0]=false" v-show="showDrag[0]"></i>
-            </p> -->
+        <!-- 消息中心 -->
         <el-card class="messageCenter">
           <p slot="header">消息中心</p>
           <el-row :gutter="10">
-            <el-col :span="8" :xs='12' v-for="msg in msgs">
+            <el-col :span="8" v-for="msg in msgs">
               <message-center :data="msg">
               </message-center>
             </el-col>
           </el-row>
         </el-card>
-        <!-- </li>
-          <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
-            <p class="dragHead" v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
-              <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>
-            </p> -->
-        <el-card class="bedoneList" v-if="doneLength!=0">
+        <!-- 待办事项 -->
+        <el-card class="bedoneList" :class="{'noLine':doneLength<4}" v-if="doneLength!=0">
           <p slot="header">待办事项 <span>{{doneLength}}</span></p>
-          <el-carousel height="150px" :autoplay="false" indicator-position="outside" arrow="never">
+          <el-carousel :height="doneHeight+'px'" :autoplay="false" :indicator-position="doneLength>6?'outside':'none'" arrow="never">
             <el-carousel-item v-for="(list,index) in doneList" :key="index">
               <el-row :gutter="20">
-                <el-col :span="12" v-for="(item,itemIndex) in list" :class="{higher:itemIndex>1}">
-                  <router-link :to="'/doc/docDetail/'+item.id">
+                <el-col :span="doneLength>3?12:24" v-for="(item,itemIndex) in list" :class="{higher:itemIndex>1&&doneLength>3}">
+                  <router-link :to="{path:'/doc/docDetail/'+item.id,query:{code:item.docTypeCode}}">
                     <span class="index">{{item.index}}</span>
                     <p class="title">{{item.docTitle}}</p>
                     <div class="timeline">
@@ -47,12 +32,7 @@
             </el-carousel-item>
           </el-carousel>
         </el-card>
-        <!-- </li>
-          <li class="list-group-item" :class="{'dragActive':showDrag[1]}">
-            <p class="dragHead" v-on:mouseover="dragShow(1)" v-on:mouseleave="dragHide(1)">
-              <span v-show="showInfo[1]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[1]=true" v-on:mouseleave="showInfo[1]=false" v-show="showDrag[1]"></i>
-            </p> -->
+        <!-- 新闻 -->
         <el-card class="news">
           <p slot="header"><span>新闻</span>
             <router-link to="FilesHome">更多</router-link>
@@ -67,12 +47,7 @@
             </el-tab-pane>
           </el-tabs>
         </el-card>
-        <!-- </li>
-          <li class="list-group-item" :class="{'dragActive':showDrag[2]}">
-            <p class="dragHead" v-on:mouseover="dragShow(2)" v-on:mouseleave="dragHide(2)">
-              <span v-show="showInfo[2]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[2]=true" v-on:mouseleave="showInfo[2]=false" v-show="showDrag[2]"></i>
-            </p> -->
+        <!-- 人事任免 -->
         <el-card class="shareBox">
           <el-row>
             <el-col :span="12" class="shareWith">
@@ -81,7 +56,7 @@
               </p>
               <ul>
                 <li v-for="(hr,index) in hr1" v-if="index<3" @click="goTo(hr)">
-                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
+                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==='0'">NEW</span></p>
                   <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
                 </li>
               </ul>
@@ -92,19 +67,14 @@
               </p>
               <ul>
                 <li v-for="(hr,index) in hr2" v-if="index<3" @click="goTo(hr)">
-                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==1">NEW</span></p>
+                  <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==='0'">NEW</span></p>
                   <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>
                 </li>
               </ul>
             </el-col>
           </el-row>
         </el-card>
-        <!-- </li>
-          <li class="list-group-item" :class="{'dragActive':showDrag[3]}">
-            <p class="dragHead" v-on:mouseover="dragShow(3)" v-on:mouseleave="dragHide(3)">
-              <span v-show="showInfo[3]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[3]=true" v-on:mouseleave="showInfo[3]=false" v-show="showDrag[3]"></i>
-            </p> -->
+        <!-- 运行报告 -->
         <el-card class="report">
           <el-row>
             <el-col :span="7" class="flightStatus">
@@ -139,56 +109,11 @@
             </el-col>
           </el-row>
         </el-card>
-        <!-- </li> -->
-        <!-- <li class="list-group-item" :class="{'dragActive':showDrag[4]}">
-            <p class="dragHead"  v-on:mouseover="dragShow(4)" v-on:mouseleave="dragHide(4)">
-              <span v-show="showInfo[4]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[4]=true" v-on:mouseleave="showInfo[4]=false" v-show="showDrag[4]"></i>
-            </p>
-            <el-card class="space">
-              <span slot="header">My Space</span>
-              <el-row  v-for="weibo in weibos">
-                <weibo :weibo='weibo'></weibo>
-              </el-row>
-              <el-input placeholder="Share Something" class="space-bottom">
-                <img slot="prepend" src="../assets/images/Image198.png">
-                <div slot="append">
-                  <i class="iconfont icon-smile"></i>
-                  <i class="iconfont icon-pics"></i>
-                  <el-button type="primary">Post</el-button>
-                </div>
-              </el-input>
-            </el-card>
-          </li> -->
-        <!-- </ul> -->
       </el-col>
       <el-col :span="8" class="sideBox">
-        <!-- <ul class="list-group" v-sortable="optionsDragRight">
-          <li class="list-group-item" :class="{'dragActive':showDrag[5]}">
-            <p class="dragHead" v-on:mouseover="dragShow(5)" v-on:mouseleave="dragHide(5)">
-              <span v-show="showInfo[5]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[5]=true" v-on:mouseleave="showInfo[5]=false" v-show="showDrag[5]"></i>
-            </p> -->
         <side-Person-Search></side-Person-Search>
-        <!-- <el-card class="contactList">
-              <span slot="header">公司同仁</span>
-              <el-input class="search" placeholder="请输入员工姓名">
-                <el-button slot="append">搜索</el-button>
-              </el-input>
-            </el-card> -->
-        <!-- </li>
-          <li class="list-group-item" :class="{'dragActive':showDrag[6]}">
-            <p class="dragHead" v-on:mouseover="dragShow(6)" v-on:mouseleave="dragHide(6)">
-              <span v-show="showInfo[6]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[6]=true" v-on:mouseleave="showInfo[6]=false" v-show="showDrag[6]"></i>
-            </p> -->
         <duty></duty>
-        <!-- </li> -->
-        <!-- <li class="list-group-item" :class="{'dragActive':showDrag[10]}">
-            <p class="dragHead" v-on:mouseover="dragShow(10)" v-on:mouseleave="dragHide(10)">
-              <span v-show="showInfo[10]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[10]=true" v-on:mouseleave="showInfo[10]=false" v-show="showDrag[10]"></i>
-            </p> -->
+        <!-- 航班动态 -->
         <el-card class="flightStatus">
           <span slot="header">航班动态</span>
           <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate" class="searchDate" :editable="false" :clearable="false" :picker-options="pickerOptions0"></el-date-picker>
@@ -201,21 +126,16 @@
               <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
             </el-select>
             <el-input class="search">
-              <el-button slot="append" @click="searchFlight">搜索</el-button>
+              <el-button slot="append" @click="searchFlight"  :maxlength="10">搜索</el-button>
             </el-input>
           </div>
           <div class="route" v-show="flightStatusType=='route'">
-            <el-autocomplete class="inline-input" v-model="tripFrom.cityName" :fetch-suggestions="querySearch" placeholder="出发地" @select="handleFrom"></el-autocomplete>
-            <el-autocomplete class="inline-input" v-model="tripTo.cityName" :fetch-suggestions="querySearch" placeholder="目的地" @select="handleTo"></el-autocomplete>
+            <el-autocomplete class="inline-input" v-model="tripFrom.cityName" :fetch-suggestions="querySearch" placeholder="出发地" @select="handleFrom"  :maxlength="10"></el-autocomplete>
+            <el-autocomplete class="inline-input" v-model="tripTo.cityName" :fetch-suggestions="querySearch" placeholder="目的地" @select="handleTo"  :maxlength="10"></el-autocomplete>
             <el-button @click="searchFlight">搜索</el-button>
           </div>
         </el-card>
-        <!-- </li>
-          <li class="list-group-item" :class="{'dragActive':showDrag[7]}">
-            <p class="dragHead" v-on:mouseover="dragShow(7)" v-on:mouseleave="dragHide(7)">
-              <span v-show="showInfo[7]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[7]=true" v-on:mouseleave="showInfo[7]=false" v-show="showDrag[7]"></i>
-            </p> -->
+        <!-- 日常事项 -->
         <el-card class="Workbench">
           <span slot="header">日常事项</span>
           <el-menu>
@@ -232,26 +152,6 @@
             <el-menu-item :index="link.text" v-for="link in otherLinks" @click.native="goToOthers(link.link)"><i class="iconfont" :class="'icon-'+link.icon"></i>{{link.text}}<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
-        <!-- </li> -->
-        <!-- <li class="list-group-item" :class="{'dragActive':showDrag[9]}">
-            <p class="dragHead"  v-on:mouseover="dragShow(9)" v-on:mouseleave="dragHide(9)">
-              <span v-show="showInfo[9]">按住拖拽来改变模块位置 <i class="iconfont icon-jiantouyou"></i></span>
-              <i class="iconfont icon-drag handleDrag" v-on:mouseover="showInfo[9]=true" v-on:mouseleave="showInfo[9]=false" v-show="showDrag[9]"></i>
-            </p>
-            <el-card class="flightSearch">
-              <span slot="header">Flight Search</span>
-              <el-radio-group v-model="tripType">
-                <el-radio label="date">One Way</el-radio>
-                <el-radio label="daterange">Round Trip</el-radio>
-              </el-radio-group>
-              <el-input v-model="tripFrom" placeholder="From">
-              </el-input>
-              <el-input v-model="tripTo"  placeholder="To" class="pullRight">
-              </el-input>
-              <search-date :type="tripType"></search-date>
-            </el-card>
-          </li> -->
-        <!-- </ul> -->
       </el-col>
     </el-row>
   </div>
@@ -269,7 +169,7 @@ var msgs = [
   { "icon": "gou", "color": "#07A9E9", "text": "待批公文:", "value": "0", "link": "/doc/docPending" },
   { "icon": "sousuo", "color": "#7562DE", "text": "公文追踪:", "value": "0", "link": "/doc/docTracking" },
   { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
-  { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": "#" },
+  { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": {name:'docPending',params:{isOverTime:'1'}} },
   { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
   { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "/meeting/meetingSearch/1" },
 ];
@@ -282,21 +182,7 @@ const otherLinks = [
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
 ]
-const piedata = {
-  labels: ['Airport Services', 'Cockpit', 'Cabin', 'HQ Staff', 'Outport Others', 'Outport China', 'MRO'],
-  datasets: [{
-    backgroundColor: [
-      '#97BBCD',
-      '#7ED0CF',
-      '#DCDCDC',
-      '#F7464A',
-      '#FDB45C',
-      '#DCDCDC',
-      '#FAD2A2'
-    ],
-    data: [2, 688, 1732, 996, 110, 163, 231]
-  }]
-}
+
 const pieoption = {
   responsive: true,
   maintainAspectRatio: false,
@@ -352,6 +238,7 @@ export default {
       searchDate: '',
       doneList: [],
       doneLength: 0,
+      doneHeight: 150,
       newsList: [],
       flightTrends: {
         "sumFlight": 0,
@@ -514,7 +401,20 @@ export default {
           if (res.status == 0) {
             if (Array.isArray(res.data)) {
               this.doneLength = res.data.length;
-
+              switch (this.doneLength) {
+                case 1:
+                  this.doneHeight = 50;
+                  break;
+                case 2:
+                case 4:
+                  this.doneHeight = 100;
+                  break;
+                case 3:
+                  this.doneHeight = 150;
+                  break;
+                default:
+                  this.doneHeight = 150;
+              }
               res.data.forEach((r, index) => r.index = index + 1);
               for (var i = 0; i < res.data.length; i += 6) {
                 if (res.data.slice(i, i + 6)) {
@@ -544,7 +444,7 @@ export default {
         })
     },
     getNew(tab) {
-      this.$http.post('/doc/selectFileList', { empId: this.userInfo.empId, classify1: this.activeName })
+      this.$http.post('/doc/selectFileList', { empId: this.userInfo.empId, classify1: this.activeName, sort: 0 })
         .then(res => {
           if (res.status == 0) {
             var temp = this.newsList.find(t => t.code == this.activeName);
@@ -659,20 +559,16 @@ $sub:#1465C0;
         }
       }
     }
-    @media (max-width: 768px) {
-      & {
-        margin-bottom: 1px;
-      }
-    }
+    
   }
-  .wrapRow {
-    @media (max-width: 1200px) {
-      margin:0!important;
-      .el-col:first-child {
-        padding: 0!important
-      }
-    }
-  }
+  // .wrapRow {
+  //   @media (max-width: 1200px) {
+  //     margin:0!important;
+  //     .el-col:first-child {
+  //       padding: 0!important
+  //     }
+  //   }
+  // }
   .news {
     padding: 0;
     .el-card__header {
@@ -923,27 +819,27 @@ $sub:#1465C0;
         left: 30px;
       }
     }
-    @media (max-width: 768px) {
-      .el-col {
-        min-height: 0;
-        .bottom {
-          position: relative;
-        }
-      }
-      .daily {
-        padding: 10px 0 0;
-        .bottom div {
-          margin-left: 0;
-        }
-      }
-      .crew {
-        min-height: 200px;
-        padding: 20px 0 0;
-        &>div:last-child {
-          right: 30px;
-        }
-      }
-    }
+    // @media (max-width: 768px) {
+    //   .el-col {
+    //     min-height: 0;
+    //     .bottom {
+    //       position: relative;
+    //     }
+    //   }
+    //   .daily {
+    //     padding: 10px 0 0;
+    //     .bottom div {
+    //       margin-left: 0;
+    //     }
+    //   }
+    //   .crew {
+    //     min-height: 200px;
+    //     padding: 20px 0 0;
+    //     &>div:last-child {
+    //       right: 30px;
+    //     }
+    //   }
+    // }
   }
   .shareBox {
     .el-card__body {
@@ -1040,6 +936,7 @@ $sub:#1465C0;
       left: 48%;
       transform: translate(-50%, -50%);
     }
+
     .el-card__header {
       border-bottom: none;
       padding-bottom: 10px;
@@ -1059,7 +956,7 @@ $sub:#1465C0;
         top: 23px;
         right: 19px;
         position: absolute;
-        z-index: 10;
+        z-index: 1;
         .el-carousel__indicator button {
           width: 8px;
           height: 8px;
@@ -1124,6 +1021,20 @@ $sub:#1465C0;
         }
       }
     }
+    &.noLine {
+      &:before {
+        display: none;
+      }
+      .el-col {
+        line-height:50px;
+          .title {
+            width: 600px;
+          }
+          .timeline {
+            right: 30px;
+          }
+      }
+    }
   }
   .space {
     padding-bottom: 5px;
@@ -1168,11 +1079,11 @@ $sub:#1465C0;
               display: table-cell;
             }
           }
-          @media (max-width:768px) {
-            & {
-              display: block;
-            }
-          }
+          // @media (max-width:768px) {
+          //   & {
+          //     display: block;
+          //   }
+          // }
         }
       }
     }
@@ -1284,15 +1195,15 @@ $sub:#1465C0;
             height: 45px;
           }
         }
-        @media (max-width:1200px) {
-          & {
-            float: initial;
-            margin-top: 10px;
-            .el-radio-button:first-child {
-              margin-left: 0;
-            }
-          }
-        }
+        // @media (max-width:1200px) {
+        //   & {
+        //     float: initial;
+        //     margin-top: 10px;
+        //     .el-radio-button:first-child {
+        //       margin-left: 0;
+        //     }
+        //   }
+        // }
       }
     }
     .flightNo {

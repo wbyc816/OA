@@ -12,10 +12,10 @@
           <el-button type="primary" icon="close" size="small" @click="delContract(index)">删除</el-button>
         </div>
         <el-form-item label="合同类型" :prop="'content.'+index+'.type'" :rules="{required: true, message: '合同类型不能为空', trigger: 'blur'}">
-          <el-input v-model="contract.type"></el-input>
+          <el-input v-model="contract.type" :maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="合同主体" :prop="'content.'+index+'.subject'" :rules="{required: true, message: '合同主体不能为空', trigger: 'blur'}">
-          <el-input v-model="contract.subject"></el-input>
+          <el-input v-model="contract.subject" :maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="合同开始日期" :prop="'content.'+index+'.startDate'" :rules="{type:'date',required: true, message: '合同开始日期不能为空', trigger: 'blur'}">
           <el-date-picker type="date" v-model="contract.startDate" style="width: 100%;" :editable="false" :clearable="false" :picker-options="dateOptions[index].start"></el-date-picker>
@@ -25,7 +25,8 @@
         </el-form-item>
         <div class="borderBox"></div>
       </template>
-      <el-form-item>
+      <el-form-item class="opeartBox">
+        <el-button type="primary" size="large" class="submitButton" @click="preClick" :disabled="submitLoading">上一步</el-button>
         <el-button type="primary" size="large" class="submitButton" @click="nextClick" :disabled="submitLoading">下一步</el-button>
       </el-form-item>
     </el-form>
@@ -46,7 +47,8 @@ export default {
         content: []
       },
       submitLoading: false,
-      constTemp: { type: '', subject: '', endDate: '', startDate: '', createUser: '', empId: '', oldId: '', isDel: 0 }
+      constTemp: { type: '', subject: '', endDate: '', startDate: '', createUser: '', empId: '', oldId: '', isDel: 0 },
+      first: true
     }
   },
   computed: {
@@ -127,18 +129,22 @@ export default {
       this.$emit('submit', { contract: this.contractForm.content.map(c => this.changeTime(c)) });
     },
     getContract() {
-      this.$http.post('/resume/getContractInfo', { id: this.userInfo.empId })
-        .then(res => {
-          if (res.status == '0') {
-            res.data.forEach(e => {
-              e.startDate = new Date(e.startDate);
-              e.endDate = new Date(e.endDate);
-              this.contractForm.content.push(Object.assign(this.clone(this.constTemp), e))
-            })
-          }
-        }, res => {
+      if (this.first) {
+        this.$http.post('/resume/getContractInfo', { id: this.userInfo.empId })
+          .then(res => {
+            if (res.status == '0') {
+              res.data.forEach(e => {
+                e.startDate = new Date(e.startDate);
+                e.endDate = new Date(e.endDate);
+                this.contractForm.content.push(Object.assign(this.clone(this.constTemp), e))
+              })
+              this.first = false;
+            }
+          }, res => {
 
-        })
+          })
+      }
+
     },
     nextClick() {
       this.$refs['contractForm'].validate((valid) => {
@@ -149,6 +155,9 @@ export default {
           return false;
         }
       });
+    },
+    preClick() {
+      this.$emit('nextClick', 'person')
     }
   }
 }

@@ -4,7 +4,7 @@
       <div slot="header">
         <span>公司同仁</span>
       </div>
-      <el-input placeholder="请输入员工姓名" class="search " v-model="searchName" @keyup.enter.native="search">
+      <el-input placeholder="请输入员工姓名" class="search " v-model="searchName" @keyup.enter.native="search" :maxlength="10">
         <el-button slot="append" @click="search">搜索</el-button>
       </el-input>
     </el-card>

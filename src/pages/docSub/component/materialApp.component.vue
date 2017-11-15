@@ -2,10 +2,10 @@
   <div class="materialApp clearfix">
     <el-form label-position="left" :model="materialForm" :rules="rules" ref="materialForm" label-width="128px">
       <el-form-item label="品名" class="inlinItem" prop="productName">
-        <el-input v-model="materialForm.productName"></el-input>
+        <el-input v-model="materialForm.productName" :maxlength="25"></el-input>
       </el-form-item>
       <el-form-item label="规格" class="inlinItem" prop="specification">
-        <el-input v-model="materialForm.specification"></el-input>
+        <el-input v-model="materialForm.specification" :maxlength="25"></el-input>
       </el-form-item>
       <el-form-item label="计划单价" class="inlinItem" prop="plannedUnitPrice">
         <money-input v-model="materialForm.plannedUnitPrice" :prepend="false">
@@ -13,11 +13,11 @@
         </money-input>
       </el-form-item>
       <el-form-item label="数量" class="inlinItem" prop="quantity">
-        <el-input v-model.number="materialForm.quantity"></el-input>
+        <el-input v-model.number="materialForm.quantity" :maxlength="5"></el-input>
       </el-form-item>
       <el-form-item label="备注" class="clearBoth">
         <el-col :span="19">
-          <el-input v-model="materialForm.remark" class="fixF5">
+          <el-input v-model="materialForm.remark" class="fixF5" :maxlength="100">
           </el-input>
         </el-col>
         <el-col :span="5">
@@ -29,7 +29,7 @@
       <el-table-column type="index" label=" " width="40"></el-table-column>
       <el-table-column property="productName" label="品名" width="160"></el-table-column>
       <el-table-column property="specification" label="规格" width="65"></el-table-column>
-      <el-table-column property="plannedUnitPrice" label="计划单价" width="100"></el-table-column>
+      <el-table-column property="plannedUnitPrice" label="计划单价" width="110"></el-table-column>
       <el-table-column property="quantity" label="数量" width="100"></el-table-column>
       <el-table-column property="remark" label="备注"></el-table-column>
       <el-table-column label="操作" width="55">
@@ -66,14 +66,14 @@ export default {
     }
   },
   computed: {
-    totalPrice:function(){
-      if(this.materials.length!=0){
-        var num=0;
-        this.materials.forEach(m=>{
-          num+=m.plannedUnitPrice*m.quantity
+    totalPrice: function() {
+      if (this.materials.length != 0) {
+        var num = 0;
+        this.materials.forEach(m => {
+          num += m.plannedUnitPrice * m.quantity
         })
         return num
-      }else{
+      } else {
         return 0
       }
     },
@@ -81,7 +81,16 @@ export default {
       'submitLoading'
     ])
   },
+  mounted() {
+    this.$emit('updateSuggest','DOC1101');
+  },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.materials));
+    },
+    getDraft(obj) {
+      this.materials=obj;
+    },
     addMaterial() {
       this.$refs.materialForm.validate((valid) => {
         if (valid) {
@@ -90,24 +99,24 @@ export default {
           temp.quantity = parseInt(temp.quantity);
           this.materials.push(temp);
           this.$refs.materialForm.resetFields();
-          this.materialForm.remark='';
+          this.materialForm.remark = '';
         } else {
           return false;
         }
       });
     },
     deleteRow(index) {
-      this.materials.splice(index,1)
+      this.materials.splice(index, 1)
     },
     fomatFloat(src, pos) {
       return Math.round(src * Math.pow(10, pos)) / Math.pow(10, pos);
     },
-    submitForm(){
-      if(this.materials.length!=0){
-        this.$emit('submitMiddle',{materials:this.materials});
-      }else{
+    submitForm() {
+      if (this.materials.length != 0) {
+        this.$emit('submitMiddle', { materials: this.materials });
+      } else {
         this.$message.warning('请添加材料')
-        this.$emit('submitMiddle',false);
+        this.$emit('submitMiddle', false);
       }
     }
   }
@@ -128,16 +137,16 @@ $main:#0460AE;
       }
     }
   }
-  .totalPrice{
-    line-height:40px;
+  .totalPrice {
+    line-height: 40px;
     padding-left: 15px;
-    border:1px solid #D5DADF;
-    border-top:none;
-    font-size:15px;
-    span{
-      margin-left:5px;
-      color:$main;
-    } 
+    border: 1px solid #D5DADF;
+    border-top: none;
+    font-size: 15px;
+    span {
+      margin-left: 5px;
+      color: $main;
+    }
   }
 }
 

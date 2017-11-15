@@ -86,6 +86,15 @@ export default {
     this.getFileCatalogue();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.contractForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.contractForm, obj, ['timeRange']);
+      obj.timeRange.forEach(t => {
+        this.contractForm.timeRange.push(new Date(t));
+      })
+    },
     fomatMoney(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
       if (val) {

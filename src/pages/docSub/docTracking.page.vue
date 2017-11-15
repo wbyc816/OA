@@ -1,7 +1,7 @@
 <template>
   <div id="docTracking">
-    <search-options title="公文追踪" @search="setOptions"></search-options>   
-    <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0" v-loading.body="searchLoading">
+    <search-options title="公文追踪" @search="setOptions"></search-options>
+    <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>
       <thead align="left">
@@ -9,26 +9,26 @@
           <th v-for="title in tableTitle">{{title}}</th>
         </tr>
       </thead>
-      <tbody v-for="doc in docData" :key="doc.taskTime">
+      <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">
         <tr>
-          <td>{{doc.docDenseType}}</td>
-          <td>{{doc.docImprotType}}</td>
-          <td>{{doc.docTypeCode}}</td>
-          <td>{{doc.taskTime}}</td>
-          <td>{{doc.taskUser}}</td>
-          <td>{{doc.currentUser}}</td>
-        </tr>
-        <tr>
-          <td>{{doc.docNo}}</td>
-          <td colspan="3">{{doc.docTitle}}</td>
+          <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
           <td>
-            <span>
-              <!-- <router-link :to="'/doc/docDetail/'+doc.id">详情</router-link> -->
-              <!-- <span>Withdraw</span>
-            <span @click="contractView = true">Delete</span> -->
-            </span>
+            <span class="overTime" v-if="doc.isOvertime"><i class="el-icon-information"></i> 超时</span>
+            <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
+            <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
+            <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
           </td>
-          <td @click="getProcess(doc.id)">查看流转</td>
+          <td>{{doc.taskUser}}</td>
+          <td>{{doc.taskTime}}</td>
+          <td><span>{{doc.currentUser}}</span></td>
+          <td>
+            <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
+              <i class="link iconfont icon-liucheng" @click="getProcess(doc.id)"></i>
+            </el-tooltip>
+            <el-tooltip content="撤回" placement="top" :enterable="false" effect="light" v-if="doc.isBack!=0">
+              <i class="link iconfont icon-chehui" @click="doBack(doc.id)"></i>
+            </el-tooltip>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -40,9 +40,10 @@
 </template>
 <script>
 import SearchOptions from '../../components/searchOptions.component'
+import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
 
-const tableTitle = ['密级程度', '重要程度', '公文类型', '呈报时间', '呈报人', '当前节点']
+const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '操作']
 
 export default {
   data() {
@@ -77,7 +78,7 @@ export default {
   },
   methods: {
     getData() {
-      var that=this;
+      var that = this;
       this.searchLoading = true;
       var params = Object.assign({ userId: this.userInfo.empId }, this.params, this.searchOptions);
       this.$http.post("/doc/trackingDocList", params, { body: true }).then(res => {
@@ -96,7 +97,26 @@ export default {
       })
     },
     getProcess(id) {
-      this.$store.dispatch('getTaskDetail',id);
+      this.$store.dispatch('getTaskDetail', id);
+    },
+    doBack(id) {
+      this.$confirm('是否撤回此公文?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/doc/docTaskBack', { empId: this.userInfo.empId, docId: id }, )
+          .then(res => {
+            if (res.status == 0) {
+              this.$message.success('撤回成功！');
+              this.getData();
+            } else {
+              this.$message.error(res.message);
+            }
+          })
+      }).catch(() => {
+
+      });
     },
     formatter(row, column, cellValue) {
       switch (cellValue) {
@@ -125,80 +145,35 @@ export default {
       this.searchOptions = options;
       this.params.pageNumber = 1;
       this.getData();
+    },
+    handDocType(val) {
+      return docConfig.find(d => d.code == val.docTypeCode) || { color: '', shortName: '', }
+    },
+    calWidth(doc) {
+      var width = 1;
+      if (doc.isOvertime) {
+        width -= 0.16
+      }
+      if (doc.docImprotType != '普通' && doc.docImprotType != '') {
+        width -= 0.13
+      }
+      if (doc.docDenseType != '平件' && doc.docDenseType != '') {
+        width -= 0.13
+      }
+      return parseInt(width * 100) + '%'
     }
   }
 }
 
 </script>
 <style lang='scss'>
-$purple: #0460AE;
+$main: #0460AE;
 #docTracking {
   .pageBox {
     text-align: right;
     margin-top: 20px;
   }
   margin-bottom:30px;
-  &>table {
-    thead {
-      background: $purple;
-      color: #fff;
-      font-size: 13px;
-      th {
-        padding: 6px 13px;
-      }
-      $widths: (1: 15%, 2: 10%, 3: 21%, 4: 22%, 5: 16%, 6: 16%);
-      @each $num,
-      $width in $widths {
-        th:nth-child(#{$num}) {
-          width: $width;
-        }
-      }
-    }
-    td {
-      padding: 4px 13px;
-      font-size: 14px;
-    }
-    tbody {
-      background:#fff;
-      tr:first-child {
-        td {
-          border-bottom: 1px dashed #D5DADF;
-        }
-      }
-      tr:last-child {
-        td {
-          border-bottom: 1px solid #D5DADF;
-          vertical-align: middle;
-        }
-        height: 76px;
-        td {
-          font-size: 15px;
-        }
-        td:nth-child(2) {
-          color: #151515;
-        }
-        td:nth-child(3),
-        td:last-child {
-          color: $purple;
-          span {
-
-            cursor: pointer;
-          }
-        }
-        td:last-child {
-          cursor: pointer;
-        }
-      }
-    }
-    tbody:nth-child(even) {
-      background: #F7F7F7;
-    }
-    tfoot {
-      td {
-        color: #95989A;
-      }
-    }
-  }
 }
 
 </style>

@@ -33,56 +33,58 @@
           {{scope.row.budgetItemName}}
         </template>
       </el-table-column>
-      <el-table-column property="budgetInitMoney" label="年度预算(元)" :formatter="formatMoney" width="130"></el-table-column>
-      <el-table-column property="remainMoney" label="可用额度(元)" :formatter="formatMoney" width="130"></el-table-column>
+      <el-table-column property="budgetInitMoney" label="年度预算(元)" :formatter="formatMoney" width="140"></el-table-column>
+      <el-table-column property="remainMoney" label="可用额度(元)" :formatter="formatMoney" width="140"></el-table-column>
       <el-table-column property="cExecRate" label="执行比例" width="100"></el-table-column>
     </el-table>
     <!-- <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p> -->
-    <p class="borderBox clearBoth"></p>
-    <el-col :span="12" class="rightBorder">
-      <h1 class="title">付款金额</h1>
-      <p v-if="info" class="textContent">人民币 {{info[0].finPayment.totalMoney | toThousands}}</p>
-    </el-col>
-    <el-col :span="12">
-      <h1 class="title">付款方式</h1>
-      <p v-if="info[0].finPayment.paymentMethodCode!='FIN0104'" class="textContent">{{info[0].finPayment.paymentMethodName}}</p>
-      <p class="textContent" v-else>{{info[0].finPayment.paymentOthers}}</p>
-    </el-col>
-    <el-col :span="12" class="rightBorder">
-      <h1 class="title">收款供应商</h1>
-      <p v-if="info" class="textContent">{{info[0].finPayment.supplierName}}</p>
-    </el-col>
-    <el-col :span="12">
-      <h1 class="title">收款账户</h1>
-      <p v-if="info" class="textContent">{{info[0].finPayment.supplierBankAccountName}}</p>
-    </el-col>
-    <el-col :span="12" class="rightBorder">
-      <h1 class="title">开户行</h1>
-      <p v-if="info" class="textContent">{{info[0].finPayment.supplierBank}}</p>
-    </el-col>
-    <el-col :span="12" class="blank">
-      <h1 class="title"></h1>
-    </el-col>
-    <el-col :span="24">
-      <h1 class="title">发票</h1>
-      <p v-if="info" class="textContent">
-        <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
-      </p>
-    </el-col>
-    <el-col :span="24">
-      <h1 class="title">合同</h1>
-      <p v-if="info" class="textContent">
-        <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==1" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
-      </p>
-    </el-col>
-    <el-col :span="12" class="rightBorder">
-      <h1 class="title">费用类型</h1>
-      <p v-if="info" class="textContent">{{info[0].finPayment.costTypeName}}</p>
-    </el-col>
-    <el-col :span="12">
-      <h1 class="title">预付款</h1>
-      <p v-if="info" class="textContent">{{info[0].finPayment.isAdvancePayment==1?'是':'否'}}</p>
-    </el-col>
+    <!-- <p class="borderBox clearBoth"></p> -->
+    <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
+      <el-col :span="12" class="rightBorder">
+        <h1 class="title">付款金额</h1>
+        <p v-if="info" class="textContent">人民币 {{info[0].finPayment.totalMoney | toThousands}}</p>
+      </el-col>
+      <el-col :span="12">
+        <h1 class="title">付款方式</h1>
+        <p v-if="info[0].finPayment.paymentMethodCode!='FIN0104'" class="textContent">{{info[0].finPayment.paymentMethodName}}</p>
+        <p class="textContent" v-else>{{info[0].finPayment.paymentOthers}}</p>
+      </el-col>
+      <el-col :span="12" class="rightBorder">
+        <h1 class="title">收款供应商</h1>
+        <p v-if="info" class="textContent">{{info[0].finPayment.supplierName}}</p>
+      </el-col>
+      <el-col :span="12">
+        <h1 class="title">收款账户</h1>
+        <p v-if="info" class="textContent">{{info[0].finPayment.supplierBankAccountName}}</p>
+      </el-col>
+      <el-col :span="12" class="rightBorder">
+        <h1 class="title">开户行</h1>
+        <p v-if="info" class="textContent">{{info[0].finPayment.supplierBank}}</p>
+      </el-col>
+      <el-col :span="12" class="blank">
+        <h1 class="title"></h1>
+      </el-col>
+      <el-col :span="24">
+        <h1 class="title">发票</h1>
+        <p v-if="info" class="textContent">
+          <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
+        </p>
+      </el-col>
+      <el-col :span="24">
+        <h1 class="title">合同</h1>
+        <p v-if="info" class="textContent">
+          <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==1" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
+        </p>
+      </el-col>
+      <el-col :span="12" class="rightBorder">
+        <h1 class="title">费用类型</h1>
+        <p v-if="info" class="textContent">{{info[0].finPayment.costTypeName}}</p>
+      </el-col>
+      <el-col :span="12">
+        <h1 class="title">预付款</h1>
+        <p v-if="info" class="textContent">{{info[0].finPayment.isAdvancePayment==1?'是':'否'}}</p>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>

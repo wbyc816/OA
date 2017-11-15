@@ -7,8 +7,8 @@
       </div>
       <el-row :gutter="12">
         <el-col :span="6">
-          <el-select v-model="searchParams.supplierType" placeholder="客户类型">
-            <el-option key="0" :label="item.dictName" :value="item.dictCode" v-for="item in supplierTypes"></el-option>
+          <el-select v-model="searchParams.supplierType" placeholder="客户类型" :clearable="true">
+            <el-option :key="item.dictCode" :label="item.dictName" :value="item.dictCode" v-for="item in supplierTypes"></el-option>
           </el-select>
         </el-col>
         <el-col :span="6">

@@ -3,9 +3,10 @@
     <div class="topBar" :class="{'active':scrollBanner}">
       <div class="topNavbar">
         <div class="container">
+          <span class="greetText">{{greetText}}好，欢迎您！</span>
+          <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
           <a><i class="iconfont icon-1"></i> 简体</a>
           <a href="#/set"><i class="iconfont icon-shezhi"></i> 设置</a>
-          <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
           <a @click="loginOut"><i class="iconfont icon-guanbi"></i> 登出</a>
         </div>
       </div>
@@ -49,15 +50,6 @@
       </nav>
     </div>
     <el-carousel height="382px" arrow="never" v-if="$route.path=='/home'">
-      <!--       <el-carousel-item>
-        <img src="./assets/images/bg4.jpg">
-      </el-carousel-item>
-      <el-carousel-item>
-        <img src="./assets/images/bg2.jpg">
-      </el-carousel-item>
-      <el-carousel-item>
-        <img src="./assets/images/bg5.jpg">
-      </el-carousel-item> -->
       <el-carousel-item v-for="pic in homePics">
         <img :src="pic">
       </el-carousel-item>
@@ -87,6 +79,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import '../static/urlConfig'
 import Vue from 'vue'
 import Sortable from 'sortablejs'
 import router from './router'
@@ -121,10 +114,15 @@ export default {
       breadcrumbShow: false,
       scrollBanner: false,
       baseUrl: '',
-      login: false
+      login: false,
+      pdR: ''
     }
   },
   computed: {
+    greetText:function(){
+      var now=new Date()
+      return now.getHours()<12?'上午':'下午'
+    },
     ...mapGetters([
       'userInfo'
     ])
@@ -135,7 +133,7 @@ export default {
       // this.$store.dispatch('getUserInfo');
       this.baseUrl = 'http://127.0.0.1:8080'
     } else {
-      this.baseUrl = 'http://apitest.donghaiair.com:8082'
+      this.baseUrl = urlConfig.loginUrl
       // this.baseUrl = 'http://localhost:8080'
       // this.baseUrl = 'http://58.250.197.143:8899'  //外网
     }
@@ -167,7 +165,7 @@ export default {
               this.routers.push(subChildren[b]);
               if (subChildren[b].children) {
                 var rootChildren = subChildren[b].children;
-                for (c = 0; c < rootChildren.length; c++) {
+                for (var c = 0; c < rootChildren.length; c++) {
                   if (!rootChildren[c].redirect) {
                     this.routers.push(rootChildren[c]);
                   }
@@ -248,7 +246,7 @@ export default {
       this.getHomePics();
       this.outBreadcrumbs();
       window.scrollTo(0, 0);
-    }
+    },
   }
 }
 
@@ -288,7 +286,7 @@ $brown: #985D55;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   z-index: 999;
 
   &.active {
@@ -352,6 +350,9 @@ $brown: #985D55;
 .topNavbar {
   background: #1465C0;
   text-align: right;
+  .greetText{
+    color: #fff;
+  }
   a {
     color: #fff;
     line-height: 25px;
@@ -541,10 +542,10 @@ $brown: #985D55;
 
 footer {
   position: absolute;
-  width: 100%;
   bottom: 0;
   left: 0;
   background: #fff;
+  width:100%;
   .container {
     .links {
       font-size: 0;

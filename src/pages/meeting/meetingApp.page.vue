@@ -31,21 +31,21 @@
             </el-time-picker>
           </el-form-item>
           <el-form-item label="会议名称" prop="conferenceTitle" class="clearBoth">
-            <el-input v-model="appForm.conferenceTitle">
+            <el-input v-model="appForm.conferenceTitle" :maxlength="50">
             </el-input>
           </el-form-item>
           <el-form-item label="会议类型" prop="type" class="deptArea">
-            <el-select v-model="appForm.type" style="width:100%" @change="changeFloor">
+            <el-select v-model="appForm.type" style="width:100%">
               <el-option v-for="item in conferenceType" :key="item.id" :label="item.typeName" :value="item.id">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="是否内部会议" prop="isInside" class="arrArea inside">
+          <!-- <el-form-item label="是否内部会议" prop="isInside" class="arrArea inside">
             <el-radio-group v-model="appForm.isInside" class="myRadio">
               <el-radio-button label="1">内部<i></i></el-radio-button>
               <el-radio-button label="0">外部<i></i></el-radio-button>
             </el-radio-group>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="参会人员" prop="person" class="reciverWrap clearBoth">
             <div class="reciverList">
               <el-tag :key="person.id" :closable="true" type="primary" @close="closePerson(index)" v-for="(person,index) in appForm.person">
@@ -61,7 +61,7 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="通知内容" prop="messageContent" v-show="appForm.isMessage==1">
-            <el-input type="textarea" :rows="8" resize='none' v-model="appForm.messageContent"></el-input>
+            <el-input type="textarea" :rows="8" resize='none' v-model="appForm.messageContent"  :maxlength="100"></el-input>
           </el-form-item>
         </el-form>
         <div class='doc-form-submit_btn'>
@@ -69,7 +69,7 @@
         </div>
       </div>
     </el-card>
-    <person-dialog @updatePerson="updatePerson" dialogType="multi" admin="1" :visible.sync="signDialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :data="appForm.person" dialogType="multi" admin="1" :visible.sync="signDialogVisible"></person-dialog>
   </div>
 </template>
 <script>
@@ -157,7 +157,7 @@ export default {
     beginTimeChange(val) {
       if (this.appForm.beginTime) {
         this.appForm.beginTime = new Date(this.appForm.beginTime.setSeconds(0));
-        this.endOption = val;
+        this.endOption = this.timeFilter(this.appForm.beginTime.setSeconds(0)+60*1000,'second');
       }
       this.appForm.endTime = '';
     },
@@ -256,7 +256,12 @@ export default {
     .el-form-item__error {
       padding-left: 6px;
     }
-
+    .el-radio-button__inner{
+      width:100px;
+      height:45px;
+      line-height: 45px;
+      padding:0;
+    }
   }
   .doc-form-submit_btn {
     button {

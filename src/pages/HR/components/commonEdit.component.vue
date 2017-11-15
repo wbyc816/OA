@@ -18,13 +18,14 @@
               <el-radio-button :label="1">是<i></i></el-radio-button>
               <el-radio-button :label="0">否<i></i></el-radio-button>
             </el-radio-group>
-            <el-input v-model="info[item.name]" v-else :maxlength="item.maxlength||99"></el-input>
+            <el-input v-model="info[item.name]" v-else :maxlength="item.maxlength||20"></el-input>
           </el-form-item>
           <div class="borderBox"></div>
         </template>
         <div class="bgBorder"></div>
       </template>
-      <el-form-item>
+      <el-form-item class="opeartBox">
+        <el-button type="primary" size="large" class="submitButton" @click="preClick">上一步</el-button>
         <el-button type="primary" size="large" class="submitButton" @click="nextClick" :disabled="submitLoading">{{nextTabName=='last'?'提交':'下一步'}}</el-button>
       </el-form-item>
     </el-form>
@@ -44,13 +45,18 @@ export default {
     nextTabName: {
       type: String,
       default: ''
+    },
+    preTabName: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       eduForm: {},
       submitLoading: false,
-      constTemp: {}
+      constTemp: {},
+      first: true
     }
   },
   computed: {
@@ -67,7 +73,6 @@ export default {
       }
     },
     getData: function(newVal, oldVal) {
-      this.initConst();
       this.getDataList();
     }
   },
@@ -85,7 +90,7 @@ export default {
           oldId: '',
           empId: this.userInfo.empId,
           createUser: this.userInfo.name,
-          isDel:0
+          isDel: 0
         }
         e.prop.forEach(c => {
           temp[c.name] = '';
@@ -103,9 +108,9 @@ export default {
     },
     addItem(name) {
       if (this.eduForm[name].filter(c => c.id != undefined).every(c => c.isDel == 1)) {
-      this.eduForm[name].unshift(this.clone(this.constTemp[name]));
+        this.eduForm[name].unshift(this.clone(this.constTemp[name]));
       } else {
-      this.eduForm[name].push(this.clone(this.constTemp[name]));
+        this.eduForm[name].push(this.clone(this.constTemp[name]));
       }
     },
     showWarn(name, index) {
@@ -121,11 +126,11 @@ export default {
     },
     delItem(name, index) {
       if (this.eduForm[name][index].id) {
-          this.eduForm[name][index].isDel = 1;
-          this.eduForm[name].push(this.eduForm[name].splice(index, 1)[0])
-        } else {
-          this.eduForm[name].splice(index, 1);
-        }
+        this.eduForm[name][index].isDel = 1;
+        this.eduForm[name].push(this.eduForm[name].splice(index, 1)[0])
+      } else {
+        this.eduForm[name].splice(index, 1);
+      }
     },
     onSubmit() {
       var paramList = {};
@@ -139,25 +144,29 @@ export default {
       this.$emit('submit', paramList);
     },
     getDataList() {
-      this.dataList.forEach(e => {
-        this.$http.post(e.url, { id: this.userInfo.empId })
-          .then(res => {
-            if (res.status == '0') {
-              res.data.forEach(r => {
-                e.prop.forEach(p => {
-                  if (p.type == 'date') {
-                    r[p.name] = new Date(r[p.name])
-                  }
+      if (this.first) {
+        this.first=false;
+        this.dataList.forEach(e => {
+          this.$http.post(e.url, { id: this.userInfo.empId })
+            .then(res => {
+              if (res.status == '0') {
+                res.data.forEach(r => {
+                  e.prop.forEach(p => {
+                    if (p.type == 'date') {
+                      r[p.name] = new Date(r[p.name])
+                    }
+                  })
+                  this.eduForm[e.enName].push(Object.assign(this.clone(this.constTemp[e.enName]), r))
                 })
-                this.eduForm[e.enName].push(Object.assign(this.clone(this.constTemp[e.enName]), r))
-              })
-            } else {
-              console.log('获取' + e.head + '失败')
-            }
-          }, res => {
 
-          })
-      })
+              } else {
+                console.log('获取' + e.head + '失败')
+              }
+            }, res => {
+
+            })
+        })
+      }
     },
     nextClick() {
       this.$refs['eduForm'].validate((valid) => {
@@ -168,6 +177,9 @@ export default {
           return false;
         }
       });
+    },
+    preClick() {
+      this.$emit('nextClick', this.preTabName)
     }
   }
 }

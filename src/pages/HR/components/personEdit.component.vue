@@ -11,46 +11,46 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="英文名" prop="nameEn">
-        <el-input v-model="personForm.nameEn"></el-input>
+        <el-input v-model="personForm.nameEn" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="出生日期" prop="birthday">
         <el-date-picker type="date" v-model="personForm.birthday" style="width: 100%;" :editable="false" :clearable="false" @change="function(val){personForm.birthday=val}"></el-date-picker>
       </el-form-item>
       <el-form-item label="国籍" prop="nationality1">
-        <el-input v-model="personForm.nationality1"></el-input>
+        <el-input v-model="personForm.nationality1" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="政治面貌" prop="politicsStatus">
-        <el-input v-model="personForm.politicsStatus"></el-input>
+        <el-input v-model="personForm.politicsStatus" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="婚姻状况" prop="marrieStatus">
-        <el-input v-model="personForm.marrieStatus"></el-input>
+        <el-input v-model="personForm.marrieStatus" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="结婚登记日期" prop="marryRegisterTime">
         <el-date-picker type="date" v-model="personForm.marryRegisterTime" style="width: 100%;" :editable="false" :clearable="false" @change="function(val){personForm.marryRegisterTime=val}"></el-date-picker>
       </el-form-item>
       <el-form-item label="籍贯" prop="nativePlace">
-        <el-input v-model="personForm.nativePlace"></el-input>
+        <el-input v-model="personForm.nativePlace" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="手机" prop="mobileNumber">
         <el-input v-model="personForm.mobileNumber" :maxlength="11"></el-input>
       </el-form-item>
       <el-form-item label="民族" prop="nationality2">
-        <el-input v-model="personForm.nationality2"></el-input>
+        <el-input v-model="personForm.nationality2" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="工作地点" prop="workPlace">
-        <el-input v-model="personForm.workPlace"></el-input>
+        <el-input v-model="personForm.workPlace" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="出生地" prop="birthplace">
-        <el-input v-model="personForm.birthplace"></el-input>
+        <el-input v-model="personForm.birthplace" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="工作邮箱" prop="workEmail">
-        <el-input v-model="personForm.workEmail"></el-input>
+        <el-input v-model="personForm.workEmail" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="身高" prop="height">
-        <el-input v-model="personForm.height"></el-input>
+        <el-input v-model="personForm.height" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="血型" prop="bloodType">
-        <el-input v-model="personForm.bloodType"></el-input>
+        <el-input v-model="personForm.bloodType" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="身份证号" prop="idNumber">
         <el-input v-model="personForm.idNumber" :maxlength="18"></el-input>
@@ -61,7 +61,7 @@
       <div class="borderBox"></div>
       <el-form-item label="个人照片" class="uploadBox" :rules="[{ required: false, message: '头像未上传'}]" prop="picUrl">
         <el-upload ref="upload" class="avatar-uploader" :auto-upload="false" :action="baseURL+'/emp/updatePic'" :data="{id:userInfo.empId}" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange">
-          <img v-if="personForm.picUrl" :src="personForm.picUrl" class="avatar">
+          <img v-if="personForm.url" :src="personForm.url" @error="personForm.url=blankHead" class="avatar">
           <img v-else src="../../../assets/images/blankHead1.png" alt="">
         </el-upload>
       </el-form-item>
@@ -73,7 +73,9 @@
   </div>
 </template>
 <script>
+import blankHead from '../../../assets/images/blankHead1.png'
 import { mapGetters } from 'vuex'
+const idCardReg=/(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/
 export default {
   props: {
     getData: {
@@ -82,6 +84,17 @@ export default {
     }
   },
   data() {
+    var checkId=(rule,value,callback)=>{
+      if(value!==''){
+        if(idCardReg.test(value)){
+          callback()
+        }else{
+          callback(new Error('请输入正确格式的身份证号！'))
+        }
+      }else{
+        callback()
+      }
+    };
     return {
       personForm: {
         gender: '',
@@ -101,13 +114,17 @@ export default {
         bloodType: '',
         idNumber: '',
         joinDate: '',
-        picUrl: ''
+        picUrl: '',
+        url: '',
       },
+      blankHead,
       rules: {
         mobileNumber: [{ validator: this.validatePhone, trigger: 'blur,change' }],
+        idNumber: [{ validator: checkId, trigger: 'blur,change' }],
         workEmail: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }]
       },
-      submitLoading: false
+      submitLoading: false,
+      first: true
     }
   },
   computed: {
@@ -124,7 +141,10 @@ export default {
       }
     },
     getData: function(newVal, oldVal) {
-      this.$store.dispatch('getResumeInfo');
+      if (this.first) {
+        this.$store.dispatch('getResumeInfo');
+        this.first = false;
+      }
     }
   },
   created() {
@@ -168,12 +188,12 @@ export default {
       }
       if (isJPG && isLt2M) {
         this.picChangeStatus = true;
-        this.personForm.picUrl = file.url
+        this.personForm.url = file.url
       }
     },
     updateInfo() {
-      var params=Object.assign({ createUser: this.userInfo.name, oldId: this.resumeInfo.id, empId: this.userInfo.empId}, this.personForm)
-      this.$emit('submit',{emp:params})
+      var params = Object.assign({ createUser: this.userInfo.name, oldId: this.resumeInfo.id, empId: this.userInfo.empId }, this.personForm)
+      this.$emit('submit', { emp: params })
     },
     nextClick() {
       this.$refs['personForm'].validate((valid) => {

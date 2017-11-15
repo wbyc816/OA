@@ -33,9 +33,9 @@
           <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
         </el-input>
       </el-form-item>
-      <el-form-item label="正文" prop="docFileId">
-        <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove">
-          <el-button size="small" type="primary" :disabled="noMore">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+      <el-form-item label="待套红文件" prop="docFileId">
+        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
+          <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''">上传待套红文件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -79,7 +79,7 @@ export default {
         classify1: [{ required: true, message: '请选择发文类型', trigger: 'blur' }],
         docFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
         fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
-        catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur'  }],
+        catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
         signName: [{ required: true, message: '请选择签发人', trigger: 'blur' }],
         issueDate: [{ type: 'date', required: true, message: '请选择发文日期', trigger: 'blur' }],
       },
@@ -90,14 +90,12 @@ export default {
       },
       params: {},
       sucessFlag: 0,
-      catalogueList:[],
-       defaultProp: {
+      catalogueList: [],
+      defaultProp: {
         value: 'id',
         label: 'name',
         children: 'catalogues'
       },
-      noMore:false,
-      docFileId:''
     }
   },
   computed: {
@@ -112,6 +110,15 @@ export default {
     this.getFileCatalogue();
   },
   methods: {
+    saveForm() {
+      this.$emit('saveMiddle', JSON.stringify(this.manuscriptForm));
+    },
+    getDraft(obj) {
+      this.combineObj(this.manuscriptForm, obj, ['issueDate']);
+      if (obj.issueDate) {
+        this.manuscriptForm.issueDate = new Date(obj.issueDate);
+      }
+    },
     updateSign(reciver) {
       this.manuscriptForm.signName = reciver.reciUserName;
       this.manuscriptForm.signId = reciver.reciUserId;
@@ -121,40 +128,23 @@ export default {
       this.manuscriptForm.fileSend = params;
     },
     handleAvatarSuccess(res, file) {
-      this.docFileId = res.data;
-      this.picSuccesss = 1;
-      this.submitMiddle();
+      this.manuscriptForm.docFileId = res.data;
     },
-    handleAvatarError(res, file) {
-      this.$emit('submitMiddle', false);
-      this.$message.error('正文上传失败，请重试');
-    },
-    handleChange(file, fileList) {
-      if (this.picSuccesss == 1) {
-        this.picSuccesss = 2;
-      } else {
-        this.picSuccesss = 0;
-      }
-      const isPDF = (file.raw.type == 'application/pdf'||file.raw.type =='application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    beforeUpload(file) {
+      // console.log(file)
+      const isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isPDF) {
-        this.$message.error('上传正文只能是 PDF或DOCX 格式!');
-        this.$refs.myUpload.clearFiles();
+
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 DOCX 格式!');
       }
       if (!isLt10M) {
-        this.$refs.myUpload.clearFiles();
-        this.$message.error('上传正文大小不能超过 20MB!');
+        this.$message.error('上传文件大小不能超过 10MB!');
       }
-      if (isPDF && isLt10M) {
-        this.noMore=true;
-        this.manuscriptForm.docFileId = file.url
-      }
+      return isJPG && isLt10M;
     },
     handleRemove() {
       this.manuscriptForm.docFileId = '';
-      this.params.docFileId = '';
-      this.picSuccesss = 0;
-      this.noMore=false;
     },
     submitMiddle() {
       var that = this;
@@ -162,7 +152,7 @@ export default {
         "file": {
           "classify1": this.manuscriptForm.classify1, //发文类型 
           "issueDate": this.manuscriptForm.issueDate.getTime(), //发文日期
-          "catalogueId": this.manuscriptForm.catalogueName[this.manuscriptForm.catalogueName.length-1], //目录 
+          "catalogueId": this.manuscriptForm.catalogueName[this.manuscriptForm.catalogueName.length - 1], //目录 
           "signId": this.manuscriptForm.signId //签发人
         },
         "fileSend": {
@@ -177,7 +167,7 @@ export default {
             "ids": []
           }
         },
-        docFileId:this.docFileId
+        docFileId: this.manuscriptForm.docFileId
       }
       // if(!this.manuscriptForm.fileSend.all.max){
       //   this.params.fileSend.sendTypeAll={};
@@ -195,24 +185,20 @@ export default {
       });
       this.$emit('submitMiddle', this.params);
     },
-    saveForm(){
-      var params=JSON.stringify(Object.assign(this.manuscriptForm));
-      this.$emit('saveMiddle',params);
+    saveForm() {
+      var params = JSON.stringify(Object.assign(this.manuscriptForm));
+      this.$emit('saveMiddle', params);
     },
-    getDraft(obj){
-      this.combineObj(this.manuscriptForm,obj);
-      if(this.manuscriptForm.issueDate){
-        this.manuscriptForm.issueDate=new Date(this.manuscriptForm.issueDate);
+    getDraft(obj) {
+      this.combineObj(this.manuscriptForm, obj);
+      if (this.manuscriptForm.issueDate) {
+        this.manuscriptForm.issueDate = new Date(this.manuscriptForm.issueDate);
       }
     },
     submitForm() {
       this.$refs.manuscriptForm.validate((valid) => {
         if (valid) {
-          if (this.picSuccesss == 2) {
-            this.submitMiddle();
-          } else {
-            this.$refs.myUpload.submit();
-          }
+          this.submitMiddle();
         } else {
           this.$message.warning('请检查填写字段')
           this.$emit('submitMiddle', false);

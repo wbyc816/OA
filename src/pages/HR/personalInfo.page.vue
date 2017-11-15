@@ -9,7 +9,7 @@
         <el-row :gutter="20" class="baseDetail">
           <el-col :span="8" class="leftDetail">
             <div class="photoBox">
-              <img :src="userInfo.picUrl" alt="" v-show="userInfo.picUrl">
+              <img :src="userPic" alt="" @error="userPic=blankHead" v-show="userInfo.picUrl">
               <img src="../../assets/images/blankHead.png" alt="" v-show="!userInfo.picUrl">
             </div>
             <div class="infoItem">
@@ -133,7 +133,6 @@ export default {
   components: {},
   data() {
     return {
-      blankHead,
       picChangeStatus: false,
       submitLoading: false,
       baseForm: {
@@ -146,6 +145,8 @@ export default {
         },
         picUrl: ''
       },
+      userPic:'',
+      blankHead,
       rules: {
         // phoneNumber: [{ validator: this.validatePhone, trigger: 'blur,change' }],
         emergencPhone: [{ validator: this.validatePhone, trigger: 'blur,change' }],
@@ -169,6 +170,7 @@ export default {
   created() {
     this.$store.dispatch('getEmpDetail', this.userInfo.empId);
     this.$store.dispatch('getEmergencyContactInfo', this.userInfo.empId);
+    this.userPic=this.userInfo.picUrl
   },
   beforeRouteLeave(to, from, next) {
     this.$store.dispatch('setEditStatus', false);
@@ -179,6 +181,9 @@ export default {
       if(!newValue){
         this.submitLoading=false;
       }
+    },
+    userInfo:function(newval){
+      this.userPic=newval.picUrl;
     }
   },
   methods: {
