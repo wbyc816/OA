@@ -45,7 +45,8 @@ export default {
   },
   mounted() {
     this.handleTemp();
-    const editor = new WangEditor(this.$refs.editor)
+    const editor = new WangEditor(this.$refs.editor);
+    editor.config.printLog = false;
     editor.config.menus = ['bold', 'underline', 'italic', 'eraser', 'forecolor', 'bgcolor', '|', 'unorderlist', 'orderlist', 'alignleft', 'aligncenter', 'alignright', 'indent'];
     editor.config.menuFixed = false;
     editor.create();
@@ -96,16 +97,27 @@ $sub:#1465C0;
     }
     .wangEditor-txt {
       line-height: 24px;
-
-      p {
+      b{
+          font-weight:700;
+          line-height:inherit;
+        }
+      i{
+        font-style: italic;
+        line-height:inherit;
+      }
+      p,h1,h2,h3,h4,h5 {
         margin: 0;
         color: #393939;
         font-size: 16px!important;
         font-family: Arial;
         line-height: 24px!important;
+        *{
+          line-height:inherit;
+        }
         span {
           font-size: 16px!important;
         }
+
       }
     }
   }

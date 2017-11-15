@@ -1163,7 +1163,8 @@ ul {
       margin-right: 3px;
     }
   }
-  .uploadInfo {
+  .uploadInfo,
+  .extraDoc {
     position: absolute;
     left: 101%;
     font-size: 13px;
@@ -1171,6 +1172,9 @@ ul {
     line-height: 15px;
     top: 7px;
     white-space: nowrap;
+  }
+  .extraDoc {
+    top: 15px;
   }
   .submitButton {
     height: 46px;
@@ -1189,9 +1193,11 @@ ul {
 .el-select .el-input__inner {
   font-size: 14px;
 }
-.el-input__inner::placeholder{
-  font-size:14px;
+
+.el-input__inner::placeholder {
+  font-size: 14px;
 }
+
 .el-input-group__prepend div.el-select {
   .el-input__inner {
     color: #1f2c3d;

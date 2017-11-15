@@ -1,12 +1,15 @@
 import Vue from 'vue';
-import { timeFilter,toThousands } from '../filters/filters'
+import '../../static/urlConfig'
+import { timeFilter, toThousands } from '../filters/filters'
 Vue.prototype.validatePhone = validatePhone
 Vue.prototype.combineObj = combineObj
 Vue.prototype.timeFilter = timeFilter
 Vue.prototype.clone = clone
 Vue.prototype.changeTime = changeTime
 Vue.prototype.toThousands = toThousands
-// Vue.prototype.lodash = lodash
+Vue.prototype.getCookie = getCookie
+Vue.prototype.setCookie = setCookie
+Vue.prototype.delCookie = delCookie
 
 function getCookie(c_name) {
   if (document.cookie.length > 0) {
@@ -21,19 +24,17 @@ function getCookie(c_name) {
   return ""
 }
 
-Vue.prototype.getCookie = getCookie
-Vue.prototype.setCookie = function (c_name, value, expiredays) {
+function setCookie(c_name, value, expiredays) {
   var exdate = new Date()
   exdate.setDate(exdate.getDate() + expiredays)
   document.cookie = c_name + "=" + escape(value) + ";path=/" +
     ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString() + "")
-
 }
-Vue.prototype.delCookie = function (c_name) {
+function delCookie(c_name) {
   console.log(c_name);
   var exp = new Date();
   exp.setTime(exp.getTime() - 1);
-  var cval = this.getCookie(c_name);
+  var cval = getCookie(c_name);
   if (cval != null)
     document.cookie = c_name + "=" + cval + ";path=/" + ";expires=" + exp.toGMTString();
 
@@ -51,13 +52,13 @@ function validatePhone(rule, value, callback) {
   }
 };
 
-function combineObj(target, source,ignoreList) {
-  Object.keys(target).forEach(function (key) {
+function combineObj(target, source, ignoreList) {
+  Object.keys(target).forEach(function(key) {
     var temp;
-    if(ignoreList&&ignoreList.length!=0){
-      temp=ignoreList.find(i=>i==key);
+    if (ignoreList && ignoreList.length != 0) {
+      temp = ignoreList.find(i => i == key);
     }
-    if (source.hasOwnProperty(key)&&!temp) {
+    if (source.hasOwnProperty(key) && !temp) {
       target[key] = source[key]
     }
   })
@@ -67,6 +68,7 @@ function combineObj(target, source,ignoreList) {
 function clone(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
+
 function changeTime(obj) {
   var _obj = clone(obj);
   Object.keys(obj).forEach(name => {
@@ -78,28 +80,44 @@ function changeTime(obj) {
 }
 
 
-function formatTime (date, fmt) { //author: meizz
-  date = new Date(date) 
+function formatTime(date, fmt) { //author: meizz
+  date = new Date(date)
   var o = {
-      "M+": date.getMonth() + 1, //月份 
-      "d+": date.getDate(), //日 
-      "h+": date.getHours(), //小时 
-      "m+": date.getMinutes(), //分 
-      "s+": date.getSeconds(), //秒 
-      "q+": Math.floor((date.getMonth() + 3) / 3), //季度 
-      "S": date.getMilliseconds() //毫秒 
+    "M+": date.getMonth() + 1, //月份 
+    "d+": date.getDate(), //日 
+    "h+": date.getHours(), //小时 
+    "m+": date.getMinutes(), //分 
+    "s+": date.getSeconds(), //秒 
+    "q+": Math.floor((date.getMonth() + 3) / 3), //季度 
+    "S": date.getMilliseconds() //毫秒 
   };
   if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
   for (var k in o)
-  if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
   return fmt;
 }
 
 function preventEmpty(data, param = '空') {
-  if(!data){
+  if (!data) {
     return param
   }
   return data
 }
 
-export  default{ combineObj, formatTime, preventEmpty}
+function loginOut() {
+  var baseUrl=''
+  if (process.env.NODE_ENV == 'development') { //开发环境
+      baseUrl = urlConfig.devUrl
+    } else {
+      baseUrl = urlConfig.loginUrl
+    }
+  var a = document.createElement('a');
+  a.setAttribute('href', baseUrl + "/login.html");
+  // a.setAttribute('target', '_self');
+  a.setAttribute('id', 'payUrl');
+  // 防止反复添加
+  if (!document.getElementById('payUrl')) document.body.appendChild(a);
+  delCookie('userId');
+  a.click();
+}
+export default { combineObj, formatTime, preventEmpty,loginOut,getCookie,delCookie,setCookie }

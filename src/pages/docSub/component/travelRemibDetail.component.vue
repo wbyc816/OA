@@ -79,7 +79,7 @@
     </el-table>
     <p class="totalMoney">合计金额 人民币 <span>{{info[0].travelpay.totalMoney | toThousands}} 元</span></p>
     <p class="borderBox clearBoth"></p>
-    
+    <el-row>
       <el-col :span="12" class="rightBorder">
         <h1 class="title">报销申请人</h1>
         <p v-if="info" class="textContent">{{info[0].travelpay.travelpayUser}}</p>
@@ -107,7 +107,7 @@
           <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
         </p>
       </el-col>
-    
+    </el-row>
   </div>
 </template>
 <script>

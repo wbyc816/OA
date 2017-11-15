@@ -109,8 +109,8 @@ export default {
     };
     return {
       ruleForm: {
-        taskContent: '',
-        state: '',
+        taskContent: '同意。',
+        state: '1',
         sign: [],
         planDate: ''
       },

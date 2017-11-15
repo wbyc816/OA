@@ -21,7 +21,7 @@
           </el-col>
           <el-col :span="24" style="min-height:90px">
             <h1 class="title">请示内容</h1>
-            <p class="textContent" style="white-space:pre-wrap">{{docDetialInfo.doc.taskContent}}</p>
+            <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
           </el-col>
           <el-collapse v-model="activeNames" class="clearfix clearBoth">
             <el-collapse-item title="附加内容" name="1">
@@ -49,6 +49,9 @@
             </el-collapse-item>
           </el-collapse>
         </el-row>
+      </div>
+      <div class="backButton" v-if="hasBack">
+        <el-button type="primary" @click="goBack">返回</el-button>
       </div>
     </el-card>
   </div>
@@ -110,16 +113,26 @@ export default {
     return {
       currentView: '',
       docDetialInfo: { doc: {}, task: [], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [] },
-      suggestHtml:'',
-      activeNames:['1']
+      suggestHtml: '',
+      activeNames: ['1'],
+      hasBack: false
     }
   },
   created() {
     this.getDetail(this.$route);
+    console.log(this.$route);
   },
   beforeRouteUpdate(to, from, next) {
     this.getDetail(to);
     next();
+  },
+  beforeRouteEnter(to, from, next) {
+
+    next(vm => {
+      if (from.name == 'docDetail') {
+        vm.hasBack=true;
+      }
+    })
   },
   computed: {
     ...mapGetters([
@@ -131,10 +144,17 @@ export default {
   methods: {
     getDetail(route) {
       var url = "/doc/getDocDetailById";
-      if (route.query.code == 'LZS') {
-        url = '/doc/getDocDimissionInfo'
+      var params = {
+        docId: route.params.id
       }
-      this.$http.post(url, { docId: route.params.id })
+      if (route.query.code == 'LZS') {
+        url = '/doc/getDocDimissionInfo';
+        params.empId = this.userInfo.empId;
+        params.id = params.docId;
+        delete params.docId
+      }
+
+      this.$http.post(url, params)
         .then(res => {
           if (res.status == 0) {
             this.docDetialInfo = res.data;
@@ -172,6 +192,9 @@ export default {
         })
         this.suggestHtml = html;
       }
+    },
+    goBack() {
+      this.$router.go(-1);
     }
   }
 }
@@ -181,6 +204,13 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docInfo {
+  .backButton {
+    padding-left: 100px;
+    padding-bottom: 20px;
+    .el-button {
+      width: 150px;
+    }
+  }
   .docheader {
     line-height: 24px;
     padding: 8px 0 4px;

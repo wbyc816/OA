@@ -1,18 +1,28 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import home from 'pages/home'
-
+import util from '../common/util'
 //公文
-const doc = () => import('pages/Doc-Approval')
-const docSub = () => import('pages/docSub/docSub.page')
-const docTracking = () => import('pages/docSub/docTracking.page')
-const docDetail = () => import('pages/docSub/docDetail.page')
-const docInfo = () => import('pages/docSub/docInfo.page')
-const docSearch = () => import('pages/docSub/docSearch.page')
-const docPending = () => import('pages/docSub/docPending.page')
-const docToRead = () => import('pages/docSub/docToRead.page')
-const docDraft = () => import('pages/docSub/docDraft.page')
-const docCommonApp = () => import('pages/docSub/docCommonApp.page')
+const doc = () =>
+  import ('pages/Doc-Approval')
+const docSub = () =>
+  import ('pages/docSub/docSub.page')
+const docTracking = () =>
+  import ('pages/docSub/docTracking.page')
+const docDetail = () =>
+  import ('pages/docSub/docDetail.page')
+const docInfo = () =>
+  import ('pages/docSub/docInfo.page')
+const docSearch = () =>
+  import ('pages/docSub/docSearch.page')
+const docPending = () =>
+  import ('pages/docSub/docPending.page')
+const docToRead = () =>
+  import ('pages/docSub/docToRead.page')
+const docDraft = () =>
+  import ('pages/docSub/docDraft.page')
+const docCommonApp = () =>
+  import ('pages/docSub/docCommonApp.page')
 // import doc from 'pages/Doc-Approval'
 // import docSub from 'pages/docSub/docSub.page'
 // import docTracking from 'pages/docSub/docTracking.page'
@@ -389,9 +399,12 @@ const router = new Router({
   ]
 })
 
-// router.beforeEach((to, from, next) => {
-//   console.log(Vue.$http);
-//   next();
-// })
+router.beforeEach((to, from, next) => {
+  if (util.getCookie('userId')) {
+    next();
+  }else{
+    util.loginOut();
+  }
+})
 
 export default router

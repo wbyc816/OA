@@ -1,11 +1,13 @@
 <template>
-  <div id='newsDetail'>
+  <div id='newsDetailHr'>
     <el-card class="pdfBox">
       <div class="formDown" slot="header">
         <el-row :gutter="20">
           <el-col class="formInfo" :span='19'>
             <p class="title">{{detail.fileNameOld}}<i class=""></i></p>
-            <p class="others"><i class="iconfont icon-eye"></i><span>{{detail.browse}}</span><span class="time">{{detail.createTime | time}}</span><span class="person">类别：{{detail.name}}</span><span class="person">级别：{{detail.majorName}}</span></p>
+            <p class="others">
+              <!-- <i class="iconfont icon-eye"></i><span>{{detail.browse}}</span> -->
+              <span class="time">{{detail.createTime | time('all')}}</span><span class="person">类别：{{detail.name}}</span><span class="person">级别：{{detail.majorName}}</span></p>
           </el-col>
           <el-col :span='5' class="downBox">
             <p>下载</p>
@@ -23,7 +25,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import pdf from '../../assets/pdf/test.pdf'
 import pdfjsLib from 'pdfjs-dist'
 import SidePersonSearch from '../../components/sidePersonSearch.component'
 import Duty from '../../components/duty.component'
@@ -41,7 +42,8 @@ export default {
       loading: false,
       pdfDoc: null,
       pageNumPending: null,
-      detail: ""
+      detail: "",
+      pdfHeight:0
     }
 
   },
@@ -82,7 +84,7 @@ export default {
         var canvas = document.getElementById('newsCanvas'+ num);
         canvas.height = viewport.height;
         canvas.width = viewport.width;
-
+        that.pdfHeight=viewport.height;
         var renderContext = {
           canvasContext: canvas.getContext('2d'),
           viewport: viewport
@@ -124,7 +126,8 @@ export default {
       this.queueRenderPage(this.pafParam.pageNum);
     },
     changePage(newPage) {
-      this.$refs.pdfScroll.scrollTop = 1070*(newPage-1);
+      this.$refs.pdfScroll.scrollTop = this.pdfHeight*(newPage-1);
+      console.log(this.pdfHeight)
     },
     getDetail() {
       this.$http.post('/index/selectByFileId', { fileId: this.$route.params.id, empId: this.userInfo.empId })
@@ -143,7 +146,7 @@ export default {
 <style lang='scss'>
 $main: #0460AE;
 $sub:#1465C0;
-#newsDetail {
+#newsDetailHr {
   .divider {
     position: relative;
     margin-right: 7px;
@@ -183,7 +186,7 @@ $sub:#1465C0;
           }
         }
         .time {
-          margin-left: 10px;
+          // margin-left: 10px;
         }
         .person {
           margin-left: 15px;
@@ -203,15 +206,21 @@ $sub:#1465C0;
     box-shadow: none;
     .el-card__body {
       padding: 0;
-      height: 1150px;
       position: relative;
       text-align: center;
-      padding-top: 10px;
-      #newsCanvas {
+      padding-bottom:50px;
+      .pdfScrollBox{
         height: 1070px;
+        width:100%;
+        overflow:auto;
+        border-bottom:1px solid #F2F2F2;
+      }
+      #newsCanvas {
+        height: inherit;
         max-width: 800px;
       }
       .el-pagination {
+
         position: absolute;
         margin: 0 auto;
         left: 0;

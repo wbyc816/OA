@@ -88,8 +88,8 @@
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
       <span slot="title">公文归档</span>
       <el-form :model="fileForm" :inline="!isRedFile" :rules="fileRules" ref="fileForm" class="fileForm" :class="{fileRed:isRedFile}">
-        <el-form-item label="建议发文号" v-if="isRedFile">
-          {{docDetialInfo.doc.fwNo}}
+        <el-form-item label="建议发文号:" v-if="isRedFile">
+          <p class="fwNo">{{docDetialInfo.doc.fwNo}}</p>
         </el-form-item>
         <el-form-item label="发布正文" prop="taskFileId" v-if="isRedFile">
           <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
@@ -643,6 +643,10 @@ $sub:#1465C0;
       button {
         width: 180px;
         border-radius: 3px;
+      }
+      .fwNo {
+        line-height: 46px;
+        font-size: 16px;
       }
       .fileForm {
         padding: 0 20px;

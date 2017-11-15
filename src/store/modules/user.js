@@ -1,6 +1,6 @@
 import api from '../../fetch/api'
 import * as types from '../types'
-
+import util from '../../common/util.js'
 
 const state = {
   userInfo: {
@@ -8,7 +8,7 @@ const state = {
     "empId": "",
 
   },
-  isReady:false
+  isReady: false
 }
 
 const actions = {
@@ -27,11 +27,14 @@ const actions = {
   getUserInfo({ commit, state }) {
     api.getEmpDetail(state.userInfo.empId)
       .then(res => {
-        // console.log(res)
+        if (res.status == 0) {
           commit(types.SET_USER_INFO, res.data);
-          commit('setReady',true);
+          commit('setReady', true);
+        }else{
+          util.loginOut();
+        }
       }, res => {
-
+          util.loginOut();
       })
   }
 }
@@ -49,8 +52,8 @@ const mutations = {
   setEmpId(state, id) {
     state.userInfo.empId = id
   },
-  setReady(state,val){
-    state.isReady=val;
+  setReady(state, val) {
+    state.isReady = val;
   }
 }
 

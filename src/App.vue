@@ -129,13 +129,9 @@ export default {
   },
   created() {
     if (process.env.NODE_ENV == 'development') { //开发环境
-      // this.$store.commit('setEmpId', 'FB2E203234DF6DEE15934E448EE88971');
-      // this.$store.dispatch('getUserInfo');
-      this.baseUrl = 'http://127.0.0.1:8080'
+      this.baseUrl = urlConfig.devUrl
     } else {
       this.baseUrl = urlConfig.loginUrl
-      // this.baseUrl = 'http://localhost:8080'
-      // this.baseUrl = 'http://58.250.197.143:8899'  //外网
     }
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));

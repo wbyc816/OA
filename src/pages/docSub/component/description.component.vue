@@ -23,16 +23,19 @@
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
         <el-col :span='21' class="docs" style="left: -6px;position: relative;">
-          <el-input class="search" :readonly="true" :value="doc.quoteDocTitle" v-for="(doc,index) in docs" icon="search" :key="doc.quoteDocTitle">
-            <div slot="append">
-              <el-button @click='showDialog(index)'>选择</el-button>
-              <i class="el-icon-close" v-show="doc.quoteDocTitle||index>0" @click="clearDoc(index)"></i>
-            </div>
-          </el-input>
+          <transition-group name="el-zoom-in-top" tag="div">
+            <el-input class="search" :readonly="true" :value="doc.quoteDocTitle" v-for="(doc,index) in docs" icon="search" :key="doc.quoteDocTitle">
+              <div slot="append">
+                <el-button @click='showDialog(index)'>选择</el-button>
+                <i class="el-icon-close" v-show="doc.quoteDocTitle||index>0" @click="clearDoc(index)"></i>
+              </div>
+            </el-input>
+          </transition-group>
         </el-col>
         <el-col :span='3'>
-          <el-button class="addButton" @click="addDoc"><i class="el-icon-plus"></i></el-button>
+          <el-button class="addButton" @click="addDoc" :disabled="docs.length>4"><i class="el-icon-plus"></i></el-button>
         </el-col>
+        <p class="extraDoc">最多添加5个附加公文</p>
       </el-form-item>
     </el-form>
     <el-dialog :visible.sync="dialogTableVisible" size="large" class="docDialog">
@@ -97,7 +100,7 @@ export default {
       searchOptions: '',
       searchLoading: false,
       fileList: [],
-      desLenth:0
+      desLenth: 0
     }
   },
   computed: {
@@ -150,20 +153,19 @@ export default {
     }
   },
   methods: {
-    desChange(html){
-      this.ruleForm.des=html;
+    desChange(html) {
+      this.ruleForm.des = html;
     },
-    updateLen(num){
-      this.desLenth=num;
+    updateLen(num) {
+      this.desLenth = num;
       this.$refs.ruleForm.validateField('des')
     },
-    checkDes(rule, value, callback){
-      if(this.desLenth==0){
-        callback(new Error('请输入'+(this.options.desTitle||'请示内容')))
-      }
-      else if(this.desLenth>5000){
+    checkDes(rule, value, callback) {
+      if (this.desLenth == 0) {
+        callback(new Error('请输入' + (this.options.desTitle || '请示内容')))
+      } else if (this.desLenth > 5000) {
         callback(new Error('超出最大输入长度'))
-      }else{
+      } else {
         callback();
       }
     },
@@ -443,8 +445,7 @@ $sub:#1465C0;
         margin-right: 5px;
       }
     }
-  }
-  // .tempBox {
+  } // .tempBox {
   //   // background :$sub;
   //   position: absolute;
   //   right: 0;
