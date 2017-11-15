@@ -5,8 +5,8 @@
       <div class="infoBox remain">剩余<span>{{freeTicket.ticketNumsLave}}</span></div>
       <div class="infoBox">年度二五折<span>{{discountTicket.ticketNumsTotal}}</span></div>
       <div class="infoBox remain">剩余<span>{{discountTicket.ticketNumsLave}}</span></div>
-      <div class="infoBox">协议票<span>{{agreementTicket.ticketNumsTotal}}</span></div>
-      <div class="infoBox remain">剩余<span>{{agreementTicket.ticketNumsLave}}</span></div>
+      <!-- <div class="infoBox">协议票<span>{{agreementTicket.ticketNumsTotal}}</span></div>
+      <div class="infoBox remain">剩余<span>{{agreementTicket.ticketNumsLave}}</span></div> -->
     </div>
 
     <el-form label-position="left" :model="staffBenefitAppFormFirst" :rules="rules" ref="staffBenefitAppFormFirst" label-width="128px" >
