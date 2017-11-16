@@ -272,7 +272,6 @@ export default {
       this.$emit('saveMiddle',params);
     },
     getDraft(obj){
-      console.log(obj);
       this.loanAppForm=obj.loanAppForm;
 
     },
@@ -281,19 +280,17 @@ export default {
       this.$refs.loanAppForm.validate((valid) => {
         if (valid) {
           // var dep=this.getBudgetDep();
-          console.log(this.$refs.paymentMethod);
           this.params = {
             docFinBorrow: {
               "money":this.loanAppForm.appMoney,//金额
               "accurencyName": this.$refs.accurency.selectedLabel, //货币名字
-              "paymentMethodName": this.$refs.paymentMethod.Label, //付款方式名字
-              "paymentMethodCode": this.$refs.paymentMethod.fieldValue, //付款方式编号
+              "paymentMethodName": this.$refs.paymentMethod.selectedLabel, //付款方式名字
+              "paymentMethodCode": this.$refs.paymentMethod.value, //付款方式编号
               "gatherName": this.loanAppForm.payee, //收款人
               "gatherAccount": this.loanAppForm.bankAccount, // 收款人账户
             }
 
           }
-          console.log(this.params);
           this.$emit('submitMiddle', this.params);
         } else {
           this.$message.warning('请检查填写字段')
@@ -317,7 +314,6 @@ export default {
             res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
             this.budgetDeptList = res.data
           } else {
-            console.log(res)
           }
         }, res => {})
       }
@@ -363,7 +359,6 @@ export default {
     //   return temp;
     // },
     blurInput(event){
-      console.log(event)
       var temp=event.target.value.split('.');
       if(temp.length==2&&(temp[1]==undefined||temp[1]==''||temp[1]==null)){
         this.budgetForm.budgetMoney = temp[0];
