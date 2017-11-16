@@ -139,7 +139,6 @@ export default {
       }
     },
     submitEnd(params) {
-      console.log(params)
       if (this.$route.query.id) {
         params.id = this.$route.query.id
       }
@@ -166,40 +165,46 @@ export default {
       this.$refs.description.saveForm();
     },
     saveEnd(params) {
-      var temp = {
-        "docTitle": this.docTitle,
-        "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
-        "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
-        "taskDeptName": this.userInfo.deptVo.dept,
-        "taskDeptId": this.userInfo.deptVo.deptId,
-        "taskUserName": this.userInfo.name,
-        "taskUserId": this.userInfo.empId,
-        "docTypeCode": this.doc.code,
-        "isSubmit": 0,
-        "draft": {
-          "draftContent": this.saveMiddlePara
-        },
-        "fileId": []
+      if (params) {
+        var temp = {
+          "docTitle": this.docTitle,
+          "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
+          "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
+          "taskDeptName": this.userInfo.deptVo.dept,
+          "taskDeptId": this.userInfo.deptVo.deptId,
+          "taskUserName": this.userInfo.name,
+          "taskUserId": this.userInfo.empId,
+          "docTypeCode": this.doc.code,
+          "isSubmit": 0,
+          "draft": {
+            "draftContent": this.saveMiddlePara,
+            "files": params.files
+          },
+          "fileId": []
+        }
+        delete params.files;
+        if (this.$route.query.id) {
+          temp.id = this.$route.query.id
+        }
+        this.$http.post(this.doc.url, Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency), { body: true })
+          .then(res => {
+            this.$store.commit('SET_SUBMIT_LOADING', false)
+            if (res.status == 0) {
+              this.$notify({
+                message: '保存公文成功',
+                type: 'success'
+              });
+              this.$router.push('/doc/docDraft');
+            } else {
+              this.$notify({
+                message: '保存公文失败',
+                type: 'error'
+              });
+            }
+          })
+      } else {
+        this.$store.commit('SET_SUBMIT_LOADING', false)
       }
-      if (this.$route.query.id) {
-        temp.id = this.$route.query.id
-      }
-      this.$http.post(this.doc.url, Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency), { body: true })
-        .then(res => {
-          this.$store.commit('SET_SUBMIT_LOADING', false)
-          if (res.status == 0) {
-            this.$notify({
-              message: '保存公文成功',
-              type: 'success'
-            });
-            this.$router.push('/doc/docDraft');
-          } else {
-            this.$notify({
-              message: '保存公文失败',
-              type: 'error'
-            });
-          }
-        })
     },
     getDefaultReciver() {
       this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.doc.code, empId: this.userInfo.empId })
@@ -233,6 +238,7 @@ export default {
             this.reciverName = res.data.receiver.reciUserName;
             this.$refs.subject.updateTitle(res.data.docTtile);
             this.$refs.description.$refs.editor.setContent(res.data.des);
+            this.$refs.description.initAttchment(JSON.parse(res.data.files));
             if (res.data.path) {
               this.$refs.description.updatePath(res.data.path);
             }
@@ -247,7 +253,7 @@ export default {
           }
         })
     },
-    updateSuggest(val){
+    updateSuggest(val) {
       this.$refs.description.getSuggestTemp(val);
     }
   }

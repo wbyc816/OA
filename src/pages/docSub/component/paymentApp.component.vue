@@ -103,12 +103,12 @@
         </el-input>
       </el-form-item>
       <el-form-item label="合同" prop="contractAttach" class="clearBoth">
-        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:1}" :on-success="handleContractSuccess" :on-error="handleContractError" ref="contractUpload" :on-remove="handleContractRemove" :before-upload="beforeContractUpload">
+        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:1}" :on-success="handleContractSuccess" :on-error="handleContractError" ref="contractUpload" :file-list="paymentForm.contractAttach" :on-remove="handleContractRemove" :before-upload="beforeContractUpload">
           <el-button size="small" type="primary">上传合同<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
       <el-form-item label="上传发票" prop="invoiceAttach">
-        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" ref="invoiceUpload" :before-upload="beforeInvoiceUpload" :on-remove="handleInvoiceRemove">
+        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'FKS',finType:1,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" ref="invoiceUpload" :file-list="paymentForm.invoiceAttach" :before-upload="beforeInvoiceUpload" :on-remove="handleInvoiceRemove">
           <el-button size="small" type="primary">上传发票<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -240,6 +240,17 @@ export default {
     this.getAddTax() //增值税进项税额
   },
   methods: {
+    saveForm() {
+      var params = JSON.stringify({
+        budgetTable: this.budgetTable,
+        paymentForm: this.paymentForm,
+      });
+      this.$emit('saveMiddle', params);
+    },
+    getDraft(obj) {
+      this.paymentForm = obj.paymentForm;
+      this.budgetTable = obj.budgetTable;
+    },
     changePayType(val) {
       this.$emit('updateSuggest', val)
     },

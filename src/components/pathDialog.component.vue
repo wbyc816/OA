@@ -152,6 +152,9 @@ export default {
             this.$message.warning('会签列表不能为空！');
             success = false;
             break;
+          }else if(i==this.pathList.length-1){
+            this.$message.warning('建议路径不能以会签结束！');
+            success = false
           }
         } else {
           if (p.state && p.state == 1) {

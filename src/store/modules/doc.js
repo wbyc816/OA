@@ -184,7 +184,7 @@ const actions = {
           router.push('/doc/docTracking');
         } else {
           Notification({
-            message: '呈报公文失败，请重试！',
+            message: res.message,
             type: 'error'
           });
         }

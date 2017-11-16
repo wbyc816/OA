@@ -43,7 +43,7 @@
         </el-table-column>
       </el-table>
       <el-form-item label="正文" prop="docFileId">
-        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
+        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove" :file-list="files">
           <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -106,6 +106,7 @@ export default {
         children: 'catalogues'
       },
       fileRedData: [],
+      files:[]
     }
   },
   computed: {
@@ -122,11 +123,16 @@ export default {
   },
   methods: {
     saveForm() {
-      this.$emit('saveMiddle', JSON.stringify(this.manuscriptForm));
+      var params = JSON.stringify({
+        manuscriptForm: this.manuscriptForm,
+        files:this.files
+      });
+      this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
-      this.combineObj(this.manuscriptForm, obj, ['issueDate']);
-      if (obj.issueDate) {
+      this.combineObj(this.manuscriptForm, obj.manuscriptForm, ['issueDate']);
+      this.files=obj.files;
+      if (obj.manuscriptForm.issueDate) {
         this.manuscriptForm.issueDate = new Date(obj.issueDate);
       }
     },
@@ -138,8 +144,10 @@ export default {
     updateFileSend(params) {
       this.manuscriptForm.fileSend = params;
     },
-    handleAvatarSuccess(res, file) {
+    handleAvatarSuccess(res, file,fileList) {
       this.manuscriptForm.docFileId = res.data;
+      this.files=fileList;
+      console.log(this.files)
     },
     beforeUpload(file) {
       // console.log(file)
@@ -156,6 +164,7 @@ export default {
     },
     handleRemove() {
       this.manuscriptForm.docFileId = '';
+      this.files=[];
     },
     submitMiddle() {
       var that = this;
@@ -195,16 +204,6 @@ export default {
         return person.empId
       });
       this.$emit('submitMiddle', this.params);
-    },
-    saveForm() {
-      var params = JSON.stringify(Object.assign(this.manuscriptForm));
-      this.$emit('saveMiddle', params);
-    },
-    getDraft(obj) {
-      this.combineObj(this.manuscriptForm, obj);
-      if (this.manuscriptForm.issueDate) {
-        this.manuscriptForm.issueDate = new Date(this.manuscriptForm.issueDate);
-      }
     },
     submitForm() {
       this.$refs.manuscriptForm.validate((valid) => {

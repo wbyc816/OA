@@ -94,7 +94,7 @@
         </el-table>
       </div>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
-        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'YFK',finType:3,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :before-upload="beforeInvoiceUpload" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
+        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'YFK',finType:3,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :before-upload="beforeInvoiceUpload" :file-list="paymentForm.invoiceAttach" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
           <el-button size="small" type="primary">上传发票<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -187,7 +187,8 @@ export default {
         "pageSize": 5
       },
       docInfo: '',
-      docsTemp: []
+      docsTemp: [],
+      initData:false,
     }
   },
   computed: {
@@ -220,11 +221,11 @@ export default {
   },
   methods: {
     saveForm() {
-      this.$emit('saveMiddle', JSON.stringify({ budgetTable: this.budgetTable, docs: this.paymentForm.docs }));
+      this.$emit('saveMiddle', JSON.stringify({ budgetTable: this.budgetTable, paymentForm: this.paymentForm }));
     },
     getDraft(obj) {
       this.budgetTable = obj.budgetTable;
-      this.paymentForm.docs = obj.docs;
+      this.paymentForm = obj.paymentForm;
     },
     confirmDocs() {
       if (this.paymentForm.docs.length != 0) {
@@ -264,6 +265,10 @@ export default {
         } else {
           this.extraDocs = [];
           this.totalSize = 0;
+        }
+        if(this.initData&&this.paymentForm.docs.length!=0){    //初始化公文表格
+          this.$refs.dialogTable.store.states.selection=this.clone(this.paymentForm.docs);
+          this.initData=false;
         }
       }, res => {
 

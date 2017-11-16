@@ -69,7 +69,7 @@ const menuList = [{
     child: [{ name: '最新工资单', path: '#/HR/salary/1' }, { name: '历史工资单', path: '#/HR/salaryHistory/1' }]
   }, {
     title: '相关链接',
-    child: [{ name: '社会保障系统', path: 'http://www.szsi.gov.cn/', target: '_blank' }, { name: '公积金系统', path: 'http://www.szzfgjj.com/', target: '_blank' }]
+    child: [{ name: '社会保障系统', path: 'http://www.szsi.gov.cn/', target: '_blank' }, { name: '公积金系统', path: 'http://www.szzfgjj.com/', target: '_blank' },{name:'深圳人力局(入户)',path:'https://sz12333.gov.cn/rcyj/',target: '_blank'}]
   }
 ]
 export default {

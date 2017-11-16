@@ -84,7 +84,7 @@ export default {
     docDetail: {
       type: Object
     },
-    suggests: ''
+    suggestHtml: ''
   },
   data() {
     var checkSign = (rule, value, callback) => {
@@ -128,7 +128,6 @@ export default {
       signPersonVisible: false,
       chooseDisable: false,
       workState: '',
-      suggestHtml: '',
       signPersons: [],
       pickerOptions0: {
         disabledDate(time) {
@@ -162,7 +161,6 @@ export default {
     } else {
       this.getDefaultReciver()
     }
-    this.handleSuggest();
   },
   methods: {
     getDefaultReciver() {
@@ -330,38 +328,6 @@ export default {
         }, res => {
 
         })
-    },
-    handleSuggest() {
-      console.log(this.suggests)
-      if (Array.isArray(this.suggests)) {
-        var html = ''
-        this.suggests.forEach((s, i, arr) => {
-          if (s.nodeName == 'sign') {
-            if (arr[i - 1].nodeName != 'sign') {
-              html += signFlag + ' ' + s.typeIdName + ' ';
-            } else if (arr[i + 1].nodeName != 'sign') {
-              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
-            } else {
-              html += s.typeIdName + ' ';
-            }
-          } else if (s.nodeName == 'trans') {
-            if (arr[i - 1].nodeName != 'trans') {
-              html += signFlag + ' ' + s.typeIdName + ' ';
-            } else if (arr[i + 1].nodeName != 'trans') {
-              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
-            } else {
-              html += s.typeIdName + ' ';
-            }
-          } else {
-            if (i == arr.length - 1) {
-              html += s.typeIdName
-            } else {
-              html += s.typeIdName + arrowHtml
-            }
-          }
-        })
-        this.suggestHtml = html;
-      }
     },
     setDefault(person) {
       this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId, taskDeptId: this.userInfo.deptId, reciId: person.signUserId, reciDeptId: person.signDeptId })

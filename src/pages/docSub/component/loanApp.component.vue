@@ -1,24 +1,28 @@
 <template>
   <div class="loanApp">
-    <el-form label-position="left" :model="loanAppForm" :rules="rules" ref="loanAppForm" label-width="128px" >      
+    <el-form label-position="left" :model="loanAppForm" :rules="rules" ref="loanAppForm" label-width="128px" >
+       
       <el-form-item label="申请金额" prop="appMoney" class="flw50"> 
           <div>
-            <el-input   v-model="loanAppForm.appMoney">
-              <el-select v-model="loanAppForm.selectMoney" slot="prepend" placeholder="请选择" class="selectMoney" @change="chooseCurrency" ref="accurency">
-                <el-option v-for="currency in currencys" :label="currency.currencyName" :value="currency.currencyCode"></el-option>               
+            <el-input   v-model="loanAppForm.appMoney" :maxlength="10" @change="fomatMoney" @blur="blurInput" ref="appMoney">
+              <el-select v-model="loanAppForm.selectMoney" slot="prepend" placeholder="请选择" class="selectMoney" @change="chooseCurrency" ref="accurency" >
+                <el-option v-for="currency in currencys" :label="currency.currencyName" :value="currency.currencyCode"></el-option>
+                
               </el-select>
-            <template slot="append">元</template>
             </el-input>
           </div>
         </el-form-item>
+
+
+
       <el-form-item label="付款方式" prop="choosePayType" class="flw50" >
         <el-select v-model="loanAppForm.choosePayType" @change="isCashType"  ref="paymentMethod">
           <el-option v-for="payType in payTypes"  :label="payType.dictName" :value="payType.dictCode">
           </el-option>
         </el-select>
       </el-form-item>
-      <div v-if="collectionInformation==1">
-      <el-form-item label="收款人" prop="payee" class="flw50" >
+      <div v-show="collectionInformation==1">
+      <el-form-item label="收款人" prop="payee" class="flw50 " >
         <el-autocomplete
            v-model="loanAppForm.payee"
             :fetch-suggestions="querySearchAsync"
@@ -26,11 +30,11 @@
             @select="handleSelect"
             :props="testprops"
              ref="payee"
-            ></el-autocomplete>
+            class="payee"></el-autocomplete>
       </el-form-item>
 
       <el-form-item label="收款账户" prop="bankAccount" class="flw50" >
-       <el-input v-model="loanAppForm.bankAccount" :maxlength="25"></el-input>
+       <el-input v-model="loanAppForm.bankAccount" ></el-input>
       </el-form-item>
       </div>
     </el-form>
@@ -149,6 +153,16 @@ export default {
     this.loadCollectionInformation();
   },
   methods: {
+    fomatMoney(val) {
+      val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
+      if (val) {
+        this.loanAppForm.appMoney = val[0];
+        this.$refs.appMoney.setCurrentValue(val[0]);
+      } else {
+        this.loanAppForm.appMoney = ''
+        this.$refs.appMoney.setCurrentValue('')
+      }
+    },
      changePayee(){
         var that = this;
         document.getElementsByClassName("el-input__inner")[5].addEventListener("keyup",function(){
@@ -291,16 +305,6 @@ export default {
     closePerson(index) {
       this.budgetForm.person.splice(index, 1);
     },
-    fomatMoney(val) {
-      val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
-      if (val) {
-        this.budgetForm.budgetMoney = val[0];
-        this.$refs.budgetMoney.setCurrentValue(val[0]);
-      } else {
-        this.budgetForm.budgetMoney = ''
-        this.$refs.budgetMoney.setCurrentValue('')
-      }
-    },
     getBudgetDeptList() {
       if(this.budgetForm.year){
          this.isDisable=false;
@@ -394,6 +398,7 @@ $main:#0460AE;
   .flw50{
     width:50%;
     float:left;
+    height:50px;
   }
   .selectMoney{
     width: 95px;
@@ -427,7 +432,9 @@ $main:#0460AE;
   .clearPadding{
       padding:0 !important;
     }
-
+ .payee{
+    width:200px;
+   }
 .loanApplication {
 
   .budgetMoney{

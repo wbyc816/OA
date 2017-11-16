@@ -173,8 +173,8 @@ $sub:#1465C0;
           height: 219px;
           margin-bottom: 10px;
           img {
-            max-height: 100%;
-            max-width: 100%;
+            max-height: 150px;
+            max-width: 150px;
           }
         }
         .infoItem {

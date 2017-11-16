@@ -5,7 +5,7 @@
         <router-link to="/duty/">更多</router-link>
       </div>
       <div class="dutyWrap">
-        <div class="dutyBox clearfix" v-for="(item,index) in dutys">
+        <div class="dutyBox clearfix" v-for="(item,index) in dutys" v-if="index<2">
           <div class="dateBox">
             <p v-if="index==0">今天</p>
             <p v-else-if="index==1">明天</p>

@@ -244,7 +244,7 @@
         </el-form-item>
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
-        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'CLB',finType:2,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :before-upload="beforeInvoiceUpload" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
+        <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFinFile'" :data="{docTypeCode:'CLB',finType:2,classify:2}" :on-success="handleInvoiceSuccess" :on-error="handleInvoiceError" :before-upload="beforeInvoiceUpload" :file-list="paymentForm.invoiceAttach" ref="invoiceUpload" :on-remove="handleInvoiceRemove">
           <el-button size="small" type="primary">上传发票<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -440,6 +440,11 @@ export default {
     this.getPayMthod(); //付款方式
     this.getArea(); //逗留城市
     this.getAddTax() //增值税进项税额
+    this.appPerson = {
+      reciUserName: this.userInfo.name,
+      reciUserId: this.userInfo.empId
+    }
+    this.paymentForm.appUserName = this.userInfo.name;
   },
   mounted() {
     this.$emit('updateSuggest', 'DOC0601');
@@ -542,12 +547,21 @@ export default {
       this.getRoomPrice();
     },
     selectPerson() {
-      this.personDialogVisible = true;
+      this.$confirm('重新选择报销申请人将清除已添加信息, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.personDialogVisible = true;
+      }).catch(() => {});
     },
     updatePerson(reciver) {
       this.paymentForm.appUserName = reciver.reciUserName;
       this.appPerson = reciver;
       this.personDialogVisible = false;
+      this.clearFeeForm();
+      this.budgetTable=[];
+      this.feeTable=[];
       this.getRoomPrice();
     },
     priceChange() {
@@ -819,9 +833,9 @@ export default {
                             item.rmb = res.data.amount;
                             item.exchangeRateId = res.data.rateId;
                             item.exchangeRate = res.data.rateReverse;
-                            if (this.budgetInfo.budgetRemain<=0||item.rmb > this.budgetInfo.budgetRemain) {
+                            if (this.budgetInfo.budgetRemain <= 0 || item.rmb > this.budgetInfo.budgetRemain) {
                               this.$message.warning('报销金额不能大于可用预算');
-                              this.budgetTable=[];
+                              this.budgetTable = [];
                             } else {
                               this.budgetTable.unshift(item);
                             }

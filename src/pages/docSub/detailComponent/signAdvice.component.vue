@@ -10,7 +10,7 @@
           </el-radio-group>
         </el-col>
       </el-form-item>
-      <el-form-item class="textarea signWrap" label="接收人" prop="sign" v-if="docDetail.signDoc==1">
+      <el-form-item class="textarea signWrap" label="接收人" prop="signUserName" v-if="docDetail.signDoc==1">
         <el-col :span='18' class="clearfix">
           <el-input class="search" :value="ruleForm.signUserName" :readonly="true">
             <el-button slot="append" @click="dialogTableVisible=true">选择</el-button>

@@ -22,7 +22,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
-        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :on-remove="handleRemove" :before-upload="beforeUpload">
+        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :on-remove="handleRemove" :before-upload="beforeUpload" :file-list="files">
         <!-- <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove" :disabled="noMore"> -->
           <el-button size="small" type="primary" :disabled="checkInForm.wordFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
@@ -61,6 +61,7 @@ export default {
       },
       sucessFlag: 0,
       noMore: false,
+      files:[]
     }
   },
   computed: {
@@ -76,13 +77,19 @@ export default {
   },
   methods: {
     saveForm() {
-      this.$emit('saveMiddle', JSON.stringify(this.checkInForm));
+      var params = JSON.stringify({
+        checkInForm: this.checkInForm,
+        files:this.files
+      });
+      this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
-      this.combineObj(this.checkInForm, obj, ['wordFileId']);
+      this.combineObj(this.checkInForm, obj.checkInForm);
+      this.files=obj.files;
     },
-    handleAvatarSuccess(res, file) {
+    handleAvatarSuccess(res, file,fileList) {
       this.checkInForm.wordFileId = res.data;
+      this.files=fileList
     },
     beforeUpload(file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
@@ -98,6 +105,7 @@ export default {
     },
     handleRemove() {
       this.checkInForm.wordFileId = '';
+      this.files=[];
     },
     submitMiddle() {
       var params = {

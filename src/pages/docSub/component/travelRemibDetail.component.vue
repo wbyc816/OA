@@ -103,8 +103,8 @@
       </el-col>
       <el-col :span="24">
         <h1 class="title">发票</h1>
-        <p v-if="info" class="textContent">
-          <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
+        <p v-if="info" class="textContent attch">
+          <a :href="vo.fileUrl" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
         </p>
       </el-col>
     </el-row>

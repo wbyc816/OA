@@ -167,7 +167,7 @@ export default {
           }
 
         }else if(this.guestTicketAppFormFirst.documentTypeSelect=="EMP0803"){
-          var reg = /^[HMhm]{1}([0-9]{10}|[0-9]{8})$/; 
+          var reg = /^[HMhmCc]{1}([0-9]{10}|[0-9]{8})$/; 
           if (reg.test(value) == true) {
             callback();
           } else {

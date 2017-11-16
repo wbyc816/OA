@@ -23,29 +23,31 @@
             <h1 class="title">请示内容</h1>
             <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
           </el-col>
-          <el-collapse class="clearfix clearBoth">
+          <el-collapse v-model="activeContent" class="clearBoth">
             <el-collapse-item title="附加内容" name="1">
-              <component v-bind:is="currentView" :info="docDetialInfo.otherInfo" :state="docDetialInfo.task[0].state">
+              <component v-bind:is="currentView" :info="docDetialInfo.otherInfo" :state="docDetialInfo.task[0].state" class="clearfix">
                 <!-- 组件在 vm.currentview 变化时改变！ -->
               </component>
-              <el-col :span="24">
-                <h1 class="title">建议路径</h1>
-                <p class="textContent suggestHtml" v-html="suggestHtml"></p>
-              </el-col>
-              <el-col :span="24">
-                <h1 class="title">附件</h1>
-                <p class="attch textContent">
-                  <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
-                    <a :href="file.filePath" target="_blank" v-for="file in docDetialInfo.taskFile">{{file.fileNameNew}}</a>
-                  </template>
-                </p>
-              </el-col>
-              <el-col :span="24" style="border-bottom:none">
-                <h1 class="title">附加公文</h1>
-                <p class="attch textContent">
-                  <router-link :to="{path:'/doc/docInfo/'+file.quoteDocId,query:{code:file.docType}}" v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</router-link>
-                </p>
-              </el-col>
+              <el-row>
+                <el-col :span="24">
+                  <h1 class="title">建议路径</h1>
+                  <p class="textContent suggestHtml" v-html="suggestHtml"></p>
+                </el-col>
+                <el-col :span="24">
+                  <h1 class="title">附件</h1>
+                  <p class="attch textContent">
+                    <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
+                      <a :href="file.filePath" target="_blank" v-for="file in docDetialInfo.taskFile">{{file.fileNameNew}}</a>
+                    </template>
+                  </p>
+                </el-col>
+                <el-col :span="24" style="border-bottom:none">
+                  <h1 class="title">附加公文</h1>
+                  <p class="attch textContent">
+                    <router-link :to="{path:'/doc/docInfo/'+file.quoteDocId,query:{code:file.docType}}" v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</router-link>
+                  </p>
+                </el-col>
+              </el-row>
             </el-collapse-item>
           </el-collapse>
         </el-row>
@@ -73,12 +75,12 @@
       </div>
       <div class="operateBox" v-if="docDetialInfo.task[0].state==3">
         <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
-        <el-button class="myButton" v-if="docDetialInfo.doc.isPay" @click="changePay">付款</el-button>
+        <el-button class="myButton" v-if="docDetialInfo.doc.isPay" @click="changePay" :disabled="docDetialInfo.doc.isView!=1">{{docDetialInfo.doc.isView==1?'付款':'已付款'}}</el-button>
         <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank">
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
         </a>
       </div>
-      <my-advice :docDetail="docDetialInfo.doc" :suggests="docDetialInfo.suggests" v-if="showMyadvice">
+      <my-advice :docDetail="docDetialInfo.doc" :suggestHtml="suggestHtml" v-if="showMyadvice">
         <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
@@ -105,7 +107,7 @@
       </el-form>
       <div class="buttonBox">
         <el-button size="large" type="primary" @click="docArchive(true)">归档并结束</el-button>
-        <el-button size="large" @click="docArchive(false)"><i class="iconfont icon-archive"></i>归档并分发</el-button>
+        <el-button size="large" @click="DialogSubmitVisible = true;"><i class="iconfont icon-archive"></i>归档并分发</el-button>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="DialogSubmitVisible" size="small" class="myDialog" custom-class="archiveSubmitDialog" @close="DialogSubmitClose">
@@ -214,7 +216,8 @@ export default {
       isSuccessSubmit: false,
       suggestHtml: '',
       archiveState: '1',
-      isRedFile: false
+      isRedFile: false,
+      activeContent: '1'
     }
   },
   created() {
@@ -223,6 +226,9 @@ export default {
   beforeRouteUpdate(to, from, next) {
     this.getDetail(to);
     next();
+  },
+  mounted() {
+
   },
   computed: {
     showMyadvice() {
@@ -266,6 +272,7 @@ export default {
               this.isRedFile = true;
             }
             this.handleSuggest();
+            this.activeContent = '';
           }
         }, res => {
 
@@ -273,7 +280,7 @@ export default {
     },
     handleSuggest() {
       if (Array.isArray(this.docDetialInfo.suggests)) {
-        var html = ''
+        var html = '起草'+ arrowHtml+' ';
         this.docDetialInfo.suggests.forEach((s, i, arr) => {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
@@ -299,6 +306,7 @@ export default {
             }
           }
         })
+        html+='归档'
         this.suggestHtml = html;
       }
     },
@@ -309,7 +317,7 @@ export default {
       this.dialogArchivePersonVisible = false;
       this.archiveForm.persons = payLoad;
     },
-    docArchive(isEnd) {
+    docArchive(isEnd) { //归档
       this.$refs.fileForm.validate((valid) => {
         if (valid) {
           var params = {
@@ -327,13 +335,11 @@ export default {
           this.$http.post('/doc/docArchive', params, { body: true })
             .then(res => {
               if (res.status == '0') {
-                this.$message.success('归档成功');
                 if (isEnd) {
+                  this.$message.success('归档成功');
                   this.$router.push('/doc/docSearch');
                 } else {
-                  this.DialogArchiveVisible = false;
-                  this.DialogSubmitVisible = true;
-                  this.isSuccessSubmit = true;
+                  this.docDistribution();
                 }
               } else {
                 this.$message.error('归档失败，请重试');
@@ -342,7 +348,8 @@ export default {
 
             })
         } else {
-
+          this.$message.waring('请填写归档信息');
+          this.DialogSubmitVisible = false;
           return false;
         }
       });
@@ -352,46 +359,66 @@ export default {
       this.archiveForm.persons.splice(index, 1);
     },
     changePay() {
-      this.$http.post('/doc/updateFinPayState', { docId: this.$route.params.id })
-        .then(res => {
-          if (res.status == 0) {
-            this.$message.success('操作成功!');
-            this.getDetail(this.$route);
-          } else {
-            this.$message.error('操作失败!' + res.message);
-          }
-        })
+      this.$confirm('确定已付款?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/doc/updateFinPayState', { docId: this.$route.params.id })
+          .then(res => {
+            if (res.status == 0) {
+              this.$message.success('操作成功!');
+              this.getDetail(this.$route);
+            } else {
+              this.$message.error('操作失败!' + res.message);
+            }
+          })
+      }).catch(() => {
+
+      });
     },
     dialogSubmit() {
       if (this.archiveForm.persons.length > 0) {
-        var params = [];
-        var dist = {
-          "distDeptMajorId": this.userInfo.deptVo.fatherDeptId,
-          "distDeptMajorName": this.userInfo.deptVo.fatherDept,
-          "distDeptId": this.userInfo.deptVo.deptId,
-          "distDeptName": this.userInfo.deptVo.dept,
-          "distUserId": this.userInfo.empId,
-          "distUserName": this.userInfo.name,
-          "content": this.archiveForm.res,
-          "docId": this.$route.params.id,
-          "operateType": '1'
-        }
-        this.archiveForm.persons.forEach(person => {
-          var temp = {
-            "reciveDeptMajorId": person.deptParentId,
-            "reciveDeptId": person.deptId,
-            "reciveDeptName": person.deptName,
-            "reciveUserId": person.empId,
-            "reciveUserName": person.name,
-          }
-          Object.assign(temp, dist);
-          params.push(temp);
-        })
-        console.log(params)
-        this.$store.dispatch('docDistribution', params);
+        this.docArchive(false);
       } else {
         this.$message.warning('请选择收件人！');
       }
+    },
+    docDistribution() {
+      var params = [];
+      var dist = {
+        "distDeptMajorId": this.userInfo.deptVo.fatherDeptId,
+        "distDeptMajorName": this.userInfo.deptVo.fatherDept,
+        "distDeptId": this.userInfo.deptVo.deptId,
+        "distDeptName": this.userInfo.deptVo.dept,
+        "distUserId": this.userInfo.empId,
+        "distUserName": this.userInfo.name,
+        "content": this.archiveForm.res,
+        "docId": this.$route.params.id,
+        "operateType": '1'
+      }
+      this.archiveForm.persons.forEach(person => {
+        var temp = {
+          "reciveDeptMajorId": person.deptParentId,
+          "reciveDeptId": person.deptId,
+          "reciveDeptName": person.deptName,
+          "reciveUserId": person.empId,
+          "reciveUserName": person.name,
+        }
+        Object.assign(temp, dist);
+        params.push(temp);
+      })
+      this.$http.post('/doc/docDistribution', params, { body: true })
+        .then(res => {
+          if (res.status == 0) {
+            this.$message.success('归档并分发成功！');
+          } else {
+            this.$message('归档成功，分发失败！')
+          }
+          this.DialogArchiveVisible = false;
+          this.DialogSubmitVisible = false;
+          this.$router.push('/doc/docSearch');
+        })
     },
     DialogSubmitClose() {
       if (this.isSuccessSubmit) {
@@ -521,11 +548,12 @@ $sub:#1465C0;
     margin-bottom: 10px;
   }
   .attch {
-    color: blue;
+    color: $main;
     cursor: pointer;
     text-decoration: underline;
     a {
       display: block;
+      color: $main!important;
     }
   }
   .doc-form_title {

@@ -50,7 +50,7 @@ $main:#0460AE;
 .budgetDetail {
   padding:20px 0;
   clear:both;
-  border-bottom: 1px solid #D5DADF;
+  // border-bottom: 1px solid #D5DADF;
   .totalPrice {
 
     line-height: 40px;

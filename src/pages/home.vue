@@ -167,8 +167,8 @@ import DocList from '../components/doc'
 import Duty from '../components/duty.component'
 var msgs = [
   { "icon": "gou", "color": "#07A9E9", "text": "待批公文:", "value": "0", "link": "/doc/docPending" },
-  { "icon": "sousuo", "color": "#7562DE", "text": "公文追踪:", "value": "0", "link": "/doc/docTracking" },
   { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
+  { "icon": "sousuo", "color": "#7562DE", "text": "公文追踪:", "value": "0", "link": "/doc/docTracking" },
   { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": {name:'docPending',params:{isOverTime:'1'}} },
   { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
   { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "/meeting/meetingSearch/1" },
@@ -291,8 +291,8 @@ export default {
   },
   watch: {
     docTips(newVal) {
-      msgs[1].value = newVal.trackingNum; //追踪
-      msgs[2].value = newVal.toReadNum; //待阅
+      msgs[2].value = newVal.trackingNum; //追踪
+      msgs[1].value = newVal.toReadNum; //待阅
       msgs[3].value = newVal.overTimeNum; //超时
       msgs[0].value = newVal.pendingNum; //待批
       msgs[4].value = newVal.birthdayNum; //生日

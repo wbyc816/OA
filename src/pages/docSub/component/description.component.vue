@@ -16,7 +16,7 @@
         <el-button size="small" type="text" @click="pathDialogVisible=true"><i class="iconfont icon-edit"></i>编辑</el-button>
       </el-form-item>
       <el-form-item label="附件" prop="attchment">
-        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="fileList" :on-remove="handleRemove" ref="myUpload">
+        <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
           <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
         <p class="uploadInfo">单个附件不能超过10MB</br>最多上传5个附件</p>
@@ -99,13 +99,16 @@ export default {
       totalSize: 0,
       searchOptions: '',
       searchLoading: false,
-      fileList: [],
-      desLenth: 0
+      desLenth: 0,
+      successUps: [],
+      difLength: 0,
+      upCount: 0,
+      isSaveForm: false
     }
   },
   computed: {
     pathHtml: function() {
-      var html = '';
+      var html = '起草' + arrowHtml + ' ';
       if (this.ruleForm.path.length != 0) {
         this.ruleForm.path.forEach((node, index) => {
           if (node.nodeName == 'sign' || node.nodeName == 'trans') {
@@ -131,15 +134,9 @@ export default {
           }
         })
       }
+      html += '归档'
       return html;
     },
-    // remainNum() {
-    //   var num = 5000;
-    //   if (this.ruleForm.des !== '') {
-    //     num -= this.ruleForm.des.length
-    //   }
-    //   return parseInt(num)
-    // },
     ...mapGetters([
       'baseURL',
       'docType',
@@ -153,6 +150,10 @@ export default {
     }
   },
   methods: {
+    initAttchment(list) {
+      this.successUps = list;
+      this.ruleForm.attchment = this.successUps;
+    },
     desChange(html) {
       this.ruleForm.des = html;
     },
@@ -171,15 +172,17 @@ export default {
     },
     submitForm() {
       this.$refs.ruleForm.validate((valid) => {
+        this.isSaveForm = false;
         if (valid) {
           if (this.checkSuggest()) {
-            if (this.ruleForm.attchment.length != 0) {
+            this.checkAttchment(); //检查是否需要上传
+            if (this.difLength != 0) {
               this.$refs.myUpload.submit();
             } else {
               this.$emit('submitEnd', {
                 taskContent: this.ruleForm.des,
                 qutoes: this.docs[0].quoteDocId ? this.docs : [],
-                fileId: [],
+                fileId: this.ruleForm.attchment.map(f => f.response.data),
                 suggests: this.handlePath(this.ruleForm.path)
               });
             }
@@ -193,15 +196,26 @@ export default {
         }
       });
     },
+    checkAttchment() { //检查是否需要上传
+      this.difLength = this.ruleForm.attchment.length;
+      this.ruleForm.attchment.forEach(f => {
+        if (this.successUps.find(s => s.uid == f.uid)) {
+          this.difLength--;
+        }
+      })
+    },
     checkSuggest() {
       var success = true;
-      this.ruleForm.path.forEach((p, i) => {
+      this.ruleForm.path.forEach((p, i, arr) => {
         if (p.type == 4 || p.type == 5) { //判断会签不能为空
           if (!p.children || p.children.length == 0) {
             this.$message.warning('建议路径内会签列表不能为空！');
             success = false
           } else if (i == 0) {
             this.$message.warning('建议路径不能以会签开始！');
+            success = false
+          } else if (i == arr.length - 1) {
+            this.$message.warning('建议路径不能以会签结束！');
             success = false
           }
 
@@ -215,12 +229,24 @@ export default {
       return success
     },
     saveForm() {
-      var params = {
-        taskContent: this.ruleForm.des, //请示内容
-        qutoes: this.docs[0].quoteDocId ? this.docs : [],
-        suggests: this.handlePath(this.ruleForm.path)
+      this.isSaveForm = true;
+      this.checkAttchment(); //检查是否需要上传
+      if (this.difLength != 0) {
+        this.$refs.myUpload.submit();
+      } else {
+        if (this.checkSuggest()) {
+          var params = {
+            taskContent: this.ruleForm.des, //请示内容
+            qutoes: this.docs[0].quoteDocId ? this.docs : [],
+            suggests: this.handlePath(this.ruleForm.path),
+            files: JSON.stringify(this.ruleForm.attchment)
+          }
+          this.$emit('saveEnd', params);
+        }else{
+          this.$emit('saveEnd', false);
+        }
       }
-      this.$emit('saveEnd', params);
+
     },
     clearDoc(index) {
       if (this.docs.length == 1) {
@@ -235,7 +261,6 @@ export default {
         this.docs[this.activeDoc].quoteDocId = row.id;
         this.dialogTableVisible = false;
       }
-
     },
     showDialog(index) {
       this.dialogTableVisible = true;
@@ -247,16 +272,22 @@ export default {
     addDoc() {
       this.docs.push({ quoteDocTitle: '', quoteDocId: '' })
     },
-    handleAvatarSuccess(res, file) {
-      this.fileIds.push(res.data);
-      if (this.fileIds.length == this.ruleForm.attchment.length) {
+    handleAvatarSuccess(res, file, fileList) {
+      this.fileIds = fileList;
+      this.upCount++;
+      if (this.upCount == this.difLength) {
         var params = {
-          fileId: this.fileIds,
           taskContent: this.ruleForm.des,
           qutoes: this.docs[0].quoteDocId ? this.docs : [],
           suggests: this.handlePath(this.ruleForm.path)
         }
-        this.$emit('submitEnd', params);
+        if (this.isSaveForm) {
+          params.files = JSON.stringify(this.fileIds);
+          this.$emit('saveEnd', params);
+        } else {
+          params.fileId = this.fileIds.map(f => f.response.data);
+          this.$emit('submitEnd', params);
+        }
       }
     },
     handleAvatarError(res, file) {
@@ -361,7 +392,6 @@ export default {
           })
         }
       })
-      console.log(_list)
       return _list
     },
     getSuggestTemp(param) {

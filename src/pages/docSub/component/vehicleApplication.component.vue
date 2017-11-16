@@ -7,7 +7,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="联系电话" prop="contactPhone">
-        <el-input v-model="vehicleForm.contactPhone" :maxlength="11"></el-input>
+        <el-input v-model="vehicleForm.contactPhone" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="用车部门" prop="contactDeptName">
         <el-input class="search" :readonly="true" :value="vehicleForm.contactDeptName">
@@ -48,13 +48,12 @@ export default {
       rules: {
         contactUserName: [{ required: true, message: '请选择联系人', trigger: 'blur' }],
         contactPhone: [{ required: true, message: '请输入联系电话', trigger: 'blur' },
-          { validator: this.validatePhone, trigger: 'blur,change' }
         ],
         contactDeptName: [{ required: true, message: '请选择用车部门', trigger: 'blur' }],
         timeLine: [{type:'array',required: true, message: '请选择用车时间', trigger: 'blur' }],
       },
       personDialogVisible: false,
-      selDep: '',
+      selDep: {name:'',id:''},
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7;
@@ -107,6 +106,7 @@ export default {
       this.$emit('saveMiddle',params);
     },
     getDraft(obj){
+      console.log(obj)
       this.combineObj(this.vehicleForm,obj);
       this.combineObj(this.selDep,obj);
       this.vehicleForm.timeLine=[];

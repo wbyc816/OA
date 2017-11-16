@@ -172,12 +172,20 @@ export default {
     },
     handleSuggest() {
       if (Array.isArray(this.docDetialInfo.suggests)) {
-        var html = ''
+        var html = '起草'+ arrowHtml+' ';
         this.docDetialInfo.suggests.forEach((s, i, arr) => {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
               html += signFlag + ' ' + s.typeIdName + ' ';
             } else if (arr[i + 1].nodeName != 'sign') {
+              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+            } else {
+              html += s.typeIdName + ' ';
+            }
+          } else if (s.nodeName == 'trans') {
+            if (arr[i - 1].nodeName != 'trans') {
+              html += signFlag + ' ' + s.typeIdName + ' ';
+            } else if (arr[i + 1].nodeName != 'trans') {
               html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
             } else {
               html += s.typeIdName + ' ';
@@ -190,6 +198,7 @@ export default {
             }
           }
         })
+        html+='归档'
         this.suggestHtml = html;
       }
     },

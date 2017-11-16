@@ -9,9 +9,10 @@
         <el-menu mode="vertical" v-bind:router="true" ref="emenu" class="mySideLink">
           <el-menu-item-group title="消息中心">
             <template v-for='(item,index) in navMenu'>
-              <div class="badge" v-if="message[index]" :style="{'top': getTop(index)}">{{ message[index] }}</div>
-              <el-menu-item v-if='item.path' :index='index.toString()' :route="{path:item.path}">
+              
+              <el-menu-item :index='index.toString()' :route="{path:item.path,params:item.params,name:item.name}">
                 <span>{{item.title}}</span>
+                <el-badge class="mark" :value="message[index]" />
                 <i class="el-icon-arrow-right"></i>
               </el-menu-item>
             </template>
@@ -42,7 +43,9 @@ export default {
         },
         {
           title: '公文超时',
-          path: '/doc/docPending'
+          // path: '/doc/docPending',
+          name:'docPending',
+          params:{isOverTime:'1'}
         },
         {
           title: '生日提醒',
@@ -53,7 +56,6 @@ export default {
           path: '/meeting/meetingSearch/1'
         }
       ],
-      menuHeight: 0,
       message: []
     };
   },
@@ -62,36 +64,32 @@ export default {
       'userInfo',
       'docTips'
     ]),
-    menuItemHeight() {
-      return this.menuHeight / (this.navMenu.length + 1)
-    }
   },
   components: { SidePersonSearch },
   created() {
-    this.$store.dispatch('getAdminStatus');
-    this.$store.dispatch('getDocForm');
+    this.$store.dispatch('getDocTips');
   },
   mounted: function() {
-    this.menuHeight = document.querySelector('.el-menu.mySideLink').clientHeight
+    
   },
   methods: {
-    getTop(index) {
-      let h = this.menuItemHeight
-      let top = h * (index + 1) + 20
-      return top + 'px'
-    },
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.$store.dispatch('getDocTips');
     })
   },
+  // beforeRouteLeave(to, from, next){
+  //   console.log(to);
+  //   // next();
+  // },
   watch: {
     docTips(newVal) {
       this.message = [];
       this.message.push(newVal.pendingNum);
       this.message.push(newVal.trackingNum);
-      this.message.push(newVal.toReadNum);
+      this.message.push(0);
+      // this.message.push(newVal.toReadNum);
       this.message.push(newVal.overTimeNum);
       this.message.push(newVal.birthdayNum);
       this.message.push(newVal.conferenceNum);
@@ -104,20 +102,10 @@ export default {
 #os {
   .mySideLink {
     margin-bottom: 20px;
-    .badge {
-      z-index: 2;
-      display: block;
-      position: absolute;
-      padding-top: .6px;
-      left: 95px;
-      background-color: #BE3B7F;
-      color: #fff;
-      border-radius: 50%;
-      text-align: center;
-      width: 19px;
-      height: 19px;
-      line-height: 19px;
-      font-size: 12px;
+    .el-badge__content {
+      margin-bottom: 3px;
+      background: #BE3B7F;
+      margin-left: 5px;
     }
   }
   .processDialog {
