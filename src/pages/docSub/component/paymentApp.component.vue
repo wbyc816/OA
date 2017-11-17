@@ -28,11 +28,11 @@
           </money-input>
         </el-form-item>
         <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
-          <el-input v-model="budgetForm.invoiceNum" class="hasUnit" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号">
+          <money-input v-model="budgetForm.invoiceNum" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号" :append="false" type="invoice" :maxlength="250">
             <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange">
               <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
             </el-select>
-          </el-input>
+          </money-input>
         </el-form-item>
         <el-form-item label="">
           <el-button type="primary" @click="addBudget" class="addBudget"><i class="el-icon-plus"></i> 添加付款项</el-button>
@@ -84,7 +84,7 @@
         <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="paymentProp" v-model="paymentForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier">
         </el-cascader>
       </el-form-item>
-      <ul class="supplierInfo clearfix" v-show="supplierInfo">
+      <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
         <li>开户银行 {{supplierInfo.accountBank}}</li>
         <li>收款账户 {{supplierInfo.accountName}}</li>
       </ul>

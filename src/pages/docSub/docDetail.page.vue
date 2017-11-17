@@ -80,12 +80,12 @@
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
         </a>
       </div>
+      <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
+      </quit-advice>
       <my-advice :docDetail="docDetialInfo.doc" :suggestHtml="suggestHtml" v-if="showMyadvice">
         <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
-      <quit-advice :info="docDetialInfo" v-if="(docDetialInfo.doc.isSign==1||docDetialInfo.doc.isFied==1)&&$route.query.code=='LZS'">
-      </quit-advice>
     </el-card>
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
       <span slot="title">公文归档</span>
@@ -280,7 +280,7 @@ export default {
     },
     handleSuggest() {
       if (Array.isArray(this.docDetialInfo.suggests)) {
-        var html = '起草'+ arrowHtml+' ';
+        var html = '起草' + arrowHtml + ' ';
         this.docDetialInfo.suggests.forEach((s, i, arr) => {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
@@ -306,7 +306,7 @@ export default {
             }
           }
         })
-        html+='归档'
+        html += '归档'
         this.suggestHtml = html;
       }
     },
@@ -550,7 +550,6 @@ $sub:#1465C0;
   .attch {
     color: $main;
     cursor: pointer;
-    text-decoration: underline;
     a {
       display: block;
       color: $main!important;
@@ -587,10 +586,12 @@ $sub:#1465C0;
     padding-bottom: 10px;
     .el-col {
       border-bottom: 1px solid #D5DADF;
-      padding: 15px 18px 15px 24px;
+      padding: 5px 18px 5px 24px;
+      min-height:57px;
       overflow: hidden;
       display: flex;
       font-size: 15px;
+      align-items: center;
     }
     .rightBorder {
       border-right: 1px solid #D5DADF;
@@ -605,6 +606,7 @@ $sub:#1465C0;
       flex: 1;
       overflow: hidden;
       word-wrap: break-word;
+      line-height: 19px;
       &.blackText {
         font-weight: bold;
       }

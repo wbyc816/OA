@@ -158,6 +158,7 @@ export default {
       this.searchParams.keyWords = '';
       this.searchParams.taskUserName = '';
       this.searchParams.docNo = '';
+      this.searchParams.taskUserIds=[];
       this.timeline = [];
     },
     getTypes() {

@@ -7,7 +7,7 @@ export const postInfo = [{
 }]
 export const contractInfo = [{
   head: '合同信息',
-  prop: [{ name: 'type', label: '合同类型', width: '' }, { name: 'subject', label: '合同主体', width: '' }, { name: 'endDate', label: '合同开始日期', width: '', type: 'date' }, { name: 'startDate', label: '合同预计结束日期', width: '', type: 'date' }],
+  prop: [{ name: 'type', label: '合同类型', width: '' }, { name: 'subject', label: '合同主体', width: '' }, { name: 'startDate', label: '合同开始日期', width: '', type: 'date' }, { name: 'endDate', label: '合同预计结束日期', width: '', type: 'date' }],
   url: '/resume/getContractInfo'
 }, {
   head: '试用期信息',
@@ -100,7 +100,7 @@ export const postExperienceInfo = [{
   head: '集团外工作经历',
   enName: 'OutjobInfo',
   postName:'outJob',
-  prop: [{ name: 'beginDate', label: '开始日期', width: '', type: 'date' }, { name: 'endDate', label: '结束日期', width: '', type: 'date' }, { name: 'company', label: '工作单位', width: '' }, { name: 'post', label: '所任职务', width: '' }],
+  prop: [{ name: 'beginDate', label: '开始日期', width: '', type: 'date',limit:{name:'endDate',rule:'less'} }, { name: 'endDate', label: '结束日期', width: '', type: 'date', limit:{name:'beginDate',rule:'more'} }, { name: 'company', label: '工作单位', width: '' }, { name: 'post', label: '所任职务', width: '' }],
   url: '/resume/getOutjobInfo',
   postUrl: '/resume/updateOutjobInfo',
 }, {

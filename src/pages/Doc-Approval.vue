@@ -50,7 +50,9 @@
               <td>{{doc.readTime}}</td>
               <td>{{doc.startTime}}</td>
               <td>{{doc.endTime}}</td>
-              <td :class="{overTime:doc.isOvertime==1}"><template v-if="doc.isOvertime!=2">{{doc.isOvertime==0?'准时':'超时'}}</template></td>
+              <td :class="{overTime:doc.isOvertime==1}">
+                <template v-if="doc.isOvertime!=2">{{doc.isOvertime==0?'准时':'超时'}}</template>
+              </td>
               <td>{{doc.nodeName}}</td>
               <td>{{doc.taskDeptMajorName}}</td>
             </tr>
@@ -140,6 +142,7 @@ export default {
     this.$store.dispatch('getDocTips');
     this.$store.dispatch('getDocForm');
     this.getPower();
+    console.log(111)
   },
   mounted: function() {
     this.breadcrumbItem = this.$route.meta.breadcrumb;
@@ -199,6 +202,11 @@ export default {
 
             }
           })
+      } else if (this.staticsPower !== 0) {
+        this.navMenu.push({
+          title: '公文统计',
+          path: '/doc/normalStatistics'
+        })
       }
     }
   },

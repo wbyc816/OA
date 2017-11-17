@@ -34,7 +34,7 @@
       </el-form-item>
 
       <el-form-item label="收款账户" prop="bankAccount" class="flw50" >
-       <el-input v-model="loanAppForm.bankAccount" ></el-input>
+       <el-input v-model="loanAppForm.bankAccount" :maxlength="19"></el-input>
       </el-form-item>
       </div>
     </el-form>

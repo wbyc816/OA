@@ -176,11 +176,11 @@
           <li>预算执行比例{{budgetInfo.execRateStr}}</li>
         </ul>
         <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
-          <el-input v-model="budgetForm.invoiceNum" class="hasUnit" :disabled="activeInvoice!='FIN0201'">
+          <money-input v-model="budgetForm.invoiceNum" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号" :append="false" type="invoice" :maxlength="250">
             <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange">
               <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
             </el-select>
-          </el-input>
+          </money-input>
         </el-form-item>
         <el-form-item label="增值税税费总额" prop="taxMoney" v-if="activeInvoice=='FIN0201'" class="taxMoney">
           <money-input v-model="budgetForm.taxMoney" style="width:50%" class="hasUnit" :maxlength="10" @change="tranMoney">
@@ -240,7 +240,7 @@
           <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
         </el-form-item>
         <el-form-item label="收款账户" prop="bankAccount" class="arrArea" label-width="100px" style="width:49%">
-          <el-input v-model="paymentForm.bankAccount" :maxlength="25"></el-input>
+          <el-input v-model="paymentForm.bankAccount" :maxlength="19"></el-input>
         </el-form-item>
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">

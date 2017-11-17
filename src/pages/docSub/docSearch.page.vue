@@ -1,6 +1,6 @@
 <template>
   <div id="docSearch">
-    <search-options title="公文查询" @search="setOptions"></search-options>
+    <search-options title="公文查询" @search="setOptions" payStatus></search-options>
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>
@@ -13,13 +13,14 @@
         <tr>
           <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
           <router-link tag="td" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}" class="linkTitle">
+            <span class="overTime" v-if="doc.isPay===0" style="background:#BE3B7F;">未付款</span>
             <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
             <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
             <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
+            
           </router-link>
           <td>{{doc.taskUser}}</td>
           <td>{{doc.taskTime}}</td>
-          <td><span>{{doc.currentUser}}</span></td>
           <td>
             <el-tooltip content="查看" placement="top" :enterable="false" effect="light">
               <router-link tag="i" class="link iconfont icon-eye" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
@@ -38,7 +39,7 @@
 import SearchOptions from '../../components/searchOptions.component'
 import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
-const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '操作']
+const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '操作']
 
 export default {
   components: {
@@ -120,7 +121,7 @@ export default {
       this.getData();
     },
     handDocType(val) {
-      return docConfig.find(d => d.code == val.docTypeCode)||{color: '',shortName: '',}
+      return docConfig.find(d => d.code == val.docTypeCode) || { color: '', shortName: '', }
     },
     calWidth(doc) {
       var width = 1;
@@ -133,6 +134,9 @@ export default {
       if (doc.docDenseType != '平件' && doc.docDenseType != '') {
         width -= 0.13
       }
+      if (doc.isPay === 0) {
+        width -= 0.2
+      }
       return parseInt(width * 100) + '%'
     }
   }
@@ -142,11 +146,20 @@ export default {
 <style lang='scss'>
 $purple: #0460AE;
 #docSearch {
+  margin-bottom: 30px;
   .pageBox {
     text-align: right;
     margin-top: 20px;
   }
-  margin-bottom:30px;
+  thead {
+    $widths: (1: 5%, 2: 50%, 3: 10%, 4: 11%, 6: 10%);
+    @each $num,
+    $width in $widths {
+      th:nth-child(#{$num}) {
+        width: $width;
+      }
+    }
+  }
 }
 
 </style>

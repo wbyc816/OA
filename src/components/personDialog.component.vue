@@ -227,7 +227,6 @@ export default {
         }
       } else {
         if (this.multipleSelection.length != 0) {
-
           this.$emit('updatePerson', this.clone(this.multipleSelection));
           this.$emit('update:visible', false)
         } else {
@@ -237,7 +236,6 @@ export default {
           })
         }
       }
-
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;

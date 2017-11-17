@@ -2,6 +2,14 @@
   <div class="docBaseBox">
     <h4 class='doc-form_title'>基本信息</h4>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
+      <!-- <el-form-item class='form-box' label="呈报人">
+        <el-input class="search selPerson" v-model="ruleForm.rec" :readonly="true">
+          <template slot="append">
+            <el-button @click='selectPerson(false)'>选择</el-button>
+            <i class="iconfont icon-renyuanshezhi" @click="selectPerson(true)"></i>
+          </template>
+        </el-input>
+      </el-form-item> -->
       <el-form-item class='form-box' :label="reciverTtitle" prop="rec">
         <el-input class="search selPerson" v-model="ruleForm.rec" :readonly="true">
           <template slot="append">

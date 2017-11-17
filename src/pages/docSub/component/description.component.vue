@@ -44,10 +44,11 @@
       </div>
       <search-options @search="setOptions"></search-options>
       <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="250" :row-class-name="tableRowClassName" v-loading="searchLoading">
+        <el-table-column prop="docNo" label="公文编号" width="190"></el-table-column>
         <el-table-column prop="docTypeName" label="公文类型" width="110"></el-table-column>
-        <el-table-column prop="docTitle" label="标题" width="310"></el-table-column>
-        <el-table-column prop="taskUser" label="呈报人" width="150"></el-table-column>
-        <el-table-column prop="taskTime" label="呈报时间"></el-table-column>
+        <el-table-column prop="docTitle" label="标题"></el-table-column>
+        <el-table-column prop="taskUser" label="呈报人" width="120"></el-table-column>
+        <el-table-column prop="taskTime" label="呈报时间" width="175"></el-table-column>
       </el-table>
       <div class="pageBox" v-show="extraDocs.length>0">
         <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="5" layout="total, prev, pager, next, jumper" :total="totalSize">
@@ -140,11 +141,12 @@ export default {
     ...mapGetters([
       'baseURL',
       'docType',
-      'userInfo'
+      'userInfo',
+      'isSubmit'
     ])
   },
   created() {
-    this.getSuggestTemp();
+    // this.getSuggestTemp();
     if (this.$route.params.code == 'LZS') {
       this.rules.attchment.push({ type: 'array', required: true, message: '请提交本人签字的辞职报告', trigger: 'blur,change' })
     }
@@ -207,7 +209,7 @@ export default {
     checkSuggest() {
       var success = true;
       this.ruleForm.path.forEach((p, i, arr) => {
-        if (p.type == 4 || p.type == 5) { //判断会签不能为空
+        if (p.type == 4 || p.type == 5||p.type==7) { //判断会签不能为空
           if (!p.children || p.children.length == 0) {
             this.$message.warning('建议路径内会签列表不能为空！');
             success = false
@@ -231,7 +233,7 @@ export default {
     saveForm() {
       this.isSaveForm = true;
       this.checkAttchment(); //检查是否需要上传
-      if (this.difLength != 0) {
+      if (this.difLength != 0&&!this.isSubmit) {
         this.$refs.myUpload.submit();
       } else {
         if (this.checkSuggest()) {
@@ -406,7 +408,7 @@ export default {
     },
     handleSuggestTemp(arr) {
       arr.forEach(s => {
-        if (s.type == 4 || s.type == 5) {
+        if (s.type == 4 || s.type == 5||s.type==7) {
           s.nodeName = 'sign';
           s.children = [];
         }
@@ -556,7 +558,7 @@ $sub:#1465C0;
 
   .docDialog {
     .el-dialog--large {
-      width: 800px;
+      width: 900px;
       top: 50%!important;
       transform: translate(-50%, -50%);
       margin-top: 0;

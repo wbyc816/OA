@@ -19,7 +19,6 @@
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updatePerson" :selfDisable="false" :visible.sync="personDialogVisible"></person-dialog>
-
     <dep-dialog :dialogVisible.sync="depDialogVisible" @updateDep="updateDep"></dep-dialog>
   </div>
 </template>
@@ -28,7 +27,7 @@ import { mapGetters } from 'vuex'
 import PersonDialog from '../../../components/personDialog.component'
 import DepDialog from '../../../components/depDialog.component'
 export default {
-  components: { PersonDialog,DepDialog },
+  components: { PersonDialog, DepDialog },
   data() {
     var checkDate = (rule, value, callback) => {
       if (value.every(val => val != null)) {
@@ -37,8 +36,21 @@ export default {
         callback(new Error('请选择用车时间'))
       }
     };
+    var checkTel = (rule, value, callback) => {
+      var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
+      var isMob = /^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+      if (value && value.length != 0) {
+        if (isMob.test(value)||isPhone.test(value)) {
+          callback();
+        } else {
+          callback(new Error("手机号码格式有误"));          
+        }
+      } else {
+        callback();
+      }
+    }
     return {
-      depDialogVisible:false,
+      depDialogVisible: false,
       vehicleForm: {
         contactUserName: '',
         contactPhone: '',
@@ -48,12 +60,12 @@ export default {
       rules: {
         contactUserName: [{ required: true, message: '请选择联系人', trigger: 'blur' }],
         contactPhone: [{ required: true, message: '请输入联系电话', trigger: 'blur' },
-        ],
+        { validator: checkTel, trigger: 'blur,change' } ],
         contactDeptName: [{ required: true, message: '请选择用车部门', trigger: 'blur' }],
-        timeLine: [{type:'array',required: true, message: '请选择用车时间', trigger: 'blur' }],
+        timeLine: [{ type: 'array', required: true, message: '请选择用车时间', trigger: 'blur' }],
       },
       personDialogVisible: false,
-      selDep: {name:'',id:''},
+      selDep: { name: '', id: '' },
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7;
@@ -72,45 +84,45 @@ export default {
     },
     updatePerson(reciver) {
       this.vehicleForm.contactUserName = reciver.reciUserName;
-      this.vehicleForm.contactPhone=reciver.mobileNumber;
-      this.selDep={name:reciver.reciDeptMajorName||reciver.reciDeptName,id:reciver.reciDeptMajorId||reciver.reciDeptId};
-      this.vehicleForm.contactDeptName=reciver.reciDeptMajorName||reciver.reciDeptName;
+      this.vehicleForm.contactPhone = reciver.mobileNumber;
+      this.selDep = { name: reciver.reciDeptMajorName || reciver.reciDeptName, id: reciver.reciDeptMajorId || reciver.reciDeptId };
+      this.vehicleForm.contactDeptName = reciver.reciDeptMajorName || reciver.reciDeptName;
       this.personDialogVisible = false;
     },
-    updateDep(dep){
-      this.selDep=dep;
-      this.vehicleForm.contactDeptName=dep.name;
+    updateDep(dep) {
+      this.selDep = dep;
+      this.vehicleForm.contactDeptName = dep.name;
     },
-    submitForm(){
+    submitForm() {
       this.$refs.vehicleForm.validate((valid) => {
         if (valid) {
-          var params={
-            startTime:this.vehicleForm.timeLine[0].getTime(),
-            endTime:this.vehicleForm.timeLine[1].getTime(),
-            contactUserName:this.vehicleForm.contactUserName,
-            contactPhone:this.vehicleForm.contactPhone,
-            contactDeptName:this.selDep.name,
-            contactDeptId:this.selDep.id
+          var params = {
+            startTime: this.vehicleForm.timeLine[0].getTime(),
+            endTime: this.vehicleForm.timeLine[1].getTime(),
+            contactUserName: this.vehicleForm.contactUserName,
+            contactPhone: this.vehicleForm.contactPhone,
+            contactDeptName: this.selDep.name,
+            contactDeptId: this.selDep.id
           }
-          this.$emit('submitMiddle',params);
+          this.$emit('submitMiddle', params);
         } else {
-          this.$message.warning('请检查填写字段')        
+          this.$message.warning('请检查填写字段')
           this.$emit('submitMiddle', false);
           return false;
         }
       });
     },
-    saveForm(){
+    saveForm() {
       // console.log(this.vehicleForm)
-      var params=JSON.stringify(Object.assign(this.vehicleForm,this.selDep));
-      this.$emit('saveMiddle',params);
+      var params = JSON.stringify(Object.assign(this.vehicleForm, this.selDep));
+      this.$emit('saveMiddle', params);
     },
-    getDraft(obj){
+    getDraft(obj) {
       console.log(obj)
-      this.combineObj(this.vehicleForm,obj);
-      this.combineObj(this.selDep,obj);
-      this.vehicleForm.timeLine=[];
-      obj.timeLine.forEach(t=>{
+      this.combineObj(this.vehicleForm, obj);
+      this.combineObj(this.selDep, obj);
+      this.vehicleForm.timeLine = [];
+      obj.timeLine.forEach(t => {
         this.vehicleForm.timeLine.push(new Date(t));
       })
     }

@@ -67,7 +67,8 @@ export default {
       'docTitle',
       'selConfident',
       'selUrgency',
-      'reciver'
+      'reciver',
+      'isSubmit'
     ])
   },
   beforeRouteLeave(to, from, next) {
@@ -112,10 +113,11 @@ export default {
         this.getDraft();
       } else {
         this.getDefaultReciver();
+        this.$refs.description.getSuggestTemp();
       }
     },
     submitDoc() {
-      this.$store.commit('SET_SUBMIT_LOADING', true)
+      this.$store.commit('SET_SUBMIT_LOADING', true);
       this.$refs.subject.submitForm();
     },
     submitStart(val) {
@@ -130,7 +132,6 @@ export default {
       }
     },
     submitMiddle(params) {
-      console.log(params);
       if (params) {
         this.middleParams = params;
         this.$refs.description.submitForm();
@@ -143,8 +144,31 @@ export default {
         params.id = this.$route.query.id
       }
       if (params) {
-        this.$store.dispatch('submitDoc', { params: Object.assign(params, this.middleParams), docTypeCode: this.doc.code, url: this.doc.url });
-        this.middleParams = '';
+        var temp = {
+          "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
+          "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
+          "taskDeptName": this.userInfo.deptVo.dept,
+          "taskDeptId": this.userInfo.deptVo.deptId,
+          "taskUserName": this.userInfo.name,
+          "taskUserId": this.userInfo.empId,
+          "docTypeCode": this.doc.code,
+          "docTitle": this.docTitle,
+          "isSubmit": 1
+        }
+        Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency, this.middleParams)
+        this.$http.post(this.doc.url, temp, { body: true })
+          .then(res => {
+            if (res.status == "0") {
+              this.$store.commit('setIsSubmit', true);
+              this.saveDoc();
+            } else {
+              this.$notify({ message: res.message, type: 'error' });
+              this.$store.commit(types.SET_SUBMIT_LOADING, false, )
+            }
+          }, res => {
+            this.$store.commit(types.SET_SUBMIT_LOADING, false, )
+            this.$notify({ message: '呈报公文失败，请重试！', type: 'error' });
+          })
       } else {
         this.$store.commit('SET_SUBMIT_LOADING', false)
       }
@@ -178,9 +202,10 @@ export default {
           "isSubmit": 0,
           "draft": {
             "draftContent": this.saveMiddlePara,
-            "files": params.files
+            "files": params.files,
+            "state": this.isSubmit ? 2 : 1
           },
-          "fileId": []
+          "fileId": [],
         }
         delete params.files;
         if (this.$route.query.id) {
@@ -188,22 +213,24 @@ export default {
         }
         this.$http.post(this.doc.url, Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency), { body: true })
           .then(res => {
-            this.$store.commit('SET_SUBMIT_LOADING', false)
+            this.$store.commit('SET_SUBMIT_LOADING', false)            
             if (res.status == 0) {
               this.$notify({
-                message: '保存公文成功',
+                message: this.isSubmit ? '呈报' : '保存' + '公文成功',
                 type: 'success'
               });
-              this.$router.push('/doc/docDraft');
+              this.$router.push(this.isSubmit ? '/doc/docTracking' : '/doc/docDraft');
             } else {
               this.$notify({
-                message: '保存公文失败',
+                message: this.isSubmit ? '呈报' : '保存' + '公文失败',
                 type: 'error'
               });
             }
+            this.$store.commit('setIsSubmit', false);
           })
       } else {
         this.$store.commit('SET_SUBMIT_LOADING', false)
+        this.$store.commit('setIsSubmit', false);
       }
     },
     getDefaultReciver() {

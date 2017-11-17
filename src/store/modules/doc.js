@@ -37,7 +37,8 @@ const state = {
     "conferenceNum": 0,
     "pendingNum": 0
   },
-  staticsPower:''
+  staticsPower:'',    //1所有 2无审批者 0无
+  isSubmit:false
 }
 
 const actions = {
@@ -252,7 +253,7 @@ const getters = {
   processData: state => state.processData,
   docTips: state => state.docTips,
   staticsPower: state => state.staticsPower,
-
+  isSubmit:state => state.isSubmit,
 }
 
 const mutations = {
@@ -298,6 +299,9 @@ const mutations = {
   },
   setStaticsPower(state,payLoad){
     state.staticsPower=payLoad;
+  },
+  setIsSubmit(state,payLoad){
+    state.isSubmit=payLoad
   }
 }
 

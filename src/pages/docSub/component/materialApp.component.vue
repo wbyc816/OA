@@ -13,7 +13,7 @@
         </money-input>
       </el-form-item>
       <el-form-item label="数量" class="inlinItem" prop="quantity">
-        <money-input v-model="materialForm.quantity" :maxlength="5" :prepend="false" :append="false" :hasDot="false"></money-input>
+        <money-input v-model="materialForm.quantity" :maxlength="5" :prepend="false" :append="false" type="int"></money-input>
       </el-form-item>
       <el-form-item label="备注" class="clearBoth">
         <el-col :span="19">

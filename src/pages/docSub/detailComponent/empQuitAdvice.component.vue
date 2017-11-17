@@ -1,5 +1,5 @@
 <template>
-  <div class="quitAdvice">
+  <div class="quitAdvice" v-if="info.signs||info.singInfoVo">
     <h4 class='doc-form_title'>工作交接登记</h4>
     <div class="boxWrap">
       <h4 class='doc-form_title' v-if="currentDepName">{{currentDepName}}</h4>
@@ -53,7 +53,7 @@
             <tr v-for="(sign,signIndex) in item.dimissionsSign">
               <td>{{sign.taskName}}</td>
               <td>{{sign.signContent}}</td>
-              <td>{{sign.signUserName}}</td>
+              <td>{{sign.takeOverName||sign.signUserName}}</td>
               <td>{{sign.remark}}</td>
               <td v-if="item.isOwnerDept==1&&signIndex==0" :rowspan="item.dimissionsSign.length" style="padding-right:13px;">{{item.empManagerSign.signContent}}</td>
             </tr>
@@ -76,7 +76,7 @@
       </el-tab-pane>
     </el-tabs>
     <el-button type="primary" class="submitButton" @click="submit" v-if="info.signs" :disabled="submitLoading">提交</el-button>
-    <el-button type="primary" class="submitButton" @click="docArchive" v-else :disabled="submitLoading">归档</el-button>
+    <el-button type="primary" class="submitButton" v-if="info.doc.isFied==1" @click="docArchive" v-else :disabled="submitLoading">归档</el-button>
   </div>
 </template>
 <script>
@@ -104,23 +104,33 @@ export default {
     }
   },
   created() {
-    if (this.info.signs) {
-      this.info.signs.forEach(s => {
-        if (s.isDeptPrincipalEnd == 1) {
-          this.leaderAdvice = s;
-          this.isLeader = true;
-          this.currentDepName = s.signDeptMajorName;
-        } else if (s.isView == 0) {
-          this.infoTable.push(s);
-          this.currentDepName = s.signDeptMajorName;
-        } else {
-          this.submitInfo.push(s);
-          this.currentDepName = s.signDeptMajorName;
+  },
+  watch:{
+    info: function (newVal) {
+      if (this.info.signs) {
+        this.info.signs.forEach(s => {
+          if (s.isDeptPrincipalEnd == 1) {
+            this.leaderAdvice = s;
+            this.isLeader = true;
+            this.currentDepName = s.signDeptMajorName;
+          } else if (s.isView == 0) {
+            this.infoTable.push(s);
+            this.currentDepName = s.signDeptMajorName;
+          } else {
+            this.submitInfo.push(s);
+            this.currentDepName = s.signDeptMajorName;
+          }
+        })
+      }
+      if (newVal) {
+        if (this.info.singInfoVo) {
+          this.activeName = this.info.singInfoVo[0].deptName;
+          console.log(this.activeName)
         }
-      })
-    } else if (this.info.singInfoVo) {
-      this.activeName = this.info.singInfoVo[0].deptName;
+      }
     }
+  },
+  mounted() {
   },
   computed: {
     ...mapGetters([
@@ -169,6 +179,7 @@ export default {
         "taskDeptId": this.userInfo.deptVo.deptId,
         "taskUserName": this.userInfo.name,
         "taskUserId": this.userInfo.empId,
+        "state":1
       }
       this.$http.post('/doc/docArchive', params, { body: true })
         .then(res => {

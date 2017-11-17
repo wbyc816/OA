@@ -46,7 +46,11 @@
         <el-table-column prop="taskUser" label="呈报人" width="100"></el-table-column>
         <el-table-column prop="docTitle" label="公文标题"></el-table-column>
         <el-table-column prop="taskTime" label="呈报时间" width="100"></el-table-column>
-        <el-table-column prop="nodeName" label="公文状态" width="80"></el-table-column>
+        <el-table-column prop="nodeName" label="公文状态" width="80">
+          <template scope="scope">
+            {{scope.row.nodeName=='end'?'已归档':'审批中'}}
+          </template>
+        </el-table-column>
         <el-table-column prop="currentUser" label="当前签批人" width="100"></el-table-column>
         <el-table-column prop="isOvertime" label="超时状态" width="80">
           <template scope="scope">

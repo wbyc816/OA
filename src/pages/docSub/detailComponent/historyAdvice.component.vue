@@ -10,7 +10,8 @@
       </li>
       <ul class="signBox" v-if="task.signInfo.length!=0">
         <li class="signStart"><i class="el-icon-caret-right"></i>会签开始</li>
-        <template v-if="task.signType==1">
+        <!-- 部门会签 -->
+        <template v-if="task.signType==1">    
           <el-collapse class="depSignBox">
             <el-collapse-item v-for="signBox in task.signInfo">
               <template slot="title">
@@ -31,7 +32,8 @@
             </el-collapse-item>
           </el-collapse>
         </template>
-        <template v-if="task.signType==2" v-for="info in task.signInfo">
+        <!-- 人员会签 -->
+        <template v-if="task.signType==2" v-for="info in task.signInfo">  
           <li class="personAdvice" :class="{disAgree:sign.state==2}" v-for="sign in info.deptSigns">
             <span class="isAgree"><i :class="sign.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
             <span class="userName">{{sign.signUserName}}</span>
@@ -213,6 +215,9 @@ $main:#0460AE;
   }
   .signBox {
     background: #EAECF7;
+    .personAdvice{
+      border-bottom: 1px solid #D5DADF;      
+    }
     .signStart,
     .signEnd {
       color: #fff;

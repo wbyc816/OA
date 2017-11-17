@@ -1,6 +1,6 @@
 <template>
   <div class="moenyInput">
-    <el-input :value="value" :class="{'hasUnit':append}" ref="input" @change="fomat" :maxlength="maxlength" @blur="blurInput" :readonly="readonly">
+    <el-input :value="value" :class="{'hasUnit':append}" ref="input" @change="fomat" :maxlength="maxlength" @blur="blurInput" :readonly="readonly" :disabled="disabled" :placeholder="placeholder">
       <template slot="prepend" v-if="prepend">
         <slot name="prepend"></slot>
       </template>
@@ -27,38 +27,34 @@ export default {
       type: Number,
       default: 10,
     },
-    hasDot: {
+    type: {
+      type: String,
+      default: 'money'
+    },
+    disabled: {
       type: Boolean,
-      default: true
+      default: false
     },
     readonly: {
       type: Boolean,
       default: false
+    },
+    placeholder: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {}
   },
-  created() {
-    // if(this.depts != '' || this.depts != undefined || this.depts != null){
-    //   this.organLoading = false;
-    // }
-  },
-  mounted() {
-
-  },
-  computed: {
-
-  },
-  watch: {
-
-  },
   methods: {
     fomat(val) {
-      if (this.hasDot) {
+      if (this.type == 'money') {
         val = val.toString().match(/^[1-9]([0-9]{0,})+(?:\.\d{0,2})?/);
-      } else {
+      } else if (this.type == 'int') {
         val = val.toString().match(/^[1-9][0-9]{0,}/)
+      } else if (this.type == 'invoice') {
+        val = val.toString().match(/^[0-9]([0-9]\,|[0-9]){0,}/)
       }
       if (val) {
         this.$emit('input', val[0]);
@@ -71,11 +67,18 @@ export default {
       }
     },
     blurInput(event) {
-      var temp = event.target.value.split('.');
-      if (temp.length == 2 && (temp[1] == undefined || temp[1] == '' || temp[1] == null)) {
-        this.$emit('input', temp[0]);
-        this.$emit('change', temp[0]);
-        this.$refs.input.setCurrentValue(temp[0]);
+      if (this.type == 'money') {
+        var temp = event.target.value.split('.');
+        if (temp.length == 2 && (temp[1] == undefined || temp[1] == '' || temp[1] == null)) {
+          this.$emit('input', temp[0]);
+          this.$emit('change', temp[0]);
+          this.$refs.input.setCurrentValue(temp[0]);
+        }
+      } else if (this.type == 'invoice') {
+        var temp = event.target.value.replace(/\,$/, '');
+        this.$emit('input', temp);
+        this.$emit('change', temp);
+        this.$refs.input.setCurrentValue(temp);
       }
     }
   }
@@ -88,19 +91,17 @@ $sub:#1465C0;
 .moenyInput {
 
   .el-input {
+    height:46px;
     .el-input-group__append,
     .el-input-group__prepend {
-      display: none;
+      display: table-cell;
     }
   }
   .hasUnit {
     input {
       padding-right: 30px;
     }
-    .el-input-group__append,
-    .el-input-group__prepend {
-      display: table-cell;
-    }
+
     .el-input-group__append {
       border: none;
       position: absolute;

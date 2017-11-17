@@ -37,7 +37,7 @@
             <i class="el-icon-close" @click="close"></i>
           </div>
           <ul class="nodeWrap" ref="nodeWrap">
-            <li v-for="(node,nodeIndex) in pathList" class="nodeBox" :class="{'isEdit':nodeIndex===activeNode,'isSign':node.type==4||node.type==5}">
+            <li v-for="(node,nodeIndex) in pathList" class="nodeBox" :class="{'isEdit':nodeIndex===activeNode,'isSign':node.type==4||node.type==5||node.type==7}">
               <el-tooltip :enterable="false" effect="dark" content="删除" placement="top">
                 <i class="el-icon-close nodeClose" @click="deleteNode(node,nodeIndex)"></i>
               </el-tooltip>
@@ -142,7 +142,7 @@ export default {
       var success = true;
       for (var i = 0; i < this.pathList.length; i++) {
         var p = this.pathList[i];
-        if (p.type == 4 || p.type == 5) { //判断会签不能为空
+        if (p.type == 4 || p.type == 5||p.type==7) { //判断会签不能为空
           if (i == 0) {
             this.$message.warning('建议路径不能以会签开始！');
             success = false;
@@ -191,8 +191,8 @@ export default {
             if (type == 1) {
               activeNode.children.push(node);
             }
-          } else if (activeNode.type == 5) { //会签添加
-            if (type == 2) {
+          } else if (activeNode.type == 5||activeNode.type == 7) { //会签添加
+            if (type == 2||type == 3) {
               activeNode.children.push(node);
             }
           } else if (activeNode.nodeName == 'sign') {
@@ -208,20 +208,19 @@ export default {
               activeNode.children.splice(this.activeNodeChild, 1, node);
               activeNode.state = 0;
             }
-          } else if (activeNode.type == 5) {
-            if (type == 2) {
+          } else if (activeNode.type == 5||activeNode.type == 7) {
+            if (type == 2||type==3) {
               activeNode.children.splice(this.activeNodeChild, 1, node);
               activeNode.state = 0;
             }
           }
         }
       } else { //添加
-        if (this.type == '0') { //审批
+        if (this.type == '0') { //审批添加
           if (this.pathList.length == 0 ? true : this.pathList[this.pathList.length - 1].typeId != node.typeId) {
             this.pathList.push(node);
           }
-        } else { //会签
-          if (type != 3) { //角色无会签
+        } else { //会签列表添加
             var last = this.pathList[this.pathList.length - 1]
             var children = last.children;
             if (!last.type) {
@@ -230,10 +229,9 @@ export default {
               children.push(node);
             } else if (last.type == 4 && type == 1) {
               children.push(node);
-            } else if (last.type == 5 && type == 2) {
+            } else if (last.type == 5 && (type == 2||type == 3)) {
               children.push(node);
             }
-          }
         }
         this.$nextTick(function() {
           this.$refs.nodeWrap.scrollTop = this.$refs.nodeWrap.scrollHeight;

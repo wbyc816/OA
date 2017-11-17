@@ -40,7 +40,7 @@
       </el-form-item>
       <el-form-item label="建议路径" class="textarea">
         <el-col :span='18'>
-          <p class="textContent suggestHtml" v-html="suggestHtml" style="padding-top: 5px;"></p>
+          <p class="textContent suggestHtml" v-html="suggestHtml"></p>
         </el-col>
       </el-form-item>
       <el-form-item label="审批内容" class="textarea">
@@ -356,6 +356,8 @@ $main:#0460AE;
     }
   }
   .suggestHtml {
+    line-height:20px;
+    padding-top:10px;
     i {
       color: $main;
       &.icon-jiantouyou {
