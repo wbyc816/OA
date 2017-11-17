@@ -140,24 +140,26 @@ export default {
     addBudget() {
       this.$refs.budgetForm.validate((valid) => {
         if (valid) {
-          var temp = {};
-          temp.budgetDept = this.$refs.budgetDept.currentLabels[0] + "/" + this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
-          temp.budgetMoney = this.budgetForm.budgetMoney;
-          temp.useBudget = this.useBudget;
-          temp.execRateStr = this.execRateStr;
-          temp.budgetDeptId = this.budgetForm.budgetDept[0];
-          temp.budgetDeptName = this.$refs.budgetDept.currentLabels[0];
-          temp.budgetItemId = this.budgetForm.budgetDept[this.budgetForm.budgetDept.length - 1];
-          temp.budgetItemName = this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
-          temp.budgetYear = this.budgetForm.year;
+          if(this.checkBudget()){
+            var temp = {};
+            temp.budgetDept = this.$refs.budgetDept.currentLabels[0] + "/" + this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
+            temp.budgetMoney = this.budgetForm.budgetMoney;
+            temp.useBudget = this.useBudget;
+            temp.execRateStr = this.execRateStr;
+            temp.budgetDeptId = this.budgetForm.budgetDept[0];
+            temp.budgetDeptName = this.$refs.budgetDept.currentLabels[0];
+            temp.budgetItemId = this.budgetForm.budgetDept[this.budgetForm.budgetDept.length - 1];
+            temp.budgetItemName = this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
+            temp.budgetYear = this.budgetForm.year;
+          
+            this.budgetTable.push(temp);
 
-          this.budgetTable.push(temp);
-
-          this.isDisable = true;
-          // this.budgetForm.year="";
-          this.$refs.budgetMoney.currentValue = "";
-          this.$refs.budgetForm.resetFields();
-          this.showData = 0;
+            this.isDisable = true;
+            // this.budgetForm.year="";
+            this.$refs.budgetMoney.currentValue = "";
+            this.$refs.budgetForm.resetFields();
+            this.showData = 0;
+          }
         } else {
           return false;
         }
@@ -176,6 +178,28 @@ export default {
       } else {
         this.$message.warning('请添加预算')
         this.$emit('submitMiddle', false);
+      }
+    },
+    getBudgetDep() {
+      var len = this.budgetForm.budgetDept.length;
+      var temp = this.budgetDeptList;
+      for (var i = 0; i < len; i++) {
+        temp = temp.find(dep => dep.budgetItemCode == this.budgetForm.budgetDept[i]);
+        if (temp.items && temp.items.length != 0) {
+          temp = temp.items;
+        }
+      }
+      return temp;
+    },
+    checkBudget() {
+      var dep = this.getBudgetDep();
+      var temp = this.budgetTable.find(b =>  b.budgetItemId == dep.budgetItemCode)
+     
+      if (temp == undefined) {
+        return true;
+      } else {
+        this.$message.warning('不能添加相同的预算科目')
+        return false
       }
     },
     saveForm() {
@@ -287,17 +311,6 @@ export default {
             this.budgetForm.bookType = this.bookTypes[0].dictCode
           }
         })
-    },
-    getBudgetDep() {
-      var len = this.budgetForm.budgetDept.length;
-      var temp = this.budgetDeptList;
-      for (var i = 0; i < len; i++) {
-        temp = temp.find(dep => dep.budgetItemCode == this.budgetForm.budgetDept[i]);
-        if (temp.items && temp.items.length != 0) {
-          temp = temp.items;
-        }
-      }
-      return temp;
     },
     blurInput(event) {
       var temp = event.target.value.split('.');

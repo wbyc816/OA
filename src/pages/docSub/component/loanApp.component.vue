@@ -34,7 +34,7 @@
       </el-form-item>
 
       <el-form-item label="收款账户" prop="bankAccount" class="flw50" >
-       <el-input v-model="loanAppForm.bankAccount" :maxlength="19"></el-input>
+         <el-input v-model="loanAppForm.bankAccount" ref="bankAccount" :maxlength="50" @change="changeBankAccount"></el-input>
       </el-form-item>
       </div>
     </el-form>
@@ -161,6 +161,16 @@ export default {
       } else {
         this.loanAppForm.appMoney = ''
         this.$refs.appMoney.setCurrentValue('')
+      }
+    },
+    changeBankAccount(val) {
+      val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
+      if (val) {
+        this.loanAppForm.bankAccount = val[0];
+        this.$refs.bankAccount.setCurrentValue(val[0]);
+      } else {
+        this.loanAppForm.bankAccount = ''
+        this.$refs.bankAccount.setCurrentValue('')
       }
     },
      changePayee(){
