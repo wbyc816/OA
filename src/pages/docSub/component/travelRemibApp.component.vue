@@ -14,7 +14,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="日期" label-width="100px" class="arrArea" prop="timeLine" key="timeLine" v-if="feeTypeCode!='FIN0604'">
-          <el-date-picker v-model="feeForm.timeLine" type="daterange" @change="topDateChange"></el-date-picker>
+          <el-date-picker v-model="feeForm.timeLine" type="daterange" @change="topDateChange" :picker-options="dateOptions"></el-date-picker>
         </el-form-item>
         <!-- 住宿 -->
         <el-form-item label="逗留城市" prop="city" class="clearBoth" key="city" v-if="feeTypeCode=='FIN0601'||feeTypeCode=='FIN0603'">
@@ -168,7 +168,7 @@
           {{year}}
         </el-form-item>
         <el-form-item label="预算机构/科目" prop="budgetDept" class="widthRight60">
-          <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%"></el-cascader>
+          <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%" :disabled="budgetTable.length>0"></el-cascader>
         </el-form-item>
         <ul class="budgetInfo clearfix clearBoth" v-show="budgetInfo">
           <li>年度预算{{budgetInfo.budgetTotal | toThousands}}元</li>
@@ -176,15 +176,15 @@
           <li>预算执行比例{{budgetInfo.execRateStr}}</li>
         </ul>
         <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
-          <money-input v-model="budgetForm.invoiceNum" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号" :append="false" type="invoice" :maxlength="250">
-            <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange">
+          <money-input v-model="budgetForm.invoiceNum" :disabled="activeInvoice!='FIN0201'||budgetTable.length>0" placeholder="用 , 分割多个票号" :append="false" type="invoice" :maxlength="250">
+            <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange" :disabled="budgetTable.length>0">
               <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
             </el-select>
           </money-input>
         </el-form-item>
         <el-form-item label="增值税税费总额" prop="taxMoney" v-if="activeInvoice=='FIN0201'" class="taxMoney">
-          <money-input v-model="budgetForm.taxMoney" style="width:50%" class="hasUnit" :maxlength="10" @change="tranMoney">
-            <el-select v-model="activeCurrency" style="width:100px" slot="prepend" @change="tranMoney">
+          <money-input v-model="budgetForm.taxMoney" style="width:50%" class="hasUnit" :maxlength="10" @change="tranMoney" :disabled="budgetTable.length>0">
+            <el-select v-model="activeCurrency" style="width:100px" slot="prepend" @change="tranMoney" :disabled="budgetTable.length>0">
               <el-option :label="item.currencyName" :value="item.currencyCode" v-for="item in currencyList"></el-option>
             </el-select>
             <template slot="append">元</template>
@@ -393,7 +393,8 @@ export default {
       appPerson: '',
       addTax: '',
       taxRmb: '',
-      isDraft: false
+      isDraft: false,
+      minDate: '',
     }
   },
   computed: {
@@ -426,6 +427,29 @@ export default {
       }
       return num
     },
+    dateOptions: function() {
+      var minDate = '';
+      var options = {};
+      if (this.feeTypeCode == 'FIN0601' || this.feeTypeCode == 'FIN0603') {
+        options = {
+          onPick(obj) {
+            if (obj.maxDate) {
+              minDate = ''
+            } else if (obj.minDate) {
+              minDate = obj.minDate;
+            }
+          },
+          disabledDate(time) {
+            if (minDate != '') {
+              return time.getTime() <= minDate.getTime();
+            } else {
+              return false
+            }
+          }
+        }
+      }
+      return options
+    },
     ...mapGetters([
       'submitLoading',
       'baseURL',
@@ -441,13 +465,15 @@ export default {
     this.getArea(); //逗留城市
     this.getAddTax() //增值税进项税额
     this.appPerson = {
-      reciUserName: this.userInfo.name,
-      reciUserId: this.userInfo.empId
+      name: this.userInfo.name,
+      empId: this.userInfo.empId
     }
     this.paymentForm.appUserName = this.userInfo.name;
+
   },
   mounted() {
     this.$emit('updateSuggest', 'DOC0601');
+
   },
   methods: {
     saveForm() {
@@ -556,12 +582,12 @@ export default {
       }).catch(() => {});
     },
     updatePerson(reciver) {
-      this.paymentForm.appUserName = reciver.reciUserName;
+      this.paymentForm.appUserName = reciver.name;
       this.appPerson = reciver;
       this.personDialogVisible = false;
       this.clearFeeForm();
-      this.budgetTable=[];
-      this.feeTable=[];
+      this.budgetTable = [];
+      this.feeTable = [];
       this.getRoomPrice();
     },
     priceChange() {
@@ -587,7 +613,7 @@ export default {
       if (this.feeTypeCode == 'FIN0604') {
         if (this.feeForm.isSend != '' && this.appPerson && this.feeForm.timeLine.length > 0 && this.feeForm.timeLine[0]) {
           var params = {
-            empId: this.appPerson.reciUserId,
+            empId: this.appPerson.empId,
             travelType: this.feeTypeCode,
             startDate: this.timeFilter(this.feeForm.timeLine[0].getTime(), 'date'),
             endDate: this.timeFilter(this.feeForm.timeLine[1].getTime(), 'date'),
@@ -615,7 +641,7 @@ export default {
     getRoomPrice() {
       if (this.feeForm.area && this.appPerson && this.roomType && this.feeTypeCode == 'FIN0601' && this.feeForm.timeLine.length > 0 && this.feeForm.timeLine[0]) {
         var params = {
-          empId: this.appPerson.reciUserId,
+          empId: this.appPerson.empId,
           cityCode: this.feeForm.area,
           roomType: this.roomType,
           travelType: this.feeTypeCode,
@@ -664,8 +690,8 @@ export default {
         "payeeUserId": this.paymentForm.empId,
         "payeeUser": this.paymentForm.payee,
         "payeeAccount": this.paymentForm.bankAccount,
-        "travelpayUser": this.appPerson.reciUserName,
-        "travelpayUserId": this.appPerson.reciUserId
+        "travelpayUser": this.appPerson.name,
+        "travelpayUserId": this.appPerson.empId
       }
       var paramsList = {
         travlepayStayList: [],

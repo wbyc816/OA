@@ -42,7 +42,7 @@
           <el-table-column prop="name" label="姓名" width="110"></el-table-column>
           <el-table-column prop="workNo" label="工号" width="80"></el-table-column>
           <el-table-column prop="workPlace" label="所属公司" width="150"></el-table-column>
-          <el-table-column prop="depts" label="部门" width="150"></el-table-column>
+          <el-table-column prop="deptParentName" label="部门" width="150"></el-table-column>
           <el-table-column prop="jobtitle" label="职务" width="150"></el-table-column>
           <el-table-column prop="phoneNumber" label="办公电话"></el-table-column>
           <el-table-column prop="mobileNumber" label="手机"></el-table-column>

@@ -15,7 +15,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="用车时间" prop="timeLine">
-        <el-date-picker v-model="vehicleForm.timeLine" type="datetimerange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+        <el-date-picker v-model="vehicleForm.timeLine" type="datetimerange" :editable="false" :clearable="false" style="width:100%" format="yyyy-MM-dd HH:mm" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updatePerson" :selfDisable="false" :visible.sync="personDialogVisible"></person-dialog>
@@ -38,12 +38,12 @@ export default {
     };
     var checkTel = (rule, value, callback) => {
       var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
-      var isMob = /^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+      var isMob = /^((\+?86)|(\(\+86\)))?(1[34578]\d{9})$/;
       if (value && value.length != 0) {
         if (isMob.test(value)||isPhone.test(value)) {
           callback();
         } else {
-          callback(new Error("手机号码格式有误"));          
+          callback(new Error("电话号码格式有误"));          
         }
       } else {
         callback();
@@ -69,7 +69,8 @@ export default {
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7;
-        }
+        },
+        format:'HH:mm',
       }
     }
   },
@@ -83,10 +84,10 @@ export default {
       this.personDialogVisible = true;
     },
     updatePerson(reciver) {
-      this.vehicleForm.contactUserName = reciver.reciUserName;
+      this.vehicleForm.contactUserName = reciver.name;
       this.vehicleForm.contactPhone = reciver.mobileNumber;
-      this.selDep = { name: reciver.reciDeptMajorName || reciver.reciDeptName, id: reciver.reciDeptMajorId || reciver.reciDeptId };
-      this.vehicleForm.contactDeptName = reciver.reciDeptMajorName || reciver.reciDeptName;
+      this.selDep = { name: reciver.deptParentName || reciver.depts, id: reciver.deptParentId || reciver.deptId };
+      this.vehicleForm.contactDeptName = reciver.deptParentName || reciver.depts;
       this.personDialogVisible = false;
     },
     updateDep(dep) {

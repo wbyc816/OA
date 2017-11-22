@@ -64,6 +64,10 @@
         <h1 class="title">开户行</h1>
         <p v-if="info" class="textContent">{{info[0].finPayment.supplierBank}}</p>
       </el-col>
+      <el-col :span="24" class="rightBorder" v-if="info[0].finPayment.supplierBankAccountCode">
+        <h1 class="title">收款账号</h1>
+        <p v-if="info" class="textContent">{{info[0].finPayment.supplierBankAccountCode}}</p>
+      </el-col>
       <el-col :span="24">
         <h1 class="title">发票</h1>
         <p v-if="info" class="textContent attch">

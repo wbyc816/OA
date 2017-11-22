@@ -207,16 +207,16 @@ export default {
     submitPerson() {
       if (this.dialogType == 'radio') {
         if (this.selPerson) {
-          var reciver = {
-            "reciDeptMajorName": this.selPerson.deptName,
-            "reciDeptMajorId": this.selPerson.deptParentId,
-            "reciDeptName": this.selPerson.depts,
-            "reciDeptId": this.selPerson.deptId,
-            "reciUserName": this.selPerson.name,
-            "reciUserId": this.selPerson.empId,
-            "mobileNumber": this.selPerson.mobileNumber
-          }
-          this.$emit('updatePerson', reciver);
+          // var reciver = {
+          //   "reciDeptMajorName": this.selPerson.deptName,
+          //   "reciDeptMajorId": this.selPerson.deptParentId,
+          //   "reciDeptName": this.selPerson.depts,
+          //   "reciDeptId": this.selPerson.deptId,
+          //   "reciUserName": this.selPerson.name,
+          //   "reciUserId": this.selPerson.empId,
+          //   "mobileNumber": this.selPerson.mobileNumber
+          // }
+          this.$emit('updatePerson', this.selPerson);
           this.$emit('update:visible', false)
           this.selPerson = '';
         } else {

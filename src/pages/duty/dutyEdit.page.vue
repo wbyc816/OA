@@ -1,6 +1,6 @@
 <template>
   <div id="dutyEdit" :class="{'scrollDisappear': scrollDisappear}">
-    <el-card>
+    <el-card class="searchOption">
       <div slot="header">
         <el-row>
           <el-col :span="4">
@@ -10,7 +10,7 @@
       </div>
       <el-row :gutter="10">
         <el-col :span="11">
-          <el-date-picker v-model="searchMsg.date" type="daterange" placeholder="起始及截止日期栏">
+          <el-date-picker v-model="searchMsg.date" type="daterange" placeholder="起始及截止日期栏" style="width:100%">
           </el-date-picker>
         </el-col>
         <el-col :span="5">
@@ -28,18 +28,18 @@
         </el-col>
       </el-row>
     </el-card>
-    <el-card>
+    <el-card class="tableData">
       <div slot="header">
         <el-row>
-          <el-col :span="3" class="titleLeft">
-            <span>编辑值班信息</span>
+          <el-col :span="4">
+            编辑值班信息
           </el-col>
         </el-row>
       </div>
       <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
-        <el-table-column type="index" width="50">
+        <el-table-column type="index" label=" " width="60">
         </el-table-column>
-        <el-table-column property="dutyDate" sortable label="日期" width="140">
+        <el-table-column property="dutyDate" label="日期" width="140">
         </el-table-column>
         <el-table-column property="deptName" label="部门" width="120">
         </el-table-column>
@@ -56,7 +56,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="paginateWrap" v-if="tableData.length">
+      <div class="paginateWrap" v-if="tableData.length!=0">
         <el-pagination @current-change="handleCurrentChange" :current-page.sync="paginate.Record" :page-sizes="paginate.pageSizes" :layout="paginate.layout" :total="paginate.total">
         </el-pagination>
       </div>
@@ -94,7 +94,6 @@
     </el-dialog>
   </div>
 </template>
-
 <script>
 import util from '../../common/util'
 import api from '../../fetch/api'
@@ -141,15 +140,19 @@ export default {
       'userInfo'
     ]),
     startDate() {
-      return this.searchMsg.date.length ? util.formatTime(this.searchMsg.date[0], 'yyyyMMdd') : ''
+      return this.searchMsg.date ? util.formatTime(this.searchMsg.date[0], 'yyyyMMdd') : ''
     },
     endDate() {
-      return this.searchMsg.date.length ? util.formatTime(this.searchMsg.date[1], 'yyyyMMdd') : ''
+      return this.searchMsg.date ? util.formatTime(this.searchMsg.date[1], 'yyyyMMdd') : ''
     }
   },
   created() {
-    this.searchMsg.date = [new Date(), new Date()]
-    this.search()
+    if (!this.userInfo.isDocsec || this.userInfo.isDocsec[1] != 1) {
+      this.$router.push('/duty/dutyDetail')
+    } else {
+      this.searchMsg.date = [new Date(), new Date()]
+      this.search()
+    }
   },
   methods: {
     handleCurrentChange() {
@@ -173,6 +176,9 @@ export default {
         if (data.status == '0' && data.data.totalSize) {
           this.tableData = dataTransform(data.data.ondutyVolist, fmts)
           this.paginate.total = Number(data.data.totalSize)
+        } else {
+          this.tableData = [];
+          this.paginate.total = 0;
         }
       })
     },
@@ -245,8 +251,8 @@ export default {
     deptList
   }
 }
-</script>
 
+</script>
 <style scope lang="scss">
 @import '../../assets/scss/color.scss';
 
@@ -254,9 +260,11 @@ export default {
   &.scrollDisappear {
     margin-right: 17px;
   }
-  ;
+  .el-table__body-wrapper {
+    overflow-x: hidden;
+  }
   .el-card {
-    padding: 0 20px;
+    padding: 0;
     .el-card__header {
       padding-left: 0;
       padding-right: 0;
@@ -319,8 +327,26 @@ export default {
       text-align: center!important;
     }
   }
+  .searchOption {
+    .el-card__header,
+    .el-card__body {
+      padding-left: 20px;
+    }
+  }
+  .tableData {
+    .el-card__header {
+      padding-left: 20px;
+      font-size: 18px;
+    }
+    .el-card__body {
+      padding: 0px;
+    }
+  }
   .paginateWrap {
-    margin: 20px auto 50px
+    margin: 20px auto 10px;
+    .el-pagination {
+      text-align: right;
+    }
   }
   .el-form-item__label {
     text-align: left
@@ -329,5 +355,5 @@ export default {
     content: ''
   }
 }
-</style>
 
+</style>

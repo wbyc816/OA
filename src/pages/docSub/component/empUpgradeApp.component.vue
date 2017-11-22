@@ -69,8 +69,8 @@ export default {
       });
     },
     updatePerson(reciver) {
-      this.upGradeForm.emp.name = reciver.reciUserName;
-      this.upGradeForm.emp.empId = reciver.reciUserId;
+      this.upGradeForm.emp.name = reciver.name;
+      this.upGradeForm.emp.empId = reciver.empId;
       this.dialogVisible = false;
     },
   }

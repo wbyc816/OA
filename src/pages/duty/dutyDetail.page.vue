@@ -1,12 +1,12 @@
 <template>
   <div id="dutyDetail">
-    <el-card>
+    <el-card class="searchOption">
       <div slot="header">
         <el-row>
           <el-col :span="4">
             今日值班
           </el-col>
-          <el-col class="titleRight" :offset="16" :span="4">
+          <el-col class="titleRight" :offset="16" :span="4" v-if="userInfo.isDocsec&&userInfo.isDocsec[1]==1">
             <i class="el-icon-date"></i>
             <a href="#/duty/dutyUpload" class="dutyUpload">新增值班信息</a>
           </el-col>
@@ -14,27 +14,27 @@
       </div>
       <el-row :gutter="10">
         <el-col :span="11">
-          <el-date-picker v-model="date" type="daterange" placeholder="起始及截止日期栏" range-separator=" 至 ">
+          <el-date-picker v-model="date" type="daterange" placeholder="起始及截止日期栏" range-separator=" 至 " style="width:100%">
           </el-date-picker>
         </el-col>
         <el-col :span="5">
           <dept-list @deptChange="deptChange"></dept-list>
         </el-col>
         <el-col :span="8">
-          <!-- <el-row :gutter="0">
-              <el-col :span="16">
-                <el-input v-model="empName" placeholder="值班人"></el-input>
-              </el-col>
-              <el-col :span="8">
-                <el-button class="search" @click="search" type="primary">搜索</el-button>
-              </el-col>
-            </el-row> -->
-          <el-button class="search" @click="search" type="primary">搜索</el-button>
+          <el-row :gutter="0">
+            <el-col :span="16">
+              <el-input v-model="empName" placeholder="值班人"></el-input>
+            </el-col>
+            <el-col :span="8">
+              <el-button class="search" @click="search" type="primary">搜索</el-button>
+            </el-col>
+          </el-row>
+          <!-- <el-button class="search" @click="search" type="primary">搜索</el-button> -->
         </el-col>
       </el-row>
     </el-card>
-    <el-card>
-      <div slot="header">
+    <el-card class="tableData">
+      <div slot="header" v-if="userInfo.isDocsec&&userInfo.isDocsec[1]==1">
         <el-row class="title">
           <el-col class="titleRight" :offset="20" :span="4">
               <i class="el-icon-edit"></i>
@@ -69,7 +69,7 @@ import api from '../../fetch/api'
 import dataTransform from '../../common/dataTransform'
 import { fmts } from '../../common/dutyConfig'
 import deptList from '../../components/deptList.component'
-
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -95,7 +95,10 @@ export default {
     },
     endDate() {
       return this.date.length!=0&&this.date[1] ? util.formatTime(this.date[1], 'yyyyMMdd') : ''
-    }
+    },
+     ...mapGetters([
+      'userInfo'
+    ])
   },
   created() {
     const now = util.formatTime(new Date(), 'yyyyMMdd')
@@ -150,8 +153,11 @@ export default {
 
 <style scope lang="scss">
 #dutyDetail {
+  .el-table__body-wrapper{
+    overflow-x: hidden;
+  }
   .el-card {
-    padding: 0 20px;
+    padding: 0;
     .el-card__header {
       padding-left: 0;
       padding-right: 0;
@@ -181,11 +187,24 @@ export default {
       text-align: center!important;
     }
   }
+  .searchOption{
+    .el-card__header,.el-card__body{
+      padding-left:20px;
+    }
+  }
+  .tableData{
+    .el-card__body{
+      padding-top:0px;
+    }
+  }
   .title {
     height: 22px;
   }
   .paginateWrap {
-    margin: 20px auto 50px
+    margin: 20px auto 50px;
+    .el-pagination{
+          text-align: right;
+    }
   }
   .search{             // 临时search
     transform: translateX(-7px)

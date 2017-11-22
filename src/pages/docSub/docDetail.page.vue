@@ -217,7 +217,7 @@ export default {
       suggestHtml: '',
       archiveState: '1',
       isRedFile: false,
-      activeContent: '1'
+      activeContent: ['1']
     }
   },
   created() {
@@ -272,7 +272,7 @@ export default {
               this.isRedFile = true;
             }
             this.handleSuggest();
-            this.activeContent = '';
+            this.activeContent = [];
           }
         }, res => {
 
@@ -379,7 +379,11 @@ export default {
     },
     dialogSubmit() {
       if (this.archiveForm.persons.length > 0) {
-        this.docArchive(false);
+        if (this.docDetialInfo.task[0].state == 3) {
+          this.docDistribution();
+        } else {
+          this.docArchive(false);
+        }
       } else {
         this.$message.warning('请选择收件人！');
       }
@@ -401,7 +405,7 @@ export default {
         var temp = {
           "reciveDeptMajorId": person.deptParentId,
           "reciveDeptId": person.deptId,
-          "reciveDeptName": person.deptName,
+          "reciveDeptName": person.deptParentName,
           "reciveUserId": person.empId,
           "reciveUserName": person.name,
         }
@@ -410,10 +414,18 @@ export default {
       })
       this.$http.post('/doc/docDistribution', params, { body: true })
         .then(res => {
-          if (res.status == 0) {
-            this.$message.success('归档并分发成功！');
+          if (this.docDetialInfo.task[0].state == 3) {
+            if (res.status == 0) {
+              this.$message.success('分发成功！');
+            } else {
+              this.$message.error(res.message)
+            }
           } else {
-            this.$message('归档成功，分发失败！')
+            if (res.status == 0) {
+              this.$message.success('归档并分发成功！');
+            } else {
+              this.$message('归档成功，分发失败！')
+            }
           }
           this.DialogArchiveVisible = false;
           this.DialogSubmitVisible = false;
@@ -545,7 +557,7 @@ $sub:#1465C0;
     }
   }
   .el-card__header {
-    margin-bottom: 10px;
+    // margin-bottom: 10px;
   }
   .attch {
     color: $main;
@@ -582,16 +594,15 @@ $sub:#1465C0;
     border-bottom: 1px dashed #D5DADF;
   }
   .baseInfoBox {
-    margin-top: 15px;
     padding-bottom: 10px;
     .el-col {
       border-bottom: 1px solid #D5DADF;
       padding: 5px 18px 5px 24px;
-      min-height:57px;
+      min-height: 57px;
       overflow: hidden;
-      display: flex;
+      display: table;
       font-size: 15px;
-      align-items: center;
+      table-layout: fixed;
     }
     .rightBorder {
       border-right: 1px solid #D5DADF;
@@ -601,9 +612,14 @@ $sub:#1465C0;
     }
     .title {
       width: 140px;
+      display:table-cell;
+      vertical-align:middle;
+      word-wrap:break-word;
     }
     .textContent {
-      flex: 1;
+      word-wrap:break-word;
+      display:table-cell;
+      vertical-align:middle;
       overflow: hidden;
       word-wrap: break-word;
       line-height: 19px;

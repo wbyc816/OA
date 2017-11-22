@@ -133,12 +133,12 @@ export default {
       this.combineObj(this.manuscriptForm, obj.manuscriptForm, ['issueDate']);
       this.files=obj.files;
       if (obj.manuscriptForm.issueDate) {
-        this.manuscriptForm.issueDate = new Date(obj.issueDate);
+        this.manuscriptForm.issueDate = new Date(obj.manuscriptForm.issueDate);
       }
     },
     updateSign(reciver) {
-      this.manuscriptForm.signName = reciver.reciUserName;
-      this.manuscriptForm.signId = reciver.reciUserId;
+      this.manuscriptForm.signName = reciver.name;
+      this.manuscriptForm.signId = reciver.empId;
       this.signDialogVisible = false;
     },
     updateFileSend(params) {

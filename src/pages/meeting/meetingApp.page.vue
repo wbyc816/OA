@@ -61,7 +61,7 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="通知内容" prop="messageContent" v-show="appForm.isMessage==1">
-            <el-input type="textarea" :rows="8" resize='none' v-model="appForm.messageContent"  :maxlength="100"></el-input>
+            <el-input type="textarea" :rows="8" resize='none' v-model="appForm.messageContent" :maxlength="100"></el-input>
           </el-form-item>
         </el-form>
         <div class='doc-form-submit_btn'>
@@ -137,7 +137,9 @@ export default {
     ])
   },
   created() {
-
+    if (!this.userInfo.isDocsec || this.userInfo.isDocsec[0] != 1) {
+      this.$router.push('/meeting/meetingSearch/1')
+    }
   },
   methods: {
     updatePerson(list) {
@@ -157,7 +159,7 @@ export default {
     beginTimeChange(val) {
       if (this.appForm.beginTime) {
         this.appForm.beginTime = new Date(this.appForm.beginTime.setSeconds(0));
-        this.endOption = this.timeFilter(this.appForm.beginTime.setSeconds(0)+60*1000,'second');
+        this.endOption = this.timeFilter(this.appForm.beginTime.setSeconds(0) + 60 * 1000, 'second');
       }
       this.appForm.endTime = '';
     },
@@ -252,27 +254,27 @@ export default {
 #meetingApp {
   .docBaseBox {
     padding-right: 150px;
-    border-bottom:none;
+    border-bottom: none;
     .el-form-item__error {
       padding-left: 6px;
     }
-    .el-radio-button__inner{
-      width:100px;
-      height:45px;
+    .el-radio-button__inner {
+      width: 100px;
+      height: 45px;
       line-height: 45px;
-      padding:0;
+      padding: 0;
     }
   }
   .doc-form-submit_btn {
     button {
       margin-left: 128px;
       width: 160px;
-      height:50px;
+      height: 50px;
     }
   }
-  .inside{
-    .el-radio-button__inner{
-      width:90px;
+  .inside {
+    .el-radio-button__inner {
+      width: 90px;
     }
   }
 }

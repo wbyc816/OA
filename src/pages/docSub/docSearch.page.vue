@@ -9,7 +9,7 @@
           <th v-for="title in tableTitle">{{title}}</th>
         </tr>
       </thead>
-      <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">
+      <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree==='0'}">
         <tr>
           <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
           <router-link tag="td" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}" class="linkTitle">
@@ -19,8 +19,9 @@
             <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
             
           </router-link>
-          <td>{{doc.taskUser}}</td>
+          <td><span>{{doc.taskUser}}</span></td>
           <td>{{doc.taskTime}}</td>
+          <td>{{doc.endUserName}}</td>
           <td>
             <el-tooltip content="查看" placement="top" :enterable="false" effect="light">
               <router-link tag="i" class="link iconfont icon-eye" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
@@ -39,7 +40,7 @@
 import SearchOptions from '../../components/searchOptions.component'
 import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
-const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '操作']
+const tableTitle = ['', '公文名称', '呈报人', '呈报时间','归档人', '操作']
 
 export default {
   components: {
@@ -151,15 +152,15 @@ $purple: #0460AE;
     text-align: right;
     margin-top: 20px;
   }
-  thead {
-    $widths: (1: 5%, 2: 50%, 3: 10%, 4: 11%, 6: 10%);
-    @each $num,
-    $width in $widths {
-      th:nth-child(#{$num}) {
-        width: $width;
-      }
-    }
-  }
+  // thead {
+  //   $widths: (1: 5%, 2: 50%, 3: 10%, 4: 11%, 6: 10%);
+  //   @each $num,
+  //   $width in $widths {
+  //     th:nth-child(#{$num}) {
+  //       width: $width;
+  //     }
+  //   }
+  // }
 }
 
 </style>

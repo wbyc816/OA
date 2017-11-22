@@ -57,7 +57,9 @@ export default {
       doc: '',
       saveStartPara: '',
       saveMiddlePara: '',
-      reciverName: ''
+      reciverName: '',
+      submitParam: '',
+      docNo: ''
     }
   },
   computed: {
@@ -68,7 +70,8 @@ export default {
       'selConfident',
       'selUrgency',
       'reciver',
-      'isSubmit'
+      'isSubmit',
+      'taskUser'
     ])
   },
   beforeRouteLeave(to, from, next) {
@@ -145,30 +148,26 @@ export default {
       }
       if (params) {
         var temp = {
-          "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
-          "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
-          "taskDeptName": this.userInfo.deptVo.dept,
-          "taskDeptId": this.userInfo.deptVo.deptId,
-          "taskUserName": this.userInfo.name,
-          "taskUserId": this.userInfo.empId,
+          "taskDeptMajorName": this.taskUser.deptParentName,
+          "taskDeptMajorId": this.taskUser.deptParentId,
+          "taskDeptName": this.taskUser.deptName,
+          "taskDeptId": this.taskUser.deptId,
+          "taskUserJobTitle": this.taskUser.jobtitle,
+          "taskEmpPostId": this.taskUser.postId,
+          "taskPostrankId": this.taskUser.postRankId,
+          "taskPostrankName": this.taskUser.postRankName,
+          "taskSupervisory": this.taskUser.supLevel,
+          "taskUserName": this.taskUser.empName,
+          "taskUserId": this.taskUser.empId,
           "docTypeCode": this.doc.code,
           "docTitle": this.docTitle,
-          "isSubmit": 1
+          "docNo": this.docNo,
+          "isSubmit": 1,
         }
         Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency, this.middleParams)
-        this.$http.post(this.doc.url, temp, { body: true })
-          .then(res => {
-            if (res.status == "0") {
-              this.$store.commit('setIsSubmit', true);
-              this.saveDoc();
-            } else {
-              this.$notify({ message: res.message, type: 'error' });
-              this.$store.commit(types.SET_SUBMIT_LOADING, false, )
-            }
-          }, res => {
-            this.$store.commit(types.SET_SUBMIT_LOADING, false, )
-            this.$notify({ message: '呈报公文失败，请重试！', type: 'error' });
-          })
+        this.$store.commit('setIsSubmit', true);
+        this.submitParam = temp;
+        this.saveDoc();
       } else {
         this.$store.commit('SET_SUBMIT_LOADING', false)
       }
@@ -189,40 +188,60 @@ export default {
       this.$refs.description.saveForm();
     },
     saveEnd(params) {
+      var finalParam;
       if (params) {
-        var temp = {
-          "docTitle": this.docTitle,
-          "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
-          "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
-          "taskDeptName": this.userInfo.deptVo.dept,
-          "taskDeptId": this.userInfo.deptVo.deptId,
-          "taskUserName": this.userInfo.name,
-          "taskUserId": this.userInfo.empId,
-          "docTypeCode": this.doc.code,
-          "isSubmit": 0,
-          "draft": {
-            "draftContent": this.saveMiddlePara,
-            "files": params.files,
-            "state": this.isSubmit ? 2 : 1
-          },
-          "fileId": [],
+        if (this.isSubmit) { //提交
+          finalParam = {
+            "draft": {
+              "draftContent": this.saveMiddlePara,
+              "files": params.files,
+              "state": this.isSubmit ? 2 : 1
+            }
+          };
+          Object.assign(finalParam, this.submitParam)
+        } else { //保存草稿箱
+          var temp = {
+            "docNo": this.docNo,
+            "docTitle": this.docTitle,
+            "taskDeptMajorName": this.taskUser.deptParentName,
+            "taskDeptMajorId": this.taskUser.deptParentId,
+            "taskDeptName": this.taskUser.deptName,
+            "taskDeptId": this.taskUser.deptId,
+            "taskUserJobTitle": this.taskUser.jobtitle,
+            "taskEmpPostId": this.taskUser.postId,
+            "taskPostrankId": this.taskUser.postRankId,
+            "taskPostrankName": this.taskUser.postRankName,
+            "taskSupervisory": this.taskUser.supLevel,
+            "taskUserName": this.taskUser.empName,
+            "taskUserId": this.taskUser.empId,
+            "docTypeCode": this.doc.code,
+            "isSubmit": 0,
+            "draft": {
+              "draftContent": this.saveMiddlePara,
+              "files": params.files,
+              "state": this.isSubmit ? 2 : 1
+            },
+            "fileId": [],
+          }
+          delete params.files;
+          if (this.$route.query.id) {
+            temp.id = this.$route.query.id
+          }
+          Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency);
+          finalParam = temp;
         }
-        delete params.files;
-        if (this.$route.query.id) {
-          temp.id = this.$route.query.id
-        }
-        this.$http.post(this.doc.url, Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency), { body: true })
+        this.$http.post(this.doc.url, finalParam, { body: true })
           .then(res => {
-            this.$store.commit('SET_SUBMIT_LOADING', false)            
+            this.$store.commit('SET_SUBMIT_LOADING', false)
             if (res.status == 0) {
               this.$notify({
-                message: this.isSubmit ? '呈报' : '保存' + '公文成功',
+                message: (this.isSubmit ? '呈报' : '保存') + '公文成功',
                 type: 'success'
               });
               this.$router.push(this.isSubmit ? '/doc/docTracking' : '/doc/docDraft');
             } else {
               this.$notify({
-                message: this.isSubmit ? '呈报' : '保存' + '公文失败',
+                message: res.message,
                 type: 'error'
               });
             }
@@ -245,6 +264,11 @@ export default {
                 "reciDeptId": res.data.reciDeptId,
                 "reciUserName": res.data.reciUserName,
                 "reciUserId": res.data.reciUserId,
+                "reciUserJobTitle": res.data.reciJobtitle, //接收人职位
+                "reciPostrankId": res.data.reciPostrankId, //职位id
+                "reciEmpPostId": res.data.reciEmpPostId,
+                "reciPostrankName": res.data.reciPostrankName, //职级名称
+                "reciSupervisory": res.data.reciSupervisoryLevel //安全级别
               }
               this.$store.commit('setReciver', receiver);
               this.reciverName = res.data.reciUserName;
@@ -258,22 +282,36 @@ export default {
       this.$http.post('/doc/getDocDraftsDetail', { docId: this.$route.query.id })
         .then(res => {
           if (res.status == 0) {
-            this.$store.commit('setReciver', res.data.receiver);
-            this.$store.commit('setConfident', res.data.selConfident);
-            this.$store.commit('setUrgency', res.data.selUrgency);
-            // this.$store.commit('setDocTtile', res.data.docTtile);
+            //公文编号
+            this.docNo = res.data.docNo;
+            // 收件人
             this.reciverName = res.data.receiver.reciUserName;
+            this.$store.commit('setReciver', res.data.receiver);
+            // 重要程度
+            this.$store.commit('setConfident', res.data.selConfident);
+            // 密级程度
+            this.$store.commit('setUrgency', res.data.selUrgency);
+            //呈报人
+            this.$refs.subject.ruleForm.taskUserID = res.data.taskUser.deptId + res.data.taskUser.jobtitle;
+            this.$store.commit('setTaskUser', res.data.taskUser);
+            //公文标题
             this.$refs.subject.updateTitle(res.data.docTtile);
+            //请示内容
             this.$refs.description.$refs.editor.setContent(res.data.des);
-            this.$refs.description.initAttchment(JSON.parse(res.data.files));
+            //附件
+            if (res.data.files) {
+              this.$refs.description.initAttchment(JSON.parse(res.data.files));
+            }
+            // 建议路径
             if (res.data.path) {
               this.$refs.description.updatePath(res.data.path);
             }
+            // 附加公文
             if (res.data.docs.length != 0) {
               this.$refs.description.docs = res.data.docs;
             }
             if (this.doc.code != 'CPD') {
-              this.$refs.middleCom.getDraft(JSON.parse(res.data.draftContent));
+              this.$refs.middleCom.getDraft(JSON.parse(res.data.draftContent),res.data);
             }
           } else {
 

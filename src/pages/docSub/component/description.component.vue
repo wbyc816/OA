@@ -13,7 +13,7 @@
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
         <div class="pathBox clearfix" v-html="pathHtml">
         </div>
-        <el-button size="small" type="text" @click="pathDialogVisible=true"><i class="iconfont icon-edit"></i>编辑</el-button>
+        <el-button size="small" type="text" @click="pathDialogVisible=true" :disabled="disableEditSuggest"><i class="iconfont icon-edit"></i>编辑</el-button>
       </el-form-item>
       <el-form-item label="附件" prop="attchment">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
@@ -44,7 +44,7 @@
       </div>
       <search-options @search="setOptions"></search-options>
       <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="250" :row-class-name="tableRowClassName" v-loading="searchLoading">
-        <el-table-column prop="docNo" label="公文编号" width="190"></el-table-column>
+        <el-table-column prop="docNo" label="公文编号" width="200"></el-table-column>
         <el-table-column prop="docTypeName" label="公文类型" width="110"></el-table-column>
         <el-table-column prop="docTitle" label="标题"></el-table-column>
         <el-table-column prop="taskUser" label="呈报人" width="120"></el-table-column>
@@ -104,7 +104,8 @@ export default {
       successUps: [],
       difLength: 0,
       upCount: 0,
-      isSaveForm: false
+      isSaveForm: false,
+      disableEditSuggest: false
     }
   },
   computed: {
@@ -209,7 +210,7 @@ export default {
     checkSuggest() {
       var success = true;
       this.ruleForm.path.forEach((p, i, arr) => {
-        if (p.type == 4 || p.type == 5||p.type==7) { //判断会签不能为空
+        if (p.type == 4 || p.type == 5) { //判断会签不能为空
           if (!p.children || p.children.length == 0) {
             this.$message.warning('建议路径内会签列表不能为空！');
             success = false
@@ -220,9 +221,8 @@ export default {
             this.$message.warning('建议路径不能以会签结束！');
             success = false
           }
-
         } else {
-          if (p.state && p.state == 1) {
+          if (p.state && p.state == 1 && p.type != 7) {
             this.$message.warning(p.typeIdName + '需替换！');
             success = false
           }
@@ -233,7 +233,7 @@ export default {
     saveForm() {
       this.isSaveForm = true;
       this.checkAttchment(); //检查是否需要上传
-      if (this.difLength != 0&&!this.isSubmit) {
+      if (this.difLength != 0 && !this.isSubmit) {
         this.$refs.myUpload.submit();
       } else {
         if (this.checkSuggest()) {
@@ -244,7 +244,7 @@ export default {
             files: JSON.stringify(this.ruleForm.attchment)
           }
           this.$emit('saveEnd', params);
-        }else{
+        } else {
           this.$emit('saveEnd', false);
         }
       }
@@ -400,20 +400,39 @@ export default {
       this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.userInfo.empId, docTypeSubCode: param })
         .then(res => {
           if (res.status == 0) {
-            this.handleSuggestTemp(res.data);
+            this.disableEditSuggest = res.data.isEdit == 0 ? false : true;
+            this.handleSuggestTemp(res.data.paths);
           } else {
 
           }
         })
     },
     handleSuggestTemp(arr) {
-      arr.forEach(s => {
-        if (s.type == 4 || s.type == 5||s.type==7) {
+      var temp = [];
+      var start;
+      arr.forEach((s, index) => {
+        if (s.type == 4 || s.type == 5) {
           s.nodeName = 'sign';
           s.children = [];
+          temp.push(s);
+        } else if (s.type == 7) {
+          if (start) {
+            start=0;
+          } else {
+            start = index;
+            s.nodeName = 'sign';
+            s.children = [];
+            temp.push(s);
+          }          
+        } else {
+          if (start) {
+            temp[start].children.push(s);
+          } else {
+            temp.push(s);
+          }
         }
       })
-      this.ruleForm.path = arr;
+      this.ruleForm.path = temp;
     },
   }
 }

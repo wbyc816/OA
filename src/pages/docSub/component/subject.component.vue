@@ -2,14 +2,15 @@
   <div class="docBaseBox">
     <h4 class='doc-form_title'>基本信息</h4>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px">
-      <!-- <el-form-item class='form-box' label="呈报人">
-        <el-input class="search selPerson" v-model="ruleForm.rec" :readonly="true">
-          <template slot="append">
-            <el-button @click='selectPerson(false)'>选择</el-button>
-            <i class="iconfont icon-renyuanshezhi" @click="selectPerson(true)"></i>
-          </template>
-        </el-input>
-      </el-form-item> -->
+      <el-form-item class='form-box' label="呈报人" prop="taskUserID">
+        <el-select v-model="ruleForm.taskUserID" style="width:100%" @change="changeTaskUser" :disabled="taskUserList.length<2" class="taskUserSel">
+          <el-option v-for="item in taskUserList" :key="item.deptId+item.jobtitle" :label="item.empName" :value="item.deptId+item.jobtitle">
+            <span style="float: left">{{ item.empName }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{item.deptName}} / {{ item.jobtitle }}</span>
+          </el-option>
+        </el-select>
+        <span class="taskUserInfo" v-if="taskUser">{{taskUser.deptName}} / {{ taskUser.jobtitle }}</span>
+      </el-form-item>
       <el-form-item class='form-box' :label="reciverTtitle" prop="rec">
         <el-input class="search selPerson" v-model="ruleForm.rec" :readonly="true">
           <template slot="append">
@@ -63,6 +64,7 @@ export default {
         confident: '',
         urgency: '',
         confidentiality: '',
+        taskUserID: ''
       },
       searchForm: {
         name: ''
@@ -72,13 +74,17 @@ export default {
           { required: true, message: '请选择收件人' },
 
         ],
+        taskUserID: [
+          { required: true, message: '请选择呈报人' },
+
+        ],
         sub: [
           { required: true, message: '请输入标题', trigger: 'blur,change' },
           // { min: 2, max: 5, message: '长度在 1 到 100 个字符之间', trigger: 'change' }
         ],
       },
       isDefault: false,
-
+      taskUserList: []
     }
   },
   computed: {
@@ -92,7 +98,8 @@ export default {
       'docTitle',
       'searchLoading',
       'searchRes',
-      'reciver'
+      'reciver',
+      'taskUser'
     ])
   },
   watch: {
@@ -106,8 +113,15 @@ export default {
     this.$store.dispatch('getConfident');
     this.$store.dispatch('getUrgency');
     this.$store.dispatch('getAdminStatus');
+    this.getTaskPerson();
   },
   methods: {
+    changeTaskUser(val) {
+      var user = this.taskUserList.find(t => (t.deptId + t.jobtitle) == val);
+      if (user) {
+        this.$store.commit('setTaskUser', user);
+      }
+    },
     selectPerson(val) {
       this.isDefault = val;
       this.dialogTableVisible = true;
@@ -126,12 +140,17 @@ export default {
     },
     updatePerson(reciver) {
       var temp = {
-        "reciDeptMajorName": reciver.reciDeptMajorName,
-        "reciDeptMajorId": reciver.reciDeptMajorId,
-        "reciDeptName": reciver.reciDeptName,
-        "reciDeptId": reciver.reciDeptId,
-        "reciUserName": reciver.reciUserName,
-        "reciUserId": reciver.reciUserId,
+        "reciDeptMajorName": reciver.deptParentName,
+        "reciDeptMajorId": reciver.deptParentId,
+        "reciDeptName": reciver.depts,
+        "reciDeptId": reciver.deptId,
+        "reciUserName": reciver.name,
+        "reciUserId": reciver.empId,
+        "reciUserJobTitle": reciver.jobtitle, //接收人职位
+        "reciEmpPostId": reciver.postId,
+        "reciPostrankId": reciver.postrankId, //职位id
+        "reciPostrankName": reciver.postRankName, //职级名称
+        "reciSupervisory": reciver.supLevel //安全级别
       }
       this.$store.commit('setReciver', temp);
       this.dialogTableVisible = false;
@@ -166,12 +185,26 @@ export default {
       });
     },
     setDefault(person) {
-      this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId, taskDeptId: this.userInfo.deptId, reciId: person.reciUserId, reciDeptId: person.reciDeptId })
+      this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId, taskEmpPostId: this.taskUser.postId, reciId: person.reciUserId, reciEmpPostId: person.reciEmpPostId })
         .then(res => {
           if (res.status == 0) {
             this.$message.success('设置默认收件人成功！');
           } else {
             this.$message.error('设置默认收件人失败,' + res.message);
+          }
+        })
+    },
+    getTaskPerson() {
+      this.$http.post('emp/getTaskUserList', { empId: this.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            this.taskUserList = res.data;
+            if (!this.$route.query.id) {
+              this.ruleForm.taskUserID = res.data[0].deptId + res.data[0].jobtitle;
+              this.$store.commit('setTaskUser', res.data[0]);
+            }
+          } else {
+
           }
         })
     },
@@ -214,6 +247,18 @@ $main:#0460AE;
     font-size: 12px;
     line-height: 1;
     color: #3F51B5;
+  }
+  .taskUserSel {
+    .el-input.is-disabled .el-input__inner {
+      color: #8492a6;
+    }
+  }
+  .taskUserInfo {
+    position: absolute;
+    top: 6px;
+    font-size: 13px;
+    color: #8492a6;
+    right: 31px;
   }
 }
 

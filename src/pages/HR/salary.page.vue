@@ -160,7 +160,7 @@
         </el-row>
         <el-row>
             <el-col :span="24">
-              上述各项小时生产数据由人力资源部薪酬管理处根据各业务部门所提供的生产数据核算，如有疑问可与部门考勤专员联系，点此<a href="#">查询联系方式及计算公式。</a>
+              上述各项小时生产数据由人力资源部薪酬管理处根据各业务部门所提供的生产数据核算，如有疑问可与部门考勤专员联系，点此<a :href="salaryDesUrl" target="_blank">查询联系方式及计算公式。</a>
             </el-col>
         </el-row>
       </div>
@@ -184,7 +184,8 @@ export default {
       salaryType:0,
       paramsMonth:"",
       salaryDialogVisible:false,
-      pageTitle:"最新工资单"
+      pageTitle:"最新工资单",
+      salaryDesUrl:''
     }
   },
   computed: {
@@ -205,12 +206,24 @@ export default {
     }else{
       this.pageTitle="最新工资单"
     }
-  },beforeRouteUpdate(to, from, next){
+    this.getWageStatement();
+  },
+  beforeRouteUpdate(to, from, next){
     next();
     this.paramsMonth=this.$route.params.salaryMonth;
     this.checkPassword();
   },
   methods: {
+    getWageStatement(){
+      this.$http.post('/doc/getWageStatement')
+      .then(res=>{
+        if(res.status==0){
+          this.salaryDesUrl=res.data
+        }else{
+
+        }
+      })
+    },
     checkPassword(){
       if(this.getCookie('salaryAccount')==this.userInfo.empId){
         this.getData();

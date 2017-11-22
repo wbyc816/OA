@@ -56,7 +56,7 @@ export default {
         state: [{ required: true, message: '请选择会签意见' }],
       },
       dialogTableVisible: false,
-      reciver:'',
+      reciver: '',
     }
   },
   computed: {
@@ -65,8 +65,8 @@ export default {
       'submitLoading'
     ])
   },
-  created(){
-     if (this.docDetail.defaultSuggestVo.reciUserId) {
+  created() {
+    if (this.docDetail.defaultSuggestVo.reciUserId) {
       this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
     }
   },
@@ -79,13 +79,38 @@ export default {
       }
     },
     handleReciver(vo) {
-      this.reciver = vo;
-      this.ruleForm.signUserName=vo.reciUserName
+      delete vo.workState;
+      this.reciver = {
+        "nextUserId": vo.reciUserId,
+        "nextUserName": vo.reciUserName,
+        "nextDeptId": vo.reciDeptId, //           部门
+        "nextDeptName": vo.reciDeptName, //
+        "nextDeptMajorId": vo.reciDeptMajorId, //      主部门
+        "nextDeptMajorName": vo.reciDeptMajorName, //
+        "nextJobtitle": vo.reciJobtitle, //          职位
+        "nextPostrankId": vo.reciPostrankId, //        职位id
+        "nextEmpPostId": vo.reciEmpPostId,
+        "nextPostrankName": vo.reciPostrankName, //      职级名称
+        "nextSupervisoryLevel": vo.reciSupervisoryLevel, //  安全级别
+      }
+      this.ruleForm.signUserName = vo.reciUserName
     },
-    updatePerson(payLoad) {
+    updatePerson(payLoad) { //单个审批接收人
       this.dialogTableVisible = false;
-      this.ruleForm.signUserName=payLoad.reciUserName;
-      this.reciver = payLoad;
+      this.ruleForm.signUserName = payLoad.name;
+      this.reciver = {
+        "nextUserId": payLoad.empId,
+        "nextUserName": payLoad.name,
+        "nextDeptId": payLoad.deptId, //           部门
+        "nextDeptName": payLoad.depts, //
+        "nextDeptMajorId": payLoad.deptParentId, //      主部门
+        "nextDeptMajorName": payLoad.deptParentName, //
+        "nextJobtitle": payLoad.jobtitle, //          职位
+        "nextPostrankId": payLoad.postrankId, //        职位id
+        "nextEmpPostId": payLoad.postId,
+        "nextPostrankName": payLoad.postRankName, //      职级名称
+        "nextSupervisoryLevel": payLoad.supLevel, //  安全级别
+      };
     },
     submitSign() { //会签审批
       this.$refs.ruleForm.validate((valid) => {
@@ -117,7 +142,7 @@ export default {
         }
       });
     },
-    docTask() {
+    docTask() { //部门会签
       var params = {
         docId: this.docDetail.id,
         "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
@@ -130,16 +155,15 @@ export default {
         state: this.ruleForm.state,
         submitType: 4,
         operateType: '1',
-        nextUserId:this.reciver.reciUserId,
-        nextUserName:this.reciver.reciUserName
       }
+      Object.assign(params, this.reciver);
       this.$http.post("/doc/docTask", params, { body: true })
         .then(res => {
           if (res.status == '0') {
             this.$message.success('会签成功');
             this.$router.push('/doc/docTracking');
           } else {
-            this.$message.error('会签失败'+res.message);
+            this.$message.error('会签失败' + res.message);
           }
         }, res => {
 
@@ -167,7 +191,7 @@ export default {
                 this.$message.success('结束会签成功');
                 this.$router.push('/doc/docTracking');
               } else {
-                this.$message.error('结束会签失败。'+res.message);
+                this.$message.error('结束会签失败。' + res.message);
               }
             }, res => {
 

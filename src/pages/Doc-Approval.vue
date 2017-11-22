@@ -142,7 +142,6 @@ export default {
     this.$store.dispatch('getDocTips');
     this.$store.dispatch('getDocForm');
     this.getPower();
-    console.log(111)
   },
   mounted: function() {
     this.breadcrumbItem = this.$route.meta.breadcrumb;

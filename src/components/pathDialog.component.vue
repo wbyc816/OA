@@ -142,7 +142,7 @@ export default {
       var success = true;
       for (var i = 0; i < this.pathList.length; i++) {
         var p = this.pathList[i];
-        if (p.type == 4 || p.type == 5||p.type==7) { //判断会签不能为空
+        if (p.type == 4 || p.type == 5) { //判断会签不能为空
           if (i == 0) {
             this.$message.warning('建议路径不能以会签开始！');
             success = false;
@@ -152,12 +152,12 @@ export default {
             this.$message.warning('会签列表不能为空！');
             success = false;
             break;
-          }else if(i==this.pathList.length-1){
+          } else if (i == this.pathList.length - 1) {
             this.$message.warning('建议路径不能以会签结束！');
             success = false
           }
         } else {
-          if (p.state && p.state == 1) {
+          if (p.state && p.state == 1 && p.type != 7) {
             this.editNode(p, i);
             this.$message.warning(p.typeIdName + '需替换！');
             success = false;
@@ -187,12 +187,12 @@ export default {
       if (this.activeNode !== '') { //编辑
         var activeNode = this.pathList[this.activeNode];
         if (this.activeNodeChild === '') { //普通编辑
-          if (activeNode.type == 4) { //会签添加
-            if (type == 1) {
+          if (activeNode.type == 4) { //部门会签添加
+            if (type == 1 && this.checkSignList(node, activeNode.children)) {
               activeNode.children.push(node);
             }
-          } else if (activeNode.type == 5||activeNode.type == 7) { //会签添加
-            if (type == 2||type == 3) {
+          } else if (activeNode.type == 5 || activeNode.type == 7) { //人员角色会签添加
+            if ((type == 2 || type == 3) && this.checkSignList(node, activeNode.children)) {
               activeNode.children.push(node);
             }
           } else if (activeNode.nodeName == 'sign') {
@@ -204,12 +204,12 @@ export default {
           }
         } else { //会签编辑
           if (activeNode.type == 4) {
-            if (type == 1) {
+            if (type == 1 && this.checkSignList(node, activeNode.children)) {
               activeNode.children.splice(this.activeNodeChild, 1, node);
               activeNode.state = 0;
             }
-          } else if (activeNode.type == 5||activeNode.type == 7) {
-            if (type == 2||type==3) {
+          } else if (activeNode.type == 5 || activeNode.type == 7) {
+            if ((type == 2 || type == 3) && this.checkSignList(node, activeNode.children)) {
               activeNode.children.splice(this.activeNodeChild, 1, node);
               activeNode.state = 0;
             }
@@ -221,17 +221,17 @@ export default {
             this.pathList.push(node);
           }
         } else { //会签列表添加
-            var last = this.pathList[this.pathList.length - 1]
-            var children = last.children;
-            if (!last.type) {
-              last.typeIdName = type == 1 ? '#部门会签#' : '#人员会签#';
-              last.type = type == 1 ? 4 : 5;
-              children.push(node);
-            } else if (last.type == 4 && type == 1) {
-              children.push(node);
-            } else if (last.type == 5 && (type == 2||type == 3)) {
-              children.push(node);
-            }
+          var last = this.pathList[this.pathList.length - 1]
+          var children = last.children;
+          if (!last.type) {
+            last.typeIdName = type == 1 ? '#部门会签#' : '#人员会签#';
+            last.type = type == 1 ? 4 : 5;
+            children.push(node);
+          } else if (last.type == 4 && type == 1) {
+            children.push(node);
+          } else if (last.type == 5 && (type == 2 || type == 3)) {
+            children.push(node);
+          }
         }
         this.$nextTick(function() {
           this.$refs.nodeWrap.scrollTop = this.$refs.nodeWrap.scrollHeight;
@@ -268,6 +268,15 @@ export default {
       node.children.splice(childIndex, 1);
       this.activeNode = '';
       this.activeNodeChild = '';
+    },
+    checkSignList(node, list) {
+      var temp = list.find(n => n.typeId == node.typeId && n.typeIdName == node.typeIdName);
+      if (temp) {
+        this.$message.warning('会签列表不能添加重复项');
+        return false;
+      } else {
+        return true;
+      }
     },
     typeChange(val) {
       if (val == 0) { //审批

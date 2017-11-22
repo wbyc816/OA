@@ -5,7 +5,7 @@
         <img :src="p">
       </el-carousel-item>
     </el-carousel>
-    <el-card class="shareBox">
+    <!-- <el-card class="shareBox">
       <el-row>
         <el-col :span="12" class="shareWith">
           <p> <i class="iconfont icon-renmian"></i> 人事任免
@@ -32,16 +32,15 @@
       </el-row>
     </el-card>
     <div class="imgBox">
-      <!-- <img src="../../assets/images/Image88.jpg" alt=""> -->
       <img :src="childPic" alt="">
-    </div>
+    </div> -->
     <el-card class="borderCard highLight">
       <p slot="header"><i class="iconfont icon-zhinan"></i>办事指南
         <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0305' }}" class="headRight">更多</router-link>
       </p>
       <el-row>
         <template>
-          <el-col :span="12" v-for="(hr,index) in hr3" v-if="index<6">
+          <el-col :span="12" v-for="(hr,index) in hr3" v-if="index<10">
             <div @click="goTo(hr)">
               <p><span class="title">{{hr.fileNameOld}}</span> <span class="new" v-if="hr.isRead==='0'">NEW</span></p>
               <p>{{hr.majorName}}<span>{{hr.createTime | time('date')}}</span></p>

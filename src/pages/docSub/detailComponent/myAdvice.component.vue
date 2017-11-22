@@ -23,9 +23,9 @@
         <el-col :span='18' class="clearfix">
           <el-input class="search" :value="ruleForm.sign[0]?ruleForm.sign[0].signUserName:''" :readonly="true" v-show="signType==0">
             <template slot="append">
-            <el-button @click="selSignPerson" :disabled="chooseDisable">选择</el-button>
-            <i class="iconfont icon-renyuanshezhi defaultPerson" @click="defaultVisible=true" v-if="!chooseDisable"></i>
-          </template>
+              <el-button @click="selSignPerson" :disabled="chooseDisable">选择</el-button>
+              <i class="iconfont icon-renyuanshezhi defaultPerson" @click="defaultVisible=true" v-if="!chooseDisable"></i>
+            </template>
           </el-input>
           <div class="signList" v-show="signType!=0">
             <el-tag :key="person.id" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==1">
@@ -120,7 +120,7 @@ export default {
         planDate: [{ required: true, type: 'date', message: '请选择离职日期' }]
       },
       dialogTableVisible: false,
-      defaultVisible:false,
+      defaultVisible: false,
       reciver: '',
       signType: '0',
       currentView: '',
@@ -134,7 +134,8 @@ export default {
           return time.getTime() < Date.now() - 8.64e7;
         }
       },
-      signDeps: []
+      signDeps: [],
+      adminReci: ''
     }
   },
   computed: {
@@ -159,20 +160,63 @@ export default {
     if (this.docDetail.defaultSuggestVo.reciUserId) {
       this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
     } else {
-      this.getDefaultReciver()
+      this.getDefaultReciver();
     }
   },
   methods: {
+    getAdminReci() {
+      if (this.adminReci) {
+        if (this.userInfo.empId != this.adminReci.secUserId) {
+          var person = {
+            "signUserName": this.adminReci.secUserName,
+          }
+          this.ruleForm.sign = [];
+          this.ruleForm.sign.push(person);
+          this.chooseDisable = true;
+        }
+      } else {
+        this.$http.post('/doc/getSecUserName', { docId: this.$route.params.id })
+          .then(res => {
+            if (res.status == 0) {
+              this.adminReci = res.data;
+              if (this.userInfo.empId != this.adminReci.secUserId) {
+                var person = {
+                  "signUserName": this.adminReci.secUserName,
+                }
+                this.ruleForm.sign = [];
+                this.ruleForm.sign.push(person);
+                this.chooseDisable = true;
+              }
+            } else {
+
+            }
+          })
+      }
+
+    },
     getDefaultReciver() {
       this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId })
         .then(res => {
           if (res.status == 0) {
-            this.reciver = res.data;
+            this.reciver = {
+              "nextUserId": res.data.reciUserId,
+              "nextUserName": res.data.reciUserName,
+              "nextDeptId": res.data.reciDeptId, //           部门
+              "nextDeptName": res.data.reciDeptName, //
+              "nextDeptMajorId": res.data.reciDeptMajorId, //      主部门
+              "nextDeptMajorName": res.data.reciDeptMajorName, //
+              "nextJobtitle": res.data.reciJobtitle, //          职位
+              "nextPostrankId": res.data.reciPostrankId, //        职位id
+              "nextEmpPostId": res.data.reciEmpPostId,
+              "nextPostrankName": res.data.reciPostrankName, //      职级名称
+              "nextSupervisoryLevel": res.data.reciSupervisoryLevel, //  安全级别
+            }
+            this.ruleForm.sign = [];
             this.ruleForm.sign.push({
               signUserName: res.data.reciUserName
             });
           } else {
-
+            this.ruleForm.sign = [];
           }
         })
     },
@@ -183,18 +227,43 @@ export default {
       }
     },
     handleReciver(vo) {
-      this.reciver = vo;
+      this.ruleForm.sign = [];
       this.ruleForm.sign.push({
         signUserName: vo.reciUserName
       });
       this.workState = vo.workState;
+      delete vo.workState;
+      this.reciver = {
+        "nextUserId": vo.reciUserId,
+        "nextUserName": vo.reciUserName,
+        "nextDeptId": vo.reciDeptId, //           部门
+        "nextDeptName": vo.reciDeptName, //
+        "nextDeptMajorId": vo.reciDeptMajorId, //      主部门
+        "nextDeptMajorName": vo.reciDeptMajorName, //
+        "nextJobtitle": vo.reciJobtitle, //          职位
+        "nextPostrankId": vo.reciPostrankId, //        职位id
+        "nextEmpPostId": vo.reciEmpPostId,
+        "nextPostrankName": vo.reciPostrankName, //      职级名称
+        "nextSupervisoryLevel": vo.reciSupervisoryLevel, //  安全级别
+      };
       this.chooseDisable = true;
     },
     adviceChange(val) {
       if (val == 1) {
-        this.ruleForm.taskContent = '同意。'
+        this.ruleForm.taskContent = '同意。';
+        if (this.signType == 0) {
+          if (this.docDetail.defaultSuggestVo.reciUserId) {
+            this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
+          } else {
+            this.getDefaultReciver();
+            this.chooseDisable = false;
+          }
+        }
       } else {
-        this.ruleForm.taskContent = "不同意。"
+        this.ruleForm.taskContent = "不同意。";
+        if (this.signType == 0) {
+          this.getAdminReci();
+        }
       }
     },
     signTypeChange(val) {
@@ -202,57 +271,86 @@ export default {
       this.signDeps = [];
       this.$refs.ruleForm.validateField('sign')
     },
-    updateDefaultPerson(payLoad){
+    updateDefaultPerson(payLoad) {
       this.defaultVisible = false;
       var person = {
-        "signDeptMajorName": payLoad.reciDeptMajorName,
-        "signDeptMajorId": payLoad.reciDeptMajorId,
-        "signDeptName": payLoad.reciDeptName,
-        "signDeptId": payLoad.reciDeptId,
-        "signUserName": payLoad.reciUserName,
-        "signUserId": payLoad.reciUserId,
+        "signDeptMajorName": payLoad.deptParentName,
+        "signDeptMajorId": payLoad.deptParentId,
+        "signDeptName": payLoad.depts,
+        "signDeptId": payLoad.deptId,
+        "signUserName": payLoad.name,
+        "signUserId": payLoad.empId,
+        "signJobtitle": payLoad.jobtitle, //接收人职位
+        "signPostrankId": payLoad.postrankId, //职位id
+        "signEmpPostId": payLoad.postId,
+        "signPostrankName": payLoad.postRankName, //职级名称
+        "signSupervisoryLevel": payLoad.supLevel //安全级别
       }
       if (this.ruleForm.sign.length != 0) {
         this.ruleForm.sign.splice(0, 1, person)
       } else {
         this.ruleForm.sign.push(person);
       }
-      this.reciver = payLoad;
+      this.reciver = {
+        "nextUserId": payLoad.empId,
+        "nextUserName": payLoad.name,
+        "nextDeptId": payLoad.deptId, //           部门
+        "nextDeptName": payLoad.depts, //
+        "nextDeptMajorId": payLoad.deptParentId, //      主部门
+        "nextDeptMajorName": payLoad.deptParentName, //
+        "nextJobtitle": payLoad.jobtitle, //          职位
+        "nextPostrankId": payLoad.postrankId, //        职位id
+        "nextEmpPostId": payLoad.postId,
+        "nextPostrankName": payLoad.postRankName, //      职级名称
+        "nextSupervisoryLevel": payLoad.supLevel, //  安全级别
+      };
       this.setDefault(person);
     },
-    updatePerson(payLoad) {
+    updatePerson(payLoad) { //单个审批接收人
       this.dialogTableVisible = false;
       var person = {
-        "signDeptMajorName": payLoad.reciDeptMajorName,
-        "signDeptMajorId": payLoad.reciDeptMajorId,
-        "signDeptName": payLoad.reciDeptName,
-        "signDeptId": payLoad.reciDeptId,
-        "signUserName": payLoad.reciUserName,
-        "signUserId": payLoad.reciUserId,
+        "signUserName": payLoad.name,
       }
       if (this.ruleForm.sign.length != 0) {
         this.ruleForm.sign.splice(0, 1, person)
       } else {
         this.ruleForm.sign.push(person);
       }
-      this.reciver = payLoad;
+      this.reciver = {
+        "nextUserId": payLoad.empId,
+        "nextUserName": payLoad.name,
+        "nextDeptId": payLoad.deptId, //           部门
+        "nextDeptName": payLoad.depts, //
+        "nextDeptMajorId": payLoad.deptParentId, //      主部门
+        "nextDeptMajorName": payLoad.deptParentName, //
+        "nextJobtitle": payLoad.jobtitle, //          职位
+        "nextPostrankId": payLoad.postrankId, //        职位id
+        "nextEmpPostId": payLoad.postId,
+        "nextPostrankName": payLoad.postRankName, //      职级名称
+        "nextSupervisoryLevel": payLoad.supLevel, //  安全级别
+      };
     },
-    updateSignPerson(payLoad) {
+    updateSignPerson(payLoad) { //人员会签更新人员
       this.signPersonVisible = false;
       this.ruleForm.sign = [];
       this.signPersons = payLoad;
       payLoad.forEach(p => {
         this.ruleForm.sign.push({
-          "signDeptMajorName": p.deptName,
+          "signDeptMajorName": p.deptParentName,
           "signDeptMajorId": p.deptParentId,
           "signDeptName": p.depts,
           "signDeptId": p.deptId,
           "signUserName": p.name,
           "signUserId": p.empId,
+          "signJobtitle": p.jobtitle, //接收人职位
+          "signPostrankId": p.postrankId, //职位id
+          "signEmpPostId": p.postId,
+          "signPostrankName": p.postRankName, //职级名称
+          "signSupervisoryLevel": p.supLevel //安全级别
         })
       })
     },
-    updateSignDep(payLoad) {
+    updateSignDep(payLoad) { //部门会签更新部门
       this.signDepVisible = false;
       this.ruleForm.sign = [];
       this.signDeps = payLoad;
@@ -292,24 +390,21 @@ export default {
       }
       var params = {
         docId: this.docDetail.id,
-        "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
-        "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
-        "taskDeptName": this.userInfo.deptVo.dept,
-        "taskDeptId": this.userInfo.deptVo.deptId,
         "taskUserName": this.userInfo.name,
         "taskUserId": this.userInfo.empId,
         taskContent: this.ruleForm.taskContent,
         state: this.ruleForm.state,
         submitType: subType,
         operateType: '1',
-        workState: this.workState
+        workState: this.workState,
       }
       if (this.currentView == 'LZS' && this.docDetail.isDept == 1) {
         params.dimissionDate = +this.ruleForm.planDate;
       }
-      if (this.signType == '0') {
-        params.nextUserId = this.reciver.reciUserId;
-        params.nextUserName = this.reciver.reciUserName;
+      if (this.signType == '0') { //普通审批
+        if (this.ruleForm.state == 1) { //同意（不同意时不传下一个接收人）
+          Object.assign(params, this.reciver)
+        }
       } else {
         params.signs = this.ruleForm.sign;
       }
@@ -330,7 +425,7 @@ export default {
         })
     },
     setDefault(person) {
-      this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId, taskDeptId: this.userInfo.deptId, reciId: person.signUserId, reciDeptId: person.signDeptId })
+      this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId, taskEmpPostId: this.docDetail.taskEmpPostId, reciId: person.signUserId, reciEmpPostId: person.signEmpPostId })
         .then(res => {
           if (res.status == 0) {
             this.$message.success('设置默认收件人成功！');
@@ -356,8 +451,8 @@ $main:#0460AE;
     }
   }
   .suggestHtml {
-    line-height:20px;
-    padding-top:10px;
+    line-height: 20px;
+    padding-top: 10px;
     i {
       color: $main;
       &.icon-jiantouyou {

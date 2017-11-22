@@ -62,8 +62,8 @@
               </ul>
             </el-col>
             <el-col :span="12" class="shareWith myShare">
-              <p> <i class="iconfont icon-hr"></i> HR政策
-                <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0302' }}">更多</router-link>
+              <p> <i class="iconfont icon-guizhang"></i> 规章制度
+                <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0303' }}">更多</router-link>
               </p>
               <ul>
                 <li v-for="(hr,index) in hr2" v-if="index<3" @click="goTo(hr)">
@@ -139,7 +139,7 @@
         <el-card class="Workbench">
           <span slot="header">日常事项</span>
           <el-menu>
-            <el-menu-item index="1" @click.native="goToOthers('/HR/newsListHr/FIL0303')"><i class="iconfont icon-guizhang"></i>规章制度<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="1" @click.native="goToOthers('/HR/newsListHr/FIL0302')"><i class="iconfont icon-hr"></i>HR政策<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="2" @click.native="goToOthers('/HR/newsListHr/FIL0304')"><i class="iconfont icon-shouce"></i>使用手册<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="3" @click.native="goToOthers('/PresidentMailbox')"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
@@ -287,7 +287,7 @@ export default {
     this.getNews();
     this.getFlightTrends();
     this.getOtherNews('FIL0301');
-    this.getOtherNews('FIL0302');
+    this.getOtherNews('FIL0303');
   },
   watch: {
     docTips(newVal) {

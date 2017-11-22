@@ -427,8 +427,8 @@ export default {
     },
     updatePerson(reciver) {
       this.dialogTableVisible = false;
-      this.appForm.classifyManagerEmpId = reciver.reciUserId;
-      this.classifyManagerName = reciver.reciUserName;
+      this.appForm.classifyManagerEmpId = reciver.empId;
+      this.classifyManagerName = reciver.name;
     },
     checkMe() {
 

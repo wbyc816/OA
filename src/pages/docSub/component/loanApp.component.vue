@@ -21,7 +21,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <div v-show="collectionInformation==1">
+      <div v-if="collectionInformation==1">
       <el-form-item label="收款人" prop="payee" class="flw50 " >
         <el-autocomplete
            v-model="loanAppForm.payee"

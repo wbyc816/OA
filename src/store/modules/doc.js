@@ -10,6 +10,7 @@ const state = {
   docType: [], //公文类别
   isAdmin: false,
   docTitle: '',
+  taskUser: '',
   reciver: {
     "reciDeptMajorName": '',
     "reciDeptMajorId": '',
@@ -17,6 +18,11 @@ const state = {
     "reciDeptId": '',
     "reciUserName": '',
     "reciUserId": '',
+    "reciUserJobTitle": "", //接收人职位
+    "reciPostrankId": "", //职位id
+    "reciEmpPostId":"",
+    "reciPostrankName": "", //职级名称
+    "reciSupervisory": "", //安全级别
   },
   selConfident: {
     "docDenseTypeCode": "",
@@ -37,8 +43,8 @@ const state = {
     "conferenceNum": 0,
     "pendingNum": 0
   },
-  staticsPower:'',    //1所有 2无审批者 0无
-  isSubmit:false
+  staticsPower: '', //1所有 2无审批者 0无
+  isSubmit: false
 }
 
 const actions = {
@@ -95,7 +101,6 @@ const actions = {
           });
         })
     }
-
   },
   //获取重要程度
   getUrgency({ commit, state, rootState, rootGetters }) {
@@ -176,7 +181,7 @@ const actions = {
     api.submitDoc(payLoad.url, params)
       .then(res => {
         this.commit(types.SET_SUBMIT_LOADING, false, { root: true })
-        if (res.status == "0") {         
+        if (res.status == "0") {
           Notification({
             message: '呈报公文成功',
             type: 'success'
@@ -253,7 +258,8 @@ const getters = {
   processData: state => state.processData,
   docTips: state => state.docTips,
   staticsPower: state => state.staticsPower,
-  isSubmit:state => state.isSubmit,
+  isSubmit: state => state.isSubmit,
+  taskUser: state => state.taskUser,
 }
 
 const mutations = {
@@ -297,11 +303,14 @@ const mutations = {
   setReciver(state, payLoad) {
     state.reciver = payLoad;
   },
-  setStaticsPower(state,payLoad){
-    state.staticsPower=payLoad;
+  setStaticsPower(state, payLoad) {
+    state.staticsPower = payLoad;
   },
-  setIsSubmit(state,payLoad){
-    state.isSubmit=payLoad
+  setIsSubmit(state, payLoad) {
+    state.isSubmit = payLoad;
+  },
+  setTaskUser(state, payLoad) {
+    state.taskUser = payLoad;
   }
 }
 

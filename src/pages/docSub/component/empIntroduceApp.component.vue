@@ -44,7 +44,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="个人照片" class="uploadBox" prop="picUrl">
-        <el-upload ref="upload" class="avatar-uploader" :auto-upload="false" :action="baseURL+'/emp/updatePic'" :data="{id:userInfo.empId,introducePic:'RRY'}" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange">
+        <el-upload ref="upload" class="avatar-uploader" :action="baseURL+'/emp/updatePic'" :data="{id:userInfo.empId,introducePic:'RRY'}" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :before-upload="beforeAvatarUpload">
           <img v-if="introduceForm.picUrl" :src="introduceForm.picUrl" class="avatar">
           <img v-else src="../../../assets/images/blankHead1.png" alt="">
         </el-upload>
@@ -64,10 +64,10 @@
           <el-input v-model="introduceForm.introduceContract[index].contractMajor" :maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="合同开始日期" :prop="'introduceContract'+'.'+index+'.'+'contractStart'" class="deptArea">
-          <el-date-picker type="date" v-model="introduceForm.introduceContract[index].contractStart" style="width: 100%;" :editable="false"></el-date-picker>
+          <el-date-picker type="date" v-model="introduceForm.introduceContract[index].contractStart" style="width: 100%;" :editable="false" :picker-options="dateOptions[index].start"></el-date-picker>
         </el-form-item>
         <el-form-item label="合同结束日期" :prop="'introduceContract'+'.'+index+'.'+'contractEnd'" class="arrArea">
-          <el-date-picker type="date" v-model="introduceForm.introduceContract[index].contractEnd" style="width: 100%;" :editable="false"></el-date-picker>
+          <el-date-picker type="date" v-model="introduceForm.introduceContract[index].contractEnd" style="width: 100%;" :editable="false" :picker-options="dateOptions[index].end"></el-date-picker>
         </el-form-item>
       </template>
       <div class="header clearBoth">
@@ -139,6 +139,31 @@ export default {
     }
   },
   computed: {
+    dateOptions: function() {
+      var options = []
+      this.introduceForm.introduceContract.forEach((c, index) => {
+        var start = {
+          disabledDate(time) {
+            if (c.contractEnd != '') {
+              return time.getTime() >= c.contractEnd.getTime();
+            } else {
+              return false
+            }
+          }
+        }
+        var end = {
+          disabledDate(time) {
+            if (c.contractStart != '') {
+              return time.getTime() <= c.contractStart.getTime();
+            } else {
+              return false
+            }
+          }
+        }
+        options.push({ start: start, end: end })
+      })
+      return options
+    },
     ...mapGetters([
       'submitLoading',
       'baseURL',
@@ -151,16 +176,16 @@ export default {
   },
   methods: {
     saveForm() {
-      this.$emit('saveMiddle', JSON.stringify(this.introduceForm));
+      this.$emit('saveMiddle', JSON.stringify( { picUrl: this.picUrl,introduceForm:this.introduceForm }));
     },
-    getDraft(obj) {
-      this.combineObj(this.introduceForm, obj, ['birthday', 'beginWorkDate', 'picUrl', 'leaveDate', 'introduceContract']);
+    getDraft(obj,data) {
+      this.combineObj(this.introduceForm, obj.introduceForm, ['birthday', 'beginWorkDate','picUrl','leaveDate', 'introduceContract']);
       ['birthday', 'beginWorkDate', 'leaveDate'].forEach(s => {
-        if (obj[s]) {
-          this.introduceForm[s] = new Date(obj[s])
+        if (obj.introduceForm[s]) {
+          this.introduceForm[s] = new Date(obj.introduceForm[s])
         }
       })
-      this.introduceForm.introduceContract = this.clone(obj).introduceContract.map(function(s) {
+      this.introduceForm.introduceContract = this.clone(obj.introduceForm).introduceContract.map(function(s) {
         // console.log(s)
         if (s.contractStart) {
           s.contractStart = new Date(s.contractStart)
@@ -169,17 +194,16 @@ export default {
           s.contractEnd = new Date(s.contractEnd)
         }
         return s;
-      })
-      console.log(this.clone(obj).introduceContract)
+      });
+      if(obj.picUrl){
+        this.introduceForm.picUrl=data.basePath+obj.picUrl;
+        this.picUrl=obj.picUrl;
+      }
     },
     submitForm() {
       this.$refs.introduceForm.validate((valid) => {
         if (valid) {
-          if (this.picSuccesss == 2) {
             this.submitMiddle();
-          } else {
-            this.$refs.upload.submit();
-          }
         } else {
           this.$message.warning('请检查填写字段')
           this.$emit('submitMiddle', false);
@@ -205,8 +229,7 @@ export default {
     },
     handleAvatarSuccess(res, file) {
       this.picUrl = res.data;
-      this.picSuccesss = 1;
-      this.submitMiddle();
+      this.introduceForm.picUrl=URL.createObjectURL(file.raw);
     },
     submitMiddle() {
       var temp = [];
@@ -232,6 +255,7 @@ export default {
       temp.forEach(t => {
         introduceForm.introduceContract.splice(t, 1)
       });
+
       this.params = {
         empintroduce: this.combineObj(introduceForm, { picUrl: this.picUrl })
       }
@@ -243,13 +267,8 @@ export default {
       this.introduceForm.picUrl = '';
       this.$message.error('图片上传失败，请重试');
     },
-    handleChange(file, fileList) {
-      if (this.picSuccesss == 1) {
-        this.picSuccesss = 2;
-      } else {
-        this.picSuccesss = 0;
-      }
-      const isJPG = file.raw.type === 'image/jpeg' || file.raw.type === 'image/png';
+    beforeAvatarUpload(file, fileList) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
         this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
@@ -257,9 +276,10 @@ export default {
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 2MB!');
       }
-      if (isJPG && isLt2M) {
-        this.introduceForm.picUrl = file.url
-      }
+      return isJPG&&isLt2M
+      // if (isJPG && isLt2M) {
+      //   this.introduceForm.picUrl = file.url
+      // }
 
     },
     addItem() {

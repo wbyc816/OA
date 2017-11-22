@@ -121,6 +121,11 @@ export default {
       return 1
     }
   },
+  created(){
+    if (!this.userInfo.isDocsec || this.userInfo.isDocsec[1] != 1) {
+      this.$router.push('/duty/dutyDetail')
+    }
+  },
   methods: {
     submitUpload() {
       this.$refs.upload.submit();

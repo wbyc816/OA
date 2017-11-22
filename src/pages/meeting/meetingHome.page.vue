@@ -19,7 +19,7 @@
             <el-menu-item index='4' :route="{path:'/meeting/meetingSearch/3'}">
               历史记录
             </el-menu-item>
-            <el-menu-item index='5' :route="{path:'/meeting/meetingApp'}">
+            <el-menu-item index='5' :route="{path:'/meeting/meetingApp'}" v-if="userInfo.isDocsec&&userInfo.isDocsec[0]==1">
               预订会议室
             </el-menu-item>
             <el-menu-item index='6' :route="{path:'/meeting/ReservationAllRoom/all'}">

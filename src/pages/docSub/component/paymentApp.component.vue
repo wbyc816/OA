@@ -10,9 +10,15 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="预付款" prop="isAdvancePayment" placeholder="" class="deptArea">
+        <el-radio-group v-model="paymentForm.isAdvancePayment" class="myRadio" @change="isAdvancePaymentChange">
+          <el-radio-button label="1">是<i></i></el-radio-button>
+          <el-radio-button label="0">否<i></i></el-radio-button>
+        </el-radio-group>
+      </el-form-item>
       <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px" class="clearBoth">
         <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
-          <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%"></el-cascader>
+          <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%" :disabled="paymentForm.isAdvancePayment==1"></el-cascader>
         </el-form-item>
         <ul class="budgetInfo clearfix clearBoth" v-show="budgetInfo">
           <li>年度预算{{budgetInfo.budgetTotal | toThousands}}元</li>
@@ -116,12 +122,12 @@
         <el-cascader expand-trigger="hover" :options="feeTypes" :props="feeTypeProp" v-model="paymentForm.feeType" style="width:100%" popper-class="myCascader" ref="feeType">
         </el-cascader>
       </el-form-item>
-      <el-form-item label="预付款" prop="isAdvancePayment" placeholder="" class="width40" label-width="110px">
+      <!-- <el-form-item label="预付款" prop="isAdvancePayment" placeholder="" class="width40" label-width="110px">
         <el-radio-group v-model="paymentForm.isAdvancePayment" class="myRadio">
           <el-radio-button label="1">是<i></i></el-radio-button>
           <el-radio-button label="0">否<i></i></el-radio-button>
         </el-radio-group>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
   </div>
 </template>
@@ -129,6 +135,8 @@
 import MoneyInput from '../../../components/moneyInput.component'
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
+
+const prePayTemp=[20184,20186]
 export default {
   components: { MoneyInput },
   data() {
@@ -323,6 +331,18 @@ export default {
         this.$message.warning('未添加付款项');
         this.$emit('submitMiddle', false);
         return false
+      }
+    },
+    isAdvancePaymentChange(val){
+      if(val==1){
+        this.handleItemChange(prePayTemp.slice(0,1));
+        this.budgetForm.budgetDept=prePayTemp;
+        this.depChange(prePayTemp);
+        this.budgetTable=[];
+      }else{
+        this.budgetForm.budgetDept=[];
+        this.budgetInfo='';
+        this.budgetTable=[];
       }
     },
     invoiceTypeChange(code) {
