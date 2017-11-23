@@ -239,7 +239,8 @@ export default {
     '$route' (to, from) {
       this.getHomePics();
       this.outBreadcrumbs();
-      window.scrollTo(0, 0);
+      // window.scrollTo(0, 0);
+      window.scrollTo({"behavior": "smooth", "top": 0})
     },
   }
 }

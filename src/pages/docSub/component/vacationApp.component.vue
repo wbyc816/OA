@@ -39,6 +39,13 @@ export default {
         callback(new Error('请选择休假时间'))
       }
     };
+    var checkTimeline = (rule, value, callback) => {
+      if (value.length > 0 &&value[0]&& value[0].getTime() == value[1].getTime()) {
+        callback(new Error('开始时间不能等于结束时间'))
+      } else {
+        callback();
+      }
+    };
     var checkDay = (rule, value, callback) => {
       var remain = this.empVacation.currentSeasonDays - this.empVacation.annual1Days + this.empVacation.preQuarterdDays - this.empVacation.annualDays
       if (this.vacationForm.typeId == 'EMP0101') {
@@ -62,7 +69,7 @@ export default {
         days: [{ required: true, message: '请输入休假天数', trigger: 'blur' },
           { validator: checkDay, trigger: 'change,blur' }
         ],
-        timeRange: [{ type: 'array', required: true, validator: checkDate, trigger: 'blur' }],
+        timeRange: [{ type: 'array', required: true,  trigger: 'blur' },{validator: checkTimeline,trigger: 'blur,change'}],
         typeId: [{ required: true, message: '请选择休假类型', trigger: 'blur' }],
         workHandover: [{ required: true, message: '请填写工作交接情况', trigger: 'blur' }],
       },

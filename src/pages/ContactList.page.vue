@@ -196,6 +196,7 @@ export default {
       this.dialogVisible = true;
       // this.$store.dispatch('getempDetial', row.empId);
       this.empDetial = row;
+      this.imgError=false;
     },
     reset1() {
       this.searchButton = false;

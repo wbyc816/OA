@@ -273,7 +273,6 @@ export default {
       }
     };
     var checkTotalFee = (rule, value, callback) => {
-      console.log(this.maxMoney)
       if (this.feeTypeCode == 'FIN0601' && this.maxMoney != 0) {
 
         if (parseFloat(value) > this.maxMoney) {
@@ -299,6 +298,13 @@ export default {
       } else {
         callback();
 
+      }
+    };
+    var checkTimeline = (rule, value, callback) => {
+      if (value.length > 0 &&value[0]&& value[0].getTime() == value[1].getTime()) {
+        callback(new Error('开始时间不能等于结束时间'))
+      } else {
+        callback();
       }
     };
     return {
@@ -332,7 +338,7 @@ export default {
       },
       feeTypeCode: '',
       feeRule: {
-        timeLine: [{ type: 'array', required: true, message: '请选择日期', trigger: 'blur' }],
+        timeLine: [{ type: 'array', required: true, message: '请选择日期', trigger: 'blur' }, { validator: checkTimeline, trigger: 'blur,change' }],
         price: [{ required: true, message: '请输入金额', trigger: 'blur' }],
         city: [{ required: true, message: '请输入城市', trigger: 'blur' }],
         des: [{ required: true, message: '请输入说明', trigger: 'blur' }],
@@ -445,6 +451,13 @@ export default {
             } else {
               return false
             }
+          }
+        }
+      } else {
+        options = {
+          onPick(obj) {},
+          disabledDate(time) {
+            return false
           }
         }
       }

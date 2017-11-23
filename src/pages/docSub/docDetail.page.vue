@@ -461,11 +461,13 @@ export default {
       this.fileForm.taskFileId = res.data;
     },
     beforeUpload(file) {
-      const isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      // const isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      const isJPG =  file.type === 'application/pdf';
       const isLt10M = file.size / 1024 / 1024 < 10;
 
       if (!isJPG) {
-        this.$message.error('上传文件只能是 DOCX 格式!');
+        // this.$message.error('上传文件只能是 DOCX 格式!');
+        this.$message.error('上传文件只能是 PDF 格式!');
       }
       if (!isLt10M) {
         this.$message.error('上传文件大小不能超过 10MB!');
