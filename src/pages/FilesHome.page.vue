@@ -61,6 +61,7 @@
         <el-card class="filebox_second">
           <el-menu>
             <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">
+             
               <span class="title">{{fileType[0]}}</span>
               <span class="num">{{fileType[2]}}</span>
             </el-menu-item>
@@ -511,14 +512,17 @@ $main: #0460AE;
     padding: 0px;
     @include linkList(#BE3B7F);
     & .title {
-      margin-left: 0;
-      display: inline-block;
+      margin-left: 0px
     }
     & .num {
-      height: 20px;
-      float: right
+       height: 40px;
+       position: absolute;
+       right:20px;
+        
+     
     }
   }
+
   .highSearch {
     & .el-input {
       margin: 12px 0;
