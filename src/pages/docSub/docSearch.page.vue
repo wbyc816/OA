@@ -19,9 +19,9 @@
             <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
             
           </router-link>
-          <td><span>{{doc.taskUser}}</span></td>
+          <td>{{doc.taskUser}}</td>
           <td>{{doc.taskTime}}</td>
-          <td>{{doc.endUserName}}</td>
+          <td><span>{{doc.endUserName}}</span></td>
           <td>
             <el-tooltip content="查看" placement="top" :enterable="false" effect="light">
               <router-link tag="i" class="link iconfont icon-eye" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>

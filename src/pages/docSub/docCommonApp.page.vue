@@ -5,7 +5,7 @@
         <span v-text='doc.docName'></span>
       </div>
       <div>
-        <subject class='doc-section' :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject>
+        <subject class='doc-section' :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject> 
         <description class='doc-section' ref="description" @submitEnd="submitEnd" @saveEnd="saveEnd" :options="options">
           <!-- <manuscript-app  @submitMiddle="submitMiddle"></manuscript-app> -->
           <component v-bind:is="$route.params.code" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'" @updateSuggest="updateSuggest">
@@ -116,7 +116,7 @@ export default {
         this.getDraft();
       } else {
         this.getDefaultReciver();
-        this.$refs.description.getSuggestTemp();
+        // this.$refs.description.getSuggestTemp();
       }
     },
     submitDoc() {

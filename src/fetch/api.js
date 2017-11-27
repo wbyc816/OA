@@ -161,5 +161,8 @@ export default {
   },
   getDocTips(id){
     return fetch('/doc/docTips',{empId:id})
+  },
+  getTypeTree(){
+    return fetch('/doc/getDocTypeTreeList')
   }
 }

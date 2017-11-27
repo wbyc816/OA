@@ -13,7 +13,7 @@
           </el-select>
         </el-col>
         <el-col :span="6" v-if="!notype">
-          <el-cascader :clearable="true" :options="docTypeOptions" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
+          <el-cascader :clearable="true" :options="typeTree" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
         </el-col>
         <el-col :span="notype?18:12">
           <el-input placeholder="公文标题" v-model.trim="params.keyWords" @keyup.enter.native="submitParam" :maxlength="50"></el-input>
@@ -75,9 +75,8 @@ export default {
         "startTime": "",
       },
       isOverTime: "",
-      isPay:"",
+      isPay: "",
       docTypes: [],
-      docTypeOptions: [],
       defaultProp: {
         label: 'dictName',
         value: 'dictCode',
@@ -99,7 +98,8 @@ export default {
       'userInfo',
       'confidentiality',
       'docType',
-      'urgency'
+      'urgency',
+      'typeTree'
     ])
   },
   created() {
@@ -110,7 +110,7 @@ export default {
     this.$store.dispatch('getUrgency');
     this.$store.dispatch('getDocForm');
     if (!this.notype) {
-      this.getTypes();
+      this.$store.dispatch('getDocTree');
     }
   },
   methods: {
@@ -126,21 +126,21 @@ export default {
       if (this.hasOverTime) {
         this.params.isOverTime = this.isOverTime;
       }
-      if(this.isPayStatus){
-        this.params.isPay=this.isPay;
+      if (this.isPayStatus) {
+        this.params.isPay = this.isPay;
       }
       this.$emit('search', this.params)
     },
-    getTypes() {
-      this.$http.post('/doc/getDocTypeTreeList')
-        .then(res => {
-          if (res.status == 0) {
-            this.docTypeOptions = res.data
-          } else {
+    // getTypes() {
+    //   this.$http.post('/doc/getDocTypeTreeList')
+    //     .then(res => {
+    //       if (res.status == 0) {
+    //         this.typeTree = res.data
+    //       } else {
 
-          }
-        })
-    }
+    //       }
+    //     })
+    // }
   }
 }
 

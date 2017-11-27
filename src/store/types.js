@@ -26,6 +26,8 @@ export const GET_EMP_POST_INFO = 'GET_EMP_POST_INFO'
 export const GET_DICT = 'GET_DICT'
 //密级程度
 export const SET_CONFIDENT = 'SET_CONFIDENT'
+//类型树
+export const GET_TYPE_TREE = 'GET_TYPE_TREE'
 //重要程度
 export const SET_URGENCY = 'SET_URGENCY'
 //公文接收人

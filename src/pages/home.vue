@@ -219,7 +219,6 @@ export default {
       options,
       hr1: [],
       hr2: [],
-      nowDate: "",
       flightNoTitle: '选项1',
       showDrag: [false, false, false, false, false, false, false, false, false, false, false],
       showInfo: [false, false, false, false, false, false, false, false, false, false, false],
@@ -266,7 +265,8 @@ export default {
       'searchRes',
       'depPageNumber',
       'airPortList',
-      'docTips'
+      'docTips',
+      'newsType'
     ])
   },
   beforeRouteEnter(to, from, next) {
@@ -281,7 +281,6 @@ export default {
     if (month < 10) {
       month = '0' + month;
     }
-    this.nowDate = temp.getFullYear() + '/' + month + '/' + temp.getDate();
     this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
     this.getDoneList();
     this.getNews();
@@ -437,7 +436,7 @@ export default {
             this.activeName = this.newsList[0].code;
             this.getNew();
           } else {
-            console.log('获取发文类型失败')
+            
           }
         }, res => {
 

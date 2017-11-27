@@ -44,16 +44,21 @@ export default {
     }
   },
   mounted() {
+    var that=this;
     this.handleTemp();
     const editor = new WangEditor(this.$refs.editor);
     editor.config.printLog = false;
     editor.config.menus = ['bold', 'underline', 'italic', 'eraser', 'forecolor', 'bgcolor', '|', 'unorderlist', 'orderlist', 'alignleft', 'aligncenter', 'alignright', 'indent'];
     editor.config.menuFixed = false;
+    editor.onchange = function() {
+      that.result();
+    };
     editor.create();
     this.editor = editor;
   },
   methods: {
     result() {
+      console.log(1111)
       this.$emit('input', this.editor.$txt.html());
       this.calcNum();
     },
@@ -97,27 +102,31 @@ $sub:#1465C0;
     }
     .wangEditor-txt {
       line-height: 24px;
-      b{
-          font-weight:700;
-          line-height:inherit;
-        }
-      i{
-        font-style: italic;
-        line-height:inherit;
+      b {
+        font-weight: 700;
+        line-height: inherit;
       }
-      p,h1,h2,h3,h4,h5 {
+      i {
+        font-style: italic;
+        line-height: inherit;
+      }
+      p,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5 {
         margin: 0;
         color: #393939;
         font-size: 16px!important;
         font-family: Arial;
         line-height: 24px!important;
-        *{
-          line-height:inherit;
+        * {
+          line-height: inherit;
         }
         span {
           font-size: 16px!important;
         }
-
       }
     }
   }

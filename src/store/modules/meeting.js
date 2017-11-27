@@ -66,6 +66,20 @@ const getters = {
 
 const mutations = {
   [types.GET_ROOM_POSITION](state, res) {
+    var arr = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+
+    function _convert(str) {
+      var _str = str;
+      for (var i = 0; i < arr.length; i++) {
+        _str = _str.replace(new RegExp(arr[i], "g"), (i + 1));
+      }
+      return _str
+    }
+    res.data.forEach(r => {
+      r._roomPosition = _convert(r.roomPosition);
+    })
+    console.log(res.data);
+    res.data.sort(function(a, b) { return a._roomPosition.localeCompare(b._roomPosition) });
     state.roomList = res.data
   },
   [types.GET_CONFERENCE_TYPE](state, res) {

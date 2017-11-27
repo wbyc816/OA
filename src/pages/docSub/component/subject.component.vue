@@ -6,10 +6,10 @@
         <el-select v-model="ruleForm.taskUserID" style="width:100%" @change="changeTaskUser" :disabled="taskUserList.length<2" class="taskUserSel">
           <el-option v-for="item in taskUserList" :key="item.deptId+item.jobtitle" :label="item.empName" :value="item.deptId+item.jobtitle">
             <span style="float: left">{{ item.empName }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{item.deptName}} / {{ item.jobtitle }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{item.deptParentName}} / {{ item.jobtitle }}</span>
           </el-option>
         </el-select>
-        <span class="taskUserInfo" v-if="taskUser">{{taskUser.deptName}} / {{ taskUser.jobtitle }}</span>
+        <span class="taskUserInfo" v-if="taskUser">{{taskUser.deptParentName}} / {{ taskUser.jobtitle }}</span>
       </el-form-item>
       <el-form-item class='form-box' :label="reciverTtitle" prop="rec">
         <el-input class="search selPerson" v-model="ruleForm.rec" :readonly="true">

@@ -105,7 +105,8 @@ export default {
       difLength: 0,
       upCount: 0,
       isSaveForm: false,
-      disableEditSuggest: false
+      disableEditSuggest: false,
+      isfirst: true
     }
   },
   computed: {
@@ -143,13 +144,23 @@ export default {
       'baseURL',
       'docType',
       'userInfo',
-      'isSubmit'
+      'isSubmit',
+      'taskUser'
     ])
   },
   created() {
     // this.getSuggestTemp();
     if (this.$route.params.code == 'LZS') {
       this.rules.attchment.push({ type: 'array', required: true, message: '请提交本人签字的辞职报告', trigger: 'blur,change' })
+    }
+  },
+  watch: {
+    taskUser: function(newval) {
+      if (newval) {
+        if (!this.$route.query.id || !this.isfirst) {   //草稿箱第一次不调用建议路径模板
+          this.getSuggestTemp();
+        }
+      }
     }
   },
   methods: {
@@ -399,8 +410,9 @@ export default {
       return _list
     },
     getSuggestTemp(param) {
-      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.userInfo.empId, docTypeSubCode: param })
+      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.taskUser.empId, deptId: this.taskUser.deptParentId, docTypeSubCode: param })
         .then(res => {
+          this.isfirst=false;
           if (res.status == 0) {
             this.disableEditSuggest = res.data.isEdit == 0 ? false : true;
             this.handleSuggestTemp(res.data.paths);

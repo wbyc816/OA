@@ -123,7 +123,7 @@ export default {
         })
       }
       if (newVal) {
-        if (this.info.singInfoVo) {
+        if (this.info.singInfoVo&&this.info.singInfoVo.length!=0) {
           this.activeName = this.info.singInfoVo[0].deptName;
           console.log(this.activeName)
         }

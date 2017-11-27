@@ -14,7 +14,7 @@
       <el-form-item label="发文日期" prop="issueDate">
         <el-date-picker v-model="manuscriptForm.issueDate" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
-      <el-form-item label="主送人" prop="fileSend" class="reciverWrap">
+      <el-form-item label="发布范围" prop="fileSend" class="reciverWrap">
         <div class="reciverList">
           <el-tag key="all" :closable="true" v-show="manuscriptForm.fileSend.all.max" type="primary" @close="closeAll">
             {{'所有人('+manuscriptForm.fileSend.all.min+'-'+manuscriptForm.fileSend.all.max+')'}}

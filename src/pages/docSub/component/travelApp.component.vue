@@ -155,6 +155,12 @@ export default {
                   "travelDeptName": person.depts, //部门名称
                   "travelDeptMajorId": person.deptId, //主部门id
                   "travelDeptMajorName": person.deptName, //主部门名称
+                  "travelUserPostrankId": person.postrankId,
+                  "travelUserPostrankName": person.postRankName,
+                  "travelUserObtitle": person.jobtitle,
+                  "travelUserSupervisoryLevel": person.supLevel,
+                  "travelUserId": person.empId,
+                  "travelEmpPostId": person.postId,
                 }
               })
             }

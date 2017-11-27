@@ -8,6 +8,7 @@ const state = {
   confidentiality: [], //机密程度
   urgency: [], //重要程度
   docType: [], //公文类别
+  typeTree:[],
   isAdmin: false,
   docTitle: '',
   taskUser: '',
@@ -82,10 +83,10 @@ const actions = {
           commit(types.GET_ADMIN_STATUS, true)
         }
       }, res => {
-        Notification({
-          message: '获取密级程度信息失败！',
-          type: 'error'
-        });
+        // Notification({
+        //   message: '获取密级程度信息失败！',
+        //   type: 'error'
+        // });
       })
   },
   //获取机密程度
@@ -95,10 +96,10 @@ const actions = {
         .then(res => {
           commit(types.SET_CONFIDENT, res)
         }, res => {
-          Notification({
-            message: '获取密级程度信息失败！',
-            type: 'error'
-          });
+          // Notification({
+          //   message: '获取密级程度信息失败！',
+          //   type: 'error'
+          // });
         })
     }
   },
@@ -109,10 +110,10 @@ const actions = {
         .then(res => {
           commit(types.SET_URGENCY, res)
         }, res => {
-          Notification({
-            message: '获取重要程度信息失败！',
-            type: 'error'
-          });
+          // Notification({
+          //   message: '获取重要程度信息失败！',
+          //   type: 'error'
+          // });
         })
     }
   },
@@ -123,10 +124,25 @@ const actions = {
         .then(res => {
           commit(types.GET_DOC_FORM, res)
         }, res => {
-          Notification({
-            message: '获取公文类别失败！',
-            type: 'error'
-          });
+          // Notification({
+          //   message: '获取公文类别失败！',
+          //   type: 'error'
+          // });
+        })
+    }
+
+  },
+  //获取公文类型树
+  getDocTree({ commit, state }) {
+    if (state.typeTree.length == 0) {
+      api.getTypeTree()
+        .then(res => {
+          commit(types.GET_TYPE_TREE, res)
+        }, res => {
+          // Notification({
+          //   message: '获取公文类别失败！',
+          //   type: 'error'
+          // });
         })
     }
 
@@ -246,6 +262,7 @@ const actions = {
 
 const getters = {
   confidentiality: state => state.confidentiality,
+  typeTree: state => state.typeTree,
   urgency: state => state.urgency,
   selConfident: state => state.selConfident,
   selUrgency: state => state.selUrgency,
@@ -275,6 +292,9 @@ const mutations = {
   },
   [types.GET_ADMIN_STATUS](state, res) {
     state.isAdmin = res
+  },
+  [types.GET_TYPE_TREE](state, res) {
+    state.typeTree = res.data
   },
   [types.GET_DOC_FORM](state, res) {
     state.docType = res.data

@@ -31,22 +31,6 @@
             </el-col>
           </el-row>
         </div>
-        <!-- <div class="sub-menu" v-bind:class="{'open':shouSubMenu}" v-on:mouseleave="dropdownHidden()">
-          <div class="container clearfix">
-            <ul>
-              <li v-for="(sub,index) in subMenu" ref="subMenu" :key="sub.name">
-                <span v-on:mouseenter="dropdown(sub.child,index)" v-goto="{path:sub.path}" @click="dropdownHidden">{{sub.name}}</span>
-              </li>
-            </ul>
-          </div>
-          <div class="childMenu" v-bind:style="childMenuStyle">
-            <ul ref="childMenu" v-bind:style="childUlStyle">
-              <li v-for="child in childMenu" :key="child.name">
-                <router-link :to="child.path" @click="dropdownHidden">{{child.name}}</router-link>
-              </li>
-            </ul>
-          </div>
-        </div> -->
       </nav>
     </div>
     <el-carousel height="382px" arrow="never" v-if="$route.path=='/home'">
