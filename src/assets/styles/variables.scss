@@ -1125,6 +1125,9 @@ ul {
 }
 
 .commonApp {
+  .el-table__body-wrapper{
+    overflow-x:hidden;
+  }
   .deptArea,
   .arrArea {
     float: left;

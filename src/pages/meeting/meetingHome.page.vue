@@ -27,38 +27,21 @@
             </el-menu-item>
           </el-menu-item-group>
         </el-menu>
-        <el-card class="roomList" v-show="$route.name=='ReservationAllRoom'">
-          <ul v-for="floor in roomList">
-            <li>{{floor.roomPosition}}</li>
-            <router-link tag="li" :to="'/meeting/ReservationAllRoom/'+room.id" v-for="room in floor.rooms">- {{room.roomName}}</router-link>
-          </ul>
+        <el-card class="roomList borderCard" v-show="$route.name=='ReservationAllRoom'">
+          <el-menu class="el-menu-vertical-demo" :default-openeds="roomList.map(r=>r.roomPosition)" router>
+            <el-submenu :index="floor.roomPosition" v-for="(floor,index) in roomList" :key="floor.roomPosition">
+              <template slot="title">{{floor.roomPosition}}</template>
+              <el-menu-item :index="'/meeting/ReservationAllRoom/'+room.id" v-for="room in floor.rooms" :key="room.id">
+                - {{room.roomName}}
+              </el-menu-item>
+            </el-submenu>
+          </el-menu>
         </el-card>
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
-// const roomList = [{
-//     floor: 'AFFC 10/F Training Room',
-//     child: ['-Training Room A', '-Training Room B', '-Training Room C', '-Training Room D', '-Training Room E', '-Training Room F', '-Training Room G']
-//   },
-//   {
-//     floor: '9/F Citygate',
-//     child: ['-Meeting Room A', '-Main Conference Room   (Crisis Management Centre) ', '-Meeting Room B']
-//   },
-//   {
-//     floor: '11/F Citygate',
-//     child: ['-Meeting Room 1 ', '-Main Conference Room', '-Meeting Room 2 ']
-//   },
-//   {
-//     floor: '7/F Citygate',
-//     child: ['-Meeting Room A ', '-Interview Room', '-Boardroom ']
-//   },
-//   {
-//     floor: 'Airport World Trade Centre',
-//     child: ['-Room AB ', '-Training Room 4 ', '-Room CD ']
-//   },
-// ]
 import { mapGetters, mapMutations } from 'vuex'
 export default {
 
@@ -113,32 +96,32 @@ $brown: #985D55;
     }
   }
   .roomList {
-    padding: 0;
     .el-card__body {
       padding: 0;
     }
-    ul {
-      border-bottom: 1px solid #f2f2f2;
-      li {
-        padding-left: 12px;
-      }
-      li:first-child {
-        line-height: 50px;
-        border-bottom: 1px solid #f2f2f2;
-        font-size: 16px;
+
+    .el-menu-vertical-demo {
+      box-shadow: none;
+      .el-submenu {}
+      .el-submenu__title {
         color: #676767;
+        font-size: 16px;
+        border-bottom: none;
+        height: 55px;
+        line-height: 50px;
+        padding-left: 14px!important;
+        border-bottom: 1px solid #E9E9E9; // i {
       }
-      li:nth-child(n+2) {
-        line-height: 30px;
-        color: $main;
+      .el-menu {
+        border-bottom: 1px solid #E9E9E9;
+        padding: 10px 0;
+      }
+      .el-menu-item {
+        padding-left: 14px!important;
         font-size: 15px;
-        cursor: pointer;
-      }
-      li:nth-child(2) {
-        padding-top: 5px;
-      }
-      li:last-child {
-        padding-bottom: 5px;
+        height: 35px;
+        line-height: 35px;
+        color: $sub;
       }
     }
   }

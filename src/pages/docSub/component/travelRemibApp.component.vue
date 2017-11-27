@@ -108,7 +108,7 @@
                   <span>{{ props.row.accommodationDays }}天</span>
                 </el-form-item>
                 <el-form-item label="房间类型" v-if="props.row.accommodationTypeName">
-                  <span>{{ props.row.accommodationTypeName==1?'单人间':'双人间' }}</span>
+                  <span>{{ props.row.accommodationTypeName}}</span>
                 </el-form-item>
                 <el-form-item label="房价" v-if="props.row.price">
                   <span>{{ props.row.price }}元/天</span>
@@ -240,7 +240,7 @@
           <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
         </el-form-item>
         <el-form-item label="收款账户" prop="bankAccount" class="arrArea" label-width="100px" style="width:49%">
-          <el-input v-model="paymentForm.bankAccount" :maxlength="19"></el-input>
+          <money-input v-model="paymentForm.bankAccount" :maxlength="50" :prepend="false" :append="false" type="int0"></money-input>
         </el-form-item>
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
@@ -301,7 +301,7 @@ export default {
       }
     };
     var checkTimeline = (rule, value, callback) => {
-      if (value.length > 0 &&value[0]&& value[0].getTime() == value[1].getTime()) {
+      if (value.length > 0 && value[0] && value[0].getTime() == value[1].getTime()) {
         callback(new Error('开始时间不能等于结束时间'))
       } else {
         callback();
@@ -341,7 +341,7 @@ export default {
         timeLine: [{ type: 'array', required: true, message: '请选择日期', trigger: 'blur' }, { validator: checkTimeline, trigger: 'blur,change' }],
         price: [{ required: true, message: '请输入金额', trigger: 'blur' }],
         city: [{ required: true, message: '请输入城市', trigger: 'blur' }],
-        des: [{ required: true, message: '请输入说明', trigger: 'blur' }],
+        // des: [{ required: true, message: '请输入说明', trigger: 'blur' }],
         totalFee: [{ required: true, message: '请输入金额', trigger: 'blur' },
           { validator: checkTotalFee, trigger: 'blur,change' }
         ],
@@ -713,8 +713,7 @@ export default {
       }
       this.clone(this.feeTable).forEach(f => {
         f.remark = f.des;
-        f.startDate = this.timeFilter(f.startDate, 'date');
-        f.endDate = this.timeFilter(f.endDate, 'date');
+
         f.acurrencyName = f.currencyName;
         f.dictTravelName = f.feeTypeName;
         delete(f.feeTypeName);
@@ -723,16 +722,22 @@ export default {
         delete(f.currencyCode);
         if (f.feeTypeCode == 'FIN0601') { //住宿
           f.reimburseRoomPrice = f.rmb;
+          f.startDate = this.timeFilter(f.startDate, 'date');
+          f.endDate = this.timeFilter(f.endDate, 'date');
           delete(f.feeTypeCode);
           delete(f.totalFee);
           delete(f.rmb);
           paramsList.travlepayStayList.push(f);
         } else if (f.feeTypeCode == 'FIN0602') { //交通
+          f.startDate = this.timeFilter(f.startDate, 'date');
+          f.endDate = this.timeFilter(f.endDate, 'date');
           delete(f.rmb);
           delete(f.totalFee);
           delete(f.feeTypeCode);
           paramsList.travelpayTrafficList.push(f);
         } else if (f.feeTypeCode == 'FIN0603') { //国际差旅
+          f.startDate = this.timeFilter(f.startDate, 'date');
+          f.endDate = this.timeFilter(f.endDate, 'date');
           f.allowanceMoney = f.rmb;
           f.dictTravelId = f.feeTypeCode;
           f.allowanceTotalMoney = f.totalFee
@@ -745,6 +750,8 @@ export default {
           f.dictTravelId = f.feeTypeCode;
           f.startTime = this.timeFilter(f.startDate, 'hours');
           f.endTime = this.timeFilter(f.endDate, 'hours');
+          f.startDate = this.timeFilter(f.startDate, 'date');
+          f.endDate = this.timeFilter(f.endDate, 'date');
           delete(f.feeTypeCode);
           delete(f.totalFee);
           delete(f.rmb);

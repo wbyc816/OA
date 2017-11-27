@@ -214,11 +214,6 @@ $sub:#1465C0;
         line-height: 50px;
         padding-left: 14px!important;
         border-bottom: 1px solid #E9E9E9; // i {
-        //   position: relative;
-        //   top: 0;
-        //   left: 4px;
-        //   padding: 0 4px;
-        // }
       }
       .el-menu {
         border-bottom: 1px solid #E9E9E9;

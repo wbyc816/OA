@@ -53,6 +53,8 @@ export default {
         val = val.toString().match(/^[1-9]([0-9]{0,})+(?:\.\d{0,2})?/);
       } else if (this.type == 'int') {
         val = val.toString().match(/^[1-9][0-9]{0,}/)
+      }else if (this.type == 'int0') {
+        val = val.toString().match(/^[0-9]{0,}/)
       } else if (this.type == 'invoice') {
         val = val.toString().match(/^[0-9]([0-9]\,|[0-9]){0,}/)
       }

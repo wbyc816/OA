@@ -178,7 +178,7 @@ export default {
     this.getFileType();
     this.getleftFileType();
     this.params.empId = this.userInfo.empId;
-    this.params.classify1 = "ADM0401";
+    // this.params.classify1 = "ADM0401";
     this.getDept();
     this.getData();
   },

@@ -7,21 +7,21 @@
       </div>
       <el-row :gutter="12">
         <el-col :span="6">
-          <el-select v-model="searchParams.supplierType" placeholder="客户类型">
+          <el-select v-model="searchParams.supplierType" placeholder="客户类型" :clearable="true">
             <el-option :key="item.dictCode" :label="item.dictName" :value="item.dictCode" v-for="item in supplierTypes"></el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="12">
           <el-input v-model="searchParams.supplierCity" placeholder="所在城市"></el-input>
         </el-col>
         <el-col :span="6">
-          <el-select v-model="searchParams.supplierStatus" placeholder="客户状态">
+          <el-select v-model="searchParams.supplierStatus" placeholder="客户状态":clearable="true">
             <el-option :key="item.dictCode" :label="item.dictName" :value="item.dictCode" v-for="item in supplierStatus"></el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <!-- <el-col :span="6">
           <el-input v-model="searchParams.supplierNo" placeholder="客户编码"></el-input>
-        </el-col>
+        </el-col> -->
         <el-col :span="21">
           <el-input v-model.trim="searchParams.supplierName" placeholder="客户名称"></el-input>
         </el-col>
@@ -32,7 +32,7 @@
     </el-card>
     <el-card class="borderCard searchResult" v-loading="searchLoading">
       <el-table :data="searchData" class="myTable">
-        <el-table-column prop="supplierNo" label="客户编码" width="180"></el-table-column>
+        <!-- <el-table-column prop="supplierNo" label="客户编码" width="180"></el-table-column> -->
         <el-table-column prop="supplierName" label="客户名称"></el-table-column>
         <el-table-column prop="supplierType" label="类型" width="100"></el-table-column>
         <el-table-column prop="supplierCity" label="所在城市" width="100"></el-table-column>

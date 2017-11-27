@@ -209,25 +209,27 @@ export default {
     },
     checkSuggest() {
       var success = true;
-      this.ruleForm.path.forEach((p, i, arr) => {
-        if (p.type == 4 || p.type == 5) { //判断会签不能为空
-          if (!p.children || p.children.length == 0) {
-            this.$message.warning('建议路径内会签列表不能为空！');
-            success = false
-          } else if (i == 0) {
-            this.$message.warning('建议路径不能以会签开始！');
-            success = false
-          } else if (i == arr.length - 1) {
-            this.$message.warning('建议路径不能以会签结束！');
-            success = false
+      if (!this.disableEditSuggest) {
+        this.ruleForm.path.forEach((p, i, arr) => {
+          if (p.type == 4 || p.type == 5) { //判断会签不能为空
+            if (!p.children || p.children.length == 0) {
+              this.$message.warning('建议路径内会签列表不能为空！');
+              success = false
+            } else if (i == 0) {
+              this.$message.warning('建议路径不能以会签开始！');
+              success = false
+            } else if (i == arr.length - 1) {
+              this.$message.warning('建议路径不能以会签结束！');
+              success = false
+            }
+          } else {
+            if (p.state && p.state == 1 && p.type != 7) {
+              this.$message.warning(p.typeIdName + '需替换！');
+              success = false
+            }
           }
-        } else {
-          if (p.state && p.state == 1 && p.type != 7) {
-            this.$message.warning(p.typeIdName + '需替换！');
-            success = false
-          }
-        }
-      })
+        })
+      }
       return success
     },
     saveForm() {
@@ -417,13 +419,13 @@ export default {
           temp.push(s);
         } else if (s.type == 7) {
           if (start) {
-            start=0;
+            start = 0;
           } else {
             start = index;
             s.nodeName = 'sign';
             s.children = [];
             temp.push(s);
-          }          
+          }
         } else {
           if (start) {
             temp[start].children.push(s);

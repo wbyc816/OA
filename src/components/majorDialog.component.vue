@@ -267,7 +267,10 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 $sub:#1465C0;
-.el-tree {
+
+
+.majorDialog {
+  .el-tree {
   border-bottom: none;
   border-left: none;
 }
@@ -275,8 +278,6 @@ $sub:#1465C0;
 .el-table__body-wrapper {
   overflow: hidden;
 }
-
-.majorDialog {
   .el-tag {
     margin-right: 5px;
   }
