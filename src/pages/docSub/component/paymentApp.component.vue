@@ -10,11 +10,12 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="预付款" prop="isAdvancePayment" placeholder="" class="deptArea">
+      <el-form-item label="预付款" prop="isAdvancePayment" placeholder="" class="clearBoth">
         <el-radio-group v-model="paymentForm.isAdvancePayment" class="myRadio" @change="isAdvancePaymentChange">
           <el-radio-button label="1">是<i></i></el-radio-button>
           <el-radio-button label="0">否<i></i></el-radio-button>
         </el-radio-group>
+        <p class="tipInfo" v-show="paymentForm.isAdvancePayment==1">预付款仅能添加一个付款项</p>
       </el-form-item>
       <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px" class="clearBoth">
         <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
@@ -136,7 +137,7 @@ import MoneyInput from '../../../components/moneyInput.component'
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 
-const prePayTemp=[20184,20186]
+const prePayTemp = [20184, 20186]
 export default {
   components: { MoneyInput },
   data() {
@@ -201,6 +202,7 @@ export default {
       params: '',
       feeTypes: [],
       addTax: '',
+      draftFirst: false,
       paymentProp: {
         value: 'id',
         label: 'supplierName',
@@ -239,7 +241,9 @@ export default {
   created() {
     this.getPayType(); //付款类型
     this.getBudgetDeptList(); //预算机构/科目
-    this.getFileCatalogue(); //收款供应商
+    if (!this.$route.params.id) {
+      this.getFileCatalogue(); //收款供应商
+    }
     this.getInvoiceList(); //发票类型
     this.getCurrencyList(); //币种
     this.getPayMthod(); //付款方式
@@ -253,11 +257,16 @@ export default {
         budgetTable: this.budgetTable,
         paymentForm: this.paymentForm,
       });
+
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
       this.paymentForm = obj.paymentForm;
       this.budgetTable = obj.budgetTable;
+      if (this.paymentForm.supplierIds.length != 0) {
+        this.draftFirst = true;
+      }
+      this.getFileCatalogue();
     },
     changePayType(val) {
       this.$emit('updateSuggest', val)
@@ -311,7 +320,7 @@ export default {
         var totalTAX = 0;
         for (var i = 0; i < this.budgetTable.length; i++) {
           var temp = this.budgetTable[i];
-          if(temp.budgetItemId==this.addTax.budgetItemId){
+          if (temp.budgetItemId == this.addTax.budgetItemId) {
             totalTAX += temp.rmb;
           }
           if (temp.money == '' || temp.rmb > temp.budegetRemain) {
@@ -333,16 +342,16 @@ export default {
         return false
       }
     },
-    isAdvancePaymentChange(val){
-      if(val==1){
-        this.handleItemChange(prePayTemp.slice(0,1));
-        this.budgetForm.budgetDept=prePayTemp;
+    isAdvancePaymentChange(val) {
+      if (val == 1) {
+        this.handleItemChange(prePayTemp.slice(0, 1));
+        this.budgetForm.budgetDept = prePayTemp;
         this.depChange(prePayTemp);
-        this.budgetTable=[];
-      }else{
-        this.budgetForm.budgetDept=[];
-        this.budgetInfo='';
-        this.budgetTable=[];
+        this.budgetTable = [];
+      } else {
+        this.budgetForm.budgetDept = [];
+        this.budgetInfo = '';
+        this.budgetTable = [];
       }
     },
     invoiceTypeChange(code) {
@@ -351,7 +360,13 @@ export default {
       }
     },
     beforeContractUpload(file) {
-      const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      var isJPG;
+      if (file.type) {
+        isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      } else {
+        var regExp = new RegExp("\.(docx|jpg|pdf)$", "i");
+        isJPG = regExp.test(file.name);
+      }
       const isLt10M = file.size / 1024 / 1024 < 10;
 
       if (!isJPG) {
@@ -589,6 +604,10 @@ export default {
               s.id = s.supplierName;
             })
             this.supplierList = res.data;
+            if (this.draftFirst) {
+              this.draftFirst = false;
+              this.supplierChange();
+            }
           } else {
             console.log('获取供应商失败')
           }
@@ -693,6 +712,11 @@ $main:#0460AE;
   // .el-input {
   //   width: 100%;
   // }
+  .tipInfo {
+    display: inline-block;
+    font-size: 14px;
+    color: $main;
+  }
   .myRadio {
     .el-radio-button__inner {
       width: 60px;

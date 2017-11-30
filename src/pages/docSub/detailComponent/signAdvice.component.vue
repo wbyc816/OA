@@ -1,6 +1,10 @@
 <template>
   <div class="signAdvice">
-    <h4 class='doc-form_title'>我的会签意见</h4>
+    <h4 class='doc-form_title'>我的会签意见
+    <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" class="exportButton">
+          <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
+        </a>
+      </h4>
     <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
       <el-form-item label="会签意见" class="textarea" prop="state">
         <el-col :span='18'>
@@ -62,7 +66,8 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo',
-      'submitLoading'
+      'submitLoading',
+      'baseURL'
     ])
   },
   created() {
@@ -208,6 +213,15 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 .signAdvice {
+  .exportButton {
+    float: right;
+    position: relative;
+    top: -10px;
+    i {
+      font-size: 22px;
+      vertical-align: middle;
+    }
+  }
   .myRadio {
     line-height: 45px;
     .el-radio-button .el-radio-button__inner {

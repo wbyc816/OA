@@ -97,7 +97,7 @@
           <el-form-item label="手机">
             <p>{{empDetial.mobileNumber}}</p>
           </el-form-item>
-          <div class="borderBox"></div>
+          <!-- <div class="borderBox"></div>
           <el-form-item label="紧急联系人" class="pr70">
             <el-input v-model="baseForm.emergency.name" :maxlength="10"></el-input>
           </el-form-item>
@@ -109,7 +109,7 @@
           </el-form-item>
           <el-form-item label="联系人地址">
             <el-input type="textarea" resize="none" :maxlength="100" :rows="4" v-model="baseForm.emergency.address"></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <div class="borderBox"></div>
           <el-form-item label="个人照片" class="uploadBox" :rules="[{ required: false, message: '头像未上传'}]" prop="picUrl">
             <el-upload ref="upload" class="avatar-uploader" :auto-upload="false" :action="baseURL+'/emp/updatePic'" :data="{id:userInfo.empId}" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange">
@@ -211,6 +211,7 @@ export default {
         emergencyParam.oldId = this.emergencyContactInfo[0].id
       }
       this.$store.dispatch('updateBaseInfo', { emergency: [emergencyParam], emp: empParam });
+      // this.$store.dispatch('updateBaseInfo', { emp: empParam });
     },
     handleAvatarSuccess(res, file) {
       this.updateInfo(res.data);

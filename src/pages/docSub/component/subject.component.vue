@@ -120,6 +120,7 @@ export default {
       var user = this.taskUserList.find(t => (t.deptId + t.jobtitle) == val);
       if (user) {
         this.$store.commit('setTaskUser', user);
+        this.getDefaultReciver();
       }
     },
     selectPerson(val) {
@@ -202,6 +203,36 @@ export default {
             if (!this.$route.query.id) {
               this.ruleForm.taskUserID = res.data[0].deptId + res.data[0].jobtitle;
               this.$store.commit('setTaskUser', res.data[0]);
+              // this.getDefaultReciver();
+            }
+          } else {
+
+          }
+        })
+    },
+    getDefaultReciver() {
+      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId,empPostId:this.taskUser.postId })
+        .then(res => {
+          if (res.status == 0) {
+            if (res.data) {
+              var receiver = {
+                "reciDeptMajorName": res.data.reciDeptMajorName,
+                "reciDeptMajorId": res.data.reciDeptMajorId,
+                "reciDeptName": res.data.reciDeptName,
+                "reciDeptId": res.data.reciDeptId,
+                "reciUserName": res.data.reciUserName,
+                "reciUserId": res.data.reciUserId,
+                "reciUserJobTitle": res.data.reciJobtitle, //接收人职位
+                "reciPostrankId": res.data.reciPostrankId, //职位id
+                "reciEmpPostId": res.data.reciEmpPostId,
+                "reciPostrankName": res.data.reciPostrankName, //职级名称
+                "reciSupervisory": res.data.reciSupervisoryLevel //安全级别
+              }
+              this.$store.commit('setReciver', receiver);
+              this.ruleForm.rec = res.data.reciUserName;
+            }else{
+              this.$store.commit('setReciver', '');
+              this.ruleForm.rec = '';
             }
           } else {
 

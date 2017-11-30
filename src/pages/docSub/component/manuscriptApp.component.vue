@@ -106,7 +106,7 @@ export default {
         children: 'catalogues'
       },
       fileRedData: [],
-      files:[]
+      files: []
     }
   },
   computed: {
@@ -125,13 +125,13 @@ export default {
     saveForm() {
       var params = JSON.stringify({
         manuscriptForm: this.manuscriptForm,
-        files:this.files
+        files: this.files
       });
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
       this.combineObj(this.manuscriptForm, obj.manuscriptForm, ['issueDate']);
-      this.files=obj.files;
+      this.files = obj.files;
       if (obj.manuscriptForm.issueDate) {
         this.manuscriptForm.issueDate = new Date(obj.manuscriptForm.issueDate);
       }
@@ -144,16 +144,19 @@ export default {
     updateFileSend(params) {
       this.manuscriptForm.fileSend = params;
     },
-    handleAvatarSuccess(res, file,fileList) {
+    handleAvatarSuccess(res, file, fileList) {
       this.manuscriptForm.docFileId = res.data;
-      this.files=fileList;
-      console.log(this.files)
+      this.files = fileList;
     },
     beforeUpload(file) {
-      // console.log(file)
-      const isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      var isJPG;
+      if (file.type) {
+        isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      }else{
+        var regExp=new RegExp("\.docx$", "i");
+        isJPG=regExp.test(file.name);
+      }
       const isLt10M = file.size / 1024 / 1024 < 10;
-
       if (!isJPG) {
         this.$message.error('上传文件只能是 DOCX 格式!');
       }
@@ -164,7 +167,7 @@ export default {
     },
     handleRemove() {
       this.manuscriptForm.docFileId = '';
-      this.files=[];
+      this.files = [];
     },
     submitMiddle() {
       var that = this;

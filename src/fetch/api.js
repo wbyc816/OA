@@ -107,7 +107,10 @@ export default {
     return fetch('/resume/getEmpPostInfo', { id: id })
   },
   updateBaseInfo(params) {
-    return concurrent([{ url: '/resume/updateEmergencyContactInfo', params: params.emergency, isBody: true },
+    // return concurrent([{ url: '/resume/updateEmergencyContactInfo', params: params.emergency, isBody: true },
+    // { url: '/emp/updateEmp', params: params.emp, isBody: true }
+    // ])
+    return concurrent([
     { url: '/emp/updateEmp', params: params.emp, isBody: true }
     ])
   },
