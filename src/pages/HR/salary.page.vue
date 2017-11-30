@@ -49,7 +49,7 @@
           <el-col :span="4" class="alignCenter">明细</el-col>
         </el-row>
       </div>
-      <div class="salaryList" v-if="salaryType==3">
+      <div class="salaryList" v-if="salaryType==1">
         <el-row>
             <el-col :span="8">上月夜班夜餐天数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.nightMealDays}}</el-col>
@@ -116,29 +116,12 @@
             <el-col :span="4" class="alignCenter">{{salaryData.overnightDays}}</el-col>
         </el-row>
         <el-row>
-            <el-col :span="8">上月夜班夜餐天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.nightMealDays}}</el-col>
-            <el-col :span="8">上月跟机小时数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.followFlightHours}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">驻外天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.stationedAbroadDays}}</el-col>
-            <el-col :span="8">上月节假日加班天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.overtimeDays}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">上月培训课时</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.trainNumber}}</el-col>
-        
-        </el-row>
-        <el-row>
             <el-col :span="24">
               上述各项小时生产数据由人力资源部薪酬管理处根据各业务部门所提供的生产数据核算，如有疑问可与部门考勤专员联系，点此<a href="#">查询联系方式及计算公式。</a>
             </el-col>
         </el-row>
       </div>
-      <div class="salaryList" v-if="salaryType==1">
+      <div class="salaryList" v-if="salaryType==3">
         <el-row>
             <el-col :span="8">技术等级</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.technicalGrade}}</el-col>
@@ -167,30 +150,13 @@
             <el-col :span="8">机上广播时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.broadcastTime}}</el-col>
             <el-col :span="8">乘务员安全员调组乘机时间</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.othercompanyFlyingTime}}</el-col>
+            <el-col :span="4" class="alignCenter">2{{salaryData.othercompanyFlyingTime}}</el-col>
         </el-row>
         <el-row>
             <el-col :span="8">飞行乘务课时</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.crewLesson}}</el-col>
             <el-col :span="8">空勤人员过夜天数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.overnightDays}}</el-col>
-        </el-row>
-          <el-row>
-            <el-col :span="8">上月夜班夜餐天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.nightMealDays}}</el-col>
-            <el-col :span="8">上月跟机小时数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.followFlightHours}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">驻外天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.stationedAbroadDays}}</el-col>
-            <el-col :span="8">上月节假日加班天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.overtimeDays}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">上月培训课时</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.trainNumber}}</el-col>
-        
         </el-row>
         <el-row>
             <el-col :span="24">
@@ -277,7 +243,6 @@ export default {
           }else if(res.data.filghtSalary!=''){
             this.salaryData=res.data.filghtSalary;
             this.salaryType=2;
-            console.log(this.salaryData)
           }else if(res.data.groundSalary!=''){
             this.salaryData=res.data.groundSalary;
             this.salaryType=3;
@@ -289,14 +254,14 @@ export default {
             this.salaryMonth=month.slice(0,4)+"年"+month.slice(4,6)+"月";
             
           }
-          // console.log(this.salaryData);
+          console.log(this.salaryData);
         }
       }, res => {
 
       })
     },
     updateSalary(val){
-      // console.log(val);
+      console.log(val);
       if(val){
         this.getData();
       }

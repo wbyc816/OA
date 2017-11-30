@@ -375,7 +375,7 @@ export default {
         payMthodCode: [{ required: true, message: '请选择付款方式', trigger: 'blur' }],
         paymentOthers: [{ required: true, trigger: 'blur', message: '请输入付款方式' }],
         contractAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择合同' }],
-        // invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票' }],
+        invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票' }],
         bankAccount: [{ required: true, trigger: 'blur', message: '请输入收款账户' }],
         payee: [{ required: true, trigger: 'blur', message: '请选择收款人' }],
         appUserName: [{ required: true, message: '请选择报销申请人', trigger: 'blur' }],

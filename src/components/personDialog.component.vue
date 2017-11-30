@@ -93,7 +93,7 @@ export default {
         this.initData=true;
         if (this.admin !== '') {
           if (this.admin == '0') {
-            this.$store.dispatch('getDeptList');
+            this.$store.dispatch('getDepById');
           } else {
             this.$store.dispatch('getDeptList');
           }
@@ -101,7 +101,7 @@ export default {
           if (this.isAdmin) {
             this.$store.dispatch('getDeptList');
           } else {
-            this.$store.dispatch('getDeptList');
+            this.$store.dispatch('getDepById');
           }
         }
         if (this.userInfo.levelNum == 30) {

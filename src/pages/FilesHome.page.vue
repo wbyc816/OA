@@ -37,9 +37,9 @@
                 <ul class="file_ul">
                   <div class="verticalLine"> </div>
                   <li v-for="fileData in fileDatas" @click="goTo(fileData)">
-                    <div class="title_li"><span class="docTitle">{{fileData.docTitle}}</span><span class="docnew" v-if="fileData.isRead==='0'">NEW</span></div>
+                    <div class="title_li">{{fileData.docTitle}}</div>
                     <div class="content_li">
-                      <span>{{fileData.taskDeptMajorName }}</span> 
+                      <span>{{fileData.taskDeptMajorName }}</span>
                       <span class="content_right">
                           <span class="iconfontColor"><i class="iconfont icon-dianzan"></i></span><span>{{fileData.praise}}</span>
                       <span class="iconfontColor"><i class="iconfont icon-eye"></i></span><span>{{fileData.browse}}</span>
@@ -352,24 +352,6 @@ $main: #0460AE;
     color: #1465C0;
   }
   & .file_ul {
-     .docnew{
-      font-size: 12px;
-      background: #FF9300;
-      color: #fff;
-      border-radius: 3px;
-      padding: 0 2px;
-      vertical-align: bottom;
-      margin-left:2px;
-    }
-    .docTitle{
-      display:inline-block;
-      max-width: 330px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      float: left;
-      padding-right: 0px;
-    }
     overflow: hidden;
     color: #676767;
     position: relative;
