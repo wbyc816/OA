@@ -48,7 +48,7 @@
         </el-upload>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updateSign" :visible.sync="signDialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updateSign" :visible.sync="signDialogVisible" admin="1"></person-dialog>
     <major-dialog :params="manuscriptForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
   </div>
 </template>
