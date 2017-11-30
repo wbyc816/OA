@@ -39,8 +39,8 @@
           </p>
           <el-tabs v-model="activeName" class="myTab" @tab-click="getNew">
             <el-tab-pane :label="list.name" :name="list.code" v-for="(list,index) in newsList" v-if="list.code!='ADM0405'&&list.code!='ADM0407'">
-              <router-link :to="'/newsDetail/'+news.id" class="newBox clearfix" v-for="(news,newIndex) in list.child" v-if="newIndex<8">
-                <p>{{news.docTitle}}</p>
+              <router-link :to="'/newsDetail/'+news.id" class="newBox clearfix" v-for="(news,newIndex) in list.child" v-if="newIndex<6">
+                <p><span class="title">{{news.docTitle}}</span> <span class="newsnew" v-if="news.isRead==='0'">NEW</span></p>
                 <p><span><i class="iconfont icon-eye"></i><span>{{news.browse}}</span>{{news.createTime | time('xie')}}</span>
                 </p>
               </router-link>
@@ -569,6 +569,7 @@ $sub:#1465C0;
   //   }
   // }
   .news {
+    
     padding: 0;
     .el-card__header {
 
@@ -592,7 +593,10 @@ $sub:#1465C0;
           font-size: 14px;
           color: #676767;
         }
+      
+       
       }
+     
     }
     .el-card__body {
       padding: 0;
@@ -613,7 +617,7 @@ $sub:#1465C0;
           white-space: nowrap;
           text-overflow: ellipsis;
           overflow: hidden;
-          padding-right: 15px;
+          // padding-right: 50px;
           width: 370px;
           color: #393939;
           float: left;
@@ -649,6 +653,24 @@ $sub:#1465C0;
           }
         }
       }
+    }
+    .newsnew{
+      font-size: 12px;
+      background: #FF9300;
+      color: #fff;
+      border-radius: 3px;
+      padding: 0 2px;
+      vertical-align: top;
+      margin-left:2px;
+    }
+    .title{
+      display:inline-block;
+      max-width: 330px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      float: left;
+      padding-right: 0px;
     }
   }
   .personnel {
