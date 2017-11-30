@@ -21,12 +21,22 @@
         </el-input>
       </el-form-item>
       <el-form-item label="培训总预算" prop="trainTotalCost" class="deptArea">
-        <money-input v-model="trainingForm.trainTotalCost" :prepend="false">
+        <money-input v-model="trainingForm.trainTotalCost" :prepend="false" >
           <template slot="append">元</template>
         </money-input>
       </el-form-item>
-      <el-form-item label="单人预算" prop="trainPerCost" class="arrArea" label-width="100px">
-        <money-input v-model="trainingForm.trainPerCost" :prepend="false">
+      <el-form-item label="培训差旅费用" prop="trainPerTravelCost" class="arrArea">
+        <money-input v-model="trainingForm.trainPerTravelCost" :prepend="false"  @change="changeTravelCost">
+          <template slot="append">元</template>
+        </money-input>
+      </el-form-item>
+      <el-form-item label="培训费用" prop="trainPerTrainlCost" class="deptArea" >
+        <money-input v-model="trainingForm.trainPerTrainlCost" :prepend="false"  @change="changeTrainlCost">
+          <template slot="append">元</template>
+        </money-input>
+      </el-form-item>
+      <el-form-item label="单人预算" prop="trainPerCost" class="arrArea" label-width="100px" >
+        <money-input v-model="trainingForm.trainPerCost" :prepend="false" :disabled="true">
           <template slot="append">元</template>
         </money-input>
       </el-form-item>
@@ -63,12 +73,16 @@ export default {
         deps: [],
         timeRange: [],
         trainTotalCost: '',
-        trainPerCost: ''
+        trainPerCost: '',
+        trainPerTrainlCost:"",
+        trainPerTravelCost:"",
       },
       rules: {
         trainTotalCost: [{ required: true, message: '请输入培训总预算', trigger: 'blur' }],
-        trainPerCost: [{ required: true, message: '请输入单人预算', trigger: 'blur' },
+        trainPerCost: [{ required: true, message: '请输入完整信息', },
         {validator: checkMoney, trigger: 'blur,change'}],
+        trainPerTrainlCost: [{ required: true, message: '请输入培训费用', trigger: 'blur' }],
+        trainPerTravelCost: [{ required: true, message: '请输入培训差旅费用', trigger: 'blur' }],
         person: [{ type: 'array', required: true, message: '请选择培训人', trigger: 'blur' }],
         timeRange: [{ type: 'array', required: true, message: '请选择培训日期', trigger: 'blur' }],
         trainSubjects: [{ required: true, message: '请输入培训科目', trigger: 'blur' }],
@@ -119,6 +133,8 @@ export default {
         if (valid) {
           this.params = {
             "train": {
+              "trainPerTrainlCost": this.trainingForm.trainPerTrainlCost, //培训费用
+              "trainPerTravelCost": this.trainingForm.trainPerTravelCost, //培训差旅费用
               "trainDeptId": this.trainingForm.deps[this.trainingForm.deps.length - 1], //最后一级部门id
               "trainDeptMajorId": this.trainingForm.deps[0], //第一级部门id
               "trainDate": this.trainingForm.timeRange[0].getTime(), //培训开始时间
@@ -141,6 +157,12 @@ export default {
           return false;
         }
       });
+    },
+    changeTravelCost(){
+      this.trainingForm.trainPerCost=Number(this.trainingForm.trainPerTrainlCost)+Number(this.trainingForm.trainPerTravelCost);
+    },
+    changeTrainlCost(){
+      this.trainingForm.trainPerCost=Number(this.trainingForm.trainPerTrainlCost)+Number(this.trainingForm.trainPerTravelCost);
     },
     getDepList() {
       function loopMap(arr) {
