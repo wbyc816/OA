@@ -258,14 +258,20 @@ export default {
       this.budgetForm.person.splice(index, 1);
     },
     fomatMoney(val) {
-      val = val.toString().match(/^\-{0,1}[0-9]{0,}\.{0,1}[0-9]{0,2}/);
-      if (val) {
-        this.budgetForm.budgetMoney = val[0];
-        this.$refs.budgetMoney.setCurrentValue(val[0]);
-      } else {
+      if(val.toString().match(/\-?[0]/)){
         this.budgetForm.budgetMoney = ''
         this.$refs.budgetMoney.setCurrentValue('')
+      }else{
+        val = val.toString().match(/\-?[0-9]*\.?[0-9]*$/);
+        if (val) {
+          this.budgetForm.budgetMoney = val[0];
+          this.$refs.budgetMoney.setCurrentValue(val[0]);
+        } else {
+          this.budgetForm.budgetMoney = ''
+          this.$refs.budgetMoney.setCurrentValue('')
+        }
       }
+      
     },
     getBudgetDeptList() {
       if (this.budgetForm.year) {
