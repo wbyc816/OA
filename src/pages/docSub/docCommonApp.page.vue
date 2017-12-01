@@ -114,11 +114,7 @@ export default {
       this.options.desTitle = this.doc.code == 'LZS' ? '离职理由说明' : '';
       if (this.$route.query.id) {
         this.getDraft();
-      } 
-      // else {
-      //   this.getDefaultReciver();
-      //   // this.$refs.description.getSuggestTemp();
-      // }
+      }
     },
     submitDoc() {
       this.$store.commit('SET_SUBMIT_LOADING', true);

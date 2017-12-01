@@ -181,7 +181,8 @@ export default {
         label: "name"
       },
       payees: [],
-      isDraft: false
+      isDraft: false,
+      isfirst: false
     }
   },
   computed: {
@@ -213,7 +214,10 @@ export default {
   mounted() {},
   methods: {
     changePayType(val) {
-      this.$emit('updateSuggest', val)
+      if (!this.isfirst) { //草稿箱第一次不调用建议路径模板  
+        this.$emit('updateSuggest', val)
+      }
+      this.isfirst = false;
     },
     saveForm() {
       var params = JSON.stringify({
@@ -223,6 +227,9 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
+      if(obj.paymentForm.payTypeCode){
+        this.isfirst=true;
+      }
       if (obj.paymentForm.payMthodCode == 'FIN0101') {
         this.isDraft = true;
       }
@@ -274,7 +281,7 @@ export default {
         var totalTAX = 0;
         for (var i = 0; i < this.budgetTable.length; i++) {
           var temp = this.budgetTable[i];
-          if(temp.budgetItemId==this.addTax.budgetItemId){
+          if (temp.budgetItemId == this.addTax.budgetItemId) {
             totalTAX += temp.rmb;
           }
           if (temp.money == '' || temp.rmb > temp.budegetRemain) {

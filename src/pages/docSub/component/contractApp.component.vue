@@ -78,7 +78,8 @@ export default {
   computed: {
     ...mapGetters([
       'submitLoading',
-      'baseURL'
+      'baseURL',
+      'userInfo'
     ])
   },
   created() {
@@ -150,18 +151,7 @@ export default {
         })
     },
     getFileCatalogue() {
-      // function loopMap(arr) {
-      //   arr.forEach(function(dep) {
-      //     if (dep.catalogues) {
-      //       if (dep.catalogues.length == 0) {
-      //         dep.catalogues = null
-      //       } else {
-      //         loopMap(dep.catalogues)
-      //       }
-      //     }
-      //   })
-      // }
-      this.$http.post('/doc/getSupplier')
+      this.$http.post('/doc/getSupplier',{empId:this.userInfo.empId})
         .then(res => {
           if (res.status == '0') {
             res.data.forEach((s, index) => {

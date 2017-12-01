@@ -217,7 +217,8 @@ export default {
         label: 'dictName',
         value: 'dictCode',
         children: 'child'
-      }
+      },
+      isfirst:false
     }
   },
   computed: {
@@ -261,15 +262,22 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
+      if(obj.paymentForm.payTypeCode){
+        this.isfirst=true;
+      }
       this.paymentForm = obj.paymentForm;
       this.budgetTable = obj.budgetTable;
       if (this.paymentForm.supplierIds.length != 0) {
         this.draftFirst = true;
       }
+
       this.getFileCatalogue();
     },
-    changePayType(val) {
-      this.$emit('updateSuggest', val)
+    changePayType(val) {      
+      if (!this.isfirst) { //草稿箱第一次不调用建议路径模板        
+        this.$emit('updateSuggest', val)
+      }
+      this.isfirst=false;
     },
     submitForm() {
       if (this.checkBudgetTable()) {
@@ -494,10 +502,12 @@ export default {
       }
     },
     budgetItemReset() {
-      this.budgetForm.budgetDept = [];
+      if (this.budgetForm.isAdvancePayment == 0) {
+        this.budgetForm.budgetDept = [];
+        this.budgetInfo = '';
+      }
       this.budgetForm.invoiceNum = '';
       this.budgetForm.appMoney = '';
-      this.budgetInfo = '';
       this.activeInvoice = this.invoiceList[0].dictCode;
       this.activeCurrency = this.currencyList[0].currencyCode;
     },
@@ -597,7 +607,7 @@ export default {
         })
     },
     getFileCatalogue() {
-      this.$http.post('/doc/getSupplier')
+      this.$http.post('/doc/getSupplier',{empId:this.userInfo.empId})
         .then(res => {
           if (res.status == '0') {
             res.data.forEach((s, index) => {

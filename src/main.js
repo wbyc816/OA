@@ -7,9 +7,8 @@ import ElementUI from 'element-ui'
 import locale from 'element-ui/lib/locale/lang/en'
 
 import './assets/fonts/iconfont.css'
-import './assets/fonts/iconfont.js'
 import './filters/filters.js'
-import pdfjsLib from 'pdfjs-dist'
+// import pdfjsLib from 'pdfjs-dist'
 import './common/util.js'
 import './common/polyfill.js'
 

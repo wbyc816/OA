@@ -113,7 +113,7 @@
           <div class="borderBox"></div>
           <el-form-item label="个人照片" class="uploadBox" :rules="[{ required: false, message: '头像未上传'}]" prop="picUrl">
             <el-upload ref="upload" class="avatar-uploader" :auto-upload="false" :action="baseURL+'/emp/updatePic'" :data="{id:userInfo.empId}" :show-file-list="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange">
-              <img v-if="baseForm.picUrl" :src="baseForm.picUrl" class="avatar">
+              <img v-if="baseForm.picUrl" :src="baseForm.picUrl"  @error="baseForm.picUrl=blankHead" class="avatar">
               <img v-else src="../../assets/images/blankHead1.png" alt="">
             </el-upload>
           </el-form-item>

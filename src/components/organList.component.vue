@@ -1,3 +1,4 @@
+<!-- 组织架构树 -->
 <template>
   <div class="organlist" v-loading="organLoading">
     <el-menu mode="vertical" :router="false" class="topMenu" :default-openeds="userInfo.deptIds">

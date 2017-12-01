@@ -1,12 +1,8 @@
 import axios from 'axios'
 import qs from 'qs'
 import Vue from 'vue'
-// var urlConfig=require("../../static/urlConfig.js")
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.defaults.baseURL = urlConfig.baseURL;
-// axios.defaults.baseURL = 'http://192.168.14.32:8080/DongHaiAirAPI/';
-// axios.defaults.baseURL = 'http://localhost:8080/DongHaiAirAPI/';
-// axios.defaults.baseURL = 'http://58.250.197.143:8899/DonghaiAirAPI';  //外网
+axios.defaults.baseURL = urlConfig.baseURL;   //基础url来自配置文件urlConfig.js
 
 
 //POST传参序列化

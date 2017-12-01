@@ -407,7 +407,11 @@ export default {
         params.dimissionDate = +this.ruleForm.planDate;
       }
       if (this.signType == '0') { //普通审批
-        if (this.ruleForm.state == 1) { //同意（不同意时不传下一个接收人）
+        if (this.ruleForm.state == 1) { //同意
+          Object.assign(params, this.reciver)
+        }
+        else if(this.ruleForm.state == 2&&this.userInfo.empId == this.adminReci.secUserId){  
+          // 不同意时且本人与默认接收人为同一人时
           Object.assign(params, this.reciver)
         }
       } else {

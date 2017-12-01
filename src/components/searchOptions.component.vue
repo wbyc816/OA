@@ -1,3 +1,4 @@
+<!-- 公文列表查询条件 -->
 <template>
   <div class="searchOptions">
     <el-card class="borderCard">
@@ -15,7 +16,13 @@
         <el-col :span="6" v-if="!notype">
           <el-cascader :clearable="true" :options="typeTree" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
         </el-col>
-        <el-col :span="notype?18:12">
+        <el-col :span="6">
+          <el-select v-model="params.taskUserId" filterable clearable remote placeholder="呈报人" :remote-method="remoteMethod" :loading="loading" style="width:100%">
+            <el-option v-for="item in personList" :key="item.empId" :label="item.name" :value="item.empId">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="notype?12:6">
           <el-input placeholder="公文标题" v-model.trim="params.keyWords" @keyup.enter.native="submitParam" :maxlength="50"></el-input>
         </el-col>
         <el-col :span="6">
@@ -52,11 +59,11 @@ export default {
     title: {
       type: String
     },
-    notype: {
+    notype: {    //是否显示公文类型
       type: Boolean,
       default: false
     },
-    hasOverTime: {
+    hasOverTime: {   //是否显示超时
       type: Boolean,
       default: false
     },
@@ -73,6 +80,7 @@ export default {
         "docNo": "",
         "docType": "",
         "startTime": "",
+        "taskUserId":""
       },
       isOverTime: "",
       isPay: "",
@@ -81,7 +89,10 @@ export default {
         label: 'dictName',
         value: 'dictCode',
         children: 'childDict'
-      }
+      },
+      loading:false,
+      meTimeout:null,
+      personList:[]
     }
   },
   computed: {
@@ -131,16 +142,25 @@ export default {
       }
       this.$emit('search', this.params)
     },
-    // getTypes() {
-    //   this.$http.post('/doc/getDocTypeTreeList')
-    //     .then(res => {
-    //       if (res.status == 0) {
-    //         this.typeTree = res.data
-    //       } else {
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loading = true;
+        clearTimeout(this.meTimeout);
+        this.meTimeout = setTimeout(() => {
+          this.$http.post('/emp/queryEmpDeptList', { name: query, pageNumber: 1, pageSize: 50 })
+            .then(res => {
+              this.loading = false;
+              if (res.status == 0) {
+                this.personList = res.empVoList;
+              } else {
 
-    //       }
-    //     })
-    // }
+              }
+            })
+        }, 300);
+      } else {
+        this.personList = [];
+      }
+    }
   }
 }
 

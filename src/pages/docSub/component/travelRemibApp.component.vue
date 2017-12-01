@@ -803,6 +803,7 @@ export default {
       this.isDraft = false;
     },
     beforeInvoiceUpload(file) {
+      console.log(file)
       const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
       const isLt10M = file.size / 1024 / 1024 < 10;
 

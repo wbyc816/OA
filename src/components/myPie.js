@@ -1,3 +1,5 @@
+//饼图
+
 import { Pie } from 'vue-chartjs'
 
 export default Pie.extend({

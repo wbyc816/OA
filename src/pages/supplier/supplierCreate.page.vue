@@ -68,6 +68,12 @@
           <el-form-item label="传真" prop="supplierFax" class="arrArea" v-if="!isPersonal">
             <el-input v-model="appForm.supplierFax"></el-input>
           </el-form-item>
+          <el-form-item label="是否公开" prop="supplierFax" class="deptArea">
+            <el-radio-group v-model="appForm.isOpen" class="myRadio">
+              <el-radio-button label="1">是<i></i></el-radio-button>
+              <el-radio-button label="0">否<i></i></el-radio-button>
+            </el-radio-group>
+          </el-form-item>
           <el-form-item label="介绍" prop="supplierIntroduction" class="clearBoth">
             <el-input type="textarea" :rows="4" resize="none" v-model="appForm.supplierIntroduction"></el-input>
           </el-form-item>
@@ -264,7 +270,8 @@ export default {
         contactMobilePhone: '',
         supplierLicense: '',
         accountLicense: '',
-        contactIdcards: ''
+        contactIdcards: '',
+        isOpen: '0'
       },
       rules: {
         supplierName: [{ required: true, message: '请输入客户名称' }, { validator: checkName, trigger: 'blur' }],
@@ -679,9 +686,17 @@ export default {
       top: 16px;
     }
   }
-  .Manager{
-    .el-form-item__content{
+  .Manager {
+    .el-form-item__content {
       line-height: 0;
+    }
+  }
+  .myRadio {
+    .el-radio-button__inner {
+      width: 60px;
+      line-height: 45px;
+      height: 45px;
+      padding: 0;
     }
   }
 }

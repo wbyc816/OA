@@ -35,7 +35,6 @@
   </div>
 </template>
 <script>
-import pdf from '../../assets/pdf/test.pdf'
 import pdfjsLib from 'pdfjs-dist'
 import SidePersonSearch from '../../components/sidePersonSearch.component'
 import Duty from '../../components/duty.component'

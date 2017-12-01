@@ -17,9 +17,9 @@
       </el-form-item>
       <el-form-item label="附件" prop="attchment">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
-          <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>19">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
-        <p class="uploadInfo">单个附件不能超过10MB</br>最多上传5个附件</p>
+        <p class="uploadInfo">单个附件不能超过500MB</br>最多上传20个附件</p>
       </el-form-item>
       <el-form-item class='form-box' label="附加公文">
         <el-col :span='21' class="docs" style="left: -6px;position: relative;">
@@ -311,12 +311,12 @@ export default {
     },
     handleChange(file, fileList) {
       // const isPDF = file.raw.type === 'application/pdf';
-      const isLt10M = file.size / 1024 / 1024 < 10;
+      const isLt10M = file.size / 1024 / 1024 < 500;
       // if (!isPDF) {
       //   this.$message.error('上传附件只能是 PDF 格式!');
       // }
       if (!isLt10M) {
-        this.$message.error('上传附件大小不能超过 10MB!');
+        this.$message.error('上传附件大小不能超过 500MB!');
       }
       if (isLt10M) {
         this.ruleForm.attchment = fileList;

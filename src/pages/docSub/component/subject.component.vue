@@ -84,7 +84,8 @@ export default {
         ],
       },
       isDefault: false,
-      taskUserList: []
+      taskUserList: [],
+      draftFirst: false
     }
   },
   computed: {
@@ -120,7 +121,10 @@ export default {
       var user = this.taskUserList.find(t => (t.deptId + t.jobtitle) == val);
       if (user) {
         this.$store.commit('setTaskUser', user);
-        this.getDefaultReciver();
+        if (!this.draftFirst) {
+          this.getDefaultReciver();
+        }
+        this.draftFirst = false;
       }
     },
     selectPerson(val) {
@@ -199,6 +203,7 @@ export default {
       this.$http.post('emp/getTaskUserList', { empId: this.userInfo.empId })
         .then(res => {
           if (res.status == 0) {
+            this.draftFirst = this.$route.query.id != undefined;
             this.taskUserList = res.data;
             if (!this.$route.query.id) {
               this.ruleForm.taskUserID = res.data[0].deptId + res.data[0].jobtitle;
@@ -211,7 +216,7 @@ export default {
         })
     },
     getDefaultReciver() {
-      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId,empPostId:this.taskUser.postId })
+      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId, empPostId: this.taskUser.postId })
         .then(res => {
           if (res.status == 0) {
             if (res.data) {
@@ -230,7 +235,7 @@ export default {
               }
               this.$store.commit('setReciver', receiver);
               this.ruleForm.rec = res.data.reciUserName;
-            }else{
+            } else {
               this.$store.commit('setReciver', '');
               this.ruleForm.rec = '';
             }

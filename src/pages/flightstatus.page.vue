@@ -8,7 +8,7 @@
           </div>
           <el-row :gutter="12">
             <el-col :span="6">
-              <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate"  :editable="false" :clearable="false" :picker-options="pickerOptions0"></el-date-picker>
+              <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate" :editable="false" :clearable="false" :picker-options="pickerOptions0"></el-date-picker>
             </el-col>
             <el-col :span="7">
               <el-radio-group v-model="flightStatusType" class="myRadio">
@@ -21,13 +21,18 @@
                 <el-select v-model="flightNoTitle">
                   <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-                <el-input v-model="flightNoValue" :maxlength="10"  @keyup.enter.native="getData"></el-input>
+                <el-input v-model="flightNoValue" :maxlength="10" @keyup.enter.native="getData"></el-input>
               </div>
               <div class="route" v-show="flightStatusType=='route'">
                 <!-- <el-input v-model="tripFrom" placeholder="出发地"></el-input> -->
-                <el-autocomplete class="inline-input" v-model="tripFrom.cityName" :fetch-suggestions="querySearch" placeholder="出发地" :maxlength="10" @select="handleFrom"></el-autocomplete>
-                <el-autocomplete class="inline-input" v-model="tripTo.cityName" :fetch-suggestions="querySearch" placeholder="目的地" :maxlength="10" @select="handleTo"></el-autocomplete>
-                </el-input>
+                <el-select v-model="tripFrom.airportName" filterable placeholder="出发地" @change="handleFrom">
+                  <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item.airportName">
+                  </el-option>
+                </el-select>
+                <el-select v-model="tripTo.airportName" filterable placeholder="目的地" @change="handleTo">
+                  <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item.airportName">
+                  </el-option>
+                </el-select>
               </div>
             </el-col>
             <el-col :span="3">
@@ -85,7 +90,7 @@ const options = [{
 }];
 const statusValue = ['计划', '延误', '起飞', '取消', '备降', '到达'];
 export default {
-  components: { SidePersonSearch,duty },
+  components: { SidePersonSearch, duty },
   data() {
     return {
       handledBy: '',
@@ -96,8 +101,8 @@ export default {
       options,
       flightNoTitle: 'DZ',
       flightNoValue: "",
-      tripFrom: { cityName: '' },
-      tripTo: { cityName: '' },
+      tripFrom: { airportName: '' },
+      tripTo: { airportName: '' },
       statusValue,
       searchLoading: false,
       flightList: [],
@@ -105,9 +110,9 @@ export default {
       totalSize: 0,
       pickerOptions0: {
         disabledDate(time) {
-          var td=new Date();
-          var d=new Date(td.getFullYear()+'-'+(td.getMonth()+1)+'-'+td.getDate()+' 00:00:00').getTime();
-          return time.getTime()<(d-24*60*60*1000)||time.getTime()>(d+24*60*60*1000);
+          var td = new Date();
+          var d = new Date(td.getFullYear() + '-' + (td.getMonth() + 1) + '-' + td.getDate() + ' 00:00:00').getTime();
+          return time.getTime() < (d - 24 * 60 * 60 * 1000) || time.getTime() > (d + 24 * 60 * 60 * 1000);
         }
       },
     }
@@ -120,62 +125,45 @@ export default {
   created() {
     // this.getAirPortList();
     var routeParam = this.$route.params;
-    console.log(this.$route)
     if (routeParam.type == 'route') {
-      this.flightStatusType='route';
-      this.searchDate=routeParam.date;
-      this.tripFrom=routeParam.tripFrom;
-      this.tripTo=routeParam.tripTo;
+      this.flightStatusType = 'route';
+      this.searchDate = routeParam.date;
+      this.tripFrom = routeParam.tripFrom;
+      this.tripTo = routeParam.tripTo;
       this.getToRound();
-    }
-    else if(routeParam.type == 'flightNo'){
-      this.flightStatusType='flightNo';
-      this.searchDate=routeParam.date;
-      this.flightNoTitle=routeParam.flightNoTitle;
-      this.flightNoValue=routeParam.flightNoValue;
+    } else if (routeParam.type == 'flightNo') {
+      this.flightStatusType = 'flightNo';
+      this.searchDate = routeParam.date;
+      this.flightNoTitle = routeParam.flightNoTitle;
+      this.flightNoValue = routeParam.flightNoValue;
       this.getToFlightNo();
-    }
-    else if(routeParam.type == 'date'){
-      this.searchDate=routeParam.date;
+    } else if (routeParam.type == 'date') {
+      this.searchDate = routeParam.date;
       this.getData();
-    }
-     else {
+    } else {
       let temp = new Date();
       let month = temp.getMonth() + 1;
       if (month < 10) {
         month = '0' + month;
       }
       this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
-      console.log(this.searchDate);
       this.getData();
     }
 
     this.$store.dispatch('getAirPortList');
   },
   methods: {
-    querySearch(queryString, cb) {
-      var airPortList = JSON.parse(JSON.stringify(this.airPortList));
-      var results = queryString ? airPortList.filter(this.createFilter(queryString)) : airPortList;
-      // 调用 callback 返回建议列表的数据
-      results.forEach(e => e.value = e.cityName);
-      cb(results);
+    handleFrom(val) {
+      this.tripFrom =this.clone(this.airPortList.find(i=>i.airportName==val));
     },
-    createFilter(queryString) {
-      return (airPort) => {
-        return (airPort.cityName.indexOf(queryString.toLowerCase()) === 0);
-      };
-    },
-    handleFrom(item) {
-      this.tripFrom = JSON.parse(JSON.stringify(item));
-    },
-    handleTo(item) {
-      this.tripTo = JSON.parse(JSON.stringify(item));
+    handleTo(val) {
+      this.tripTo = this.clone(this.airPortList.find(i=>i.airportName==val));
     },
     showDialog() {
       this.paymentView = true;
     },
     show() {
-      console.log(this.$parent);
+      
     },
     changDate() {
       let temp = new Date(this.searchDate);
@@ -184,7 +172,7 @@ export default {
         month = '0' + month;
       }
       this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
-      console.log(this.searchDate);
+      
     },
     getData() {
       if (this.searchDate != 'NaN-NaN-NaN') {
@@ -358,7 +346,7 @@ $main: #0460AE;
       }
       .route {
         float: right;
-        .el-autocomplete {
+        .el-select {
           width: 50%;
           float: left;
           &:first-child {
@@ -410,7 +398,7 @@ $main: #0460AE;
           font-size: 14px;
         }
         tbody {
-          background:#fff;
+          background: #fff;
           tr:first-child {
             td {
               border-bottom: 1px dashed #D5DADF;
