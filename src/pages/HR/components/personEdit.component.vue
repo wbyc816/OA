@@ -26,7 +26,7 @@
         <el-input v-model="personForm.marrieStatus" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="结婚登记日期" prop="marryRegisterTime">
-        <el-date-picker type="date" v-model="personForm.marryRegisterTime" style="width: 100%;" :editable="false" :clearable="false" @change="function(val){personForm.marryRegisterTime=val}"></el-date-picker>
+        <el-date-picker type="date" v-model="personForm.marryRegisterTime" style="width: 100%;" :editable="false" :clearable="false"></el-date-picker>
       </el-form-item>
       <el-form-item label="籍贯" prop="nativePlace">
         <el-input v-model="personForm.nativePlace" :maxlength="20"></el-input>
@@ -56,7 +56,7 @@
         <el-input v-model="personForm.idNumber" :maxlength="18"></el-input>
       </el-form-item>
       <el-form-item label="参加工作日期" prop="joinDate">
-        <el-date-picker type="date" v-model="personForm.joinDate" style="width: 100%;" :editable="false" :clearable="false" @change="function(val){personForm.joinDate=val}"></el-date-picker>
+        <el-date-picker type="date" v-model="personForm.joinDate" style="width: 100%;" :editable="false" :clearable="false"></el-date-picker>
       </el-form-item>
       <div class="borderBox"></div>
       <el-form-item label="个人照片" class="uploadBox" :rules="[{ required: false, message: '头像未上传'}]" prop="picUrl">

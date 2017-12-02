@@ -81,7 +81,7 @@
 import OrganList from './organlist.component'
 import { mapGetters, mapMutations } from 'vuex'
 const levels = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-const defaultExpand = ['DAFFED346E29C5654F54133D1FC65CCB', 'E52F7AFCDE68813EDCFCA3CAECC5C54A', 'FD22DF607B10CC14A0CABA6CFDF9212F']
+const defaultExpand = ['DAFFED346E29C5654F54133D1FC65CCB', 'E52F7AFCDE68813EDCFCA3CAECC5C54A', 'FD22DF607B10CC14A0CABA6CFDF9212F']    //默认展开部门ID
 export default {
   components: {
     OrganList
@@ -108,7 +108,7 @@ export default {
     }
   },
   props: {
-    dialogType: {
+    dialogType: {   //单选或多选，默认单选
       type: String,
       default: 'radio'
     },
@@ -116,7 +116,7 @@ export default {
       type: Boolean,
       default: false
     },
-    params: {
+    params: {    //其他参数
       type: Object
     }
   },

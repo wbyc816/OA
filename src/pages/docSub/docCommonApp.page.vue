@@ -114,9 +114,6 @@ export default {
       this.options.desTitle = this.doc.code == 'LZS' ? '离职理由说明' : '';
       if (this.$route.query.id) {
         this.getDraft();
-      } else {
-        this.getDefaultReciver();
-        // this.$refs.description.getSuggestTemp();
       }
     },
     submitDoc() {
@@ -252,32 +249,32 @@ export default {
         this.$store.commit('setIsSubmit', false);
       }
     },
-    getDefaultReciver() {
-      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.doc.code, empId: this.userInfo.empId })
-        .then(res => {
-          if (res.status == 0) {
-            if (res.data.length != 0) {
-              var receiver = {
-                "reciDeptMajorName": res.data.reciDeptMajorName,
-                "reciDeptMajorId": res.data.reciDeptMajorId,
-                "reciDeptName": res.data.reciDeptName,
-                "reciDeptId": res.data.reciDeptId,
-                "reciUserName": res.data.reciUserName,
-                "reciUserId": res.data.reciUserId,
-                "reciUserJobTitle": res.data.reciJobtitle, //接收人职位
-                "reciPostrankId": res.data.reciPostrankId, //职位id
-                "reciEmpPostId": res.data.reciEmpPostId,
-                "reciPostrankName": res.data.reciPostrankName, //职级名称
-                "reciSupervisory": res.data.reciSupervisoryLevel //安全级别
-              }
-              this.$store.commit('setReciver', receiver);
-              this.reciverName = res.data.reciUserName;
-            }
-          } else {
+    // getDefaultReciver() {
+    //   this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.doc.code, empId: this.userInfo.empId })
+    //     .then(res => {
+    //       if (res.status == 0) {
+    //         if (res.data.length != 0) {
+    //           var receiver = {
+    //             "reciDeptMajorName": res.data.reciDeptMajorName,
+    //             "reciDeptMajorId": res.data.reciDeptMajorId,
+    //             "reciDeptName": res.data.reciDeptName,
+    //             "reciDeptId": res.data.reciDeptId,
+    //             "reciUserName": res.data.reciUserName,
+    //             "reciUserId": res.data.reciUserId,
+    //             "reciUserJobTitle": res.data.reciJobtitle, //接收人职位
+    //             "reciPostrankId": res.data.reciPostrankId, //职位id
+    //             "reciEmpPostId": res.data.reciEmpPostId,
+    //             "reciPostrankName": res.data.reciPostrankName, //职级名称
+    //             "reciSupervisory": res.data.reciSupervisoryLevel //安全级别
+    //           }
+    //           this.$store.commit('setReciver', receiver);
+    //           this.reciverName = res.data.reciUserName;
+    //         }
+    //       } else {
 
-          }
-        })
-    },
+    //       }
+    //     })
+    // },
     getDraft() {
       this.$http.post('/doc/getDocDraftsDetail', { docId: this.$route.query.id })
         .then(res => {
@@ -306,11 +303,12 @@ export default {
             if (res.data.path) {
               this.$refs.description.updatePath(res.data.path);
             }
+            this.$refs.description.disableEditSuggest=res.data.isEdit == 0 ? false : true;
             // 附加公文
             if (res.data.docs.length != 0) {
               this.$refs.description.docs = res.data.docs;
             }
-            if (this.doc.code != 'CPD') {
+            if (this.doc.code != 'CPD'&&res.data.draftContent) {
               this.$refs.middleCom.getDraft(JSON.parse(res.data.draftContent),res.data);
             }
           } else {

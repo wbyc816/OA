@@ -126,12 +126,18 @@
               <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
             </el-select>
             <el-input class="search">
-              <el-button slot="append" @click="searchFlight"  :maxlength="10">搜索</el-button>
+              <el-button slot="append" @click="searchFlight" :maxlength="10">搜索</el-button>
             </el-input>
           </div>
           <div class="route" v-show="flightStatusType=='route'">
-            <el-autocomplete class="inline-input" v-model="tripFrom.cityName" :fetch-suggestions="querySearch" placeholder="出发地" @select="handleFrom"  :maxlength="10"></el-autocomplete>
-            <el-autocomplete class="inline-input" v-model="tripTo.cityName" :fetch-suggestions="querySearch" placeholder="目的地" @select="handleTo"  :maxlength="10"></el-autocomplete>
+            <el-select v-model="tripFrom.airportName" filterable placeholder="出发地" @change="handleFrom">
+              <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item.airportName">
+              </el-option>
+            </el-select>
+            <el-select v-model="tripTo.airportName" filterable placeholder="目的地" @change="handleTo">
+              <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item.airportName">
+              </el-option>
+            </el-select>
             <el-button @click="searchFlight">搜索</el-button>
           </div>
         </el-card>
@@ -170,7 +176,7 @@ var msgs = [
   { "icon": "gou", "color": "#07A9E9", "text": "待批公文:", "value": "0", "link": "/doc/docPending" },
   { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
   { "icon": "sousuo", "color": "#7562DE", "text": "公文追踪:", "value": "0", "link": "/doc/docTracking" },
-  { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": {name:'docPending',params:{isOverTime:'1'}} },
+  { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": { name: 'docPending', params: { isOverTime: '1' } } },
   { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
   { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "/meeting/meetingSearch/1" },
 ];
@@ -214,8 +220,8 @@ export default {
       pieoption,
       otherLinks,
       tripType: 'date',
-      tripFrom: { cityName: '' },
-      tripTo: { cityName: '' },
+      tripFrom: { airportName: '' },
+      tripTo: { airportName: '' },
       flightStatusType: 'flightNo',
       options,
       hr1: [],
@@ -327,24 +333,11 @@ export default {
     getTips() {
       this.$store.dispatch('getDocTips');
     },
-    querySearch(queryString, cb) {
-      var airPortList = JSON.parse(JSON.stringify(this.airPortList));
-      var results = queryString ? airPortList.filter(this.createFilter(queryString)) : airPortList;
-      // 调用 callback 返回建议列表的数据
-      results.forEach(e => e.value = e.cityName);
-      console.log(results)
-      cb(results);
+    handleFrom(val) {
+      this.tripFrom =this.clone(this.airPortList.find(i=>i.airportName==val));
     },
-    createFilter(queryString) {
-      return (airPort) => {
-        return (airPort.cityName.indexOf(queryString.toLowerCase()) === 0);
-      };
-    },
-    handleFrom(item) {
-      this.tripFrom = JSON.parse(JSON.stringify(item));
-    },
-    handleTo(item) {
-      this.tripTo = JSON.parse(JSON.stringify(item));
+    handleTo(val) {
+      this.tripTo = this.clone(this.airPortList.find(i=>i.airportName==val));
     },
     changDate() {
       let temp = new Date(this.searchDate);
@@ -364,8 +357,8 @@ export default {
               // this.getToRound();
 
               this.$router.push({ name: 'flightStatus', params: { 'type': 'route', 'date': this.searchDate, 'tripFrom': this.tripFrom, 'tripTo': this.tripTo } })
-              this.tripFrom = { 'cityName': '' };
-              this.tripTo = { 'cityName': '' };
+              this.tripFrom = { 'airportName': '' };
+              this.tripTo = { 'airportName': '' };
               this.searchDate = '';
             }
           } else {
@@ -437,7 +430,7 @@ export default {
             this.activeName = this.newsList[0].code;
             this.getNew();
           } else {
-            
+
           }
         }, res => {
 
@@ -559,9 +552,7 @@ $sub:#1465C0;
         }
       }
     }
-    
-  }
-  // .wrapRow {
+  } // .wrapRow {
   //   @media (max-width: 1200px) {
   //     margin:0!important;
   //     .el-col:first-child {
@@ -570,7 +561,7 @@ $sub:#1465C0;
   //   }
   // }
   .news {
-    
+
     padding: 0;
     .el-card__header {
 
@@ -594,10 +585,7 @@ $sub:#1465C0;
           font-size: 14px;
           color: #676767;
         }
-      
-       
       }
-     
     }
     .el-card__body {
       padding: 0;
@@ -617,8 +605,7 @@ $sub:#1465C0;
           font-size: 15px;
           white-space: nowrap;
           text-overflow: ellipsis;
-          overflow: hidden;
-          // padding-right: 50px;
+          overflow: hidden; // padding-right: 50px;
           width: 370px;
           color: #393939;
           float: left;
@@ -655,17 +642,17 @@ $sub:#1465C0;
         }
       }
     }
-    .newsnew{
+    .newsnew {
       font-size: 12px;
       background: #FF9300;
       color: #fff;
       border-radius: 3px;
       padding: 0 2px;
       vertical-align: top;
-      margin-left:2px;
+      margin-left: 2px;
     }
-    .title{
-      display:inline-block;
+    .title {
+      display: inline-block;
       max-width: 330px;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -840,8 +827,7 @@ $sub:#1465C0;
         bottom: 0;
         left: 30px;
       }
-    }
-    // @media (max-width: 768px) {
+    } // @media (max-width: 768px) {
     //   .el-col {
     //     min-height: 0;
     //     .bottom {
@@ -1048,13 +1034,13 @@ $sub:#1465C0;
         display: none;
       }
       .el-col {
-        line-height:50px;
-          .title {
-            width: 600px;
-          }
-          .timeline {
-            right: 30px;
-          }
+        line-height: 50px;
+        .title {
+          width: 600px;
+        }
+        .timeline {
+          right: 30px;
+        }
       }
     }
   }
@@ -1100,8 +1086,7 @@ $sub:#1465C0;
               vertical-align: middle;
               display: table-cell;
             }
-          }
-          // @media (max-width:768px) {
+          } // @media (max-width:768px) {
           //   & {
           //     display: block;
           //   }
@@ -1216,8 +1201,7 @@ $sub:#1465C0;
             line-height: 45px;
             height: 45px;
           }
-        }
-        // @media (max-width:1200px) {
+        } // @media (max-width:1200px) {
         //   & {
         //     float: initial;
         //     margin-top: 10px;
@@ -1240,7 +1224,7 @@ $sub:#1465C0;
     }
     .route {
       margin-top: 10px;
-      .el-autocomplete {
+      .el-select {
         width: 35%;
         float: left;
         &:first-child {

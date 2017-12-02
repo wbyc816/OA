@@ -23,66 +23,86 @@ const docDraft = () =>
   import ('pages/docSub/docDraft.page')
 const docCommonApp = () =>
   import ('pages/docSub/docCommonApp.page')
-// import doc from 'pages/Doc-Approval'
-// import docSub from 'pages/docSub/docSub.page'
-// import docTracking from 'pages/docSub/docTracking.page'
-// import docDetail from 'pages/docSub/docDetail.page'
-// import docInfo from 'pages/docSub/docInfo.page'
-// import docSearch from 'pages/docSub/docSearch.page'
-// import docPending from 'pages/docSub/docPending.page'
-// import docToRead from 'pages/docSub/docToRead.page'
-// import docDraft from 'pages/docSub/docDraft.page'
-// import docCommonApp from 'pages/docSub/docCommonApp.page'
 //公文统计
-import macroStatistics from 'pages/docSub/statistical/macroStatistics.page'
-import normalStatistics from 'pages/docSub/statistical/normalStatistics.page'
-import approveStatistics from 'pages/docSub/statistical/approveStatistics.page'
+const macroStatistics = () =>
+  import ('pages/docSub/statistical/macroStatistics.page')
+const normalStatistics = () =>
+  import ('pages/docSub/statistical/normalStatistics.page')
+const approveStatistics = () =>
+  import ('pages/docSub/statistical/approveStatistics.page')
 
 //会议
-import meetingHome from 'pages/meeting/meetingHome.page'
-import ReservationAllRoom from 'pages/meeting/reservationAllRoom.page'
-import bookingDetail from 'pages/meeting/bookingDetail.page'
-import MyBooking from 'pages/meeting/myBooking.page'
-import meetingSearch from 'pages/meeting/meetingSearch.page'
-import meetingApp from 'pages/meeting/meetingApp.page'
+const meetingHome = () =>
+  import ('pages/meeting/meetingHome.page')
+const ReservationAllRoom = () =>
+  import ('pages/meeting/reservationAllRoom.page')
+const bookingDetail = () =>
+  import ('pages/meeting/bookingDetail.page')
+const MyBooking = () =>
+  import ('pages/meeting/myBooking.page')
+const meetingSearch = () =>
+  import ('pages/meeting/meetingSearch.page')
+const meetingApp = () =>
+  import ('pages/meeting/meetingApp.page')
 
 //客户
-import supplierHome from 'pages/supplier/supplierHome.page'
-import mySupplier from 'pages/supplier/mySupplier.page'
-import supplierSearch from 'pages/supplier/supplierSearch.page'
-import supplierCreate from 'pages/supplier/supplierCreate.page'
+const supplierHome = () =>
+  import ('pages/supplier/supplierHome.page')
+const mySupplier = () =>
+  import ('pages/supplier/mySupplier.page')
+const supplierSearch = () =>
+  import ('pages/supplier/supplierSearch.page')
+const supplierCreate = () =>
+  import ('pages/supplier/supplierCreate.page')
 
 //航班动态
-import flightStatus from 'pages/flightStatus.page'
+const flightStatus = () =>
+  import ('pages/flightStatus.page')
 
 
 //公司同仁
-import contactList from 'pages/ContactList.page'
+const contactList = () =>
+  import ('pages/ContactList.page')
 //人力资源
-import HR from '../pages/HR/homeHR.page'
-import clildHR from '../pages/HR/clildHR.page'
-import personalInfo from '../pages/HR/personalInfo.page'
-import resume from '../pages/HR/resume.page'
-import editResume from '../pages/HR/editResume.page'
-import salary from '../pages/HR/salary.page'
-import salaryHistory from '../pages/HR/salaryHistory.page'
-import newsDetail from '../pages/HR/newsDetail.page'
-import newsDetailHr from '../pages/HR/newsDetailHr.page'
-import newsListHr from '../pages/HR/newsListHr.page'
+const HR = () =>
+  import ('../pages/HR/homeHR.page')
+const clildHR = () =>
+  import ('../pages/HR/clildHR.page')
+const personalInfo = () =>
+  import ('../pages/HR/personalInfo.page')
+const resume = () =>
+  import ('../pages/HR/resume.page')
+const editResume = () =>
+  import ('../pages/HR/editResume.page')
+const salary = () =>
+  import ('../pages/HR/salary.page')
+const salaryHistory = () =>
+  import ('../pages/HR/salaryHistory.page')
+const newsDetail = () =>
+  import ('../pages/HR/newsDetail.page')
+const newsDetailHr = () =>
+  import ('../pages/HR/newsDetailHr.page')
+const newsListHr = () =>
+  import ('../pages/HR/newsListHr.page')
 
 //菜谱
-import diningMenu from '../pages/diningMenu.page'
+const diningMenu = () =>
+  import ('../pages/diningMenu.page')
 
 
 //生日提醒
-import BirthdayReminder from 'pages/BirthdayReminder.page'
+const BirthdayReminder = () =>
+  import ('pages/BirthdayReminder.page')
 
 //文件首页
-import FilesHome from 'pages/FilesHome.page'
+const FilesHome = () =>
+  import ('pages/FilesHome.page')
 
 //总裁邮箱
-import PresidentMailbox from 'pages/PresidentMailbox.page'
-import softDownload from '../pages/softDownload.page'
+const PresidentMailbox = () =>
+  import ('pages/PresidentMailbox.page')
+const softDownload = () =>
+  import ('../pages/softDownload.page')
 
 //飞行报表
 import flightReport from 'pages/flightReport.page'
@@ -412,7 +432,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   if (util.getCookie('userId')) {
     next();
-  }else{
+  } else {
     util.loginOut();
   }
 })

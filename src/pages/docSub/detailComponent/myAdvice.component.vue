@@ -1,6 +1,10 @@
 <template>
   <div class='myAdvice'>
-    <h4 class='doc-form_title'>我的审批意见</h4>
+    <h4 class='doc-form_title'>我的审批意见 
+      <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" class="exportButton">
+          <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
+        </a>
+    </h4>
     <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
       <el-form-item label="审批意见" class="textarea" prop="state">
         <el-col :span='18'>
@@ -152,7 +156,8 @@ export default {
     },
     ...mapGetters([
       'userInfo',
-      'submitLoading'
+      'submitLoading',
+      'baseURL'
     ])
   },
   created() {
@@ -195,7 +200,7 @@ export default {
 
     },
     getDefaultReciver() {
-      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId })
+      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId,empPostId:this.docDetail.reciEmpPostId })
         .then(res => {
           if (res.status == 0) {
             this.reciver = {
@@ -402,7 +407,11 @@ export default {
         params.dimissionDate = +this.ruleForm.planDate;
       }
       if (this.signType == '0') { //普通审批
-        if (this.ruleForm.state == 1) { //同意（不同意时不传下一个接收人）
+        if (this.ruleForm.state == 1) { //同意
+          Object.assign(params, this.reciver)
+        }
+        else if(this.ruleForm.state == 2&&this.userInfo.empId == this.adminReci.secUserId){  
+          // 不同意时且本人与默认接收人为同一人时
           Object.assign(params, this.reciver)
         }
       } else {
@@ -441,6 +450,15 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 .myAdvice {
+  .exportButton {
+    float: right;
+    position: relative;
+    top: -10px;
+    i {
+      font-size: 22px;
+      vertical-align: middle;
+    }
+  }
   .myRadio {
     line-height: 45px;
     .el-radio-button .el-radio-button__inner {

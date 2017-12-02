@@ -1,3 +1,4 @@
+<!-- 人员选择弹窗 -->
 <template>
   <div class="personDialogBox">
     <el-dialog size="large" class="personDialog" :visible.sync="personVisible" @close="close" @open="open">
@@ -62,7 +63,7 @@ export default {
     }
   },
   props: {
-    dialogType: {
+    dialogType: {   //单选或多选，默认单选
       type: String,
       default: 'radio'
     },
@@ -70,11 +71,11 @@ export default {
       type: Boolean,
       default: false
     },
-    admin: {
+    admin: {      //是否可选所有部门，可选值0（否） 1（是）
       type: String,
       default: ''
     },
-    selfDisable: {
+    selfDisable: {    //是否可选本人
       type: Boolean,
       default: true
     },
@@ -82,7 +83,7 @@ export default {
       type: String,
       default: '收件人'
     },
-    data: {
+    data: {   //初始化数据
       type: [Array, Object, String]
     }
   },
@@ -93,7 +94,7 @@ export default {
         this.initData=true;
         if (this.admin !== '') {
           if (this.admin == '0') {
-            this.$store.dispatch('getDeptList');
+            this.$store.dispatch('getDepById');
           } else {
             this.$store.dispatch('getDeptList');
           }
@@ -101,7 +102,7 @@ export default {
           if (this.isAdmin) {
             this.$store.dispatch('getDeptList');
           } else {
-            this.$store.dispatch('getDeptList');
+            this.$store.dispatch('getDepById');
           }
         }
         if (this.userInfo.levelNum == 30) {

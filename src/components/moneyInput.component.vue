@@ -15,19 +15,19 @@ import { mapGetters } from 'vuex'
 export default {
   props: {
     value: '',
-    prepend: {
+    prepend: {        //是否有前置元素，默认有
+      type: Boolean, 
+      default: true
+    },
+    append: {   //是否有后置元素，默认有
       type: Boolean,
       default: true
     },
-    append: {
-      type: Boolean,
-      default: true
-    },
-    maxlength: {
+    maxlength: {         //最大长度，默认10
       type: Number,
       default: 10,
     },
-    type: {
+    type: {         //类型，默认money，可选int(整数)、int0（整数含0）、invoice(发票号)
       type: String,
       default: 'money'
     },

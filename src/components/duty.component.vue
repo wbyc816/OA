@@ -25,8 +25,7 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      organLoading: false,
-      dutys: []
+      organLoading: false
     }
   },
   created() {
@@ -38,21 +37,23 @@ export default {
   computed: {
     ...mapGetters([
       'depts',
-      'userInfo'
+      'userInfo',
+      'dutys'
     ])
   },
   methods: {
     getData() {
-      this.$http.post('/onduty/getDutyInfo', )
-        .then(res => {
-          if (res.status == 0) {
-            this.dutys = res.data;
-          } else {
-            console.log('获取值班信息失败')
-          }
-        })
+      if (this.dutys.length == 0) {
+        this.$http.post('/onduty/getDutyInfo', )
+          .then(res => {
+            if (res.status == 0) {
+              this.$store.commit('setDutys',res.data);
+            } else {
+              console.log('获取值班信息失败')
+            }
+          })
+      }
     }
-
   }
 }
 
@@ -136,7 +137,7 @@ $sub:#1465C0;
       }
     }
     .dutyBox:first-child {
-      background:#0281EE;
+      background: #0281EE;
       color: #fff;
       .dateBox {
         color: #FFF;

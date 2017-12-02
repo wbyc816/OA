@@ -200,7 +200,6 @@ export default {
         temp = temp.find(dep => dep.budgetItemCode == val[i]).items;
         i++
       }
-      console.log(temp);
       if (temp.length == 0) {
         this.$http.post('/doc/getBudItemTreeList', { parentId: val[val.length - 1] })
           .then(res => {

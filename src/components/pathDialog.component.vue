@@ -1,3 +1,4 @@
+<!-- 建议路径弹窗 -->
 <template>
   <div class="pathDialogBox">
     <el-dialog size="large" class="personDialog" :visible.sync="pathVisible" @close="close">

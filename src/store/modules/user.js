@@ -8,6 +8,7 @@ const state = {
     "empId": "",
 
   },
+  dutys:[],
   isReady: false
 }
 
@@ -42,6 +43,7 @@ const actions = {
 const getters = {
   userInfo: state => state.userInfo,
   isReady: state => state.isReady,
+  dutys: state => state.dutys,
 
 }
 
@@ -54,6 +56,9 @@ const mutations = {
   },
   setReady(state, val) {
     state.isReady = val;
+  },
+  setDutys(state,data){
+    state.dutys=data;
   }
 }
 

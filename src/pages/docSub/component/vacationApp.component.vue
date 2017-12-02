@@ -16,7 +16,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="类型" prop="typeId" class="arrArea">
-        <el-select v-model="vacationForm.typeId">
+        <el-select v-model="vacationForm.typeId" @change="typeChange">
           <el-option v-for="item in types" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -132,6 +132,9 @@ export default {
           return false;
         }
       });
+    },
+    typeChange(){
+      this.$refs.vacationForm.validateField('days')
     },
     fomatDays(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,1})?/);

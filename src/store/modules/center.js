@@ -87,7 +87,7 @@ const actions = {
         // }
         setTimeout(function() {
           Notification({
-            message: '修改个人信息成功,请等待后台审核！',
+            message: '修改个人信息成功！',
             type: 'success'
           });
           commit(types.SET_EDIT_STATUS, false, { root: true })

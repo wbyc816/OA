@@ -88,6 +88,9 @@ export default {
         case 'date':
           return this.timeFilter(cellValue, type);
           break;
+          case 'boolean':
+          return cellValue==1?'是':'否';
+          break;
         default:
           return cellValue;
       }

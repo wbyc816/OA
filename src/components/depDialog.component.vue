@@ -66,7 +66,7 @@ export default {
     }
   },
   props: {
-    dialogType: {
+    dialogType: {    //单选或多选，默认单选
       type: String,
       default: 'radio'
     },
@@ -74,7 +74,7 @@ export default {
       type: Boolean,
       default: false
     },
-    data: {
+    data: {   //初始化数据
       type: [Array, Object, String]
     }
   },

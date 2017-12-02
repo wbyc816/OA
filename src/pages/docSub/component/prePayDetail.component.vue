@@ -50,9 +50,6 @@
             <el-form-item label="收款账户">
               <span>{{ props.row.paymentSupplierAccountName }}</span>
             </el-form-item>
-            <el-form-item label="发票">
-              <p>{{ props.row.shopId }}</p>
-            </el-form-item>
             <el-form-item label="费用类型">
               <span>{{ props.row.costTypeName }}</span>
             </el-form-item>
@@ -72,6 +69,12 @@
       </el-table-column>
     </el-table>
     <p class="borderBox clearBoth"></p>
+    <el-col :span="24">
+      <h1 class="title">发票</h1>
+      <p v-if="info" class="textContent">
+        <a :href="vo.fileUrl" class="fileLink" v-if="vo.classify==2" v-for="vo in info[0].finFiles" target="_blank">{{vo.fileName+vo.fileTypeName}}</a>
+      </p>
+    </el-col>
   </div>
 </template>
 <script>
