@@ -84,6 +84,9 @@ import FilesHome from 'pages/FilesHome.page'
 import PresidentMailbox from 'pages/PresidentMailbox.page'
 import softDownload from '../pages/softDownload.page'
 
+//飞行报表
+import flightReport from 'pages/flightReport.page'
+
 
 Vue.use(Router)
 
@@ -119,6 +122,13 @@ const router = new Router({
       component: BirthdayReminder,
       meta: {
         breadcrumb: "生日提醒",
+      }
+    },{
+      path: '/flightReport',
+      name: 'flightReport',
+      component: flightReport,
+      meta: {
+        breadcrumb: "飞行报表",
       }
     }, {
       path: '/diningMenu',
