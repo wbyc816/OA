@@ -7,22 +7,22 @@
       </div>
       <el-row :gutter="12">
         <el-col :span="8">
-          <el-input v-model.trim="searchParams.conferenceTitle" placeholder="会议名称"  :maxlength="50"></el-input>
+          <el-input v-model.trim="searchParams.conferenceTitle" placeholder="会议名称" :maxlength="50"></el-input>
         </el-col>
         <el-col :span="5">
           <el-date-picker v-model="searchParams.reserveDate" type="date" :editable="false" style="width:100%" placeholder="日期"></el-date-picker>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="8">
           <el-input v-model="searchParams.convenerName" placeholder="发起人"></el-input>
         </el-col>
-        <el-col :span="3">
+        <!-- <el-col :span="3" v-show="status!=3">
           <el-select v-model="status" placeholder="状态">
             <el-option key="0" label="全部" value="0"></el-option>
             <el-option key="1" label="正常" value="1"></el-option>
             <el-option key="2" label="已取消" value="2"></el-option>
             <el-option key="3" label="已结束" value="3"></el-option>
           </el-select>
-        </el-col>
+        </el-col> -->
         <el-col :span="3">
           <el-button type="primary" @click="search" :disabled="searchLoading">搜索</el-button>
         </el-col>
@@ -102,7 +102,7 @@ export default {
   created() {
     this.initPage(this.$route.params);
   },
-  beforeRouteUpdate (to, from, next) {
+  beforeRouteUpdate(to, from, next) {
     this.initPage(to.params);
     next();
   },
@@ -116,8 +116,8 @@ export default {
           this.status = '2'
         } else if (type == 3) {
           this.status = '3'
-        }else{
-          this.status=''
+        } else {
+          this.status = ''
         }
       }
       this.getData();
@@ -147,11 +147,11 @@ export default {
           break;
         case '3': //已结束
           params.isEnd = '1';
-          params.isCancel = '';
+          params.isCancel = '0';
           params.isMyLaunched = '';
           break;
         default:
-          ;
+          params.isMyLaunched = '2';
       }
       this.$http.post("/conference/conferReserveList", params, { body: true }).then(res => {
         setTimeout(function() {

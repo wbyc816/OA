@@ -195,7 +195,6 @@ export default {
         "roomId": this.appForm.roomId, //房间ID
         "reserveDate": this.appForm.reserveDate.getTime() //预定日期
       }
-      console.log(now.getTime(),params.beginTime)
       if (now.getTime() > params.beginTime) {
         this.$message.warning('预定时间不能早于现在时间，请重新选择');
       } else {

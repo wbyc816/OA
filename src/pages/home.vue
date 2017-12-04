@@ -165,8 +165,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import MyPie from '../components/myPie'
-import MyPolarArea from '../components/myPolarArea'
 import SearchDate from '../components/searchDate'
 import MessageCenter from '../components/message'
 import SidePersonSearch from '../components/sidePersonSearch.component'
@@ -213,7 +211,7 @@ const options = [{
 }, ];
 const pieBg = ['#97BBCD', '#F7464A', '#DCDCDC', '#7ED0CF']
 export default {
-  components: { MyPie, MyPolarArea, SearchDate, MessageCenter, DocList, SidePersonSearch, Duty },
+  components: {  SearchDate, MessageCenter, DocList, SidePersonSearch, Duty },
 
   data() {
     return {
@@ -379,7 +377,6 @@ export default {
            this.optionOne.series[0].data[1].push("延误");
            this.optionOne.series[0].data[2].push("出发");
            this.optionOne.series[0].data[3].push("计划");
-           console.log(this.flightTrends.arrival)
           this.optionOne.series[0].data[0].push(parseFloat(this.flightTrends.arrival));
           this.optionOne.series[0].data[1].push(parseFloat(this.flightTrends.delay));
           this.optionOne.series[0].data[2].push(parseFloat(this.flightTrends.departure));
