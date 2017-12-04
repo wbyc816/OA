@@ -43,7 +43,7 @@
   </div>
 </template>
 <script>
-import DocList from '../../components/doc'
+ import DocList from '../../components/doc'
 const adminData = [
   { 'logo': 'icon-write', 'color': '#FF754F', 'text': '呈批单', 'link': '#/doc/docCommonApp/CPD' },
   { 'logo': 'icon-file11', 'color': '#FF5F88', 'text': '发文稿纸', 'link': '#/doc/docCommonApp/FWG' },

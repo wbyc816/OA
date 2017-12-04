@@ -12,7 +12,7 @@
               <el-table :data="tableData" stripe style="width: 100%">
                 <el-table-column prop="empName" label="员工姓名" >
                 </el-table-column>
-                <el-table-column prop="deptName" label="部门" width="160">
+                <el-table-column prop="deptName" label="部门" >
                 </el-table-column>
                 <el-table-column prop="jobtitle" label="职位" width="120">
                 </el-table-column>

@@ -151,6 +151,7 @@
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')" v-if="userInfo.isDocsec&&userInfo.isDocsec[0]==1"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="6" @click.native="goToOthers('/supplier')"><i class="iconfont icon-geren"></i>客户维护<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="7" @click.native="goToOthers('/flightReport')"><i class="iconfont icon-99"></i>飞行报表<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">
