@@ -1,7 +1,7 @@
 <template>
-  <div id="flightReport"  v-loading="reportLoading">
+  <div id="flightReport" >
     <search-report title="飞行报表" @search="setReport" hasOverTime></search-report>
-        <el-table :data="recordData" stripe style="width: 100%" :fit="true">
+        <el-table :data="recordData" stripe style="width: 100%" :fit="true" v-loading.body="searchLoading">
         <el-table-column prop="controlPersonName" label="姓名" width="90">
         </el-table-column>
         <el-table-column prop="flightDate" label="日期" width="115">
@@ -83,11 +83,11 @@
       <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
-    <div ref="highchartsContainerOne" id="highchartsContainerOne" v-show="clickSearch"></div>
-    <div ref="highchartsContainerTwo" id="highchartsContainerTwo" v-show="clickSearch"></div>
-    <div ref="highchartsContainerThree" id="highchartsContainerThree" v-show="clickSearch"></div>
-    <div ref="highchartsContainerFour" id="highchartsContainerFour" v-show="clickSearch"></div>
-    <div ref="highchartsContainerFive" id="highchartsContainerFive"  v-show="clickSearch"></div>
+    <div ref="highchartsContainerOne" id="highchartsContainerOne" v-show="clickSearch" v-loading.body="searchLoading"></div>
+    <div ref="highchartsContainerTwo" id="highchartsContainerTwo" v-show="clickSearch" v-loading.body="searchLoading"></div>
+    <div ref="highchartsContainerThree" id="highchartsContainerThree" v-show="clickSearch" v-loading.body="searchLoading"></div>
+    <div ref="highchartsContainerFour" id="highchartsContainerFour" v-show="clickSearch" v-loading.body="searchLoading"></div>
+    <div ref="highchartsContainerFive" id="highchartsContainerFive"  v-show="clickSearch" v-loading.body="searchLoading"></div>
     <div  id="getTip" @click="getTip" style="display:none" ></div>
     <div  id="getTipTwo" @click="getTipTwo" style="display:none" ></div>
     <div  id="getTipThree" @click="getTipThree" style="display:none" ></div>
@@ -389,7 +389,6 @@ export default {
         "rightPersonName": "",
         "controlPersonName": "",
       },
-      reportLoading:"",
       beginTime:"",
       endTime:"",
       fiveBeginTime:"",
@@ -430,12 +429,13 @@ export default {
   },
   methods: {
     getTip() {
+      this.searchLoading = true;
       let params = Object.assign(this.params);
       params.beginTime=document.getElementById("getTip").innerHTML;
       params.endTime=document.getElementById("getTip").innerHTML;
       this.$http.post("/foc/getFocs?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          this.reportLoading = false;
+          this.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -460,6 +460,7 @@ export default {
         })
     },
     getTipTwo(){
+      this.searchLoading = true;
       let params = Object.assign(this.params);
       params.beginTime=this.beginTime;
       params.endTime=this.endTime;
@@ -467,7 +468,7 @@ export default {
       params.rightPersonName="";
       this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          this.reportLoading = false;
+          that.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -524,7 +525,7 @@ export default {
         })
     },
     getTipThree(){
-      
+      this.searchLoading = true;
       let params = Object.assign(this.params);
       params.beginTime=this.beginTime;
       params.endTime=this.endTime;
@@ -532,7 +533,7 @@ export default {
       params.rightPersonName="";
       this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          this.reportLoading = false;
+          that.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -602,11 +603,11 @@ export default {
     },
     getData() {
       var that = this;
-      this.reportLoading = true;
+     that.searchLoading = true;
       var params = Object.assign(this.params);
       this.$http.post("/foc/getFocs?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          that.reportLoading = false;
+        that.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -657,11 +658,11 @@ export default {
       this.params = options;
       this.getData();
       this.clickSearch=true,
-      this.reportLoading = false;
+      this.searchLoading = true;
       //某航段某日期区间内空中时间chart统计
         this.$http.post("/foc/getFocAirTime", this.params, { body: true }).then(res => {
         setTimeout(function() {
-          this.reportLoading = false;
+         that.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -703,7 +704,7 @@ export default {
         // 查询某段时间某航段飞行时间chart统计
         this.$http.post("/foc/getFocFlyTime", this.params, { body: true }).then(res => {//22
         setTimeout(function() {
-          this.reportLoading = false;
+          that.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -743,7 +744,7 @@ export default {
         console.log
         this.$http.post("/foc/getFocOil",sortoil , { body: true }).then(res => {//
         setTimeout(function() {
-          this.reportLoading = false;
+          that.searchLoading = false;
         }, 200)
         if (res.status == 0) {
           this.optionFive.series[0].data=[];
@@ -793,7 +794,7 @@ export default {
         // //某航段某日期区间内地面时间chart统计
         this.$http.post("/foc/getFocLand", this.params, { body: true }).then(res => {//3
         setTimeout(function() {
-          this.reportLoading = false;
+          that.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -834,7 +835,7 @@ export default {
         //某航段某日期区间内日油耗chart统计
         this.$http.post("/foc/getFocOil", this.params, { body: true }).then(res => {//
         setTimeout(function() {
-          this.reportLoading = false;
+          that.searchLoading = false;
         }, 200)
         if (res.status == 0) {
           this.optionFour.series[0].data=[];

@@ -93,7 +93,7 @@ export const postExperienceInfo = [{
   head: '任职经历',
   enName: 'PostInfo',
   postName:'post',
-  prop: [{ name: 'period', label: '任职时间', width: '' }, { name: 'post', label: '职位', width: '' }, { name: 'postCompany', label: '任职(定岗)单位', width: '150' }, { name: 'isFulltime', label: '是否全职', width: '',type:'boolean' }, { name: 'isOnjob', label: '在职情况', width: ''}, { name: 'officeNum', label: '公文号', width: '' }, { name: 'supervisoryLevel', label: '管理级别', width: '' }],
+  prop: [{ name: 'period', label: '任职时间', width: '' }, { name: 'post', label: '职位', width: '' }, { name: 'postCompany', label: '任职(定岗)单位', width: '150' }, { name: 'isFulltime', label: '是否全职', width: '',type:'boolean' }, { name: 'isOnjob', label: '在职情况', width: '',type:'boolean',yes:'在职',no:'不在职' }, { name: 'officeNum', label: '公文号', width: '' }, { name: 'supervisoryLevel', label: '管理级别', width: '' }],
   url: '/resume/getPostInfo',
   postUrl: '/resume/updatePostInfo',
 }, {
@@ -107,14 +107,14 @@ export const postExperienceInfo = [{
   head: '董监事工作经历',
   enName: 'SupervisorInfo',
   postName:'supervisor',
-  prop: [{ name: 'period', label: '任职期间', width: '' }, { name: 'company', label: '任职单位', width: '' }, { name: 'post', label: '职务', width: '' }, { name: 'officeNum', label: '公文号', width: '' }, { name: 'isOnjob', label: '在职情况', width: '',type:'boolean' }],
+  prop: [{ name: 'period', label: '任职期间', width: '' }, { name: 'company', label: '任职单位', width: '' }, { name: 'post', label: '职务', width: '' }, { name: 'officeNum', label: '公文号', width: '' }, { name: 'isOnjob', label: '在职情况', width: '',type:'boolean',yes:'在职',no:'不在职' }],
   url: '/resume/getSupervisorInfo',
   postUrl: '/resume/updateSupervisorInfo',
 }, {
   head: '党群工作经历',
   enName: 'PartyInfo',
   postName:'party',
-  prop: [{ name: 'period', label: '任职时间', width: '' }, { name: 'partyName', label: '党群组织名称', width: '' }, { name: 'post', label: '党群职务', width: '' }, { name: 'status', label: '状态', width: '' }, { name: 'isExpdh', label: '是否东海经历', width: '',type:'boolean' }],
+  prop: [{ name: 'period', label: '任职时间', width: '' }, { name: 'partyName', label: '党群组织名称', width: '' }, { name: 'post', label: '党群职务', width: '' }, { name: 'status', label: '状态', width: '',type:'boolean',yes:"在职",no:"不在职" }, { name: 'isExpdh', label: '是否东海经历', width: '',type:'boolean' }],
   url: '/resume/getPartyInfo',
   postUrl: '/resume/updatePartyInfo',
 }]
