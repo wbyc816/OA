@@ -172,7 +172,7 @@ export default {
   methods: {
     getAdminReci() {
       if (this.adminReci) {
-        if (this.userInfo.empId != this.adminReci.secUserId) {
+        if (this.userInfo.empId != this.adminReci.secUserId&&this.adminReci.secUserId) {
           var person = {
             "signUserName": this.adminReci.secUserName,
           }
@@ -185,7 +185,7 @@ export default {
           .then(res => {
             if (res.status == 0) {
               this.adminReci = res.data;
-              if (this.userInfo.empId != this.adminReci.secUserId) {
+              if (this.userInfo.empId != this.adminReci.secUserId&&this.adminReci.secUserId) {
                 var person = {
                   "signUserName": this.adminReci.secUserName,
                 }

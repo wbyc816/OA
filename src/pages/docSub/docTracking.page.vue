@@ -28,6 +28,11 @@
             <el-tooltip content="撤回" placement="top" :enterable="false" effect="light" v-if="doc.isBack!=0">
               <i class="link iconfont icon-chehui" @click="doBack(doc.id)"></i>
             </el-tooltip>
+            <el-tooltip content="导出" placement="top" :enterable="false" effect="light">
+              <a :href="baseURL+'/pdf/exportPdf?docId='+doc.id" target="_blank" v-if="doc.taskUserId==userInfo.empId">
+              <i class="link iconfont icon-icon202"></i>
+              </a>
+            </el-tooltip>
           </td>
         </tr>
       </tbody>
@@ -67,7 +72,8 @@ export default {
       'userInfo',
       'confidentiality',
       'urgency',
-      'docType'
+      'docType',
+      'baseURL'
     ])
   },
   components: {
@@ -174,6 +180,15 @@ $main: #0460AE;
     margin-top: 20px;
   }
   margin-bottom:30px;
+  thead {
+    $widths: (1: 5%, 2: 38%, 3: 10%, 4: 11%, 5:10%, 6: 12%);
+    @each $num,
+    $width in $widths {
+      th:nth-child(#{$num}) {
+        width: $width;
+      }
+    }
+  }
 }
 
 </style>

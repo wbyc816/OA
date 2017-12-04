@@ -70,8 +70,8 @@
           </el-form-item>
           <el-form-item label="是否公开" prop="supplierFax" class="deptArea">
             <el-radio-group v-model="appForm.isOpen" class="myRadio">
-              <el-radio-button label="1">是<i></i></el-radio-button>
-              <el-radio-button label="0">否<i></i></el-radio-button>
+              <el-radio-button :label="1">是<i></i></el-radio-button>
+              <el-radio-button :label="0">否<i></i></el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="介绍" prop="supplierIntroduction" class="clearBoth">
@@ -271,7 +271,7 @@ export default {
         supplierLicense: '',
         accountLicense: '',
         contactIdcards: '',
-        isOpen: '0'
+        isOpen: 0
       },
       rules: {
         supplierName: [{ required: true, message: '请输入客户名称' }, { validator: checkName, trigger: 'blur' }],
