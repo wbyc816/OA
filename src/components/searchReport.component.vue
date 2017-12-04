@@ -7,24 +7,22 @@
       </div>
       <el-row :gutter="10">
         <el-col :span="6">
-          <el-select v-model="params.departureAirport" filterable placeholder="起飞四字码">
-            <el-option label="全部起飞四字码" value=""></el-option>
-            <el-option
+          <el-select v-model="params.departureAirport" ref="takeOffData"  filterable placeholder="起飞四字码">
+、            <el-option
               v-for="item in takeOffData"
-              :key="item"
-              :label="item"
-              :value="item">
+              :key="item.airCode"
+              :label="item.airCode+'-'+item.airCodeName"
+              :value="item.airCode">
             </el-option>
           </el-select>
         </el-col>
         <el-col :span="6" v-if="!notype">
-          <el-select v-model="params.arrivalAirport" filterable placeholder="到达四字码">
-            <el-option label="全部到达四字码" value=""></el-option>
+          <el-select v-model="params.arrivalAirport" ref="achieve"  filterable placeholder="到达四字码">
             <el-option
               v-for="item in achieve"
-              :key="item"
-              :label="item"
-              :value="item">
+              :key="item.airCode"
+              :label="item.airCode+'-'+item.airCodeName"
+              :value="item.airCode">
             </el-option>
           </el-select>    
         </el-col>
@@ -116,7 +114,21 @@ export default {
     }
   },
   data() {
+    var validateFourChar = (rule, value, callback) => {
+    if (value && value.length != 0) {
+      if (!(/^1[34578]\d{9}$/.test(value))) {
+        callback(new Error("请填写完整四字码"));
+      } else {
+        callback();
+      }
+      } else {
+        callback();
+      }
+    };
     return {
+      rules: {
+        takeOffData: [{ required: true, message: '请填写完整四字码', trigger: 'blur' },{ validator: this.validateFourChar, trigger: 'blur,change' }],
+      },
        pickerOptions2: {
           shortcuts: [{
             text: '最近一周',
@@ -148,8 +160,8 @@ export default {
       params: {
         "beginTime":"",
         "endTime": "",
-        "departureAirport": "",
-        "arrivalAirport": "",
+        "departureAirport": "ZGSZ",
+        "arrivalAirport": "ZBHD",
         "leftPersonName": "",
         "rightPersonName": "",
         "controlPersonName": "",
@@ -203,7 +215,7 @@ export default {
     //     this.params.endTime=val;
     // },
     getData() {
-        this.$http.post('/foc/getFocAir', {
+        this.$http.post('/foc/getAirCode', {
             position: 1 ,
         }).then(res => {
             if (res.status == 0) {
@@ -215,7 +227,7 @@ export default {
 
           }
         )
-        this.$http.post('/foc/getFocAir', {
+        this.$http.post('/foc/getAirCode', {
             position:"" ,
         }).then(res => {
             if (res.status == 0) {
@@ -263,7 +275,17 @@ export default {
         )
     },
     submitParam() {
-      this.$emit('search', this.params)
+      if(this.params.departureAirport!=""&&this.params.arrivalAirport!=""||this.params.departureAirport==""&&this.params.arrivalAirport==""){
+         this.$emit('search', this.params)
+      }else {
+        this.$notify({
+          title: '提示',
+          message: '请选择完整四字码或都不选则',
+          duration: 5000,
+          type: 'warning'
+        });
+      }
+     
     },
   }
 }

@@ -87,6 +87,7 @@
     <div ref="highchartsContainerFive" id="highchartsContainerFive"  v-show="clickSearch"></div>
     <div  id="getTip" @click="getTip" style="display:none" ></div>
     <div  id="getTipTwo" @click="getTipTwo" style="display:none" ></div>
+    <div  id="getTipThree" @click="getTipThree" style="display:none" ></div>
   </div>
   
 </template>
@@ -129,7 +130,7 @@ export default {
                   } 
                 }, 
                 title: {
-                    text:'空中'
+                    text:'空中时间'
                 },
                 xAxis: {
                     categories: []
@@ -180,7 +181,7 @@ export default {
                   } 
                 }, 
                 title: {
-                    text:'飞行'
+                    text:'飞行时间'
                 },
                 xAxis: {
                     categories: []
@@ -235,7 +236,7 @@ export default {
                   } 
                 }, 
                 title: {
-                    text:'地面'
+                    text:'地面时间'
                 },
                 xAxis: {
                     categories: []
@@ -277,15 +278,15 @@ export default {
                       cursor: 'pointer', 
                       events: { 
                           click: function(e) { 
-                            document.getElementById("getTip").innerHTML=e.point.category;
-                            document.getElementById("getTip").click();
+                            document.getElementById("getTipThree").innerHTML=e.point.category+","+e.point.y;
+                            document.getElementById("getTipThree").click();
                            
                           } 
                       } 
                   } 
                 }, 
                 title: {
-                    text:'耗油'
+                    text:'耗油量'
                 },
                 xAxis: {
                     categories: []
@@ -300,12 +301,12 @@ export default {
                 },
                 series: [
                   {
-                      name: '耗油',
+                      name: '耗油量',
                       data: [],
                       color: '#9c9'
                   },
                   {
-                      name: '平均耗油',
+                      name: '平均耗油量',
                       data: [],
                       color: '#369'
                   }
@@ -317,7 +318,7 @@ export default {
                       cursor: 'pointer', 
                       events: { 
                           click: function(e) { 
-                            document.getElementById("getTip").innerHTML=e.point.category;
+                            document.getElementById("getTipTwo").innerHTML=e.point.category+","+e.point.y;
                             document.getElementById("getTipTwo").click();
 
                           } 
@@ -325,7 +326,7 @@ export default {
                   } 
                 }, 
                 title: {
-                    text:'耗油升高排序'
+                    text:'耗油量升高排序'
                 },
                 xAxis: {
                     categories: [],
@@ -341,12 +342,12 @@ export default {
                 },
                 series: [
                   {   type: 'spline',
-                      name: '耗油',
+                      name: '耗油量',
                       data: [],
                       color: '#9c9'
                   },
                   {   type: 'spline',
-                      name: '平均耗油',
+                      name: '平均耗油量',
                       data: [],
                       color: '#369'
                   }
@@ -370,6 +371,10 @@ export default {
         "rightPersonName": "",
         "controlPersonName": "",
       },
+      beginTime:"",
+      endTime:"",
+      fiveBeginTime:"",
+      fiveEndTime:"",
       recordData: [],
       clickSearch:false,
       totalSize: 0,
@@ -408,8 +413,8 @@ export default {
     getTip() {
      
       this.searchLoading = true;
-      var params = Object.assign(this.params);
-       params.beginTime=document.getElementById("getTip").innerHTML;
+      let params = Object.assign(this.params);
+      params.beginTime=document.getElementById("getTip").innerHTML;
       params.endTime=document.getElementById("getTip").innerHTML;
       this.$http.post("/foc/getFocs?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
@@ -418,7 +423,7 @@ export default {
         }, 200)
         if (res.status == 0) {
          var infor= res.data.records;
-         this.tip="操作者:"+infor[0].controlPersonName+" 左座者:"+infor[0].leftPersonName+" 右座者:"+infor[0].rightPersonName+" 航班号:"+infor[0].flightNo+" 日期："+this.timeFilter(infor[0].flightDate, 'date');
+         this.tip="操作者:"+infor[0].controlPersonName+" 左座:"+infor[0].leftPersonName+" 右座:"+infor[0].rightPersonName+" 航班号:"+infor[0].flightNo+" 日期："+this.timeFilter(infor[0].flightDate, 'date');
            this.$notify({
             title: '机组详细信息',
             message: this.tip,
@@ -437,24 +442,58 @@ export default {
         })
     },
     getTipTwo(){
-      
       this.searchLoading = true;
-      var params = Object.assign(this.params);
-      params.leftPersonName=document.getElementById("getTip").innerHTML.split(",")[0];
-      params.rightPersonName=document.getElementById("getTip").innerHTML.split(",")[1];
-      this.$http.post("/foc/getFocs?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
+      let params = Object.assign(this.params);
+      params.beginTime=this.beginTime;
+      params.endTime=this.endTime;
+      params.leftPersonName="";
+      params.rightPersonName="";
+      this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
-         var infor= res.data.records;
-         this.tip="操作者:"+infor[0].controlPersonName+" 左座者:"+infor[0].leftPersonName+" 右座者:"+infor[0].rightPersonName+" 航班号:"+infor[0].flightNo+" 日期："+this.timeFilter(infor[0].flightDate, 'date');
-           this.$notify({
-            title: '机组详细信息',
-            message: this.tip,
-            duration: 10000
-          })
+         var infor= res.focVos;
+         var avroil=infor[0].avrOil;
+
+              this.searchLoading = true;
+              let paramPeoples = Object.assign(this.params);
+              paramPeoples.leftPersonName=document.getElementById("getTipTwo").innerHTML.split(",")[0];
+              paramPeoples.rightPersonName=document.getElementById("getTipTwo").innerHTML.split(",")[1];
+              
+              this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", paramPeoples, { body: true }).then(res => {
+                setTimeout(function() {
+                  this.searchLoading = false;
+
+                }, 200)
+                if (res.status == 0) {
+                var infora= res.focVos;
+                console.log(infora)
+                this.tip=" 左座:"+document.getElementById("getTipTwo").innerHTML.split(",")[0]+" 右座:"+document.getElementById("getTipTwo").innerHTML.split(",")[1]+" 航班号:"+infora[0].flightNo+" 日期："+infora[0].flyDate+" 油耗"+document.getElementById("getTipTwo").innerHTML.split(",")[2]+" 平均油耗"+avroil;
+                  this.$notify({
+                    title: '机组详细信息',
+                    message: this.tip,
+                    duration: 10000
+                  })
+                  // this.totalSize = res.data.total;
+                //  this.graphdata.datasets[0].data.push(0.5);
+                  
+                // console.log(this.recordData.length)
+                } else {
+                  // this.recordData = [];
+                  // this.totalSize = 0;
+                }
+                }, res => {
+
+                })
+
+        //  this.tip=" 左座:"+document.getElementById("getTipTwo").innerHTML.split(",")[0]+" 右座:"+document.getElementById("getTipTwo").innerHTML.split(",")[1]+" 航班号:"+infor[0].flightNo+" 日期："+infor[0].flyDate+" 油耗"+document.getElementById("getTipTwo").innerHTML.split(",")[2]+" 平均油耗"+infor[0].avrOil;
+        //    this.$notify({
+        //     title: '机组详细信息',
+        //     message: this.tip,
+        //     duration: 10000
+        //   })
           // this.totalSize = res.data.total;
         //  this.graphdata.datasets[0].data.push(0.5);
           
@@ -466,6 +505,64 @@ export default {
         }, res => {
 
         })
+    },
+    getTipThree(){
+      
+      this.searchLoading = true;
+      let params = Object.assign(this.params);
+      params.beginTime=this.beginTime;
+      params.endTime=this.endTime;
+      params.leftPersonName= "";
+      params.rightPersonName="";
+      this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
+        setTimeout(function() {
+          this.searchLoading = false;
+
+        }, 200)
+        if (res.status == 0) {
+         var infor= res.focVos;
+         var tips=" 日期："+document.getElementById("getTipThree").innerHTML.split(",")[0]+" 油耗"+ document.getElementById("getTipThree").innerHTML.split(",")[1]+" 平均油耗"+infor[0].avrOil;
+           
+              let paramPersons = Object.assign(this.params);
+              paramPersons.beginTime= document.getElementById("getTipThree").innerHTML.split(",")[0];
+              paramPersons.endTime=document.getElementById("getTipThree").innerHTML.split(",")[0];
+              paramPersons.leftPersonName= "";
+              paramPersons.rightPersonName="";
+              this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", paramPersons, { body: true }).then(res => {
+              setTimeout(function() {
+                this.searchLoading = false;
+
+              }, 200)
+              if (res.status == 0) {
+              var infor= res.focVos;
+              this.tip="操作者:"+infor[0].controlPersonName+" 左座:"+infor[0].leftPersonName+" 右座:"+infor[0].rightPersonName+" 航班号:"+infor[0].flightNo+tips;
+                this.$notify({
+                  title: '机组详细信息',
+                  message: this.tip,
+                  duration: 10000
+                })
+                // this.totalSize = res.data.total;
+              //  this.graphdata.datasets[0].data.push(0.5);
+                
+              // console.log(this.recordData.length)
+              } else {
+                // this.recordData = [];
+                // this.totalSize = 0;
+              }
+              }, res => {
+
+              })
+
+        // console.log(this.recordData.length)
+        } else {
+          // this.recordData = [];
+          // this.totalSize = 0;
+        }
+        }, res => {
+
+        })
+
+        
     },
     initChart() {
       // console.log(this.$el);
@@ -539,6 +636,8 @@ export default {
       this.getData()
     },
     setReport(options) {
+      this.beginTime=options.beginTime;
+      this.endTime=options.endTime;
       this.params = options;
       this.getData();
       this.clickSearch=true,
@@ -555,14 +654,19 @@ export default {
           this.optionOne.series[2].data=[];
           this.optionOne.series[3].data=[];
           this.optionOne.xAxis.categories=[];
-          for(var i=flightData.length-1;i>0;i--){
+          for(var i=flightData.length-1;i>=0;i--){
               this.optionOne.series[0].data.push(parseFloat(flightData[i].airHour));
               this.optionOne.series[1].data.push(parseFloat(flightData[i].avrAirHour));
               this.optionOne.series[2].data.push(parseFloat(flightData[i].acarsAirHour));
               this.optionOne.series[3].data.push(parseFloat(flightData[i].avrAcarsAirHour));
               this.optionOne.xAxis.categories.push(flightData[i].flyDate)
           } 
-          this.optionOne.title.text=this.params.beginTime+"到"+this.params.endTime+"空中折线图";
+ 
+          if(this.params.departureAirport){
+            this.optionOne.title.text=flightData[flightData.length-1].flyDate+"到"+flightData[0].flyDate+" "+this.params.departureAirport+"-"+this.params.arrivalAirport+" "+"空中时间折线图";
+          }else{
+            this.optionOne.title.text=flightData[flightData.length-1].flyDate+"到"+flightData[0].flyDate+" "+"空中时间折线图";
+          }
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerOne, this.optionOne);
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerTwo, this.optionTwo);
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerThree, this.optionThree);
@@ -593,15 +697,65 @@ export default {
           this.optionTwo.series[3].data=[];
           this.optionTwo.series[4].data=[];
           this.optionTwo.xAxis.categories=[];
-          for(var i=flyData.length-1;i>0;i--){
+          for(var i=flyData.length-1;i>=0;i--){
              this.optionTwo.series[0].data.push(parseFloat(flyData[i].flyHours));
              this.optionTwo.series[1].data.push(parseFloat(flyData[i].avrFlyHours));
              this.optionTwo.series[2].data.push(parseFloat(flyData[i].acarsHours));
              this.optionTwo.series[3].data.push(parseFloat(flyData[i].avrAcarsHours));
              this.optionTwo.series[4].data.push(parseFloat(flyData[i].contractHours));
              this.optionTwo.xAxis.categories.push(flyData[i].flyDate)
-          }         
-          this.optionTwo.title.text=this.params.beginTime+"到"+this.params.endTime+"飞行折线图";
+          }    
+          if(this.params.departureAirport){
+            this.optionTwo.title.text=flyData[flyData.length-1].flyDate+"到"+flyData[0].flyDate+" "+this.params.departureAirport+"-"+this.params.arrivalAirport+" "+"飞行时间折线图";
+          } else{
+            this.optionTwo.title.text=flyData[flyData.length-1].flyDate+"到"+flyData[0].flyDate+" "+"飞行时间折线图";
+            
+          }    
+          
+          this.fiveBeginTime=flyData[flyData.length-1].flyDate;
+          this.fiveEndTime=flyData[0].flyDate;
+          var sortoil = new Object(); 
+        sortoil.beginTime=this.params.beginTime;
+        sortoil.isSort="1";
+        sortoil.arrivalAirport=this.params.arrivalAirport;
+        sortoil.endTime=this.params.endTime;
+        sortoil.departureAirport=this.params.departureAirport;
+        sortoil.leftPersonName=this.params.leftPersonName;
+        sortoil.rightPersonName=this.params.rightPersonName;
+        sortoil.controlPersonName=this.params.controlPersonName;
+        console.log
+        this.$http.post("/foc/getFocOil",sortoil , { body: true }).then(res => {//
+        setTimeout(function() {
+          this.searchLoading = false;
+        }, 200)
+        if (res.status == 0) {
+          this.optionFive.series[0].data=[];
+          this.optionFive.series[1].data=[];
+          this.optionFive.xAxis.categories=[];
+          var oilData = res.focVos;
+          for(var i=oilData.length-1;i>0;i--){
+              this.optionFive.series[1].data.push(parseFloat(oilData[i].avrOil));
+              this.optionFive.series[0].data.push(parseFloat(oilData[i].oil));
+              this.optionFive.xAxis.categories.push(oilData[i].leftPersonName+","+oilData[i].rightPersonName)
+          }
+          if(this.params.departureAirport&&this.params.arrivalAirport){
+            this.optionFive.title.text=this.fiveBeginTime+"到"+this.fiveEndTime+" "+this.params.departureAirport+"-"+this.params.arrivalAirport+" "+"耗油升序曲线图";
+          }else{
+            this.optionFive.title.text=this.fiveBeginTime+"到"+this.fiveEndTime+" "+"耗油量升序曲线图";
+          }
+          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerOne, this.optionOne);
+          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerTwo, this.optionTwo);
+          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerThree, this.optionThree);
+          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerFour, this.optionFour);
+          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerFive, this.optionFive);
+        } else {
+            this.optionFive.xAxis.categories=[];
+            this.optionFive.series[0].data=[];
+            this.optionFive.series[1].data=[];
+        }
+        }, res => {
+
+        })
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerOne, this.optionOne);
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerTwo, this.optionTwo);
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerThree, this.optionThree);
@@ -633,15 +787,18 @@ export default {
             this.optionThree.series[2].data=[];
             this.optionThree.series[3].data=[];
             this.optionThree.xAxis.categories=[];
-            for(var i=landData.length-1;i>0;i--){
+            for(var i=landData.length-1;i>=0;i--){
                   this.optionThree.series[0].data.push(parseFloat(landData[i].landHour));
                   this.optionThree.series[1].data.push(parseFloat(landData[i].avrLandHour));
                   this.optionThree.series[2].data.push(parseFloat(landData[i].acarsLand));
                   this.optionThree.series[3].data.push(parseFloat(landData[i].avrAcarsLand));
                   this.optionThree.xAxis.categories.push(landData[i].flyDate)
             } 
-            console.log(this.params)
-            this.optionThree.title.text=this.params.beginTime+"到"+this.params.endTime+"地面折线图";
+            if(this.params.departureAirport){
+              this.optionThree.title.text=landData[landData.length-1].flyDate+"到"+landData[0].flyDate+" "+this.params.departureAirport+"-"+this.params.arrivalAirport+" "+"地面时间折线图";
+            }else{
+              this.optionThree.title.text=landData[landData.length-1].flyDate+"到"+landData[0].flyDate+" "+"地面时间折线图";
+            }
             this.chart = new Highcharts.Chart(this.$refs.highchartsContainerOne, this.optionOne);
             this.chart = new Highcharts.Chart(this.$refs.highchartsContainerTwo, this.optionTwo);
             this.chart = new Highcharts.Chart(this.$refs.highchartsContainerThree, this.optionThree);
@@ -667,12 +824,18 @@ export default {
           this.optionFour.series[1].data=[];
           this.optionFour.xAxis.categories=[];
           var oilData = res.focVos;
-          for(var i=oilData.length-1;i>0;i--){
+          for(var i=oilData.length-1;i>=0;i--){
               this.optionFour.series[1].data.push(parseFloat(oilData[i].avrOil));
               this.optionFour.series[0].data.push(parseFloat(oilData[i].oil));
               this.optionFour.xAxis.categories.push(oilData[i].flyDate)
           }
-          this.optionFour.title.text=this.params.beginTime+"到"+this.params.endTime+"耗油折线图";
+          console.log(this.params)
+          if(this.params.departureAirport){
+            this.optionFour.title.text=oilData[oilData.length-1].flyDate+"到"+oilData[0].flyDate+" "+this.params.departureAirport+"-"+this.params.arrivalAirport+" "+"耗油量折线图";
+          }else{
+            this.optionFour.title.text=oilData[oilData.length-1].flyDate+"到"+oilData[0].flyDate+" "+"耗油量折线图";
+
+          }
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerOne, this.optionOne);
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerTwo, this.optionTwo);
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerThree, this.optionThree);
@@ -695,44 +858,7 @@ export default {
         // "rightPersonName": "",
         // "controlPersonName": "",
 
-        var sortoil = new Object(); 
-        sortoil.beginTime=this.params.beginTime;
-        sortoil.isSort="1";
-        sortoil.arrivalAirport=this.params.arrivalAirport;
-        sortoil.endTime=this.params.endTime;
-        sortoil.departureAirport=this.params.departureAirport;
-        sortoil.leftPersonName=this.params.leftPersonName;
-        sortoil.rightPersonName=this.params.rightPersonName;
-        sortoil.controlPersonName=this.params.controlPersonName;
-        console.log
-        this.$http.post("/foc/getFocOil",sortoil , { body: true }).then(res => {//
-        setTimeout(function() {
-          this.searchLoading = false;
-        }, 200)
-        if (res.status == 0) {
-          this.optionFive.series[0].data=[];
-          this.optionFive.series[1].data=[];
-          this.optionFive.xAxis.categories=[];
-          var oilData = res.focVos;
-          for(var i=oilData.length-1;i>0;i--){
-              this.optionFive.series[0].data.push(parseFloat(oilData[i].avrOil));
-              this.optionFive.series[1].data.push(parseFloat(oilData[i].oil));
-              this.optionFive.xAxis.categories.push(oilData[i].leftPersonName+","+oilData[i].rightPersonName)
-          }
-          this.optionFour.title.text=this.params.beginTime+"到"+this.params.endTime+"耗油升序曲线图";
-          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerOne, this.optionOne);
-          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerTwo, this.optionTwo);
-          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerThree, this.optionThree);
-          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerFour, this.optionFour);
-          this.chart = new Highcharts.Chart(this.$refs.highchartsContainerFive, this.optionFive);
-        } else {
-            this.optionFive.xAxis.categories=[];
-            this.optionFive.series[0].data=[];
-            this.optionFive.series[1].data=[];
-        }
-        }, res => {
-
-        })
+        
 
         //某人某日期区间内多航段chart统计
         // this.$http.post("/foc/getFocPart", this.params, { body: true }).then(res => {
