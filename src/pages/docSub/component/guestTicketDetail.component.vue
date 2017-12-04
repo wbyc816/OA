@@ -14,11 +14,11 @@
     <el-table-column property="reciptCompany" label="乘机人公司" ></el-table-column>
   </el-table>
 
-  <el-table :data="TripTable" :stripe="true" highlight-current-row   class="appTable">
+  <el-table :data="TripTable" :stripe="true" highlight-current-row style="width: 100%"  class="appTable">
     <el-table-column property="flightFrom" label="始发"  ></el-table-column>
     <el-table-column property="flightTo" label="到达" ></el-table-column>
     <el-table-column property="flightNo" label="航班号" ></el-table-column>
-    <el-table-column property="carriageName" label="承运人" >></el-table-column>
+    <el-table-column property="carriageName" label="承运人" ></el-table-column>
     <el-table-column property="seatsClassName" label="等级" ></el-table-column>
     <el-table-column property="isBookingSeats" label="座位状态" >
       <template scope="scope">

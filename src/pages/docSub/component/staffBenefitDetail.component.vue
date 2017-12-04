@@ -13,7 +13,7 @@
       <el-table-column property="reciptContact" label="联系电话"></el-table-column>
     </el-table>
 
-    <el-table :data="TripTable" :stripe="true" highlight-current-row   class="appTable" >
+    <el-table :data="TripTable" :stripe="true" highlight-current-row    >
       <el-table-column property="flightFrom" label="始发" ></el-table-column>
       <el-table-column property="flightTo"  label="到达" ></el-table-column>
       <el-table-column property="flightNo" label="航班号" ></el-table-column>
