@@ -9,8 +9,7 @@ function resolve (dir) {
 
 module.exports = {
   entry: {
-    app: ["babel-polyfill","./src/main.js"],
-    'pdf.worker': 'pdfjs-dist/build/pdf.worker.entry'
+    app: ["babel-polyfill","./src/main.js"]
   },
   output: {
     path: config.build.assetsRoot,

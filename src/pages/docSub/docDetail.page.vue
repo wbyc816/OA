@@ -82,7 +82,7 @@
       </div>
       <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
       </quit-advice>
-      <my-advice :docDetail="docDetialInfo.doc" :suggestHtml="suggestHtml" v-if="showMyadvice">
+      <my-advice :docDetail="docDetialInfo.doc" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice">
         <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
@@ -93,7 +93,7 @@
         <el-form-item label="建议发文号:" v-if="isRedFile">
           <p class="fwNo">{{docDetialInfo.doc.fwNo}}</p>
         </el-form-item>
-        <el-form-item label="发布正文" prop="taskFileId" v-if="isRedFile">
+        <el-form-item label="发布正文" prop="taskFileId" v-if="isRedFile&&archiveState==1">
           <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
             <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''">上传发布正文<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>

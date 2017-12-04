@@ -56,7 +56,29 @@
           <a href="http://www.szanbao.com.cn/Cn/" target="_blank"><img src="./assets/images/foot5.png" alt=""></a>
           <!-- </div> -->
         </div>
-        <p class="copyRight">COPYRIGHT @2017 东海航空有限公司 ALLRIGHTS RESERVED</p>
+        <div class="copyRight clearfix">
+          <div class="appBox flLeft clearfix">
+            <div class="leftBox flLeft">
+              <i class="iconfont icon-fankui"></i>
+              <span>APP下载</span>
+            </div>
+            <div class="rightBox flLeft" @mouseenter="qrShow=true" @mouseleave="qrShow=false">
+              <img src="./assets/images/logo3.png" alt="">
+              <span>东海E网APP</span>
+              <transition name="el-zoom-in-bottom">
+                <div class="qrBox" v-show="qrShow">
+                  <span>东海E网APP</span>
+                  <img src="http://efile.donghaiair.cn/install/QRcode_ewang.png" alt="">
+                  <p class="phoneIcon">
+                    <i class="iconfont icon-anzhuo"></i>
+                    <i class="iconfont icon-ios"></i>
+                  </p>
+                </div>
+              </transition>
+            </div>
+          </div>
+          <span class="flRight">COPYRIGHT @2017 东海航空有限公司 ALLRIGHTS RESERVED</span>
+        </div>
       </div>
     </footer>
   </div>
@@ -65,29 +87,7 @@
 import { mapGetters } from 'vuex'
 import '../static/urlConfig'
 import Vue from 'vue'
-import Sortable from 'sortablejs'
 import router from './router'
-Vue.directive('goto', {
-  bind: function(el, binding) {
-    el.addEventListener("click", function() {
-      if (binding.value.path) {
-
-        if (new RegExp("^http").test(binding.value.path)) {
-          window.open(binding.value.path);
-        } else {
-          router.push({ path: binding.value.path });
-        }
-      } else if (binding.value.name) {
-        router.push({ name: binding.value.name });
-      }
-    });
-  }
-});
-Vue.directive('sortable', {
-  inserted: function(el, binding) {
-    new Sortable(el, binding.value || {})
-  }
-})
 export default {
   name: 'app',
   data: function() {
@@ -99,13 +99,14 @@ export default {
       scrollBanner: false,
       baseUrl: '',
       login: false,
-      pdR: ''
+      pdR: '',
+      qrShow:false
     }
   },
   computed: {
-    greetText:function(){
-      var now=new Date()
-      return now.getHours()<12?'上午':'下午'
+    greetText: function() {
+      var now = new Date()
+      return now.getHours() < 12 ? '上午' : '下午'
     },
     ...mapGetters([
       'userInfo'
@@ -224,7 +225,7 @@ export default {
       this.getHomePics();
       this.outBreadcrumbs();
       // window.scrollTo(0, 0);
-      window.scrollTo({"behavior": "smooth", "top": 0})
+      window.scrollTo({ "behavior": "smooth", "top": 0 })
     },
   }
 }
@@ -257,7 +258,7 @@ $brown: #985D55;
 #app {
   padding-top: 26px;
   min-height: 100%;
-  padding-bottom: 140px;
+  padding-bottom: 170px;
   position: relative;
 }
 
@@ -329,7 +330,7 @@ $brown: #985D55;
 .topNavbar {
   background: #1465C0;
   text-align: right;
-  .greetText{
+  .greetText {
     color: #fff;
   }
   a {
@@ -524,7 +525,7 @@ footer {
   bottom: 0;
   left: 0;
   background: #fff;
-  width:100%;
+  width: 100%;
   .container {
     .links {
       font-size: 0;
@@ -555,7 +556,103 @@ footer {
     .copyRight {
       text-align: right;
       font-size: 14px;
-      line-height: 50px;
+      line-height: 80px;
+      .appBox {
+        color: $main;
+        .leftBox {
+          padding-right: 20px;
+          margin: 10px 20px 10px 0;
+          line-height: 60px;
+          border-right: 1px solid rgb(129, 132, 136);
+          i {
+            font-size: 40px;
+            vertical-align: middle;
+            position: relative;
+            top: -4px;
+            padding-right: 5px;
+          }
+          span {
+            vertical-align: middle;
+            width: 30px;
+            display: inline-block;
+            line-height: 19px;
+            text-align: center;
+          }
+        }
+        .rightBox {
+          font-size: 0;
+          cursor: pointer;
+          position: relative;
+          >img {
+            vertical-align: middle;
+            padding: 5px 7px;
+            box-shadow: 1px 3px 10px #cecece;
+            border-radius: 4px;
+            margin-right: 15px;
+          }
+          >span {
+            font-size: 15px;
+            vertical-align: middle;
+            display: inline-block;
+            width: 56px;
+            line-height: 19px;
+            text-align: left;
+          }
+          .el-zoom-in-bottom-enter-active,
+          .el-zoom-in-bottom-leave-active {
+            opacity: 1;
+            transform: scaleY(1);
+            transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms, opacity 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms;
+            transform-origin: center bottom
+          }
+          .el-zoom-in-bottom-enter,
+          .el-zoom-in-bottom-leave-active {
+            opacity: 0;
+            transform: scaleY(0)
+          }
+          .qrBox {
+            // display: none;
+            position: absolute;
+            bottom: 75px;
+            left: -45px;
+            width: 140px;
+            padding: 0 7px 5px;
+            line-height: 1;
+            background: rgba(255, 255, 255, 0.95);
+            text-align: left;
+            box-shadow: 0 0 8px #dedede;
+            span {
+              font-size: 15px;
+              padding: 12px 0 6px;
+              display: inline-block;
+            }
+            img {
+              width: 100%;
+              height:auto;
+            }
+            .phoneIcon{
+              text-align:right;
+              padding:5px 0;
+              i{
+                font-size:20px;
+                color:#555;
+                padding-left: 7px;
+                // vertical-align:top;
+              }
+              .icon-anzhuo{
+                font-size:22px;
+                position: relative;
+                top:2px;
+              }
+            }
+          }
+          &:hover {
+            .qrBox {
+              display: block;
+            }
+          }
+        }
+      }
     }
   }
 }

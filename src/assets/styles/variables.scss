@@ -1026,6 +1026,9 @@ ul {
       font-size: 22px; // display: none;
       padding-right: 10px;
     }
+    .link:last-child{
+      padding-right:0;
+    }
     tr:hover {
       .link {
         display: inline-block;
