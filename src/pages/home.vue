@@ -105,7 +105,7 @@
                 <p><span :style="{'background':pieBg[2]}"></span>出发: {{flightTrends.departure/flightTrends.sumFlight | percent}}</p>
                 <p><span :style="{'background':pieBg[3]}"></span>计划: {{(flightTrends.sumFlight-flightTrends.departure-flightTrends.arrival-flightTrends.delay)/flightTrends.sumFlight | percent}}</p>
               </div>
-              <my-pie :data="piedata" :options="pieoption" v-if="piedata.datasets[0].data.length==4"></my-pie>
+              <div ref="mypie"></div>
             </el-col>
           </el-row>
         </el-card>
@@ -172,6 +172,16 @@ import MessageCenter from '../components/message'
 import SidePersonSearch from '../components/sidePersonSearch.component'
 import DocList from '../components/doc'
 import Duty from '../components/duty.component'
+import Highcharts from 'highcharts/highstock';
+import HighchartsMore from 'highcharts/highcharts-more';
+import HighchartsDrilldown from 'highcharts/modules/drilldown';
+import Highcharts3D from 'highcharts/highcharts-3d';
+import Highmaps from 'highcharts/modules/map';
+
+HighchartsMore(Highcharts)
+HighchartsDrilldown(Highcharts);
+Highcharts3D(Highcharts);
+Highmaps(Highcharts);
 var msgs = [
   { "icon": "gou", "color": "#07A9E9", "text": "待批公文:", "value": "0", "link": "/doc/docPending" },
   { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
@@ -207,16 +217,67 @@ export default {
 
   data() {
     return {
+      chart: {
+        // plotBorderWidth: 500,        //绘图区边框宽度
+      },
+      optionOne: {
+        
+        credits: {  
+          enabled:false  
+        }, 
+        title: {
+            text:''
+        },
+        xAxis: {
+            categories: []
+        },
+        yAxis: {
+            title: {
+                text: '单位/min'
+            },
+            lineWidth: 2,
+            lineColor: 'black',
+            id: 'sky'
+        },
+        tooltip: {
+            headerFormat: '{series.name}<br>',
+             pointFormat: '  {point.name}' +
+        ': <b>{point.y}</b><br/>' 
+      
+        },
+        colors:[
+          '#97BBCD', '#F7464A', '#DCDCDC', '#7ED0CF'
+        ],
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: false
+            }
+          }
+        },
+        //  series: [{
+        //     type: 'pie',
+        //     name: '航班占比',
+        //     data: [
+        //         ['到达'],
+        //         ['延误'],
+        //         ['出发'],
+        //         ['计划'],
+        //     ]
+        // }]
+         series: [{
+            size:"120px",
+            type: 'pie',
+            name: '航班数量',
+        }]
+        
+      },
       msgs,
       activeName: '',
       pieBg,
-      piedata: {
-        labels: ['到达', '延误', '出发', '计划'],
-        datasets: [{
-          backgroundColor: pieBg,
-          data: []
-        }]
-      },
+      
       pieoption,
       otherLinks,
       tripType: 'date',
@@ -276,6 +337,9 @@ export default {
       'newsType'
     ])
   },
+  mounted() {
+    this.initChart();
+  },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.getTips();
@@ -310,12 +374,24 @@ export default {
       this.$http.post('/index/getFlightTrends', { flightDate: this.timeFilter(new Date().getTime(), 'date') })
         .then(res => {
           this.flightTrends = res.data;
-          this.piedata.datasets[0].data = [];
-          this.piedata.datasets[0].data.push(this.flightTrends.arrival);
-          this.piedata.datasets[0].data.push(this.flightTrends.delay);
-          this.piedata.datasets[0].data.push(this.flightTrends.departure);
-          this.piedata.datasets[0].data.push((this.flightTrends.sumFlight - this.flightTrends.departure - this.flightTrends.delay - this.flightTrends.arrival));
+          this.optionOne.series[0].data = [[],[],[],[]];
+           this.optionOne.series[0].data[0].push("到达");
+           this.optionOne.series[0].data[1].push("延误");
+           this.optionOne.series[0].data[2].push("出发");
+           this.optionOne.series[0].data[3].push("计划");
+           console.log(this.flightTrends.arrival)
+          this.optionOne.series[0].data[0].push(parseFloat(this.flightTrends.arrival));
+          this.optionOne.series[0].data[1].push(parseFloat(this.flightTrends.delay));
+          this.optionOne.series[0].data[2].push(parseFloat(this.flightTrends.departure));
+          this.optionOne.series[0].data[3].push(parseFloat((this.flightTrends.sumFlight - this.flightTrends.departure - this.flightTrends.delay - this.flightTrends.arrival)));
+          this.chart = new Highcharts.Chart(this.$refs.mypie, this.optionOne);
         })
+    },
+     initChart() {
+      // console.log(this.$el);
+      // this.$el.style.width = 100 + 'px';
+      // this.$el.style.height =  100+'px';
+      this.chart = new Highcharts.Chart(this.$refs.mypie, this.optionOne);
     },
     goToOthers(link) {
       if (/^http/.test(link)) {

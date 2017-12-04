@@ -1,5 +1,5 @@
 <template>
-  <div id="flightReport">
+  <div id="flightReport"  v-loading="reportLoading">
     <search-report title="飞行报表" @search="setReport" hasOverTime></search-report>
         <el-table :data="recordData" stripe style="width: 100%" :fit="true">
         <el-table-column prop="controlPersonName" label="姓名" width="90">
@@ -11,10 +11,10 @@
         </el-table-column>
         <el-table-column prop="flightNo" label="航班号" width="90">
         </el-table-column>
-        <el-table-column prop="departureAirport" label="起飞四码" width="90">
+        <el-table-column prop="departureAirport" label="起飞四码" width="130">
         </el-table-column>
 
-        <el-table-column prop="arrivalAirport" label="到达四码"width="90">
+        <el-table-column prop="arrivalAirport" label="到达四码" width="130">
         </el-table-column>
         <el-table-column prop="acReg" label="机号" >
         </el-table-column>
@@ -33,23 +33,23 @@
         </el-table-column> -->
         <el-table-column prop="flyHours" label="飞行时间" width="115">
             <template scope="scope">
-                <span>{{ scope.row.flyHours}}分钟</span>
+                <span>{{ scope.row.flyHours?scope.row.flyHours:0}}分钟</span>
             </template>
         </el-table-column>
         <el-table-column prop="landHours" label="地面时间" width="115">
             <template scope="scope">
-                <span>{{ scope.row.landHours}}分钟</span>
+                <span>{{ scope.row.landHours?scope.row.landHours:0}}分钟</span>
             </template>
         </el-table-column>
         <el-table-column prop="airHours" label="空中时间" width="115">
             <template scope="scope">
-                <span>{{ scope.row.airHours}}分钟</span>
+                <span>{{scope.row.airHours?scope.row.airHours:0}}分钟</span>
             </template>
         </el-table-column>
 
         <el-table-column prop="nightHours" label="夜航时间" width="115">
             <template scope="scope">
-                <span>{{ scope.row.nightHours}}分钟</span>
+                <span>{{ scope.row.nightHours?scope.row.nightHours:0}}分钟</span>
             </template>
         </el-table-column>
         <!-- <el-table-column prop="deptName" label="左座时间">
@@ -61,7 +61,10 @@
 
         <el-table-column prop="updown" label="操纵次数" width="90">
         </el-table-column>
-        <el-table-column prop="chargeHour" label="计费时间" width="90">
+        <el-table-column prop="chargeHour" label="计费时间" width="120">
+           <template scope="scope">
+                <span>{{ scope.row.chargeHour?scope.row.chargeHour:0}}分钟</span>
+            </template>
         </el-table-column>
         <el-table-column  label="耗油量" >
             <template scope="scope">
@@ -105,7 +108,7 @@ HighchartsMore(Highcharts)
 HighchartsDrilldown(Highcharts);
 Highcharts3D(Highcharts);
 Highmaps(Highcharts);
-import HighchartsComponent from '../HighchartsComponent.vue';
+import HighchartsComponent from '../components/HighchartsComponent.vue';
 import util from '../common/util'
 export default {
   name: 'highchartsContainer',
@@ -117,241 +120,256 @@ export default {
               type: 'spline'
             },
             optionOne: {
-               plotOptions: { 
-                  series: { 
-                      cursor: 'pointer', 
-                      events: { 
-                          click: function(e) { 
-                            document.getElementById("getTip").innerHTML=e.point.category;
-                            document.getElementById("getTip").click();
-                           
-                          } 
-                      } 
-                  } 
-                }, 
-                title: {
-                    text:'空中时间'
+              credits: {  
+                enabled:false  
+              }, 
+              plotOptions: { 
+                series: { 
+                    cursor: 'pointer', 
+                    events: { 
+                        click: function(e) { 
+                          document.getElementById("getTip").innerHTML=e.point.category;
+                          document.getElementById("getTip").click();
+                          
+                        } 
+                    } 
+                } 
+              }, 
+              title: {
+                  text:'空中时间'
+              },
+              xAxis: {
+                  categories: []
+              },
+              yAxis: {
+                  title: {
+                      text: '单位/min'
+                  },
+                  lineWidth: 2,
+                  lineColor: 'black',
+                  id: 'sky'
+              },
+              series: [
+                {
+                  name: '空中时间',
+                  data: [],
+                  color: '#9c9'
                 },
-                xAxis: {
-                    categories: []
+                {
+                  name: '平均空中时间',
+                  data: [],
+                  color: 'black'
                 },
-                yAxis: {
-                    title: {
-                        text: '单位/min'
-                    },
-                    lineWidth: 2,
-                    lineColor: 'black',
-                    id: 'sky'
+                  {
+                  name: 'Acars空中时间',
+                  data: [],
+                  color: '#369'
                 },
-                series: [
-                  {
-                    name: '空中时间',
-                    data: [],
-                    color: '#9c9'
-                  },
-                  {
-                    name: '平均空中时间',
-                    data: [],
-                    color: 'black'
-                  },
-                   {
-                    name: 'Acars空中时间',
-                    data: [],
-                    color: '#369'
-                  },
-                  {
-                    name: '平均Acars空中时间',
-                    data: [],
-                    color: 'red'
-                  },
-                  
-                ]
+                {
+                  name: '平均Acars空中时间',
+                  data: [],
+                  color: 'red'
+                },
+                
+              ]
             },
             optionTwo: {
-               plotOptions: { 
-                  series: { 
-                      cursor: 'pointer', 
-                      events: { 
-                          click: function(e) { 
-                            document.getElementById("getTip").innerHTML=e.point.category;
-                            document.getElementById("getTip").click();
-                           
-                          } 
-                      } 
-                  } 
-                }, 
-                title: {
-                    text:'飞行时间'
-                },
-                xAxis: {
-                    categories: []
-                },
-                yAxis: {
-                    title: {
-                        text: '单位/min'
-                    },
-                    lineWidth: 2,
-                    lineColor: 'black',
-                    id: 'fly'
-                },
-                series: [
-                  {
-                      name: '飞行时间',
-                      data: [],
-                      color: '#9c9'
+              credits: {  
+                enabled:false  
+              }, 
+              plotOptions: { 
+                series: { 
+                    cursor: 'pointer', 
+                    events: { 
+                        click: function(e) { 
+                          document.getElementById("getTip").innerHTML=e.point.category;
+                          document.getElementById("getTip").click();
+                          
+                        } 
+                    } 
+                } 
+              }, 
+              title: {
+                  text:'飞行时间'
+              },
+              xAxis: {
+                  categories: []
+              },
+              yAxis: {
+                  title: {
+                      text: '单位/min'
                   },
-                   {
-                      name: '平均飞行时间',
-                      data: [],
-                      color: 'black'
-                  },
-                   {
-                      name: 'Acars飞行时间',
-                      data: [],
-                      color: '#369'
-                  },
-                   {
-                      name: '平均Acars飞行时间',
-                      data: [],
-                      color: 'red'
-                  },
-                   {
-                      name: '承包时间',
-                      data: [],
-                      color: '#630'
-                  }
-                ]
-            },
-             optionThree: {
-                plotOptions: { 
-                  series: { 
-                      cursor: 'pointer', 
-                      events: { 
-                          click: function(e) { 
-                            document.getElementById("getTip").innerHTML=e.point.category;
-                            document.getElementById("getTip").click();
-                           
-                          } 
-                      } 
-                  } 
-                }, 
-                title: {
-                    text:'地面时间'
-                },
-                xAxis: {
-                    categories: []
-                },
-                yAxis: {
-                    title: {
-                        text: '单位/min'
-                    },
-                    lineWidth: 2,
-                    lineColor: 'black',
-                    id: 'land'
-                },
-                series: [
-                   {
-                    name: '地面时间',
+                  lineWidth: 2,
+                  lineColor: 'black',
+                  id: 'fly'
+              },
+              series: [
+                {
+                    name: '飞行时间',
                     data: [],
                     color: '#9c9'
-                  },
+                },
                   {
-                    name: '平均地面时间',
+                    name: '平均飞行时间',
                     data: [],
                     color: 'black'
-                  },
+                },
                   {
-                    name: 'Acars地面时间',
+                    name: 'Acars飞行时间',
                     data: [],
                     color: '#369'
-                  },
+                },
                   {
-                    name: '平均Acars地面时间',
+                    name: '平均Acars飞行时间',
                     data: [],
                     color: 'red'
-                  }
-                ]
+                },
+                  {
+                    name: '承包时间',
+                    data: [],
+                    color: '#630'
+                }
+              ]
+            },
+            optionThree: {
+              credits: {  
+                enabled:false  
+              }, 
+              plotOptions: { 
+                series: { 
+                    cursor: 'pointer', 
+                    events: { 
+                        click: function(e) { 
+                          document.getElementById("getTip").innerHTML=e.point.category;
+                          document.getElementById("getTip").click();
+                          
+                        } 
+                    } 
+                } 
+              }, 
+              title: {
+                  text:'地面时间'
+              },
+              xAxis: {
+                  categories: []
+              },
+              yAxis: {
+                  title: {
+                      text: '单位/min'
+                  },
+                  lineWidth: 2,
+                  lineColor: 'black',
+                  id: 'land'
+              },
+              series: [
+                  {
+                  name: '地面时间',
+                  data: [],
+                  color: '#9c9'
+                },
+                {
+                  name: '平均地面时间',
+                  data: [],
+                  color: 'black'
+                },
+                {
+                  name: 'Acars地面时间',
+                  data: [],
+                  color: '#369'
+                },
+                {
+                  name: '平均Acars地面时间',
+                  data: [],
+                  color: 'red'
+                }
+              ]
             },
             optionFour: {
-                 plotOptions: { 
-                  series: { 
-                      cursor: 'pointer', 
-                      events: { 
-                          click: function(e) { 
-                            document.getElementById("getTipThree").innerHTML=e.point.category+","+e.point.y;
-                            document.getElementById("getTipThree").click();
-                           
-                          } 
-                      } 
-                  } 
-                }, 
-                title: {
-                    text:'耗油量'
-                },
-                xAxis: {
-                    categories: []
-                },
-                yAxis: {
-                    title: {
-                        text: '单位/L'
-                    },
-                    lineWidth: 2,
-                    lineColor: 'black',
-                    id: 'oil'
-                },
-                series: [
-                  {
-                      name: '耗油量',
-                      data: [],
-                      color: '#9c9'
+              credits: {  
+                enabled:false  
+              }, 
+                plotOptions: { 
+                series: { 
+                    cursor: 'pointer', 
+                    events: { 
+                        click: function(e) { 
+                          document.getElementById("getTipThree").innerHTML=e.point.category+","+e.point.y;
+                          document.getElementById("getTipThree").click();
+                          
+                        } 
+                    } 
+                } 
+              }, 
+              title: {
+                  text:'耗油量'
+              },
+              xAxis: {
+                  categories: []
+              },
+              yAxis: {
+                  title: {
+                      text: '单位/L'
                   },
-                  {
-                      name: '平均耗油量',
-                      data: [],
-                      color: '#369'
-                  }
-                ]
+                  lineWidth: 2,
+                  lineColor: 'black',
+                  id: 'oil'
+              },
+              series: [
+                {
+                    name: '耗油量',
+                    data: [],
+                    color: '#9c9'
+                },
+                {
+                    name: '平均耗油量',
+                    data: [],
+                    color: '#369'
+                }
+              ]
             },
             optionFive: {
-                plotOptions: { 
-                  series: { 
-                      cursor: 'pointer', 
-                      events: { 
-                          click: function(e) { 
-                            document.getElementById("getTipTwo").innerHTML=e.point.category+","+e.point.y;
-                            document.getElementById("getTipTwo").click();
+              credits: {  
+                enabled:false  
+              }, 
+              plotOptions: { 
+                series: { 
+                    cursor: 'pointer', 
+                    events: { 
+                        click: function(e) { 
+                          document.getElementById("getTipTwo").innerHTML=e.point.category+","+e.point.y;
+                          document.getElementById("getTipTwo").click();
 
-                          } 
-                      } 
-                  } 
-                }, 
-                title: {
-                    text:'耗油量升高排序'
-                },
-                xAxis: {
-                    categories: [],
-                    categoriesTwo: []
-                },
-                yAxis: {
-                    title: {
-                        text: '单位/L'
-                    },
-                    lineWidth: 2,
-                    lineColor: 'black',
-                    id: 'oilsort'
-                },
-                series: [
-                  {   type: 'spline',
-                      name: '耗油量',
-                      data: [],
-                      color: '#9c9'
+                        } 
+                    } 
+                } 
+              }, 
+              title: {
+                  text:'耗油量升高排序'
+              },
+              xAxis: {
+                  categories: [],
+                  categoriesTwo: []
+              },
+              yAxis: {
+                  title: {
+                      text: '单位/L'
                   },
-                  {   type: 'spline',
-                      name: '平均耗油量',
-                      data: [],
-                      color: '#369'
-                  }
-                ]
+                  lineWidth: 2,
+                  lineColor: 'black',
+                  id: 'oilsort'
+              },
+              series: [
+                {   type: 'spline',
+                    name: '耗油量',
+                    data: [],
+                    color: '#9c9'
+                },
+                {   type: 'spline',
+                    name: '平均耗油量',
+                    data: [],
+                    color: '#369'
+                }
+              ]
             },
             styles: {
               width: 600,
@@ -371,6 +389,7 @@ export default {
         "rightPersonName": "",
         "controlPersonName": "",
       },
+      reportLoading:"",
       beginTime:"",
       endTime:"",
       fiveBeginTime:"",
@@ -411,23 +430,22 @@ export default {
   },
   methods: {
     getTip() {
-     
-      this.searchLoading = true;
       let params = Object.assign(this.params);
       params.beginTime=document.getElementById("getTip").innerHTML;
       params.endTime=document.getElementById("getTip").innerHTML;
       this.$http.post("/foc/getFocs?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          this.searchLoading = false;
+          this.reportLoading = false;
 
         }, 200)
         if (res.status == 0) {
+         ;
          var infor= res.data.records;
          this.tip="操作者:"+infor[0].controlPersonName+" 左座:"+infor[0].leftPersonName+" 右座:"+infor[0].rightPersonName+" 航班号:"+infor[0].flightNo+" 日期："+this.timeFilter(infor[0].flightDate, 'date');
            this.$notify({
             title: '机组详细信息',
             message: this.tip,
-            duration: 10000
+            duration: 5000
           })
           // this.totalSize = res.data.total;
         //  this.graphdata.datasets[0].data.push(0.5);
@@ -442,7 +460,6 @@ export default {
         })
     },
     getTipTwo(){
-      this.searchLoading = true;
       let params = Object.assign(this.params);
       params.beginTime=this.beginTime;
       params.endTime=this.endTime;
@@ -450,7 +467,7 @@ export default {
       params.rightPersonName="";
       this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          this.searchLoading = false;
+          this.reportLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -474,7 +491,7 @@ export default {
                   this.$notify({
                     title: '机组详细信息',
                     message: this.tip,
-                    duration: 10000
+                    duration: 5000
                   })
                   // this.totalSize = res.data.total;
                 //  this.graphdata.datasets[0].data.push(0.5);
@@ -508,7 +525,6 @@ export default {
     },
     getTipThree(){
       
-      this.searchLoading = true;
       let params = Object.assign(this.params);
       params.beginTime=this.beginTime;
       params.endTime=this.endTime;
@@ -516,7 +532,7 @@ export default {
       params.rightPersonName="";
       this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          this.searchLoading = false;
+          this.reportLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -586,11 +602,11 @@ export default {
     },
     getData() {
       var that = this;
-      this.searchLoading = true;
+      this.reportLoading = true;
       var params = Object.assign(this.params);
       this.$http.post("/foc/getFocs?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          that.searchLoading = false;
+          that.reportLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -641,10 +657,11 @@ export default {
       this.params = options;
       this.getData();
       this.clickSearch=true,
+      this.reportLoading = false;
       //某航段某日期区间内空中时间chart统计
         this.$http.post("/foc/getFocAirTime", this.params, { body: true }).then(res => {
         setTimeout(function() {
-          this.searchLoading = false;
+          this.reportLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -686,7 +703,7 @@ export default {
         // 查询某段时间某航段飞行时间chart统计
         this.$http.post("/foc/getFocFlyTime", this.params, { body: true }).then(res => {//22
         setTimeout(function() {
-          this.searchLoading = false;
+          this.reportLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -726,7 +743,7 @@ export default {
         console.log
         this.$http.post("/foc/getFocOil",sortoil , { body: true }).then(res => {//
         setTimeout(function() {
-          this.searchLoading = false;
+          this.reportLoading = false;
         }, 200)
         if (res.status == 0) {
           this.optionFive.series[0].data=[];
@@ -776,7 +793,7 @@ export default {
         // //某航段某日期区间内地面时间chart统计
         this.$http.post("/foc/getFocLand", this.params, { body: true }).then(res => {//3
         setTimeout(function() {
-          this.searchLoading = false;
+          this.reportLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -817,7 +834,7 @@ export default {
         //某航段某日期区间内日油耗chart统计
         this.$http.post("/foc/getFocOil", this.params, { body: true }).then(res => {//
         setTimeout(function() {
-          this.searchLoading = false;
+          this.reportLoading = false;
         }, 200)
         if (res.status == 0) {
           this.optionFour.series[0].data=[];

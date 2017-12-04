@@ -648,6 +648,14 @@ export default {
       console.log(obj)
       this.flightPersonTable=obj.flightPersonTable;
       this.TripTable=obj.TripTable;
+      this.flightPersonTable=obj.flightPersonTable;
+      for(let i=0;i<this.flightPersonTable.length;i++){
+        if(this.flightPersonTable[i].genger=="M"){
+          this.flightPersonTable[i].genger="男"
+        }else{
+          this.flightPersonTable[i].genger="女"
+        }
+      }
       this.staffBenefitAppFormThird.ticketTypes=obj.ticketTypes;
       this.staffBenefitAppFormThird.ticketWays=obj.ticketWays;
     },

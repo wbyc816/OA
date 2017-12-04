@@ -352,7 +352,7 @@ export default {
         if (res.status == 0) {
          this.documentTypes=res.data;
            this.guestTicketAppFormFirst.documentTypeSelect=res.data[0].dictCode;
-           console.log(res)
+          //  console.log(res)
 
         }
       })
@@ -517,9 +517,20 @@ export default {
       this.$emit('saveMiddle',params);
     },
     getDraft(obj){
-      console.log(obj)
+      // console.log(obj)
       this.TripTable=obj.TripTable;
+     
       this.flightPersonTable=obj.flightPersonTable;
+      for(let i=0;i<this.flightPersonTable.length;i++){
+        if(this.flightPersonTable[i].genger=="M"){
+          this.flightPersonTable[i].genger="男"
+        }else{
+          this.flightPersonTable[i].genger="女"
+        }
+      }
+      
+      // console.log(this.flightPersonTable)
+      // this.flightPersonTable.push(this.flightPersonTable);
       this.guestTicketAppFormThird.ticketType=obj.guestTicketAppFormThird.ticketType;
       this.guestTicketAppFormThird.ticketWays=obj.guestTicketAppFormThird.ticketWays;
     },

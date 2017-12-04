@@ -1,5 +1,5 @@
 <template>
-  <div class="searchReport">
+  <div class="searchReport" v-loading="reportLoading">
     <el-card class="borderCard">
       <div slot="header" v-if="title">
         <span>{{title}}</span>
@@ -129,6 +129,7 @@ export default {
       rules: {
         takeOffData: [{ required: true, message: '请填写完整四字码', trigger: 'blur' },{ validator: this.validateFourChar, trigger: 'blur,change' }],
       },
+      reportLoading:"",
        pickerOptions2: {
           shortcuts: [{
             text: '最近一周',
