@@ -100,7 +100,7 @@ export default {
     this.getEmpVacation();
   },
   mounted() {
-    this.$emit('updateSuggest','DOC1001');
+    // this.$emit('updateSuggest','DOC1001');
   },
   methods: {
     saveForm() {

@@ -56,7 +56,7 @@
           </el-form-item>
           <el-form-item label="短信会议通知">
             <el-radio-group v-model="appForm.isMessage" class="myRadio">
-              <!-- <el-radio-button label="1">发放<i></i></el-radio-button> -->
+              <el-radio-button label="1">发放<i></i></el-radio-button>
               <el-radio-button label="0">不发放<i></i></el-radio-button>
             </el-radio-group>
           </el-form-item>
@@ -140,6 +140,10 @@ export default {
     if (!this.userInfo.isDocsec || this.userInfo.isDocsec[0] != 1) {
       this.$router.push('/meeting/meetingSearch/1')
     }
+    var now = new Date();
+    if (now.getHours() > 7) {
+      this.timeOption.selectableRange = this.timeFilter(+now, 'second') + ' - 22:00:00';
+    }
   },
   methods: {
     updatePerson(list) {
@@ -182,6 +186,7 @@ export default {
       });
     },
     checkApp() {
+      var now = new Date();
       var m = this.appForm.reserveDate.getMonth();
       var d = this.appForm.reserveDate.getDate();
       var params = {
@@ -190,20 +195,25 @@ export default {
         "roomId": this.appForm.roomId, //房间ID
         "reserveDate": this.appForm.reserveDate.getTime() //预定日期
       }
-      this.submitLoading = true;
-      this.$http.post('/conference/checkConferenceReserve', params, { body: true })
-        .then(res => {
-          if (res.status == 0) {
-            if (res.data == 1) {
-              this.postApp(params)
+      console.log(now.getTime(),params.beginTime)
+      if (now.getTime() > params.beginTime) {
+        this.$message.warning('预定时间不能早于现在时间，请重新选择');
+      } else {
+        this.submitLoading = true;
+        this.$http.post('/conference/checkConferenceReserve', params, { body: true })
+          .then(res => {
+            if (res.status == 0) {
+              if (res.data == 1) {
+                this.postApp(params)
+              } else {
+                this.submitLoading = false;
+                this.$message.warning('此房间该时间段不可预定，请重新选择');
+              }
             } else {
               this.submitLoading = false;
-              this.$message.warning('此房间该时间段不可预定，请重新选择');
             }
-          } else {
-            this.submitLoading = false;
-          }
-        })
+          })
+      }
     },
     postApp(p) {
       var room = this.rooms.find(r => r.id == this.appForm.roomId);

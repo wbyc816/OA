@@ -88,6 +88,7 @@ export default {
     docDetail: {
       type: Object
     },
+    taskDetail:'',
     suggestHtml: ''
   },
   data() {
@@ -200,7 +201,9 @@ export default {
 
     },
     getDefaultReciver() {
-      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId,empPostId:this.docDetail.reciEmpPostId })
+      var taskEmpPostId=this.taskDetail[this.taskDetail.length-1].taskEmpPostId;
+      
+      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId,empPostId:taskEmpPostId })
         .then(res => {
           if (res.status == 0) {
             this.reciver = {
@@ -434,7 +437,8 @@ export default {
         })
     },
     setDefault(person) {
-      this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId, taskEmpPostId: this.docDetail.taskEmpPostId, reciId: person.signUserId, reciEmpPostId: person.signEmpPostId })
+      var taskEmpPostId=this.taskDetail[this.taskDetail.length-1].taskEmpPostId;
+      this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId, taskEmpPostId: taskEmpPostId, reciId: person.signUserId, reciEmpPostId: person.signEmpPostId })
         .then(res => {
           if (res.status == 0) {
             this.$message.success('设置默认收件人成功！');

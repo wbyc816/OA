@@ -15,35 +15,30 @@
           </el-col>
         </el-row>
       </div>
-      <div class="pdfScrollBox" ref="pdfScroll" v-loading="loading">
-        <canvas :id="'newsCanvas'+num" v-for="num in pafParam.total"></canvas>
+      <div class="pdfScrollBox" ref="pdfScroll" v-loading="loading" :style="{height:pdfHeight+'px'}">
+        <pdf :src="detail.url" v-if="detail.url" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
+        <pdf :src="detail.url" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
       </div>
-      <el-pagination :current-page="pafParam.pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="pafParam.total" v-on:current-change="changePage">
+      <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
       </el-pagination>
     </el-card>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import pdfjsLib from 'pdfjs-dist'
 import SidePersonSearch from '../../components/sidePersonSearch.component'
 import Duty from '../../components/duty.component'
+import pdf from 'vue-pdf'
 
 export default {
-  components: { SidePersonSearch, Duty },
+  components: { SidePersonSearch, Duty, pdf },
   data() {
     return {
-      checked: false,
-      pafParam: {
-        pageNum: 1,
-        pageRendering: false,
-        total: 0
-      },
-      loading: false,
-      pdfDoc: null,
-      pageNumPending: null,
+      pageNum: 1,
+      totalNum: 0,
+      loading: true,
       detail: "",
-      pdfHeight:0
+      pdfHeight: 1070
     }
 
   },
@@ -57,86 +52,29 @@ export default {
   },
   mounted() {},
   methods: {
-    initPdf() {
-      this.loading = true;
-      pdfjsLib.PDFJS.workerSrc = '../pdf.worker.js';
-      console.log(this.detail)
-      var loadingTask = pdfjsLib.getDocument(decodeURI(this.detail.fileUrlNew));
-      var that = this;
-      loadingTask.promise.then(function(pdfDoc_) {
-        that.pdfDoc = pdfDoc_;
-        console.log(pdfDoc_);
-        that.pafParam.total = pdfDoc_.numPages;
-        that.$nextTick(function() {
-          for (var i = 0; i < that.pafParam.total; i++) {
-            that.renderPage(i + 1);
-          }
-        })
-      }).catch(function(reason) {
-        console.error('Error: ' + reason);
-      });
-    },
-    renderPage(num) {
-      this.pageRendering = true;
-      var that = this;
-      that.pdfDoc.getPage(num).then(function(page) {
-        var viewport = page.getViewport(1.4);
-        var canvas = document.getElementById('newsCanvas'+ num);
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        that.pdfHeight=viewport.height;
-        var renderContext = {
-          canvasContext: canvas.getContext('2d'),
-          viewport: viewport
-        };
-        var renderTask = page.render(renderContext);
-
-        renderTask.promise.then(function() {
-          that.pageRendering = false;
-          if (that.pageNumPending !== null) {
-
-            that.renderPage(that.pageNumPending);
-            that.pageNumPending = null;
-          }
-          if (num == that.pafParam.total) {
-            that.loading = false;
-          }
-        });
-      });
-    },
-    queueRenderPage(num) {
-      if (this.pageRendering) {
-        this.pageNumPending = num;
-      } else {
-        this.renderPage(num);
-      }
-    },
-    onPrevPage() {
-      if (this.pafParam.pageNum <= 1) {
-        return;
-      }
-      this.pafParam.pageNum--;
-      this.queueRenderPage(this.pafParam.pageNum);
-    },
-    onNextPage() {
-      if (this.pafParam.pageNum >= this.pafParam.total) {
-        return;
-      }
-      this.pafParam.pageNum++;
-      this.queueRenderPage(this.pafParam.pageNum);
-    },
     changePage(newPage) {
-      this.$refs.pdfScroll.scrollTop = this.pdfHeight*(newPage-1);
-      console.log(this.pdfHeight)
+      this.$refs.pdfScroll.scrollTop = this.pdfHeight * (newPage - 1);
     },
     getDetail() {
       this.$http.post('/index/selectByFileId', { fileId: this.$route.params.id, empId: this.userInfo.empId })
         .then(res => {
           if (res.status == 0 && res.data) {
             this.detail = res.data;
-            this.initPdf();
           }
         })
+    },
+    getNums(num) {
+      if (num) {
+        this.totalNum = num;
+      }
+    },
+    pageLoad(num) {
+      this.loading = false;
+      this.pdfHeight = this.$refs.pdfPage.$el.clientHeight;
+    },
+    pdfError(obj) {
+      this.loading = false;
+      this.$message.error('PDF文件加载失败！')
     }
   }
 
@@ -208,19 +146,15 @@ $sub:#1465C0;
       padding: 0;
       position: relative;
       text-align: center;
-      padding-bottom:50px;
-      .pdfScrollBox{
+      padding-bottom: 50px;
+      .pdfScrollBox {
         height: 1070px;
-        width:100%;
-        overflow:auto;
-        border-bottom:1px solid #F2F2F2;
-      }
-      #newsCanvas {
-        height: inherit;
-        max-width: 800px;
+        width: 100%;
+        overflow: auto;
+        border-bottom: 1px solid #F2F2F2;
+        overflow-x: hidden;
       }
       .el-pagination {
-
         position: absolute;
         margin: 0 auto;
         left: 0;

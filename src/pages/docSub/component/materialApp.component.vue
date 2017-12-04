@@ -82,7 +82,7 @@ export default {
     ])
   },
   mounted() {
-    this.$emit('updateSuggest','DOC1101');
+    // this.$emit('updateSuggest','DOC1101');
   },
   methods: {
     saveForm() {
