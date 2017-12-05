@@ -105,7 +105,8 @@ const softDownload = () =>
   import ('../pages/softDownload.page')
 
 //飞行报表
-import flightReport from 'pages/flightReport.page'
+const flightReport = () =>
+  import ('pages/flightReport.page')
 
 
 Vue.use(Router)

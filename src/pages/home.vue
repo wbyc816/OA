@@ -151,7 +151,7 @@
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')" v-if="userInfo.isDocsec&&userInfo.isDocsec[0]==1"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="6" @click.native="goToOthers('/supplier')"><i class="iconfont icon-geren"></i>客户维护<i class="el-icon-arrow-right"></i></el-menu-item>
-            <el-menu-item index="7" @click.native="goToOthers('/flightReport')"><i class="iconfont icon-99"></i>飞行报表<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="7" @click.native="goToOthers('/flightReport')"  v-if="userInfo.isDocsec&&userInfo.isDocsec[2]==1"><i class="iconfont icon-99"></i>飞行报表<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -196,6 +196,7 @@ const otherLinks = [
   { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080/login.jsp" },
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
+  { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },
 ]
 
 const pieoption = {

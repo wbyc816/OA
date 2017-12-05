@@ -38,12 +38,13 @@
         <el-table-column prop="userName" label="姓名" width="100"></el-table-column>
         <el-table-column prop="deptName" label="所属部门"></el-table-column>
         <el-table-column prop="roleName" label="角色" width="100"></el-table-column>
-        <el-table-column prop="taskDocNum" label="呈报公文" width="80" align="center"></el-table-column>
-        <el-table-column prop="signDocNum" label="签批公文" width="80" align="center"></el-table-column>
-        <el-table-column prop="countersignLaunchNum" label="会签发起" width="80" align="center"></el-table-column>
-        <el-table-column prop="countersignNum" label="会签公文" width="80" align="center"></el-table-column>
-        <el-table-column prop="toReadingNum" label=" 待阅公文" width="80" align="center"></el-table-column>
-        <el-table-column prop="overTimeNum" label="超时公文" width="80" align="center"></el-table-column>
+        <el-table-column prop="taskDocNum" label="呈报公文" width="70" align="center"></el-table-column>
+        <el-table-column prop="signDocNum" label="签批公文" width="70" align="center"></el-table-column>
+        <el-table-column prop="countersignLaunchNum" label="会签发起" width="70" align="center"></el-table-column>
+        <el-table-column prop="countersignNum" label="会签公文" width="70" align="center"></el-table-column>
+        <el-table-column prop="toReadingNum" label="待阅公文" width="70" align="center"></el-table-column>
+        <el-table-column prop="distributeNum" label="分发公文" width="70" align="center"></el-table-column>
+        <el-table-column prop="overTimeNum" label="超时公文" width="70" align="center"></el-table-column>
       </el-table>
       <div class="pageBox" v-show="searchData.length>0">
         <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">

@@ -1,6 +1,6 @@
 <template>
   <div class="materialDetail">
-    <el-table :data="info" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加材料" class="appTable">
+    <el-table :data="info1"   style="width: 100%;" empty-text="未添加材料" class="appTable">
       <el-table-column type="index" label=" " width="40"></el-table-column>
       <el-table-column property="productName" label="品名" width="180"></el-table-column>
       <el-table-column property="specification" label="规格" width="90"></el-table-column>
@@ -21,8 +21,11 @@ export default {
   },
   data() {
     return {
-
+      info1:[]
     }
+  },
+  mounted(){
+    this.info1=this.info;
   },
   computed: {
     totalPrice:function(){
@@ -62,6 +65,9 @@ $main:#0460AE;
       color: $main;
     }
   }
+  // .el-table__header,.el-table__body{
+  //   width:100%!important;
+  // }
 }
 
 </style>
