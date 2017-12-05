@@ -11,10 +11,10 @@
         </el-table-column>
         <el-table-column prop="flightNo" label="航班号" width="90">
         </el-table-column>
-        <el-table-column prop="departureAirport" label="起飞四码" width="130">
+        <el-table-column prop="departureAirportName" label="起飞四码" width="130">
         </el-table-column>
 
-        <el-table-column prop="arrivalAirport" label="到达四码" width="130">
+        <el-table-column prop="arrivalAirportName" label="到达四码" width="130">
         </el-table-column>
         <el-table-column prop="acReg" label="机号" >
         </el-table-column>

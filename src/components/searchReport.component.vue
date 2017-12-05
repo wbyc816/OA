@@ -8,7 +8,7 @@
       <el-row :gutter="10">
         <el-col :span="6">
           <el-select v-model="params.departureAirport" ref="takeOffData"  filterable placeholder="起飞四字码">
-、            <el-option
+             <el-option
               v-for="item in takeOffData"
               :key="item.airCode"
               :label="item.airCode+'-'+item.airCodeName"
@@ -221,6 +221,7 @@ export default {
         }).then(res => {
             if (res.status == 0) {
               this.takeOffData = res.list
+              console.log(this.takeOffData)
             } else {
 
             }
