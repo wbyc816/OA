@@ -84,7 +84,7 @@
                 <span>总航班数: {{flightTrends.sumFlight}}</span>
                 <span>出发: {{flightTrends.departure}}</span>
                 <span>到达: {{flightTrends.arrival}}</span>
-                <span>延误: {{flightTrends.delay}}</span>
+                <span>计划: {{flightTrends.sumFlight-flightTrends.departure-flightTrends.arrival}}</span>
               </div>
             </el-col>
             <el-col :span="8" class="daily">
@@ -101,9 +101,9 @@
               <div class="content clearfix">
                 <p>总航班数: {{flightTrends.sumFlight}}</p>
                 <p><span :style="{'background':pieBg[0]}"></span>到达: {{flightTrends.arrival/flightTrends.sumFlight | percent}}</p>
-                <p><span :style="{'background':pieBg[1]}"></span>延误: {{flightTrends.delay/flightTrends.sumFlight | percent}}</p>
+                <!-- <p><span :style="{'background':pieBg[1]}"></span>延误: {{flightTrends.delay/flightTrends.sumFlight | percent}}</p> -->
                 <p><span :style="{'background':pieBg[2]}"></span>出发: {{flightTrends.departure/flightTrends.sumFlight | percent}}</p>
-                <p><span :style="{'background':pieBg[3]}"></span>计划: {{(flightTrends.sumFlight-flightTrends.departure-flightTrends.arrival-flightTrends.delay)/flightTrends.sumFlight | percent}}</p>
+                <p><span :style="{'background':pieBg[3]}"></span>计划: {{(flightTrends.sumFlight-flightTrends.departure-flightTrends.arrival)/flightTrends.sumFlight | percent}}</p>
               </div>
               <div ref="mypie"></div>
             </el-col>
@@ -244,7 +244,7 @@ export default {
       
         },
         colors:[
-          '#97BBCD', '#F7464A', '#DCDCDC', '#7ED0CF'
+          '#97BBCD',  '#DCDCDC', '#7ED0CF'
         ],
         plotOptions: {
           pie: {
@@ -372,15 +372,13 @@ export default {
       this.$http.post('/index/getFlightTrends', { flightDate: this.timeFilter(new Date().getTime(), 'date') })
         .then(res => {
           this.flightTrends = res.data;
-          this.optionOne.series[0].data = [[],[],[],[]];
+          this.optionOne.series[0].data = [[],[],[]];
            this.optionOne.series[0].data[0].push("到达");
-           this.optionOne.series[0].data[1].push("延误");
-           this.optionOne.series[0].data[2].push("出发");
-           this.optionOne.series[0].data[3].push("计划");
+           this.optionOne.series[0].data[1].push("出发");
+           this.optionOne.series[0].data[2].push("计划");
           this.optionOne.series[0].data[0].push(parseFloat(this.flightTrends.arrival));
-          this.optionOne.series[0].data[1].push(parseFloat(this.flightTrends.delay));
-          this.optionOne.series[0].data[2].push(parseFloat(this.flightTrends.departure));
-          this.optionOne.series[0].data[3].push(parseFloat((this.flightTrends.sumFlight - this.flightTrends.departure - this.flightTrends.delay - this.flightTrends.arrival)));
+          this.optionOne.series[0].data[1].push(parseFloat(this.flightTrends.departure));
+          this.optionOne.series[0].data[2].push(parseFloat((this.flightTrends.sumFlight - this.flightTrends.departure - this.flightTrends.delay - this.flightTrends.arrival)));
           this.chart = new Highcharts.Chart(this.$refs.mypie, this.optionOne);
         })
     },

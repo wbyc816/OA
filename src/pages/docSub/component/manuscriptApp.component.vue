@@ -2,7 +2,7 @@
   <div class="manuscriptApp">
     <el-form label-position="left" :model="manuscriptForm" :rules="rules" ref="manuscriptForm" label-width="128px">
       <el-form-item label="发文类型" prop="classify1" placeholder="">
-        <el-select v-model="manuscriptForm.classify1" style="width:100%">
+        <el-select v-model="manuscriptForm.classify1" style="width:100%" @change="typeChange">
           <el-option v-for="item in types" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -136,6 +136,10 @@ export default {
         this.manuscriptForm.issueDate = new Date(obj.manuscriptForm.issueDate);
       }
     },
+    typeChange() {
+      this.manuscriptForm.docFileId = '';
+      this.files = [];
+    },
     updateSign(reciver) {
       this.manuscriptForm.signName = reciver.name;
       this.manuscriptForm.signId = reciver.empId;
@@ -150,16 +154,30 @@ export default {
     },
     beforeUpload(file) {
       var isJPG;
-      if (file.type) {
-        isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-      }else{
-        var regExp=new RegExp("\.docx$", "i");
-        isJPG=regExp.test(file.name);
+      if (this.manuscriptForm.classify1 == 'ADM0406' || this.manuscriptForm.classify1 == 'ADM0404') {
+        // 公司新闻，部门发文
+        if (file.type) {
+          isJPG = file.type === 'application/pdf';
+        } else {
+          var regExp = new RegExp("\.pdf$", "i");
+          isJPG = regExp.test(file.name);
+        }
+        if (!isJPG) {
+          this.$message.error('上传文件只能是 PDF 格式!');
+        }
+      } else {
+        if (file.type) {
+          isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        } else {
+          var regExp = new RegExp("\.docx$", "i");
+          isJPG = regExp.test(file.name);
+        }
+        if (!isJPG) {
+          this.$message.error('上传文件只能是 DOCX 格式!');
+        }
       }
       const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isJPG) {
-        this.$message.error('上传文件只能是 DOCX 格式!');
-      }
+
       if (!isLt10M) {
         this.$message.error('上传文件大小不能超过 10MB!');
       }

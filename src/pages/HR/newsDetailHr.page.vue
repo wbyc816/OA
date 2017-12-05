@@ -16,8 +16,8 @@
         </el-row>
       </div>
       <div class="pdfScrollBox" ref="pdfScroll" v-loading="loading" :style="{height:pdfHeight+'px'}">
-        <pdf :src="detail.url" v-if="detail.url" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
-        <pdf :src="detail.url" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
+        <pdf :src="detail.fileUrlNew" v-if="detail.fileUrlNew" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
+        <pdf :src="detail.fileUrlNew" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
       </div>
       <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
       </el-pagination>
