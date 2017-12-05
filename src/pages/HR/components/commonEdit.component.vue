@@ -14,12 +14,19 @@
           </div>
           <el-form-item :label="item.label" :prop="edu.enName+'.'+index+'.'+item.name" :rules="creatRule(item)" v-for="item in edu.prop" :style="{marginBottom:item.name=='postCompany'?'19px':'20px'}">
             <el-date-picker type="date" v-model="info[item.name]" style="width: 100%;" :editable="false" :clearable="false" v-if="item.type=='date'" :picker-options="creatOption(info,item.limit)"></el-date-picker>
+            <!-- <el-date-picker type="daterange" v-model="info[item.name]" style="width: 100%;" :editable="false" :clearable="false" v-if="item.type=='daterange'" :picker-options="creatOption(info,item.limit)"></el-date-picker> -->
+
             <el-radio-group v-model="info[item.name]" class="myRadio" v-else-if="item.type=='boolean'">
-              <el-radio-button :label="1">是<i></i></el-radio-button>
-              <el-radio-button :label="0">否<i></i></el-radio-button>
+              <el-radio-button :label="1">{{item.yes||'是'}}<i></i></el-radio-button>
+              <el-radio-button :label="0">{{item.no||'否'}}<i></i></el-radio-button>
             </el-radio-group>
+
+             
+         
             <el-input v-model="info[item.name]" v-else :maxlength="item.maxlength||20"></el-input>
+            
           </el-form-item>
+          
           <div class="borderBox"></div>
         </template>
         <div class="bgBorder"></div>
@@ -121,10 +128,12 @@ export default {
       }
     },
     creatRule(item) {
+      console.log(item)
       var rules = [{ type: item.type == 'boolean' ? 'number' : item.type, required: true, message: item.label + '不能为空', trigger: 'blur' }];
       if (item.rule) {
         rules.push(item.rule)
       }
+     console.log(rules)
       return rules
     },
     addItem(name) {
@@ -209,6 +218,14 @@ export default {
 <style lang="scss">
 $main:#0460AE;
 $sub:#1465C0;
-.eduEdit {}
+.eduEdit {
+  .myRadio {
+    .el-radio-button__inner {
+      padding: 0;
+      line-height: 45px;
+      width: 80px;
+    }
+  }
+}
 
 </style>
