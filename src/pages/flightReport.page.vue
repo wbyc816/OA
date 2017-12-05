@@ -468,7 +468,7 @@ export default {
       params.rightPersonName="";
       this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          that.searchLoading = false;
+          this.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -533,7 +533,7 @@ export default {
       params.rightPersonName="";
       this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          that.searchLoading = false;
+          this.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -662,7 +662,7 @@ export default {
       //某航段某日期区间内空中时间chart统计
         this.$http.post("/foc/getFocAirTime", this.params, { body: true }).then(res => {
         setTimeout(function() {
-         that.searchLoading = false;
+         this.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -704,7 +704,7 @@ export default {
         // 查询某段时间某航段飞行时间chart统计
         this.$http.post("/foc/getFocFlyTime", this.params, { body: true }).then(res => {//22
         setTimeout(function() {
-          that.searchLoading = false;
+          this.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -744,7 +744,7 @@ export default {
         console.log
         this.$http.post("/foc/getFocOil",sortoil , { body: true }).then(res => {//
         setTimeout(function() {
-          that.searchLoading = false;
+          this.searchLoading = false;
         }, 200)
         if (res.status == 0) {
           this.optionFive.series[0].data=[];
@@ -794,7 +794,7 @@ export default {
         // //某航段某日期区间内地面时间chart统计
         this.$http.post("/foc/getFocLand", this.params, { body: true }).then(res => {//3
         setTimeout(function() {
-          that.searchLoading = false;
+          this.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -835,7 +835,7 @@ export default {
         //某航段某日期区间内日油耗chart统计
         this.$http.post("/foc/getFocOil", this.params, { body: true }).then(res => {//
         setTimeout(function() {
-          that.searchLoading = false;
+          this.searchLoading = false;
         }, 200)
         if (res.status == 0) {
           this.optionFour.series[0].data=[];
