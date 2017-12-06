@@ -29,7 +29,7 @@
               <i class="link iconfont icon-chehui" @click="doBack(doc.id)"></i>
             </el-tooltip>
             <el-tooltip content="导出" placement="top" :enterable="false" effect="light">
-              <a :href="baseURL+'/pdf/exportPdf?docId='+doc.id" target="_blank" v-if="doc.taskUserId==userInfo.empId">
+              <a :href="baseURL+'/pdf/exportPdf?docId='+doc.id" target="_blank" v-if="doc.taskUserId==userInfo.empId&&showDowload(doc.docTypeCode)">
               <i class="link iconfont icon-icon202"></i>
               </a>
             </el-tooltip>

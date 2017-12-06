@@ -19,7 +19,7 @@
             <h1 class="title">标题</h1>
             <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
-          <el-col :span="24" style="min-height:90px">
+          <el-col :span="24" style="min-height:90px" v-if="$route.query.code!='FWG'">
             <h1 class="title">请示内容</h1>
             <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
           </el-col>
@@ -76,7 +76,7 @@
       <div class="operateBox" v-if="docDetialInfo.task[0].state==3">
         <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         <el-button class="myButton" v-if="docDetialInfo.doc.isPay" @click="changePay" :disabled="docDetialInfo.doc.isView!=1">{{docDetialInfo.doc.isView==1?'付款':'已付款'}}</el-button>
-        <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank">
+        <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" v-if="showDowload($route.query.code)">
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
         </a>
       </div>
@@ -138,7 +138,7 @@ import signAdvice from './detailComponent/signAdvice.component'
 import myAdvice from './detailComponent/myAdvice.component'
 import YCS from './component/vehicleDetail.component' //用车详情
 import CLS from './component/materialDetail.component' //材料详情
-import FWG from './component/manuscriptDetail.component' //材料详情
+import FWG from './component/manuscriptDetail.component' //发文详情
 import CLV from './component/travelDetail.component' //差旅详情
 import GSS from './component/injuryDetail.component' //工伤详情
 import QJS from './component/vacationDetail.component' //休假详情

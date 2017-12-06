@@ -10,7 +10,13 @@ Vue.prototype.toThousands = toThousands
 Vue.prototype.getCookie = getCookie
 Vue.prototype.setCookie = setCookie
 Vue.prototype.delCookie = delCookie
+Vue.prototype.showDowload = showDowload
 
+
+function showDowload(docName){
+  const docArr=['CPD','BXS','JKS','RSB','PXS','CLB','CLV','FKS','YFK']  //显示导出PDF的公文列表
+  return docArr.find(d=>d==docName)!=undefined
+}
 function getCookie(c_name) {
   if (document.cookie.length > 0) {
     var c_start = document.cookie.indexOf(c_name + "=")

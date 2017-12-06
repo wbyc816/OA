@@ -16,8 +16,8 @@
       <h1 class="title">主送</h1>
       <p v-if="info" class="textContent">
         <el-tag :key="send" type="primary" v-for="send in info[0].sendIds">
-            {{send}}
-          </el-tag>
+          {{send}}
+        </el-tag>
       </p>
     </el-col>
     <el-col :span="12" class="rightBorder">
@@ -31,28 +31,41 @@
     <el-col :span="24">
       <h1 class="title">正文</h1>
       <p v-if="info" class="textContent">
-        <a :href="info[0].toRedUrl" target="_blank"  style="color:#0460AE" v-if="state!=3">{{info[0].fielName}}</a>
-        <a :href="info[0].url" target="_blank"  style="color:#0460AE" v-else>{{info[0].fielName}}</a>
+        <a :href="info[0].toRedUrl" target="_blank" style="color:#0460AE" v-if="state!=3">{{info[0].fielName}}</a>
+        <a :href="info[0].url" target="_blank" style="color:#0460AE" v-else>{{info[0].fielName}}</a>
       </p>
     </el-col>
+    <div class="pdfBox clearBoth" v-if="info.length>0&&info[0].pdfUrl">
+      <div class="pdfScrollBox" ref="pdfScroll" :style="{height:pdfHeight+'px'}">
+        <pdf :src="info[0].pdfUrl" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
+        <pdf :src="info[0].pdfUrl" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
+      </div>
+      <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
+      </el-pagination>
+    </div>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
-const depList=[{name:'综合部',max:10,min:90},{name:'后勤部',max:10,min:70},{name:'法律部',max:10,min:90}]
-const personList=[{name:'王城',max:10,min:90},{name:'李健',max:10,min:70},{name:'孙浩',max:10,min:90}]
+import pdf from 'vue-pdf'
+const depList = [{ name: '综合部', max: 10, min: 90 }, { name: '后勤部', max: 10, min: 70 }, { name: '法律部', max: 10, min: 90 }]
+const personList = [{ name: '王城', max: 10, min: 90 }, { name: '李健', max: 10, min: 70 }, { name: '孙浩', max: 10, min: 90 }]
 export default {
-  props:{
-    info:{
-      type:Array
+  components: { pdf },
+  props: {
+    info: {
+      type: Array
     },
-    state:''
+    state: ''
   },
   data() {
     return {
       depList,
       personList,
-      types:[]
+      types: [],
+      pageNum: 1,
+      totalNum: 0,
+      pdfHeight: 800
     }
   },
   computed: {
@@ -60,7 +73,7 @@ export default {
       'submitLoading'
     ])
   },
-  created(){
+  created() {
     this.getType();
   },
   methods: {
@@ -76,6 +89,20 @@ export default {
 
         })
     },
+    changePage(newPage) {
+      this.$refs.pdfScroll.scrollTop = this.pdfHeight * (newPage - 1);
+    },
+    getNums(num) {
+      if (num) {
+        this.totalNum = num;
+      }
+    },
+    pageLoad(num) {
+      this.pdfHeight = this.$refs.pdfPage.$el.clientHeight;
+    },
+    pdfError(obj) {
+      this.$message.error('PDF文件加载失败！')
+    }
   }
 }
 
@@ -85,6 +112,29 @@ $main:#0460AE;
 .manuscriptDetail {
   .el-input {
     width: 100%;
+  }
+  .pdfBox {
+    padding: 0;
+    position: relative;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 50px;
+    .pdfScrollBox {
+      margin:0 auto;
+      width: 80%;
+      overflow-y: auto;
+      height: 800px;
+      overflow-x: hidden;
+      border-bottom: 1px solid #F2F2F2;
+    }
+
+    .el-pagination {
+      position: absolute;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      bottom: 10px;
+    }
   }
 }
 

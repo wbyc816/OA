@@ -1,7 +1,7 @@
 <template>
   <div class="signAdvice">
     <h4 class='doc-form_title'>我的会签意见
-    <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" class="exportButton">
+    <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" class="exportButton" v-if="showDowload($route.query.code)">
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
         </a>
       </h4>

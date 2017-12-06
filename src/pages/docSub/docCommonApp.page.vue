@@ -5,7 +5,7 @@
         <span v-text='doc.docName'></span>
       </div>
       <div>
-        <subject class='doc-section' :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject> 
+        <subject class='doc-section' :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject>
         <description class='doc-section' ref="description" @submitEnd="submitEnd" @saveEnd="saveEnd" :options="options">
           <!-- <manuscript-app  @submitMiddle="submitMiddle"></manuscript-app> -->
           <component v-bind:is="$route.params.code" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'" @updateSuggest="updateSuggest">
@@ -294,7 +294,9 @@ export default {
             //公文标题
             this.$refs.subject.updateTitle(res.data.docTtile);
             //请示内容
-            this.$refs.description.$refs.editor.setContent(res.data.des);
+            if (this.$route.params.code != 'FWG') {   //发文稿纸无请示内容
+              this.$refs.description.$refs.editor.setContent(res.data.des);
+            }
             //附件
             if (res.data.files) {
               this.$refs.description.initAttchment(JSON.parse(res.data.files));
@@ -303,13 +305,13 @@ export default {
             if (res.data.path) {
               this.$refs.description.updatePath(res.data.path);
             }
-            this.$refs.description.disableEditSuggest=res.data.isEdit == 0 ? false : true;
+            this.$refs.description.disableEditSuggest = res.data.isEdit == 0 ? false : true;
             // 附加公文
             if (res.data.docs.length != 0) {
               this.$refs.description.docs = res.data.docs;
             }
-            if (this.doc.code != 'CPD'&&res.data.draftContent) {
-              this.$refs.middleCom.getDraft(JSON.parse(res.data.draftContent),res.data);
+            if (this.doc.code != 'CPD' && res.data.draftContent) {
+              this.$refs.middleCom.getDraft(JSON.parse(res.data.draftContent), res.data);
             }
           } else {
 
