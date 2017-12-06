@@ -73,6 +73,9 @@ export default {
         .then(res => {
           if (res.status == 0 && res.data) {
             this.detail = res.data;
+          } else {
+            this.loading = false;
+            this.$message.error(res.message);
           }
         })
     },

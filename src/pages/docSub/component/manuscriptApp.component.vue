@@ -48,7 +48,7 @@
         </el-upload>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updateSign" :visible.sync="signDialogVisible" admin="1"></person-dialog>
+    <person-dialog @updatePerson="updateSign" :visible.sync="signDialogVisible" admin="1" selText="签发人"></person-dialog>
     <major-dialog :params="manuscriptForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
   </div>
 </template>
@@ -106,7 +106,8 @@ export default {
         children: 'catalogues'
       },
       fileRedData: [],
-      files: []
+      files: [],
+      isDrafFirst: false
     }
   },
   computed: {
@@ -130,6 +131,9 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
+      if (obj.manuscriptForm.classify1) {
+        this.isDrafFirst = true;
+      }
       this.combineObj(this.manuscriptForm, obj.manuscriptForm, ['issueDate']);
       this.files = obj.files;
       if (obj.manuscriptForm.issueDate) {
@@ -137,8 +141,12 @@ export default {
       }
     },
     typeChange() {
-      this.manuscriptForm.docFileId = '';
-      this.files = [];
+      if (!this.isDrafFirst) {
+        this.manuscriptForm.docFileId = '';
+        this.files = [];
+      } else {
+        this.isDrafFirst = false;
+      }
     },
     updateSign(reciver) {
       this.manuscriptForm.signName = reciver.name;
