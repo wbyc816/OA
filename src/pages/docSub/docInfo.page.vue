@@ -165,6 +165,9 @@ export default {
               this.currentView = this.docDetialInfo.doc.pageCode;
             }
             this.handleSuggest();
+            if (route.query.code != 'FWG') {
+              this.activeContent = [];              
+            }
           }
         }, res => {
 

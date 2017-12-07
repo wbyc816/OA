@@ -25,7 +25,7 @@
           </el-col>
           <el-collapse v-model="activeContent" class="clearBoth">
             <el-collapse-item title="附加内容" name="1">
-              <component v-bind:is="currentView" :info="docDetialInfo.otherInfo" :state="docDetialInfo.task[0].state" class="clearfix">
+              <component v-bind:is="currentView" :info="docDetialInfo.otherInfo" :state="docDetialInfo.task[0].state" :open="activeContent" class="clearfix">
                 <!-- 组件在 vm.currentview 变化时改变！ -->
               </component>
               <el-row>
@@ -272,7 +272,9 @@ export default {
               this.isRedFile = true;
             }
             this.handleSuggest();
-            this.activeContent = [];
+            if (route.query.code != 'FWG') {
+              this.activeContent = [];              
+            }
           }
         }, res => {
 

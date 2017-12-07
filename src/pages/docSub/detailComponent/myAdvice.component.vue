@@ -47,7 +47,7 @@
           <p class="textContent suggestHtml" v-html="suggestHtml"></p>
         </el-col>
       </el-form-item>
-      <el-form-item label="审批内容" class="textarea">
+      <el-form-item label="审批内容" prop="taskContent" class="textarea">
         <el-col :span='18'>
           <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="500"></el-input>
         </el-col>
@@ -122,7 +122,8 @@ export default {
       rules: {
         sign: [{ type: 'array', validator: checkSign, required: true }],
         state: [{ required: true, message: '请选择审批意见' }],
-        planDate: [{ required: true, type: 'date', message: '请选择离职日期' }]
+        planDate: [{ required: true, type: 'date', message: '请选择离职日期' }],
+        taskContent:[{required: true, message: '请填写审批内容' }]
       },
       dialogTableVisible: false,
       defaultVisible: false,

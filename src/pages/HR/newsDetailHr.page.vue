@@ -15,7 +15,7 @@
           </el-col>
         </el-row>
       </div>
-      <div class="pdfScrollBox" ref="pdfScroll" v-loading="loading" :style="{height:pdfHeight+'px'}">
+      <div class="pdfScrollBox" ref="pdfScroll" v-loading="loading" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}">
         <pdf :src="detail.fileUrlNew" v-if="detail.fileUrlNew" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
         <pdf :src="detail.fileUrlNew" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
       </div>

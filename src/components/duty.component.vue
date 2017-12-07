@@ -13,7 +13,16 @@
               <br/>{{item.oudutyDate | time('week')}}</p>
           </div>
           <div class="infoBox">
-            <p v-for="(child,index) in item.onduty"><span>{{index==0?'01':'AOC'}}</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span></p>
+            <p v-for="(child,index) in item.onduty">
+              <template v-if="index==0&&child.isLeader==1">
+                <span>01</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
+              </template>
+            </p>
+            <p v-for="(child,index) in item.onduty">
+              <template v-if="child.isLeader==0">
+                <span>AOC</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
+              </template>
+            </p>
           </div>
         </div>
       </div>
@@ -47,7 +56,7 @@ export default {
         this.$http.post('/onduty/getDutyInfo', )
           .then(res => {
             if (res.status == 0) {
-              this.$store.commit('setDutys',res.data);
+              this.$store.commit('setDutys', res.data);
             } else {
               console.log('获取值班信息失败')
             }

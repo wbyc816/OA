@@ -21,7 +21,7 @@
           </el-input>
         </el-col>
       </el-form-item>
-      <el-form-item label="会签内容" class="textarea">
+      <el-form-item label="会签内容" prop="taskContent" class="textarea">
         <el-col :span='18'>
           <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="100"></el-input>
         </el-col>
@@ -58,6 +58,7 @@ export default {
       rules: {
         signUserName: [{ required: true, message: '请选择会签接收人' }],
         state: [{ required: true, message: '请选择会签意见' }],
+        taskContent:[{required: true, message: '请填写会签内容' }]
       },
       dialogTableVisible: false,
       reciver: '',

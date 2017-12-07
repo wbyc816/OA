@@ -35,8 +35,8 @@
         <a :href="info[0].url" target="_blank" style="color:#0460AE" v-else>{{info[0].fielName}}</a>
       </p>
     </el-col>
-    <div class="pdfBox clearBoth" v-if="info.length>0&&info[0].pdfUrl">
-      <div class="pdfScrollBox" ref="pdfScroll" :style="{height:pdfHeight+'px'}">
+    <div class="pdfBox clearBoth">
+      <div class="pdfScrollBox" ref="pdfScroll" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}" v-if="first">
         <pdf :src="info[0].pdfUrl" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
         <pdf :src="info[0].pdfUrl" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
       </div>
@@ -56,7 +56,8 @@ export default {
     info: {
       type: Array
     },
-    state: ''
+    state: '',
+    open:''
   },
   data() {
     return {
@@ -65,7 +66,8 @@ export default {
       types: [],
       pageNum: 1,
       totalNum: 0,
-      pdfHeight: 800
+      pdfHeight: 900,
+      first:false
     }
   },
   computed: {
@@ -75,6 +77,16 @@ export default {
   },
   created() {
     this.getType();
+  },
+  watch:{
+    // open:function(newval){
+    //   if(newval&&!this.first){
+    //     this.first=true;
+    //   }
+    // }
+  },
+  mounted(){
+    this.first=true;
   },
   methods: {
     getType() {
@@ -120,7 +132,7 @@ $main:#0460AE;
     padding-top: 10px;
     padding-bottom: 50px;
     .pdfScrollBox {
-      margin:0 auto;
+      margin: 0 auto;
       width: 80%;
       overflow-y: auto;
       height: 800px;
