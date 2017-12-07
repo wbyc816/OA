@@ -1,7 +1,7 @@
 <template>
   <div id='templateDownload'>
     <el-row :gutter='12'>
-      <el-col :span='17' :xs="24">
+      <el-col :span='24' :xs="24">
         <el-card class="softcard">
           <div slot="header">
             <el-row>
@@ -29,16 +29,16 @@
           </div>
 
           <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
-            <el-table-column property="name" label="模板名称" width="130">
+            <el-table-column property="name" label="模板名称" >
             </el-table-column>
-            <el-table-column property="content" label="简介" width="160">
+            <el-table-column property="content" label="简介">
             </el-table-column>
-            <el-table-column property="createTime" label="创建时间" width="120">
+            <el-table-column property="createTime" label="创建时间" >
               <template scope="scope">
                     <span>{{ scope.row.createTime | time('date')}}</span>
                   </template>
             </el-table-column>
-            <el-table-column property="url" label="下载地址">
+            <el-table-column property="url" label="下载地址" width="500">
               <template scope="scope">
                 <!-- <a :href="formatUrl(scope.row.url)" target="_blank">{{scope.row.url}}</a> -->
                 <span :href="formatUrl(scope.row.url)" target="_blank">{{scope.row.url}}</span>
