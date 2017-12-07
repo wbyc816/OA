@@ -3,7 +3,9 @@
     <el-card class="borderCard highLight">
       <div slot="header" class="clearfix">
         <span>{{newsType[params.classify2]}}</span>
-        <span v-show="params.title" class="headRight">按搜索条件 "<i>{{params.title}}</i>" 查询结果</span>
+        <span v-show="params.title" class="headLeft">按搜索条件 "<i>{{params.title}}</i>" 查询结果</span>
+        <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="catalogueName" popper-class="myCascader" class="headRight" clearable @change="catalogueChange">
+        </el-cascader>
       </div>
       <el-row>
         <template>
@@ -44,9 +46,17 @@ export default {
         classify2: "",
         pageNumber: 1,
         pageSize: 10,
-        title: ''
+        title: '',
+        deptId:''
       },
-      totalSize: 0
+      totalSize: 0,
+      defaultProp: {
+        value: 'id',
+        label: 'name',
+        children: 'catalogues'
+      },
+      catalogueList: [],
+      catalogueName: []
     }
   },
   computed: {
@@ -56,6 +66,7 @@ export default {
   },
   created() {
     this.initSearch(this.$route);
+    this.getFileCatalogue();
   },
   beforeRouteUpdate(to, from, next) {
     this.initSearch(to);
@@ -85,7 +96,33 @@ export default {
     handleCurrentChange(page) {
       this.params.pageNumber = page;
       this.getOtherNews()
-    }
+    },
+    catalogueChange(val){
+      
+      this.params.deptId=val[val.length-1]||'';
+      this.getOtherNews();
+    },
+    getFileCatalogue() {
+
+      function loopMap(arr) {
+        arr.forEach(function(dep) {
+          dep.catalogues.forEach(function(child) {
+            child.catalogues = null;
+          })
+        })
+      }
+      this.$http.post('/doc/getFileCatalogue')
+        .then(res => {
+          if (res.status == '0') {
+            loopMap(res.data);
+            res.data[0].catalogues = null;
+            console.log(res.data)
+            this.catalogueList = res.data;
+          } else {
+            console.log('获取发文目录失败')
+          }
+        })
+    },
   }
 }
 
@@ -112,12 +149,21 @@ $brown: #985D55;
       line-height: 45px;
       color: $main;
 
-      .headRight {
+      .headLeft {
         font-size: 14px;
         color: #676767;
         i {
           color: $main;
           font-style: normal;
+        }
+      }
+      .headRight {
+        height: 35px;
+        input {
+          height: 35px;
+        }
+        .el-cascader__label {
+          line-height: 45px;
         }
       }
     }
