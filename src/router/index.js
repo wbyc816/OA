@@ -103,6 +103,9 @@ const PresidentMailbox = () =>
   import ('pages/PresidentMailbox.page')
 const softDownload = () =>
   import ('../pages/softDownload.page')
+//模板下载
+const templateDownload = () =>
+  import ('../pages/templateDownload.page')
 
 //飞行报表
 import flightReport from 'pages/flightReport.page'
@@ -423,6 +426,13 @@ const router = new Router({
       component: softDownload,
       meta: {
         breadcrumb: '软件下载'
+      }
+    },
+    {
+      path: '/templateDownload',
+      component: templateDownload,
+      meta: {
+        breadcrumb: '模板下载'
       }
     }
 

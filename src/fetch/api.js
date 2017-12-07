@@ -143,6 +143,9 @@ export default {
   getSoftList(params) {
     return fetch('/index/selectSoftwareInfo', params)
   },
+  getTemplateDownload(params) {
+    return fetch('/index/selectTemplateInfo', params)
+  },
   deleteDutyInfo(id) {
     return fetch('/onduty/deleteDutyInfo', id)
   },
