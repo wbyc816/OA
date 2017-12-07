@@ -190,6 +190,7 @@ var msgs = [
 ];
 
 const otherLinks = [
+  { "icon": "xiazai1", "text": "各类模板下载", "link": "/templateDownload" },
   { "icon": "changyong", "text": "常用办公软件", "link": "/softDownload" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
@@ -197,6 +198,7 @@ const otherLinks = [
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
   { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },
+  { "icon": "money", "text": "财务预算系统", "link": "http://efin.donghaiair.cn/" },
 ]
 
 const pieoption = {
