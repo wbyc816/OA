@@ -45,7 +45,8 @@ const state = {
     "pendingNum": 0
   },
   staticsPower: '', //1所有 2无审批者 0无
-  isSubmit: false
+  isSubmit: false,
+  secretaryInfo:''
 }
 
 const actions = {
@@ -148,10 +149,16 @@ const actions = {
 
   },
   //根据部门ID获取组织结构
-  getDepById({ commit, state, rootState, rootGetters }) {
+  getDepById({ commit, state, rootState, rootGetters }, hasSecretary) {
     api.getDepById(rootGetters.userInfo.deptId)
       .then(res => {
         if (res.status == '0') {
+          console.log(hasSecretary)
+          if(hasSecretary){
+            res.data.deptList.push(state.secretaryInfo)
+            console.log(res.data.deptList)
+          }
+
           commit(types.GET_DEPT_LIST, res, { root: true })
         }
       }, res => {
@@ -277,6 +284,7 @@ const getters = {
   staticsPower: state => state.staticsPower,
   isSubmit: state => state.isSubmit,
   taskUser: state => state.taskUser,
+  secretaryInfo:state=>state.secretaryInfo
 }
 
 const mutations = {
@@ -331,6 +339,9 @@ const mutations = {
   },
   setTaskUser(state, payLoad) {
     state.taskUser = payLoad;
+  },
+  setSecretaryInfo(state, payLoad) {
+    state.secretaryInfo = payLoad;
   }
 }
 

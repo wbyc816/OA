@@ -28,10 +28,44 @@
         </div>
         <el-button class="addButton" @click="fileSendVisible=true"><i class="el-icon-plus"></i></el-button>
       </el-form-item>
+      <el-form-item label="主送人" prop="mainPeople" class="reciverWrap">
+        <div class="reciverList">
+          <el-tag key="all" :closable="true" v-show="manuscriptForm.mainPeople.all" type="primary" @close="closeMainAll">
+            所有人
+          </el-tag>
+          <el-tag :key="dep.id" :closable="true" type="primary" @close="closeMainDep(index)" v-for="(dep,index) in manuscriptForm.mainPeople.depList">
+            {{dep.name}}
+          </el-tag>
+          <el-tag :key="person.id" :closable="true" type="primary" @close="closeMainPerson(index)" v-for="(person,index) in manuscriptForm.mainPeople.personList">
+            {{person.name}}
+          </el-tag>
+        </div>
+        <el-button class="addButton" @click="mainPeopleVisible=true"><i class="el-icon-plus"></i></el-button>
+      </el-form-item>
+      <el-form-item label="抄送人" prop="ccPeople" class="reciverWrap">
+        <div class="reciverList">
+          <el-tag key="all" :closable="true" v-show="manuscriptForm.ccPeople.all" type="primary" @close="closeCcAll">
+            所有人
+          </el-tag>
+          <el-tag :key="dep.id" :closable="true" type="primary" @close="closeCcDep(index)" v-for="(dep,index) in manuscriptForm.ccPeople.depList">
+            {{dep.name}}
+          </el-tag>
+          <el-tag :key="person.id" :closable="true" type="primary" @close="closeCcPerson(index)" v-for="(person,index) in manuscriptForm.ccPeople.personList">
+            {{person.name}}
+          </el-tag>
+        </div>
+        <el-button class="addButton" @click="ccPeopleVisible=true"><i class="el-icon-plus"></i></el-button>
+      </el-form-item>
       <el-form-item label="签发人" prop="signName">
         <el-input class="search" :readonly="true" :value="manuscriptForm.signName">
           <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
         </el-input>
+      </el-form-item>
+      <el-form-item label="打印份数" class="inlinItem" prop="printNum">
+        <money-input v-model="manuscriptForm.printNum" :maxlength="5" :prepend="false" :append="false" type="int"></money-input>
+      </el-form-item>
+      <el-form-item label="存档份数" class="inlinItem" prop="storeNum">
+        <money-input v-model="manuscriptForm.storeNum" :maxlength="5" :prepend="false" :append="false" type="int"></money-input>
       </el-form-item>
       <el-table :data="fileRedData" style="width: 100%;margin-bottom:20px;" max-height="200">
         <el-table-column prop="fileName" label="模板名称" width="">
@@ -50,32 +84,63 @@
     </el-form>
     <person-dialog @updatePerson="updateSign" :visible.sync="signDialogVisible" admin="1" selText="签发人"></person-dialog>
     <major-dialog :params="manuscriptForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
+    <major-dialog :params="manuscriptForm.mainPeople" @updatePerson="updateMainPeople" :visible.sync="mainPeopleVisible" :hasLevel="false"></major-dialog>
+    <major-dialog :params="manuscriptForm.ccPeople" @updatePerson="updateCcPeople" :visible.sync="ccPeopleVisible" :hasLevel="false"></major-dialog>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import PersonDialog from '../../../components/personDialog.component'
+import MoneyInput from '../../../components/moneyInput.component'
 import MajorDialog from '../../../components/majorDialog.component'
 export default {
-  components: { PersonDialog, MajorDialog },
+  components: { PersonDialog, MajorDialog, MoneyInput },
   data() {
     var checkFileSend = (rule, value, callback) => {
       if (value.all.max || value.personList.length != 0 || value.depList != 0) {
         callback();
       } else {
+        callback(new Error('请选择发布范围'))
+      }
+    };
+    var checkFileSend1 = (rule, value, callback) => {
+      if (value.all || value.personList.length != 0 || value.depList != 0) {
+        callback();
+      } else {
         callback(new Error('请选择主送人'))
+      }
+    };
+    var checkFileSend2 = (rule, value, callback) => {
+      if (value.all || value.personList.length != 0 || value.depList != 0) {
+        callback();
+      } else {
+        callback(new Error('请选择抄送人'))
       }
     };
     return {
       signDialogVisible: false,
       fileSendVisible: false,
+      mainPeopleVisible: false,
+      ccPeopleVisible: false,
       manuscriptForm: {
         classify1: '',
         catalogueName: [],
         signName: '',
         signId: '',
         issueDate: '',
+        printNum: '',
+        storeNum: '',
         fileSend: {
+          personList: [],
+          all: '',
+          depList: []
+        },
+        mainPeople: {
+          personList: [],
+          all: '',
+          depList: []
+        },
+        ccPeople: {
           personList: [],
           all: '',
           depList: []
@@ -88,9 +153,13 @@ export default {
         classify1: [{ required: true, message: '请选择发文类型', trigger: 'blur' }],
         docFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
         fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
+        mainPeople: [{ type: 'object', required: true, validator: checkFileSend1, trigger: 'blur' }],
+        ccPeople: [{ type: 'object', required: true, validator: checkFileSend2, trigger: 'blur' }],
         catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
         signName: [{ required: true, message: '请选择签发人', trigger: 'blur' }],
         issueDate: [{ type: 'date', required: true, message: '请选择发文日期', trigger: 'blur' }],
+        printNum: [{ required: true, message: '请输入打印份数' }],
+        storeNum: [{ required: true, message: '请输入存档份数' }],
       },
       pickerOptions0: {
         disabledDate(time) {
@@ -156,6 +225,12 @@ export default {
     updateFileSend(params) {
       this.manuscriptForm.fileSend = params;
     },
+    updateMainPeople(params) {
+      this.manuscriptForm.mainPeople = params;
+    },
+    updateCcPeople(params) {
+      this.manuscriptForm.ccPeople = params;
+    },
     handleAvatarSuccess(res, file, fileList) {
       this.manuscriptForm.docFileId = res.data;
       this.files = fileList;
@@ -202,25 +277,44 @@ export default {
           "classify1": this.manuscriptForm.classify1, //发文类型 
           "issueDate": this.manuscriptForm.issueDate.getTime(), //发文日期
           "catalogueId": this.manuscriptForm.catalogueName[this.manuscriptForm.catalogueName.length - 1], //目录 
-          "signId": this.manuscriptForm.signId //签发人
+          "signId": this.manuscriptForm.signId, //签发人
+          "printNum": this.manuscriptForm.printNum,
+          "storeNum": this.manuscriptForm.storeNum
         },
         "fileSend": {
           "sendTypeAll": {
-            "sendType": this.sendTypes.find(type => type.dictEname == 'all').dictCode, //主送人类型
+            "sendType": this.sendTypes.find(type => type.dictEname == 'all').dictCode, //发布范围i人类型
             "max": this.manuscriptForm.fileSend.all.max, //最大
             "min": this.manuscriptForm.fileSend.all.min //最小
           },
           "sendTypeDept": [],
           "sendTypeEmp": {
             "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
-            "ids": []
+            "ids": this.manuscriptForm.fileSend.personList.map(person => person.empId)
           }
         },
-        docFileId: this.manuscriptForm.docFileId
+        "mainSend": {
+          "sendTypeAll": {
+            "sendType": this.manuscriptForm.mainPeople.all ? this.sendTypes.find(type => type.dictEname == 'all').dictCode : '', //主送人类型
+          },
+          "sendTypeDept": [],
+          "sendTypeEmp": {
+            "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
+            "ids": this.manuscriptForm.mainPeople.personList.map(person => person.empId)
+          }
+        },
+        "ccSend": {
+          "sendTypeAll": {
+            "sendType": this.manuscriptForm.ccPeople.all ? this.sendTypes.find(type => type.dictEname == 'all').dictCode : '', //抄送人类型
+          },
+          "sendTypeDept": [],
+          "sendTypeEmp": {
+            "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
+            "ids": this.manuscriptForm.ccPeople.personList.map(person => person.empId)
+          }
+        },
+        docFileId: this.manuscriptForm.docFileId,
       }
-      // if(!this.manuscriptForm.fileSend.all.max){
-      //   this.params.fileSend.sendTypeAll={};
-      // }
       this.params.fileSend.sendTypeDept = this.manuscriptForm.fileSend.depList.map(function(dep) {
         return {
           sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
@@ -229,8 +323,17 @@ export default {
           min: dep.min
         }
       });
-      this.params.fileSend.sendTypeEmp.ids = this.manuscriptForm.fileSend.personList.map(function(person) {
-        return person.empId
+      this.params.mainSend.sendTypeDept = this.manuscriptForm.mainPeople.depList.map(function(dep) {
+        return {
+          sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
+          id: dep.id,
+        }
+      });
+      this.params.ccSend.sendTypeDept = this.manuscriptForm.ccPeople.depList.map(function(dep) {
+        return {
+          sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
+          id: dep.id,
+        }
       });
       this.$emit('submitMiddle', this.params);
     },
@@ -263,11 +366,29 @@ export default {
     closeAll() {
       this.manuscriptForm.fileSend.all = '';
     },
+    closeMainAll() {
+      this.manuscriptForm.mainPeople.all = '';
+    },
+    closeCcAll() {
+      this.manuscriptForm.ccPeople.all = '';
+    },
     closePerson(index) {
       this.manuscriptForm.fileSend.personList.splice(index, 1);
     },
     closeDep(index) {
       this.manuscriptForm.fileSend.depList.splice(index, 1);
+    },
+    closeMainPerson(index) {
+      this.manuscriptForm.mainPeople.personList.splice(index, 1);
+    },
+    closeMainDep(index) {
+      this.manuscriptForm.mainPeople.depList.splice(index, 1);
+    },
+    closeCcPerson(index) {
+      this.manuscriptForm.ccPeople.personList.splice(index, 1);
+    },
+    closeCcDep(index) {
+      this.manuscriptForm.ccPeople.depList.splice(index, 1);
     },
     getSendType() {
       this.$http.post('/api/getDict', { dictCode: 'FIL01' })
@@ -320,6 +441,16 @@ $main:#0460AE;
 .manuscriptApp {
   .el-input {
     width: 100%;
+  }
+  .inlinItem {
+    display: inline-block;
+    width: 50%;
+    float: left;
+    &:nth-child(odd) {
+      .el-form-item__label {
+        text-indent: 30px;
+      }
+    }
   }
   .reciverWrap {
     .el-form-item__content {

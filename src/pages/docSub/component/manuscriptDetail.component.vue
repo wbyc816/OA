@@ -13,9 +13,25 @@
       <p v-if="info" class="textContent">{{info[0].catalogueId}}</p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">主送</h1>
+      <h1 class="title">发布范围</h1>
       <p v-if="info" class="textContent">
         <el-tag :key="send" type="primary" v-for="send in info[0].sendIds">
+          {{send}}
+        </el-tag>
+      </p>
+    </el-col>
+    <el-col :span="24">
+      <h1 class="title">主送</h1>
+      <p v-if="info" class="textContent">
+        <el-tag :key="send" type="primary" v-for="send in info[0].mainPeople">
+          {{send}}
+        </el-tag>
+      </p>
+    </el-col>
+    <el-col :span="24">
+      <h1 class="title">抄送</h1>
+      <p v-if="info" class="textContent">
+        <el-tag :key="send" type="primary" v-for="send in info[0].ccPeople">
           {{send}}
         </el-tag>
       </p>
@@ -27,6 +43,14 @@
     <el-col :span="12" class="rightBorder">
       <h1 class="title">校对人</h1>
       <p v-if="info" class="textContent">{{info[0].verifyId}}</p>
+    </el-col>
+    <el-col :span="12" class="rightBorder">
+      <h1 class="title">打印份数</h1>
+      <p v-if="info" class="textContent">{{info[0].printNum}}</p>
+    </el-col>
+    <el-col :span="12" class="rightBorder">
+      <h1 class="title">存档份数</h1>
+      <p v-if="info" class="textContent">{{info[0].storeNum}}</p>
     </el-col>
     <el-col :span="24">
       <h1 class="title">正文</h1>

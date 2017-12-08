@@ -11,13 +11,14 @@
           <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
             <el-radio-button label="1">同意<i></i></el-radio-button>
             <el-radio-button label="2">不同意<i></i></el-radio-button>
+            <el-radio-button label="6" class="isChen" v-if="docDetail.isConfidential==1&&hasSecretary()">承办部门办理<i></i></el-radio-button>
           </el-radio-group>
         </el-col>
       </el-form-item>
       <el-form-item label="审批类型" class="textarea" v-if="showSignType">
         <el-col :span='18'>
           <el-radio-group class="myRadio" v-model="signType" @change="signTypeChange">
-            <el-radio-button label="0">审批<i></i></el-radio-button>
+            <el-radio-button label="0" :disabled="disableApproval">审批<i></i></el-radio-button>
             <el-radio-button label="1" :disabled="chooseDisable" v-if="docDetail.isDept==1">部门会签<i></i></el-radio-button>
             <el-radio-button label="2" :disabled="chooseDisable" v-if="docDetail.isPerson==1">人员会签<i></i></el-radio-button>
           </el-radio-group>
@@ -32,7 +33,7 @@
             </template>
           </el-input>
           <div class="signList" v-show="signType!=0">
-            <el-tag :key="person.id" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==1">
+            <el-tag :key="person.signDeptMajorId" :closable="ableDepClose(person.signDeptMajorId)" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==1">
               {{person.signDeptMajorName}}
             </el-tag>
             <el-tag :key="person.empId" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==2">
@@ -65,10 +66,10 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="dialogTableVisible" dialogType="radio"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :admin="docDetail.isAdmin==1&&!hasSecretary()?'1':'0'" :visible.sync="dialogTableVisible" dialogType="radio" :hasSecretary="hasSecretary()"></person-dialog>
     <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :data="signPersons"></person-dialog>
     <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="$route.query.code=='LZS'?'0':''"></person-dialog>
-    <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep"></dep-dialog>
+    <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" isSaveInit></dep-dialog>
   </div>
 </template>
 <script>
@@ -78,7 +79,41 @@ import DepDialog from '../../../components/depDialog.component'
 
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
-
+const initFWGDeps = [{
+  code: "",
+  companyName: "东海航空有限公司",
+  createTime: "",
+  createUser: "",
+  deptId: "",
+  description: "",
+  empCount: 0,
+  fatherId: "CFCD208495D565EF66E7DFF9F98764DA",
+  id: "C16A5320FA475530D9583C34FD356EF5",
+  levelNum: 30,
+  name: "综合管理部",
+  sortNum: "",
+  sts: "",
+  updateTime: "",
+  updateUser: "",
+}]
+const initHTSDeps = [{
+  code: "",
+  companyName: "东海航空有限公司",
+  createTime: "",
+  createUser: "",
+  deptId: "",
+  description: "",
+  empCount: 0,
+  fatherId: "CFCD208495D565EF66E7DFF9F98764DA",
+  id: "1905AEDAB9BF2477EDC068A355BBA31A",
+  levelNum: 30,
+  name: "法律部",
+  sortNum: "",
+  sts: "",
+  updateTime: "",
+  updateUser: ""
+}]
+const secretaryDoc=['FWG','HTS','SWD','CPD']
 export default {
   components: {
     PersonDialog,
@@ -88,7 +123,7 @@ export default {
     docDetail: {
       type: Object
     },
-    taskDetail:'',
+    taskDetail: '',
     suggestHtml: ''
   },
   data() {
@@ -101,7 +136,6 @@ export default {
             callback(new Error('请选择至少一个会签部门'))
           } else {
             callback(new Error('请选择至少一个会签接收人'))
-
           }
         }
       } else {
@@ -123,7 +157,7 @@ export default {
         sign: [{ type: 'array', validator: checkSign, required: true }],
         state: [{ required: true, message: '请选择审批意见' }],
         planDate: [{ required: true, type: 'date', message: '请选择离职日期' }],
-        taskContent:[{required: true, message: '请填写审批内容' }]
+        taskContent: [{ required: true, message: '请填写审批内容' }]
       },
       dialogTableVisible: false,
       defaultVisible: false,
@@ -141,7 +175,10 @@ export default {
         }
       },
       signDeps: [],
-      adminReci: ''
+      adminReci: '',
+      initFWGDeps,
+      initHTSDeps,
+      disableApproval:false
     }
   },
   computed: {
@@ -159,10 +196,14 @@ export default {
     ...mapGetters([
       'userInfo',
       'submitLoading',
-      'baseURL'
+      'baseURL',
+      'secretaryInfo'
     ])
   },
   created() {
+    if(this.hasSecretary()){
+      this.getSecretaryInfo();
+    }
     this.currentView = this.docDetail.pageCode;
     if (this.docDetail.defaultSuggestVo.reciUserId) {
       this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
@@ -171,9 +212,24 @@ export default {
     }
   },
   methods: {
+    getSecretaryInfo(){
+      if(!this.secretaryInfo){
+        this.$http.post('doc/getSecInfo')
+        .then(res=>{
+          if(res.status == '0'){
+            this.$store.commit('setSecretaryInfo',res.data);
+          }else{
+
+          }
+        })
+      }
+    },
+    hasSecretary(){
+      return secretaryDoc.find(d=>d==this.$route.query.code)!=undefined;
+    },
     getAdminReci() {
       if (this.adminReci) {
-        if (this.userInfo.empId != this.adminReci.secUserId&&this.adminReci.secUserId) {
+        if (this.userInfo.empId != this.adminReci.secUserId && this.adminReci.secUserId) {
           var person = {
             "signUserName": this.adminReci.secUserName,
           }
@@ -186,7 +242,7 @@ export default {
           .then(res => {
             if (res.status == 0) {
               this.adminReci = res.data;
-              if (this.userInfo.empId != this.adminReci.secUserId&&this.adminReci.secUserId) {
+              if (this.userInfo.empId != this.adminReci.secUserId && this.adminReci.secUserId) {
                 var person = {
                   "signUserName": this.adminReci.secUserName,
                 }
@@ -199,12 +255,10 @@ export default {
             }
           })
       }
-
     },
     getDefaultReciver() {
-      var taskEmpPostId=this.taskDetail[this.taskDetail.length-1].taskEmpPostId;
-      
-      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId,empPostId:taskEmpPostId })
+      var taskEmpPostId = this.taskDetail[this.taskDetail.length - 1].taskEmpPostId;
+      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId, empPostId: taskEmpPostId })
         .then(res => {
           if (res.status == 0) {
             this.reciver = {
@@ -260,6 +314,7 @@ export default {
     adviceChange(val) {
       if (val == 1) {
         this.ruleForm.taskContent = '同意。';
+        this.disableApproval=false;
         if (this.signType == 0) {
           if (this.docDetail.defaultSuggestVo.reciUserId) {
             this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
@@ -268,17 +323,38 @@ export default {
             this.chooseDisable = false;
           }
         }
-      } else {
+      } else if(val==2) {
+        this.disableApproval=false;
         this.ruleForm.taskContent = "不同意。";
         if (this.signType == 0) {
           this.getAdminReci();
         }
+      }else{
+        this.ruleForm.taskContent = "同意。";
+        this.disableApproval=true;
+        this.signType='1'
       }
     },
     signTypeChange(val) {
       this.ruleForm.sign = [];
       this.signDeps = [];
-      this.$refs.ruleForm.validateField('sign')
+      if (val == 1) {
+        if (this.$route.query.code == 'FWG') {
+          this.updateSignDep(initFWGDeps);
+        } else if (this.$route.query.code == 'HTS') {
+          this.updateSignDep(initHTSDeps);
+        }
+      }
+      this.$refs.ruleForm.validateField('sign');
+    },
+    ableDepClose(val) {
+      if (this.$route.query.code == 'FWG') {
+        return initFWGDeps.find(d => d.id == val) == undefined
+      } else if (this.$route.query.code == 'HTS') {
+        return initHTSDeps.find(d => d.id == val) == undefined
+      } else {
+        return true
+      }
     },
     updateDefaultPerson(payLoad) {
       this.defaultVisible = false;
@@ -413,8 +489,7 @@ export default {
       if (this.signType == '0') { //普通审批
         if (this.ruleForm.state == 1) { //同意
           Object.assign(params, this.reciver)
-        }
-        else if(this.ruleForm.state == 2&&this.userInfo.empId == this.adminReci.secUserId){  
+        } else if (this.ruleForm.state == 2 && this.userInfo.empId == this.adminReci.secUserId) {
           // 不同意时且本人与默认接收人为同一人时
           Object.assign(params, this.reciver)
         }
@@ -438,7 +513,7 @@ export default {
         })
     },
     setDefault(person) {
-      var taskEmpPostId=this.taskDetail[this.taskDetail.length-1].taskEmpPostId;
+      var taskEmpPostId = this.taskDetail[this.taskDetail.length - 1].taskEmpPostId;
       this.$http.post('/doc/updateDefaultRecipent', { docTypeCode: this.$route.query.code, empId: this.userInfo.empId, taskEmpPostId: taskEmpPostId, reciId: person.signUserId, reciEmpPostId: person.signEmpPostId })
         .then(res => {
           if (res.status == 0) {
@@ -471,6 +546,9 @@ $main:#0460AE;
       width: 100px;
       line-height: 45px;
       padding: 0;
+    }
+    .isChen .el-radio-button__inner{
+      width: 150px!important;
     }
   }
   .suggestHtml {

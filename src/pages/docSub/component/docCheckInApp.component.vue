@@ -21,9 +21,12 @@
         <el-input v-model="checkInForm.wordNo" :maxlength="25">
         </el-input>
       </el-form-item>
+      <el-form-item label="来文单位" prop="receiveCompany">
+        <el-input v-model="checkInForm.receiveCompany" :maxlength="100">
+        </el-input>
+      </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
         <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :on-remove="handleRemove" :before-upload="beforeUpload" :file-list="files">
-        <!-- <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove" :disabled="noMore"> -->
           <el-button size="small" type="primary" :disabled="checkInForm.wordFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -41,7 +44,8 @@ export default {
         classify2: '',
         wordNo: '',
         catalogueName: [],
-        wordFileId: ''
+        wordFileId: '',
+        receiveCompany:''
       },
       types: [],
       sendTypes: [],
@@ -50,6 +54,7 @@ export default {
         classify2: [{ required: true, message: '请选择莱文种类', trigger: 'blur' }],
         wordFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
         wordNo: [{ required: true, message: '请输入来文文号', trigger: 'blur' }],
+        receiveCompany: [{ required: true, message: '请输入来文单位', trigger: 'blur' }],
         catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
       },
       catalogueList: [],
@@ -113,6 +118,7 @@ export default {
           classify1: this.checkInForm.classify1,
           classify2: this.checkInForm.classify2,
           wordNo: this.checkInForm.wordNo,
+          receiveCompany: this.checkInForm.receiveCompany,
           catalogueId: this.checkInForm.catalogueName[this.checkInForm.catalogueName.length - 1],
         },
         wordFileId: this.checkInForm.wordFileId

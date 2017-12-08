@@ -85,7 +85,11 @@ export default {
     },
     data: {   //初始化数据
       type: [Array, Object, String]
-    }
+    },
+    hasSecretary: {
+      type: Boolean,
+      default: false
+    },
   },
   watch: {
     'visible': function(newVal) {
@@ -94,7 +98,7 @@ export default {
         this.initData=true;
         if (this.admin !== '') {
           if (this.admin == '0') {
-            this.$store.dispatch('getDepById');
+            this.$store.dispatch('getDepById',this.hasSecretary);
           } else {
             this.$store.dispatch('getDeptList');
           }
@@ -102,7 +106,7 @@ export default {
           if (this.isAdmin) {
             this.$store.dispatch('getDeptList');
           } else {
-            this.$store.dispatch('getDepById');
+            this.$store.dispatch('getDepById',this.hasSecretary);
           }
         }
         if (this.userInfo.levelNum == 30) {
@@ -163,7 +167,7 @@ export default {
           } else {
             this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
           }
-          this.$store.dispatch('getDepById');
+          this.$store.dispatch('getDepById',this.hasSecretary);
         } else {
           this.$store.dispatch('setQueryDepId', '');
           this.$store.dispatch('getDeptList');
@@ -178,7 +182,7 @@ export default {
           } else {
             this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
           }
-          this.$store.dispatch('getDepById');
+          this.$store.dispatch('getDepById',this.hasSecretary);
         }
       }
       this.$store.dispatch('setQueryPage', 1);

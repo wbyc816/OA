@@ -17,6 +17,10 @@
       <p v-if="info" class="textContent">{{info[0].wordNo}}</p>
     </el-col>
     <el-col :span="24">
+      <h1 class="title">来文单位</h1>
+      <p v-if="info" class="textContent">{{info[0].receiveCompany}}</p>
+    </el-col>
+    <el-col :span="24">
       <h1 class="title">正文</h1>
       <p v-if="info" class="textContent attch"><a :href="info[0].url" target="_blank">{{info[0].fileName}}</a></p>
     </el-col>

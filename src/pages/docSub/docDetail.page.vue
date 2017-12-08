@@ -19,6 +19,30 @@
             <h1 class="title">标题</h1>
             <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
+          <template v-if="showOtherAdvice">
+            <el-col :span="24">
+              <h1 class="title">拟稿部门意见</h1>
+              <p class="textContent">
+                <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.taskTime}}</span>
+              </p>
+            </el-col>
+            <el-col :span="24">
+              <h1 class="title">{{$route.query.code=='SWD'?'综合管理意见':'部门会签意见'}}</h1>
+              <p class="textContent">
+                <template v-for="adviceBox in otherAdvice.deptSign">
+                  <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+                </template>
+              </p>
+            </el-col>
+            <el-col :span="24">
+              <h1 class="title">公司领导意见</h1>
+              <p class="textContent">
+                <template v-for="adviceBox in otherAdvice.empSign">
+                  <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+                </template>
+              </p>
+            </el-col>
+          </template>
           <el-col :span="24" style="min-height:90px" v-if="$route.query.code!='FWG'">
             <h1 class="title">请示内容</h1>
             <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
@@ -161,7 +185,7 @@ import LZS from './component/empQuitDetail.component.vue' //离职详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
-
+const otherAdviceDoc = ["FWG", "SWD", "CPD"]
 export default {
   components: {
     PersonDialog,
@@ -217,7 +241,9 @@ export default {
       suggestHtml: '',
       archiveState: '1',
       isRedFile: false,
-      activeContent: ['1']
+      activeContent: ['1'],
+      showOtherAdvice: false,
+      otherAdvice: ''
     }
   },
   created() {
@@ -250,7 +276,22 @@ export default {
     ])
   },
   methods: {
+    getOtherAdvice(route) {
+      this.$http.post("/doc/getDetailByType", { id: route.params.id, empId: this.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            this.otherAdvice = res.data
+            console.log(this.otherAdvice)
+          } else {
+
+          }
+        })
+    },
     getDetail(route) {
+      if (otherAdviceDoc.find(d => d == this.$route.query.code) != undefined) {
+        this.showOtherAdvice = true;
+        this.getOtherAdvice(route);
+      }
       var url = "/doc/getDocDetailInfo";
       if (route.query.code == 'LZS') {
         url = '/doc/getDocDimissionInfo'
@@ -273,7 +314,7 @@ export default {
             }
             this.handleSuggest();
             if (route.query.code != 'FWG') {
-              this.activeContent = [];              
+              this.activeContent = [];
             }
           }
         }, res => {
@@ -464,7 +505,7 @@ export default {
     },
     beforeUpload(file) {
       // const isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-      const isJPG =  file.type === 'application/pdf';
+      const isJPG = file.type === 'application/pdf';
       const isLt10M = file.size / 1024 / 1024 < 10;
 
       if (!isJPG) {
@@ -597,6 +638,10 @@ $sub:#1465C0;
     padding-bottom: 30px;
     border-bottom: 1px dashed #D5DADF;
   }
+  .adviceSpan{
+    display:inline-block;
+    padding-right:10px;
+  }
   .baseInfoBox {
     padding-bottom: 10px;
     .el-col {
@@ -616,14 +661,14 @@ $sub:#1465C0;
     }
     .title {
       width: 140px;
-      display:table-cell;
-      vertical-align:middle;
-      word-wrap:break-word;
+      display: table-cell;
+      vertical-align: middle;
+      word-wrap: break-word;
     }
     .textContent {
-      word-wrap:break-word;
-      display:table-cell;
-      vertical-align:middle;
+      word-wrap: break-word;
+      display: table-cell;
+      vertical-align: middle;
       overflow: hidden;
       word-wrap: break-word;
       line-height: 19px;

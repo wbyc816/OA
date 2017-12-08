@@ -9,7 +9,7 @@
         <span class="taskTime">{{task.startTime}}</span>
       </li>
       <ul class="signBox" v-if="task.signInfo.length!=0">
-        <li class="signStart"><i class="el-icon-caret-right"></i>会签开始</li>
+        <li class="signStart"><i class="el-icon-caret-right"></i>{{task.state==6?'承办':'会签'}}开始</li>
         <!-- 部门会签 -->
         <template v-if="task.signType==1">    
           <el-collapse class="depSignBox">
@@ -41,7 +41,7 @@
             <span class="taskTime">{{sign.signTime}}</span>
           </li>
         </template>
-        <li class="signEnd"><i class="el-icon-caret-right"></i>会签结束</li>
+        <li class="signEnd"><i class="el-icon-caret-right"></i>{{task.state==6?'承办':'会签'}}结束</li>
       </ul>
     </ul>
     <div class="moreHistory" v-if="taskDetail.length>4" :class="{isActive:moreFlag}" @click="moreFlag=!moreFlag">

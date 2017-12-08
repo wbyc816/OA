@@ -34,7 +34,7 @@
         </el-card>
         <!-- 新闻 -->
         <el-card class="news">
-          <p slot="header"><span>新闻</span>
+          <p slot="header"><span @click="homeVisible=true">新闻</span>
             <router-link to="FilesHome">更多</router-link>
           </p>
           <el-tabs v-model="activeName" class="myTab" @tab-click="getNew">
@@ -151,7 +151,7 @@
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')" v-if="userInfo.isDocsec&&userInfo.isDocsec[0]==1"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="6" @click.native="goToOthers('/supplier')"><i class="iconfont icon-geren"></i>客户维护<i class="el-icon-arrow-right"></i></el-menu-item>
-            <el-menu-item index="7" @click.native="goToOthers('/flightReport')"  v-if="userInfo.isDocsec&&userInfo.isDocsec[2]==1"><i class="iconfont icon-99"></i>飞行报表<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="7" @click.native="goToOthers('/flightReport')" v-if="userInfo.isDocsec&&userInfo.isDocsec[2]==1"><i class="iconfont icon-99"></i>飞行报表<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -161,6 +161,9 @@
         </el-card>
       </el-col>
     </el-row>
+    <el-dialog :visible.sync="homeVisible" size="large" custom-class="homeDialog">
+      <img src="../assets/images/homeImg.jpg" alt="">
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -175,7 +178,6 @@ import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsDrilldown from 'highcharts/modules/drilldown';
 import Highcharts3D from 'highcharts/highcharts-3d';
 import Highmaps from 'highcharts/modules/map';
-
 HighchartsMore(Highcharts)
 HighchartsDrilldown(Highcharts);
 Highcharts3D(Highcharts);
@@ -214,7 +216,7 @@ const options = [{
 }, ];
 const pieBg = ['#97BBCD', '#F7464A', '#DCDCDC', '#7ED0CF']
 export default {
-  components: {  SearchDate, MessageCenter, DocList, SidePersonSearch, Duty },
+  components: { SearchDate, MessageCenter, DocList, SidePersonSearch, Duty },
 
   data() {
     return {
@@ -222,32 +224,32 @@ export default {
         // plotBorderWidth: 500,        //绘图区边框宽度
       },
       optionOne: {
-        
-        credits: {  
-          enabled:false  
-        }, 
+
+        credits: {
+          enabled: false
+        },
         title: {
-            text:''
+          text: ''
         },
         xAxis: {
-            categories: []
+          categories: []
         },
         yAxis: {
-            title: {
-                text: '单位/min'
-            },
-            lineWidth: 2,
-            lineColor: 'black',
-            id: 'sky'
+          title: {
+            text: '单位/min'
+          },
+          lineWidth: 2,
+          lineColor: 'black',
+          id: 'sky'
         },
         tooltip: {
-            headerFormat: '{series.name}<br>',
-             pointFormat: '  {point.name}' +
-        ': <b>{point.y}</b><br/>' 
-      
+          headerFormat: '{series.name}<br>',
+          pointFormat: '  {point.name}' +
+            ': <b>{point.y}</b><br/>'
+
         },
-        colors:[
-          '#97BBCD',  '#DCDCDC', '#7ED0CF'
+        colors: [
+          '#97BBCD', '#DCDCDC', '#7ED0CF'
         ],
         plotOptions: {
           pie: {
@@ -268,17 +270,17 @@ export default {
         //         ['计划'],
         //     ]
         // }]
-         series: [{
-            size:"120px",
-            type: 'pie',
-            name: '航班数量',
+        series: [{
+          size: "120px",
+          type: 'pie',
+          name: '航班数量',
         }]
-        
+
       },
       msgs,
       activeName: '',
       pieBg,
-      
+
       pieoption,
       otherLinks,
       tripType: 'date',
@@ -325,6 +327,7 @@ export default {
           return time.getTime() < (d - 24 * 60 * 60 * 1000) || time.getTime() > (d + 24 * 60 * 60 * 1000);
         }
       },
+      homeVisible: false
     }
   },
   computed: {
@@ -335,11 +338,21 @@ export default {
       'depPageNumber',
       'airPortList',
       'docTips',
-      'newsType'
+      'newsType',
+      'homeHasShow'
     ])
   },
   mounted() {
     this.initChart();
+    if (!this.homeHasShow) {
+      this.$store.commit('setHomeHasShow',true);
+      setTimeout(() => {
+        this.homeVisible = true;
+      }, 500)
+      setTimeout(() => {
+        this.homeVisible = false;
+      }, 5000)
+    }
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -375,17 +388,21 @@ export default {
       this.$http.post('/index/getFlightTrends', { flightDate: this.timeFilter(new Date().getTime(), 'date') })
         .then(res => {
           this.flightTrends = res.data;
-          this.optionOne.series[0].data = [[],[],[]];
-           this.optionOne.series[0].data[0].push("到达");
-           this.optionOne.series[0].data[1].push("出发");
-           this.optionOne.series[0].data[2].push("计划");
+          this.optionOne.series[0].data = [
+            [],
+            [],
+            []
+          ];
+          this.optionOne.series[0].data[0].push("到达");
+          this.optionOne.series[0].data[1].push("出发");
+          this.optionOne.series[0].data[2].push("计划");
           this.optionOne.series[0].data[0].push(parseFloat(this.flightTrends.arrival));
           this.optionOne.series[0].data[1].push(parseFloat(this.flightTrends.departure));
           this.optionOne.series[0].data[2].push(parseFloat((this.flightTrends.sumFlight - this.flightTrends.departure - this.flightTrends.delay - this.flightTrends.arrival)));
           this.chart = new Highcharts.Chart(this.$refs.mypie, this.optionOne);
         })
     },
-     initChart() {
+    initChart() {
       // console.log(this.$el);
       // this.$el.style.width = 100 + 'px';
       // this.$el.style.height =  100+'px';
@@ -408,10 +425,10 @@ export default {
       this.$store.dispatch('getDocTips');
     },
     handleFrom(val) {
-      this.tripFrom =this.clone(this.airPortList.find(i=>i.airportName==val));
+      this.tripFrom = this.clone(this.airPortList.find(i => i.airportName == val));
     },
     handleTo(val) {
-      this.tripTo = this.clone(this.airPortList.find(i=>i.airportName==val));
+      this.tripTo = this.clone(this.airPortList.find(i => i.airportName == val));
     },
     changDate() {
       let temp = new Date(this.searchDate);
@@ -545,6 +562,21 @@ $lan:#0460AE;
 $sub:#1465C0;
 
 #home {
+  .homeDialog {
+    width: 1080px;
+    .el-dialog__header {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+      .el-dialog__headerbtn .el-dialog__close {
+        color: #fff;
+      }
+    }
+    .el-dialog__body {
+      padding: 0;
+    }
+  }
   .messageCenter {
     .el-card__header {
       border-bottom: none;
@@ -583,25 +615,7 @@ $sub:#1465C0;
           cursor: move;
         }
       }
-    } // .dragActive {
-    //   position: relative;
-    //   &:before {
-    //     content: '';
-    //     position: absolute;
-    //     width: 100%;
-    //     height: 100%;
-    //     top: 0;
-    //     left: 0;
-    //     border: 1px solid $main;
-    //   }
-    //   .el-card,
-    //   >.el-menu {
-    //     &.personnel {
-    //       border-bottom-width: 1px;
-    //       margin-bottom: 19px;
-    //     }
-    //   }
-    // }
+    }
   }
   .el-carousel {
     box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16);

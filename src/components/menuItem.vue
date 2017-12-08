@@ -29,29 +29,35 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'queryDepId'
+      'queryDepId',
+      'secretaryInfo'
     ])
   },
   methods: {
     selDep(item) {
-      // this.selItem=item;
       if (this.itemType == 'person') {
-        this.$store.dispatch('setQueryDepId', item.id);
-        if (item.levelNum >= 30) {
-          this.$store.dispatch('setQueryPage', 1);
-          this.$store.dispatch('queryEmpList', {})
+        if (item.id == 'JYMS') {
+          this.$store.commit('QUERY_EMP_LIST', {
+            pageNumber: 1,
+            totalSize: 1,
+            empVoList:this.secretaryInfo.empVoList
+          })
+        } else {
+          this.$store.dispatch('setQueryDepId', item.id);
+          if (item.levelNum >= 30) {
+            this.$store.dispatch('setQueryPage', 1);
+            this.$store.dispatch('queryEmpList', {})
+          }
         }
       } else {
         this.$emit('depChange', item.id);
       }
       this.$emit('reset');
-
-      // console.log(item.id,this.queryDepId)
     },
     reset2() {
       this.$emit('reset');
     },
-    depChange1(id){
+    depChange1(id) {
       this.$emit('depChange', id);
     }
   }

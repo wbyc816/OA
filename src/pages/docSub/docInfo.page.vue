@@ -50,6 +50,7 @@
           </el-collapse>
         </el-row>
       </div>
+      <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
       <div class="backButton" v-if="hasBack">
         <el-button type="primary" @click="goBack">返回</el-button>
       </div>
@@ -57,6 +58,7 @@
   </div>
 </template>
 <script>
+import historyAdvice from './detailComponent/historyAdvice.component'
 import YCS from './component/vehicleDetail.component' //用车详情
 import CLS from './component/materialDetail.component' //材料详情
 import FWG from './component/manuscriptDetail.component' //材料详情
@@ -86,6 +88,7 @@ const signFlag = '<i class="signFlag">#</i>'
 
 export default {
   components: {
+    historyAdvice,
     YCS,
     CLS,
     FWG,
@@ -153,11 +156,11 @@ export default {
         params.id = params.docId;
         delete params.docId
       }
-
       this.$http.post(url, params)
         .then(res => {
           if (res.status == 0) {
             this.docDetialInfo = res.data;
+            console.log(res.data)
             if (route.query.code == 'LZS') {
               this.docDetialInfo.otherInfo = this.docDetialInfo.dimission;
             }
