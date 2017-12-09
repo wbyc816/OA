@@ -140,9 +140,7 @@ export default {
       }
     },
     submitEnd(params) {
-      if (this.$route.query.id) {
-        params.id = this.$route.query.id
-      }
+
       if (params) {
         var temp = {
           "taskDeptMajorName": this.taskUser.deptParentName,
@@ -160,6 +158,9 @@ export default {
           "docTitle": this.docTitle,
           "docNo": this.docNo,
           "isSubmit": 1,
+        }
+        if (this.$route.query.id) {
+          params.id = this.$route.query.id
         }
         Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency, this.middleParams)
         this.$store.commit('setIsSubmit', true);
@@ -294,7 +295,7 @@ export default {
             //公文标题
             this.$refs.subject.updateTitle(res.data.docTtile);
             //请示内容
-            if (this.$route.params.code != 'FWG') {   //发文稿纸无请示内容
+            if (this.$route.params.code != 'FWG') { //发文稿纸无请示内容
               this.$refs.description.$refs.editor.setContent(res.data.des);
             }
             //附件

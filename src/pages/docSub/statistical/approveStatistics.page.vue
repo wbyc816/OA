@@ -129,6 +129,7 @@ export default {
       if (params.isAdmin === '') {
         delete params.isAdmin
       }
+      params.userId=this.userInfo.empId;
       this.$http.post("/doc/approveDocStatistics", params, { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;

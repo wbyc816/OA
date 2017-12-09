@@ -50,7 +50,7 @@
           </el-collapse>
         </el-row>
       </div>
-      <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
+      <history-advice :taskDetail="advice"></history-advice>
       <div class="backButton" v-if="hasBack">
         <el-button type="primary" @click="goBack">返回</el-button>
       </div>
@@ -118,7 +118,8 @@ export default {
       docDetialInfo: { doc: {}, task: [], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [] },
       suggestHtml: '',
       activeNames: ['1'],
-      hasBack: false
+      hasBack: false,
+      advice:[]
     }
   },
   created() {
@@ -146,6 +147,7 @@ export default {
   },
   methods: {
     getDetail(route) {
+      this.getAdvice();
       var url = "/doc/getDocDetailById";
       var params = {
         docId: route.params.id
@@ -160,7 +162,6 @@ export default {
         .then(res => {
           if (res.status == 0) {
             this.docDetialInfo = res.data;
-            console.log(res.data)
             if (route.query.code == 'LZS') {
               this.docDetialInfo.otherInfo = this.docDetialInfo.dimission;
             }
@@ -210,6 +211,16 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
+    },
+    getAdvice(){
+      this.$http.post('/doc/getTaskDetail',{id:this.$route.params.id})
+      .then(res=>{
+        if(res.status==0){
+          this.advice=res.data;
+        }else{
+
+        }
+      })
     }
   }
 }

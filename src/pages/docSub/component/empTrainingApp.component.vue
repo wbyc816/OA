@@ -21,17 +21,17 @@
         </el-input>
       </el-form-item>
       <el-form-item label="培训总预算" prop="trainTotalCost" class="deptArea">
-        <money-input v-model="trainingForm.trainTotalCost" :prepend="false" >
+        <money-input v-model="trainingForm.trainTotalCost" type="int0" :prepend="false" >
           <template slot="append">元</template>
         </money-input>
       </el-form-item>
       <el-form-item label="培训差旅费用" prop="trainPerTravelCost" class="arrArea">
-        <money-input v-model="trainingForm.trainPerTravelCost" :prepend="false"  @change="changeTravelCost">
+        <money-input v-model="trainingForm.trainPerTravelCost" type="int0" :prepend="false"  @change="changeTravelCost">
           <template slot="append">元</template>
         </money-input>
       </el-form-item>
       <el-form-item label="培训费用" prop="trainPerTrainlCost" class="deptArea" >
-        <money-input v-model="trainingForm.trainPerTrainlCost" :prepend="false"  @change="changeTrainlCost">
+        <money-input v-model="trainingForm.trainPerTrainlCost" type="int0" :prepend="false"  @change="changeTrainlCost">
           <template slot="append">元</template>
         </money-input>
       </el-form-item>
