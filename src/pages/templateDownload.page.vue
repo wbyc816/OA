@@ -38,10 +38,13 @@
                     <span>{{ scope.row.createTime | time('date')}}</span>
                   </template>
             </el-table-column>
-            <el-table-column property="url" label="下载地址" width="500">
-              <template scope="scope">
-                <!-- <a :href="formatUrl(scope.row.url)" target="_blank">{{scope.row.url}}</a> -->
-                <span :href="formatUrl(scope.row.url)" target="_blank">{{scope.row.url}}</span>
+            
+             <el-table-column
+              
+              label="操作"
+              width="500">
+              <template slot-scope="scope">
+                <el-button @click="formatUrl(scope.row.url)"  type="text" size="small" class="downPdf">{{scope.row.url}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -118,9 +121,11 @@ export default {
     },
     formatUrl(data) {
       if(/^http/.test(data)){
-        return data
+         window.open(data,'_blank','width='+(window.screen.availWidth)+',height='+(window.screen.availHeight)+ ',top=0,left=0,status=no')
+      }else{
+       window.open('http://'+data,'_blank','width='+(window.screen.availWidth)+',height='+(window.screen.availHeight)+ ',top=0,left=0,status=no')
       }
-      return 'http://'+data
+       
     }
   },
   components: {
@@ -138,6 +143,9 @@ export default {
   }
   .searchButton{
     width: 100px;
+  }
+  .downPdf{
+    font-size:13px;color:black
   }
   .el-card.softcard {
     padding: 0 20px;
