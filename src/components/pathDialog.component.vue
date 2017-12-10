@@ -27,7 +27,7 @@
             <div class="selArea">
               <p class="header">选择角色</p>
               <ul>
-                <li v-for="role in roleList" @click="addNode(role,3)">{{role.dictName}}</li>
+                <li v-for="role in roleList" @click="addNode(role,3)" v-if="role.remarks==1">{{role.dictName}}</li>
               </ul>
             </div>
           </div>
@@ -174,7 +174,7 @@ export default {
       this.$emit('update:visible', false)
     },
     addNode(val, type) {
-      var node = { type: type };
+      var node = { type: type,remark:'' };
       if (type == 1) {
         node.typeId = val.deptId;
         node.typeIdName = val.deptName;

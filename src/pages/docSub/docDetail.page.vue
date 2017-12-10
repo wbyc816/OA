@@ -21,13 +21,13 @@
           </el-col>
           <template v-if="showOtherAdvice">
             <el-col :span="24">
-              <h1 class="title">拟稿部门意见</h1>
+              <h1 class="title">{{$route.query.code=='SWD'?'综合管理意见':'拟稿部门意见'}}</h1>
               <p class="textContent">
                 <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.taskTime}}</span>
               </p>
             </el-col>
             <el-col :span="24">
-              <h1 class="title">{{$route.query.code=='SWD'?'综合管理意见':'部门会签意见'}}</h1>
+              <h1 class="title">部门会签意见</h1>
               <p class="textContent">
                 <template v-for="adviceBox in otherAdvice.deptSign">
                   <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
@@ -107,7 +107,7 @@
       <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
       </quit-advice>
       <my-advice :docDetail="docDetialInfo.doc" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice">
-        <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
+        <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true;getFileSend();" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
     </el-card>
@@ -121,6 +121,20 @@
           <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
             <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''">上传发布正文<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
+        </el-form-item>
+        <el-form-item label="发布范围" class='reciverWrap' prop="fileSend" v-if="isRedFile&&archiveState==1">
+          <div class="reciverList">
+            <el-tag key="all" :closable="true" v-show="fileForm.fileSend.all.max" v-if="fileForm.fileSend.all" type="primary" @close="closeAll">
+              {{'所有人('+fileForm.fileSend.all.min+'-'+fileForm.fileSend.all.max+')'}}
+            </el-tag>
+            <el-tag :key="dep.id" :closable="true" type="primary" @close="closeDep(index)" v-for="(dep,index) in fileForm.fileSend.depList">
+              {{dep.name+'('+dep.min+'-'+dep.max+')'}}
+            </el-tag>
+            <el-tag :key="person.id" :closable="true" type="primary" @close="closePerson(index)" v-for="(person,index) in fileForm.fileSend.personList">
+              {{person.name}}
+            </el-tag>
+          </div>
+          <el-button class="addButton" @click="showArchive"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="归档状态" class="textarea" prop="state">
           <el-radio-group class="myRadio" v-model="archiveState">
@@ -152,11 +166,13 @@
       </el-form>
     </el-dialog>
     <person-dialog @updatePerson="updateArchivePerson" :data="archiveForm.persons" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog>
+    <major-dialog :params="fileForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
   </div>
 </template>
 <script>
 import PersonDialog from '../../components/personDialog.component'
 import QuitAdvice from './detailComponent/empQuitAdvice.component'
+import MajorDialog from '../../components/majorDialog.component'
 import historyAdvice from './detailComponent/historyAdvice.component'
 import signAdvice from './detailComponent/signAdvice.component'
 import myAdvice from './detailComponent/myAdvice.component'
@@ -190,6 +206,7 @@ export default {
   components: {
     PersonDialog,
     QuitAdvice,
+    MajorDialog,
     historyAdvice,
     signAdvice,
     myAdvice,
@@ -217,6 +234,13 @@ export default {
     LZS
   },
   data() {
+    var checkFileSend = (rule, value, callback) => {
+      if (value.all.max || value.personList.length != 0 || value.depList != 0) {
+        callback();
+      } else {
+        callback(new Error('请选择发布范围'))
+      }
+    };
     return {
       DialogArchiveVisible: false,
       DialogSubmitVisible: false,
@@ -229,10 +253,16 @@ export default {
       docDetialInfo: { doc: {}, task: [{ state: '' }], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [], suggests: '' },
       archiveFormRule: {},
       fileRules: {
-        taskFileId: [{ required: true, message: '请上传正文！' }]
+        taskFileId: [{ required: true, message: '请上传正文！' }],
+        fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
       },
       fileForm: {
-        taskFileId: ''
+        taskFileId: '',
+        fileSend: {
+          personList: [],
+          all: '',
+          depList: []
+        },
       },
       activeNames: [],
       topDistData: [],
@@ -243,7 +273,9 @@ export default {
       isRedFile: false,
       activeContent: ['1'],
       showOtherAdvice: false,
-      otherAdvice: ''
+      otherAdvice: '',
+      fileSendVisible: false,
+      sendTypes: []
     }
   },
   created() {
@@ -257,6 +289,7 @@ export default {
 
   },
   computed: {
+
     showMyadvice() {
       if (this.docDetialInfo.doc != {}) {
         if (this.currentView == 'LZS') {
@@ -276,6 +309,41 @@ export default {
     ])
   },
   methods: {
+    updateFileSend(params) {
+      this.fileForm.fileSend = params;
+    },
+    showArchive() {
+      this.fileSendVisible = true;
+    },
+    getFileSend() {
+      this.$http.post("/doc/getFileSend", { id: this.$route.params.id })
+        .then(res => {
+          if (res.status == 0) {
+            if (res.data.sendTypeAll.max) {
+              this.fileForm.fileSend.all = { max: res.data.sendTypeAll.max, min: res.data.sendTypeAll.min }
+            } else {
+              this.fileForm.fileSend.depList=[];
+              this.fileForm.fileSend.personList=[];
+              res.data.sendTypeDept.forEach(d => {
+                this.fileForm.fileSend.depList.push({
+                  id: d.id,
+                  name: d.name,
+                  min: d.min,
+                  max: d.max
+                })
+              })
+              res.data.sendTypeEmp.ids.forEach((d, index) => {
+                this.fileForm.fileSend.personList.push({
+                  empId: d,
+                  name: res.data.sendTypeEmp.names[index],
+                })
+              })
+            }
+          } else {
+
+          }
+        })
+    },
     getOtherAdvice(route) {
       this.$http.post("/doc/getDetailByType", { id: route.params.id, empId: this.userInfo.empId })
         .then(res => {
@@ -311,6 +379,7 @@ export default {
             }
             if (this.docDetialInfo.doc.isConfidential == 1 && route.query.code == 'FWG') {
               this.isRedFile = true;
+              this.getSendType();
             }
             this.handleSuggest();
             if (route.query.code != 'FWG') {
@@ -321,31 +390,41 @@ export default {
 
         })
     },
+    getSendType() {
+      this.$http.post('/api/getDict', { dictCode: 'FIL01' })
+        .then(res => {
+          if (res.status == '0') {
+            this.sendTypes = res.data;
+          } else {
+            console.log('获取主送类型失败')
+          }
+        })
+    },
     handleSuggest() {
       if (Array.isArray(this.docDetialInfo.suggests)) {
         var html = '起草' + arrowHtml + ' ';
         this.docDetialInfo.suggests.forEach((s, i, arr) => {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
-              html += signFlag + ' ' + s.typeIdName + ' ';
+              html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
             } else if (arr[i + 1].nodeName != 'sign') {
-              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName + s.remark + ' ' + signFlag + '' + arrowHtml;
             } else {
-              html += s.typeIdName + ' ';
+              html += s.typeIdName + s.remark + ' ';
             }
           } else if (s.nodeName == 'trans') {
             if (arr[i - 1].nodeName != 'trans') {
-              html += signFlag + ' ' + s.typeIdName + ' ';
+              html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
             } else if (arr[i + 1].nodeName != 'trans') {
-              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName + s.remark + ' ' + signFlag + '' + arrowHtml;
             } else {
-              html += s.typeIdName + ' ';
+              html += s.typeIdName + s.remark + ' ';
             }
           } else {
             if (i == arr.length - 1) {
-              html += s.typeIdName
+              html += s.typeIdName + s.remark
             } else {
-              html += s.typeIdName + arrowHtml
+              html += s.typeIdName + s.remark + arrowHtml
             }
           }
         })
@@ -360,9 +439,19 @@ export default {
       this.dialogArchivePersonVisible = false;
       this.archiveForm.persons = payLoad;
     },
+    closeAll() {
+      this.fileForm.fileSend.all = '';
+    },
+    closePerson(index) {
+      this.fileForm.fileSend.personList.splice(index, 1);
+    },
+    closeDep(index) {
+      this.fileForm.fileSend.depList.splice(index, 1);
+    },
     docArchive(isEnd) { //归档
       this.$refs.fileForm.validate((valid) => {
         if (valid) {
+          var that = this;
           var params = {
             docId: this.docDetialInfo.doc.id,
             "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
@@ -374,7 +463,29 @@ export default {
             "state": this.archiveState,
             "taskFileId": this.fileForm.taskFileId
           }
-          // console.log(params)
+          if (this.isRedFile && this.archiveState == 1) {
+            params.fileSend = {
+              "sendTypeAll": {
+                "sendType": this.sendTypes.find(type => type.dictEname == 'all').dictCode, //发布范围i人类型
+                "max": this.fileForm.fileSend.all.max, //最大
+                "min": this.fileForm.fileSend.all.min //最小
+              },
+              "sendTypeDept": [],
+              "sendTypeEmp": {
+                "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
+                "ids": this.fileForm.fileSend.personList.map(person => person.empId)
+              }
+            }
+            params.fileSend.sendTypeDept = this.fileForm.fileSend.depList.map(function(dep) {
+              return {
+                sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
+                id: dep.id,
+                max: dep.max,
+                min: dep.min
+              }
+            });
+          }
+          console.log(params)
           this.$http.post('/doc/docArchive', params, { body: true })
             .then(res => {
               if (res.status == '0') {
@@ -638,9 +749,10 @@ $sub:#1465C0;
     padding-bottom: 30px;
     border-bottom: 1px dashed #D5DADF;
   }
-  .adviceSpan{
-    display:inline-block;
-    padding-right:10px;
+  .adviceSpan {
+    display: inline-block;
+    padding-right: 10px;
+    word-break:break-word;
   }
   .baseInfoBox {
     padding-bottom: 10px;
@@ -765,6 +877,20 @@ $sub:#1465C0;
           height: 45px;
           line-height: 45px;
           padding: 0;
+        }
+        .reciverWrap {
+          .el-form-item__content {
+            display: flex;
+          }
+          .reciverList {
+            flex: 1;
+            .el-tag {
+              margin-right: 5px;
+            }
+          }
+          button {
+            width: 48px;
+          }
         }
       }
     }

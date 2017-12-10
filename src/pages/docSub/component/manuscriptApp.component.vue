@@ -117,6 +117,20 @@ export default {
         callback(new Error('请选择抄送人'))
       }
     };
+    var checkPrintNum = (rule, value, callback) => {
+      if (value&&parseInt(value)<=50) {
+        callback();
+      } else {
+        callback(new Error('打印份数不能超过50'))
+      }
+    };
+     var checkStoreNum = (rule, value, callback) => {
+      if (value&&parseInt(value)<=50) {
+        callback();
+      } else {
+        callback(new Error('存档份数不能超过50'))
+      }
+    };
     return {
       signDialogVisible: false,
       fileSendVisible: false,
@@ -158,8 +172,8 @@ export default {
         catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
         signName: [{ required: true, message: '请选择签发人', trigger: 'blur' }],
         issueDate: [{ type: 'date', required: true, message: '请选择发文日期', trigger: 'blur' }],
-        printNum: [{ required: true, message: '请输入打印份数' }],
-        storeNum: [{ required: true, message: '请输入存档份数' }],
+        printNum: [{ required: true, message: '请输入打印份数' },{validator: checkPrintNum}],
+        storeNum: [{ required: true, message: '请输入存档份数' },{validator: checkStoreNum}],
       },
       pickerOptions0: {
         disabledDate(time) {

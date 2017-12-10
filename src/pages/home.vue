@@ -346,6 +346,7 @@ export default {
     this.initChart();
     if (!this.homeHasShow) {
       this.$store.commit('setHomeHasShow',true);
+      this.setCookie('homeAd','1')
       setTimeout(() => {
         this.homeVisible = true;
       }, 500)

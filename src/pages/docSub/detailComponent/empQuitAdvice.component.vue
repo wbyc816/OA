@@ -103,10 +103,9 @@ export default {
       activeName: ''
     }
   },
-  created() {
-  },
-  watch:{
-    info: function (newVal) {
+  created() {},
+  watch: {
+    info: function(newVal) {
       if (this.info.signs) {
         this.info.signs.forEach(s => {
           if (s.isDeptPrincipalEnd == 1) {
@@ -123,15 +122,14 @@ export default {
         })
       }
       if (newVal) {
-        if (this.info.singInfoVo&&this.info.singInfoVo.length!=0) {
+        if (this.info.singInfoVo && this.info.singInfoVo.length != 0) {
           this.activeName = this.info.singInfoVo[0].deptName;
           console.log(this.activeName)
         }
       }
     }
   },
-  mounted() {
-  },
+  mounted() {},
   computed: {
     ...mapGetters([
       'userInfo'
@@ -147,9 +145,23 @@ export default {
     },
     submit() {
       if (this.isLeader) { //领导
-        if (this.leaderAdvice.signContent !== '') {
-          this.doTask([this.leaderAdvice]);
+        var params=[];
+        var success=true;
+        if (this.info.doc.isOwnDeptSign == 1) {
+          if (this.submitInfo.every(s => s.signContent != '') && this.submitInfo.filter(s => s.isTaskNameOther != 1).every(s => s.takeOverId != '')) {
+            params=this.submitInfo;
+          }else{
+            success=false;
+          }
+
+        }
+        if (this.leaderAdvice.signContent !== ''&&success) {
+          params.push(this.leaderAdvice);
+          this.doTask(params);
         } else {
+          success=false;
+        }
+        if(!success){
           this.$message.warning('请填写信息！');
         }
       } else if (this.info.doc.isOwnDeptSign == 1) { //本部门
@@ -179,7 +191,7 @@ export default {
         "taskDeptId": this.userInfo.deptVo.deptId,
         "taskUserName": this.userInfo.name,
         "taskUserId": this.userInfo.empId,
-        "state":1
+        "state": 1
       }
       this.$http.post('/doc/docArchive', params, { body: true })
         .then(res => {
@@ -195,6 +207,7 @@ export default {
         })
     },
     doTask(params) {
+      console.log(params)
       this.submitLoading = true;
       this.$http.post('/doc/docDimissionTask', { dimissionSign: params, submitType: 2 }, { body: true })
         .then(res => {

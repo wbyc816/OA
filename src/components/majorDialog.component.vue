@@ -266,7 +266,7 @@ export default {
 
     },
     rowKey(row) {
-      return row.empId+row.deptId+row.jobtitle
+      return row.empId
     },
     submitPerson() {
       this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList })

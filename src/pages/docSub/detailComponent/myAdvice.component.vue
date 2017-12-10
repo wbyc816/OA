@@ -66,7 +66,7 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :admin="docDetail.isAdmin==1&&!hasSecretary()?'1':'0'" :visible.sync="dialogTableVisible" dialogType="radio" :hasSecretary="hasSecretary()"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :admin="docDetail.isAdmin==1&&!hasSecretary()?'1':'0'" :visible.sync="dialogTableVisible" dialogType="radio" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()"></person-dialog>
     <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :data="signPersons"></person-dialog>
     <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="$route.query.code=='LZS'?'0':''"></person-dialog>
     <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" isSaveInit></dep-dialog>
@@ -339,9 +339,9 @@ export default {
       this.ruleForm.sign = [];
       this.signDeps = [];
       if (val == 1) {
-        if (this.$route.query.code == 'FWG') {
+        if (this.$route.query.code == 'FWG'&&this.userInfo.deptParentId!=initFWGDeps[0].id) {
           this.updateSignDep(initFWGDeps);
-        } else if (this.$route.query.code == 'HTS') {
+        } else if (this.$route.query.code == 'HTS'&&this.userInfo.deptParentId!=initHTSDeps[0].id) {
           this.updateSignDep(initHTSDeps);
         }
       }

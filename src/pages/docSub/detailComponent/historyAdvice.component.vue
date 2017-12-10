@@ -95,6 +95,7 @@ $main:#0460AE;
       span {
         display: table-cell;
         vertical-align: middle;
+            word-break: break-word;
       }
       $widths: (1: 4%, 2: 12%, 3: 72%, 4: 12%);
       @each $num,

@@ -19,6 +19,30 @@
             <h1 class="title">标题</h1>
             <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
+          <template v-if="showOtherAdvice">
+            <el-col :span="24">
+              <h1 class="title">{{$route.query.code=='SWD'?'综合管理意见':'拟稿部门意见'}}</h1>
+              <p class="textContent">
+                <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.taskTime}}</span>
+              </p>
+            </el-col>
+            <el-col :span="24">
+              <h1 class="title">部门会签意见</h1>
+              <p class="textContent">
+                <template v-for="adviceBox in otherAdvice.deptSign">
+                  <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+                </template>
+              </p>
+            </el-col>
+            <el-col :span="24">
+              <h1 class="title">公司领导意见</h1>
+              <p class="textContent">
+                <template v-for="adviceBox in otherAdvice.empSign">
+                  <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+                </template>
+              </p>
+            </el-col>
+          </template>
           <el-col :span="24" style="min-height:90px" v-if="$route.query.code!='FWG'">
             <h1 class="title">请示内容</h1>
             <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
@@ -85,7 +109,7 @@ import LZS from './component/empQuitDetail.component.vue' //离职详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
-
+const otherAdviceDoc = ["FWG", "SWD", "CPD"]
 export default {
   components: {
     historyAdvice,
@@ -119,7 +143,9 @@ export default {
       suggestHtml: '',
       activeNames: ['1'],
       hasBack: false,
-      advice:[]
+      advice:[],
+      showOtherAdvice:false,
+      otherAdvice:''
     }
   },
   created() {
@@ -146,8 +172,23 @@ export default {
     ])
   },
   methods: {
+    getOtherAdvice(route) {
+      this.$http.post("/doc/getDetailByType", { id: route.params.id, empId: this.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            this.otherAdvice = res.data
+            console.log(this.otherAdvice)
+          } else {
+
+          }
+        })
+    },
     getDetail(route) {
       this.getAdvice();
+      if (otherAdviceDoc.find(d => d == this.$route.query.code) != undefined) {
+        this.showOtherAdvice = true;
+        this.getOtherAdvice(route);
+      }
       var url = "/doc/getDocDetailById";
       var params = {
         docId: route.params.id
@@ -179,33 +220,33 @@ export default {
     },
     handleSuggest() {
       if (Array.isArray(this.docDetialInfo.suggests)) {
-        var html = '起草'+ arrowHtml+' ';
+        var html = '起草' + arrowHtml + ' ';
         this.docDetialInfo.suggests.forEach((s, i, arr) => {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
-              html += signFlag + ' ' + s.typeIdName + ' ';
+              html += signFlag + ' ' + s.typeIdName+s.remark + ' ';
             } else if (arr[i + 1].nodeName != 'sign') {
-              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName+s.remark + ' ' + signFlag + '' + arrowHtml;
             } else {
-              html += s.typeIdName + ' ';
+              html += s.typeIdName+s.remark + ' ';
             }
           } else if (s.nodeName == 'trans') {
             if (arr[i - 1].nodeName != 'trans') {
-              html += signFlag + ' ' + s.typeIdName + ' ';
+              html += signFlag + ' ' + s.typeIdName+s.remark + ' ';
             } else if (arr[i + 1].nodeName != 'trans') {
-              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName+s.remark + ' ' + signFlag + '' + arrowHtml;
             } else {
-              html += s.typeIdName + ' ';
+              html += s.typeIdName+s.remark + ' ';
             }
           } else {
             if (i == arr.length - 1) {
-              html += s.typeIdName
+              html += s.typeIdName+s.remark
             } else {
-              html += s.typeIdName + arrowHtml
+              html += s.typeIdName+s.remark + arrowHtml
             }
           }
         })
-        html+='归档'
+        html += '归档'
         this.suggestHtml = html;
       }
     },
@@ -297,6 +338,11 @@ $sub:#1465C0;
     .addButton {
       float: right;
     }
+  }
+  .adviceSpan {
+    display: inline-block;
+    padding-right: 10px;
+    word-break:break-word;
   }
   .suggestHtml {
     i {

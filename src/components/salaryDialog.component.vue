@@ -5,7 +5,7 @@
         <el-form-item label="个人密码" prop="password" :rules="[
             { required: true, message: '个人密码不能为空'}
           ]">
-          <el-input type="password" v-model.number="passwordValidateForm.password" auto-complete="off" :maxlength="16"></el-input>
+          <el-input type="password" v-model="passwordValidateForm.password" auto-complete="off" :maxlength="16"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('passwordValidateForm')">提交</el-button>
