@@ -13,11 +13,11 @@
               <br/>{{item.oudutyDate | time('week')}}</p>
           </div>
           <div class="infoBox">
-            <p v-for="(child,index) in item.onduty">
+            <!-- <p v-for="(child,index) in item.onduty">
               <template v-if="index==0&&child.isLeader==1">
                 <span>01</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
               </template>
-            </p>
+            </p> -->
             <p v-for="(child,index) in item.onduty">
               <template v-if="child.isLeader==0">
                 <span>AOC</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
@@ -112,8 +112,8 @@ $sub:#1465C0;
       float: left;
       width: 65%;
       p {
-        line-height: 40px;
-        height: 40px;
+        line-height:60px;
+        height: 60px;
         padding-left: 10px;
         span:first-child {
           width: 40px;
@@ -123,7 +123,7 @@ $sub:#1465C0;
           padding-right: 10px;
         }
         &:first-child {
-          border-bottom: 1px solid #F2F2F2;
+          // border-bottom: 1px solid #F2F2F2;
         }
       }
     }
