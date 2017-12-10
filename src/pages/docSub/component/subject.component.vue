@@ -35,12 +35,13 @@
         </el-radio-group>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="$route.params.code=='LZS'?'0':''"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="personAdmin"></person-dialog>
   </div>
 </template>
 <script>
 import PersonDialog from '../../../components/personDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
+const otherAdviceDoc = ["FWG", "SWD", "CPD","HTS"]
 export default {
   components: {
     PersonDialog
@@ -89,6 +90,16 @@ export default {
     }
   },
   computed: {
+    personAdmin:function(){
+      var temp='';
+      if(otherAdviceDoc.find(d=>d==this.$route.params.code)){
+        temp='0'
+      }else if(this.$route.params.code=='LZS'){
+        temp='0'
+      }
+      console.log(temp)
+      return temp
+    },
     ...mapGetters([
       'userInfo',
       'confidentiality',

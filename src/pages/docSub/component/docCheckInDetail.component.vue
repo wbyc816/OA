@@ -8,18 +8,18 @@
       <h1 class="title">收文种类</h1>
       <p v-if="info" class="textContent">{{info[0].classify2}}</p>
     </el-col>
-    <el-col :span="12" class="rightBorder">
+    <el-col :span="24">
       <h1 class="title">发文目录</h1>
       <p v-if="info" class="textContent">{{info[0].catalogueId}}</p>
     </el-col>
-    <el-col :span="12">
+    <!-- <el-col :span="12">
       <h1 class="title">来文文号</h1>
       <p v-if="info" class="textContent">{{info[0].wordNo}}</p>
-    </el-col>
-    <el-col :span="24">
+    </el-col> -->
+    <!-- <el-col :span="24">
       <h1 class="title">来文单位</h1>
       <p v-if="info" class="textContent">{{info[0].receiveCompany}}</p>
-    </el-col>
+    </el-col> -->
     <el-col :span="24">
       <h1 class="title">正文</h1>
       <p v-if="info" class="textContent attch"><a :href="info[0].url" target="_blank">{{info[0].fileName}}</a></p>

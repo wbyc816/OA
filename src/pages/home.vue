@@ -162,7 +162,21 @@
       </el-col>
     </el-row>
     <el-dialog :visible.sync="homeVisible" size="large" custom-class="homeDialog">
-      <img src="../assets/images/homeImg.jpg" alt="">
+      <!-- <img src="../assets/images/homeImg.jpg" alt=""> -->
+      <el-carousel height="432px" arrow="hover">
+        <el-carousel-item>
+          <img src="../assets/images/homeImg1.jpg">
+        </el-carousel-item>
+        <el-carousel-item>
+          <img src="../assets/images/homeImg2.jpg">
+        </el-carousel-item>
+        <el-carousel-item>
+          <img src="../assets/images/homeImg3.jpg">
+        </el-carousel-item>
+        <el-carousel-item>
+          <img src="../assets/images/homeImg4.jpg">
+        </el-carousel-item>
+      </el-carousel>
     </el-dialog>
   </div>
 </template>
@@ -345,14 +359,14 @@ export default {
   mounted() {
     this.initChart();
     if (!this.homeHasShow) {
-      this.$store.commit('setHomeHasShow',true);
-      this.setCookie('homeAd','1')
+      this.$store.commit('setHomeHasShow', true);
+      this.setCookie('homeAd', '1')
       setTimeout(() => {
         this.homeVisible = true;
       }, 500)
-      setTimeout(() => {
-        this.homeVisible = false;
-      }, 5000)
+      // setTimeout(() => {
+      //   this.homeVisible = false;
+      // }, 5000)
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -570,12 +584,16 @@ $sub:#1465C0;
       width: 100%;
       top: 0;
       left: 0;
+      z-index: 3;
       .el-dialog__headerbtn .el-dialog__close {
         color: #fff;
       }
     }
     .el-dialog__body {
       padding: 0;
+      .el-carousel {
+        margin-bottom: 0;
+      }
     }
   }
   .messageCenter {
@@ -614,30 +632,6 @@ $sub:#1465C0;
           color: $main;
           font-size: 20px;
           cursor: move;
-        }
-      }
-    }
-  }
-  .el-carousel {
-    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16);
-    margin-bottom: 20px;
-    .el-carousel__indicators {
-      right: 10px;
-      top: 23px;
-      left: inherit;
-      transform: inherit;
-      .el-carousel__indicator {
-        padding: 0 2px;
-        button {
-          width: 13px;
-          height: 13px;
-          border-radius: 100%;
-          opacity: 1;
-        }
-        &.is-active {
-          button {
-            background: $main;
-          }
         }
       }
     }
@@ -916,27 +910,7 @@ $sub:#1465C0;
         bottom: 0;
         left: 30px;
       }
-    } // @media (max-width: 768px) {
-    //   .el-col {
-    //     min-height: 0;
-    //     .bottom {
-    //       position: relative;
-    //     }
-    //   }
-    //   .daily {
-    //     padding: 10px 0 0;
-    //     .bottom div {
-    //       margin-left: 0;
-    //     }
-    //   }
-    //   .crew {
-    //     min-height: 200px;
-    //     padding: 20px 0 0;
-    //     &>div:last-child {
-    //       right: 30px;
-    //     }
-    //   }
-    // }
+    }
   }
   .shareBox {
     .el-card__body {
@@ -1047,16 +1021,29 @@ $sub:#1465C0;
       padding-bottom: 10px;
     }
     .el-carousel {
+      margin-bottom: 20px;
       box-shadow: none;
       position: static!important;
       .el-carousel__indicators {
         top: 23px;
         right: 19px;
         position: absolute;
+        left: inherit;
+        transform: inherit;
         z-index: 1;
-        .el-carousel__indicator button {
-          width: 8px;
-          height: 8px;
+        .el-carousel__indicator {
+          padding: 0 2px;
+          button {
+            width: 8px;
+            height: 8px;
+            border-radius: 100%;
+            opacity: 1;
+          }
+          &.is-active {
+            button {
+              background: $main;
+            }
+          }
         }
       }
     }

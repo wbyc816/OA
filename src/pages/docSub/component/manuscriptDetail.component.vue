@@ -1,13 +1,13 @@
 <template>
   <div class="manuscriptDetail">
-    <el-col :span="12" class="rightBorder">
+    <el-col :span="24">
       <h1 class="title">发文类型</h1>
       <p v-if="info" class="textContent">{{info[0].classify1}}</p>
     </el-col>
-    <el-col :span="12">
+    <!-- <el-col :span="12">
       <h1 class="title">发文日期</h1>
       <p v-if="info" class="textContent">{{info[0].issueDate | time('date')}}</p>
-    </el-col>
+    </el-col> -->
     <el-col :span="24">
       <h1 class="title">发文目录</h1>
       <p v-if="info" class="textContent">{{info[0].catalogueId}}</p>
@@ -36,7 +36,7 @@
         </el-tag>
       </p>
     </el-col>
-    <el-col :span="12" class="rightBorder">
+   <!--  <el-col :span="12" class="rightBorder">
       <h1 class="title">签发人</h1>
       <p v-if="info" class="textContent">{{info[0].signId}}</p>
     </el-col>
@@ -51,7 +51,7 @@
     <el-col :span="12" class="rightBorder">
       <h1 class="title">存档份数</h1>
       <p v-if="info" class="textContent">{{info[0].storeNum}}</p>
-    </el-col>
+    </el-col> -->
     <el-col :span="24">
       <h1 class="title">正文</h1>
       <p v-if="info" class="textContent">
@@ -59,23 +59,23 @@
         <a :href="info[0].url" target="_blank" style="color:#0460AE" v-else>{{info[0].fielName}}</a>
       </p>
     </el-col>
-    <div class="pdfBox clearBoth">
+    <!-- <div class="pdfBox clearBoth">
       <div class="pdfScrollBox" ref="pdfScroll" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}" v-if="first">
         <pdf :src="info[0].pdfUrl" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
         <pdf :src="info[0].pdfUrl" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
       </div>
       <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
       </el-pagination>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import pdf from 'vue-pdf'
+
 const depList = [{ name: '综合部', max: 10, min: 90 }, { name: '后勤部', max: 10, min: 70 }, { name: '法律部', max: 10, min: 90 }]
 const personList = [{ name: '王城', max: 10, min: 90 }, { name: '李健', max: 10, min: 70 }, { name: '孙浩', max: 10, min: 90 }]
 export default {
-  components: { pdf },
+  components: {  },
   props: {
     info: {
       type: Array

@@ -97,6 +97,7 @@ export default {
       if (newVal) {
         this.initData=true;
         if (this.admin !== '') {
+          console.log(this.admin)
           if (this.admin == '0') {
             this.$store.dispatch('getDepById',this.hasSecretary);
           } else {

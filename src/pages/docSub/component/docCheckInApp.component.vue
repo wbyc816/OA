@@ -17,6 +17,9 @@
         <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="checkInForm.catalogueName" style="width:100%" popper-class="myCascader">
         </el-cascader>
       </el-form-item>
+      <el-form-item label="收文日期" prop="receiveTime">
+        <el-date-picker type="date" v-model="checkInForm.receiveTime" style="width: 100%;" :editable="false" :clearable="false"></el-date-picker>
+      </el-form-item>
       <el-form-item label="来文文号" prop="wordNo">
         <el-input v-model="checkInForm.wordNo" :maxlength="25">
         </el-input>
@@ -45,13 +48,15 @@ export default {
         wordNo: '',
         catalogueName: [],
         wordFileId: '',
-        receiveCompany:''
+        receiveCompany:'',
+        receiveTime:''
       },
       types: [],
       sendTypes: [],
       rules: {
         classify1: [{ required: true, message: '请选择收文类型', trigger: 'blur' }],
         classify2: [{ required: true, message: '请选择莱文种类', trigger: 'blur' }],
+        receiveTime: [{type:'date', required: true, message: '请选择收文日期', trigger: 'blur' }],
         wordFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
         wordNo: [{ required: true, message: '请输入来文文号', trigger: 'blur' }],
         receiveCompany: [{ required: true, message: '请输入来文单位', trigger: 'blur' }],
@@ -118,6 +123,7 @@ export default {
           classify1: this.checkInForm.classify1,
           classify2: this.checkInForm.classify2,
           wordNo: this.checkInForm.wordNo,
+          receiveTime:+this.checkInForm.receiveTime,
           receiveCompany: this.checkInForm.receiveCompany,
           catalogueId: this.checkInForm.catalogueName[this.checkInForm.catalogueName.length - 1],
         },

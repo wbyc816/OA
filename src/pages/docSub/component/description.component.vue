@@ -106,7 +106,7 @@ export default {
       upCount: 0,
       isSaveForm: false,
       disableEditSuggest: false,
-      isfirst: true
+      isfirst: true,
     }
   },
   computed: {

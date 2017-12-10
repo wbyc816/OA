@@ -19,30 +19,7 @@
             <h1 class="title">标题</h1>
             <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
-          <template v-if="showOtherAdvice">
-            <el-col :span="24">
-              <h1 class="title">{{$route.query.code=='SWD'?'综合管理意见':'拟稿部门意见'}}</h1>
-              <p class="textContent">
-                <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.taskTime}}</span>
-              </p>
-            </el-col>
-            <el-col :span="24">
-              <h1 class="title">部门会签意见</h1>
-              <p class="textContent">
-                <template v-for="adviceBox in otherAdvice.deptSign">
-                  <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
-                </template>
-              </p>
-            </el-col>
-            <el-col :span="24">
-              <h1 class="title">公司领导意见</h1>
-              <p class="textContent">
-                <template v-for="adviceBox in otherAdvice.empSign">
-                  <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
-                </template>
-              </p>
-            </el-col>
-          </template>
+          <component v-bind:is="computeView" :info="docDetialInfo.otherInfo" :docDetialInfo="docDetialInfo" v-if="computeView"></component>
           <el-col :span="24" style="min-height:90px" v-if="$route.query.code!='FWG'">
             <h1 class="title">请示内容</h1>
             <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
@@ -57,7 +34,7 @@
                   <h1 class="title">建议路径</h1>
                   <p class="textContent suggestHtml" v-html="suggestHtml"></p>
                 </el-col>
-                <el-col :span="24">
+                <el-col :span="24" v-if="$route.query.code!='FWG'">
                   <h1 class="title">附件</h1>
                   <p class="attch textContent">
                     <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
@@ -176,6 +153,10 @@ import MajorDialog from '../../components/majorDialog.component'
 import historyAdvice from './detailComponent/historyAdvice.component'
 import signAdvice from './detailComponent/signAdvice.component'
 import myAdvice from './detailComponent/myAdvice.component'
+import FWGD from './detailComponent/FWGDetail.component'
+import SWDD from './detailComponent/SWDDetail.component'
+import CPDD from './detailComponent/CPDDetail.component'
+import HTSD from './detailComponent/HTSDetail.component'
 import YCS from './component/vehicleDetail.component' //用车详情
 import CLS from './component/materialDetail.component' //材料详情
 import FWG from './component/manuscriptDetail.component' //发文详情
@@ -201,7 +182,7 @@ import LZS from './component/empQuitDetail.component.vue' //离职详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
-const otherAdviceDoc = ["FWG", "SWD", "CPD"]
+const otherAdviceDoc = ["FWG", "SWD", "CPD","HTS"]
 export default {
   components: {
     PersonDialog,
@@ -210,6 +191,10 @@ export default {
     historyAdvice,
     signAdvice,
     myAdvice,
+    FWGD,
+    SWDD,
+    CPDD,
+    HTSD,
     YCS,
     CLS,
     FWG,
@@ -231,7 +216,8 @@ export default {
     CLB,
     BKY,
     YGY,
-    LZS
+    LZS,
+    FWGD
   },
   data() {
     var checkFileSend = (rule, value, callback) => {
@@ -273,7 +259,7 @@ export default {
       isRedFile: false,
       activeContent: ['1'],
       showOtherAdvice: false,
-      otherAdvice: '',
+      otherAdviceDoc,
       fileSendVisible: false,
       sendTypes: []
     }
@@ -289,7 +275,14 @@ export default {
 
   },
   computed: {
-
+    computeView(){
+      var view='';
+      var temp=otherAdviceDoc.find(d=>d==this.$route.query.code);
+      if(temp){
+        view=temp+'D'
+      }
+      return view
+    },
     showMyadvice() {
       if (this.docDetialInfo.doc != {}) {
         if (this.currentView == 'LZS') {
@@ -344,22 +337,9 @@ export default {
           }
         })
     },
-    getOtherAdvice(route) {
-      this.$http.post("/doc/getDetailByType", { id: route.params.id, empId: this.userInfo.empId })
-        .then(res => {
-          if (res.status == 0) {
-            this.otherAdvice = res.data
-            console.log(this.otherAdvice)
-          } else {
-
-          }
-        })
-    },
+    
     getDetail(route) {
-      if (otherAdviceDoc.find(d => d == this.$route.query.code) != undefined) {
-        this.showOtherAdvice = true;
-        this.getOtherAdvice(route);
-      }
+      
       var url = "/doc/getDocDetailInfo";
       if (route.query.code == 'LZS') {
         url = '/doc/getDocDimissionInfo'
@@ -382,7 +362,7 @@ export default {
               this.getSendType();
             }
             this.handleSuggest();
-            if (route.query.code != 'FWG') {
+            if (route.query.code != 'FWG'||route.query.code != 'SWD') {
               this.activeContent = [];
             }
           }
