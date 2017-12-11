@@ -23,14 +23,16 @@
     <el-col :span="24">
       <h1 class="title">综合管理部拟办意见</h1>
       <p class="textContent">
-        <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.taskTime}}</span>
+        <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.startTime}}</span>
       </p>
     </el-col>
     <el-col :span="24">
       <h1 class="title">承办部门意见</h1>
       <p class="textContent">
         <template v-for="adviceBox in otherAdvice.taskDeptSign">
-          <span v-for="advice in adviceBox.signInfo" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+          <template v-for="adviceChild in adviceBox.signInfo">
+            <span v-for="advice in adviceChild.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+          </template>
         </template>
       </p>
     </el-col>

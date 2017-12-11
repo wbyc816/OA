@@ -40,6 +40,7 @@ export default {
   },
   watch: {
     depts: function(newValue) {
+      console.log(newValue)
       if (newValue != '' || newValue != undefined || newValue != null) {
 
         this.organLoading = false;

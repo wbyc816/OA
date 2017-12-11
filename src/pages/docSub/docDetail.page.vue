@@ -328,6 +328,7 @@ export default {
               res.data.sendTypeEmp.ids.forEach((d, index) => {
                 this.fileForm.fileSend.personList.push({
                   empId: d,
+                  postId:res.data.sendTypeEmp.empPostId[index],
                   name: res.data.sendTypeEmp.names[index],
                 })
               })
@@ -453,7 +454,8 @@ export default {
               "sendTypeDept": [],
               "sendTypeEmp": {
                 "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
-                "ids": this.fileForm.fileSend.personList.map(person => person.empId)
+                "ids": this.fileForm.fileSend.personList.map(person => person.empId),
+                "empPostId": this.fileForm.fileSend.personList.map(person => person.postId),
               }
             }
             params.fileSend.sendTypeDept = this.fileForm.fileSend.depList.map(function(dep) {

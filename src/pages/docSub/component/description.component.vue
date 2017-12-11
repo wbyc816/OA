@@ -381,7 +381,7 @@ export default {
         } else {
           nodeName = 'task';
         }
-        if (item.nodeName == 'sign') {
+        if (item.nodeName == 'sign'||item.type == 4) {
           nodeName = 'sign';
           if (item.type == 4) {
             nodeName = 'trans';
@@ -427,11 +427,11 @@ export default {
       var temp = [];
       var start;
       arr.forEach((s, index) => {
-        if (s.type == 4 || s.type == 5) {
+        if (s.type == 4 || s.type == 5) {   //人员或部门会签
           s.nodeName = 'sign';
           s.children = [];
           temp.push(s);
-        } else if (s.type == 7) {
+        } else if (s.type == 7) { 
           if (start) {
             start = 0;
           } else {
@@ -441,7 +441,7 @@ export default {
             temp.push(s);
           }
         } else {
-          if (start) {
+          if (start) {  
             temp[start].children.push(s);
           } else {
             temp.push(s);

@@ -156,9 +156,7 @@ const actions = {
           console.log(hasSecretary)
           if(hasSecretary){
             res.data.deptList.push(state.secretaryInfo)
-            console.log(res.data.deptList)
           }
-
           commit(types.GET_DEPT_LIST, res, { root: true })
         }
       }, res => {

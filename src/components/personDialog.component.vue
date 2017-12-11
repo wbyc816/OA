@@ -4,7 +4,7 @@
     <el-dialog size="large" class="personDialog" :visible.sync="personVisible" @close="close" @open="open">
       <el-row>
         <el-col :span='6'>
-          <organ-list @reset="reset1"></organ-list>
+          <organ-list @reset="reset1" ref="organList"></organ-list>
         </el-col>
         <el-col :span='18'>
           <div class="topSearch clearfix">
@@ -47,6 +47,28 @@
 <script>
 import OrganList from './organlist.component'
 import { mapGetters, mapMutations } from 'vuex'
+const leaderDep = {
+  data: {
+    deptList: [{
+      childNode: [],
+      code: "",
+      companyName: "",
+      createTime: "",
+      createUser: "",
+      deptId: "",
+      description: "",
+      empCount: 0,
+      fatherId: "CFCD208495D565EF66E7DFF9F98764DA",
+      id: "1FF1DE774005F8DA13F42943881C655F",
+      levelNum: 30,
+      name: "公司领导",
+      sortNum: 9,
+      sts: "",
+      updateTime: "",
+      updateUser: ""
+    }]
+  }
+}
 export default {
   components: {
     OrganList
@@ -59,11 +81,11 @@ export default {
       initialReady: true,
       searchButton: false,
       personVisible: false,
-      initData:true
+      initData: true
     }
   },
   props: {
-    dialogType: {   //单选或多选，默认单选
+    dialogType: { //单选或多选，默认单选
       type: String,
       default: 'radio'
     },
@@ -71,11 +93,11 @@ export default {
       type: Boolean,
       default: false
     },
-    admin: {      //是否可选所有部门，可选值0（否） 1（是）
+    admin: { //是否可选所有部门，可选值0（否） 1（是）
       type: String,
       default: ''
     },
-    selfDisable: {    //是否可选本人
+    selfDisable: { //是否可选本人
       type: Boolean,
       default: true
     },
@@ -83,10 +105,14 @@ export default {
       type: String,
       default: '收件人'
     },
-    data: {   //初始化数据
+    data: { //初始化数据
       type: [Array, Object, String]
     },
     hasSecretary: {
+      type: Boolean,
+      default: false
+    },
+    isLeaderDep: {
       type: Boolean,
       default: false
     },
@@ -95,25 +121,31 @@ export default {
     'visible': function(newVal) {
       this.personVisible = newVal;
       if (newVal) {
-        this.initData=true;
-        if (this.admin !== '') {
-          console.log(this.admin)
-          if (this.admin == '0') {
-            this.$store.dispatch('getDepById',this.hasSecretary);
-          } else {
-            this.$store.dispatch('getDeptList');
-          }
+        this.initData = true;
+        if (this.isLeaderDep) {   //是否只显示领导
+          setTimeout(() => {
+            this.$store.commit('GET_DEPT_LIST', leaderDep);
+          }, 500)
+          this.$store.dispatch('setQueryDepId', leaderDep.data.deptList[0].id);
         } else {
-          if (this.isAdmin) {
-            this.$store.dispatch('getDeptList');
+          if (this.admin !== '') {
+            if (this.admin == '0') {
+              this.$store.dispatch('getDepById', this.hasSecretary);
+            } else {
+              this.$store.dispatch('getDeptList');
+            }
           } else {
-            this.$store.dispatch('getDepById',this.hasSecretary);
+            if (this.isAdmin) {
+              this.$store.dispatch('getDeptList');
+            } else {
+              this.$store.dispatch('getDepById', this.hasSecretary);
+            }
           }
-        }
-        if (this.userInfo.levelNum == 30) {
-          this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
-        } else {
-          this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          if (this.userInfo.levelNum == 30) {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+          } else {
+            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+          }
         }
         this.name = "";
         this.$store.dispatch('setQueryPage', 1);
@@ -122,8 +154,8 @@ export default {
     },
     searchRes(newVal) {
       if (this.$refs.multipleTable) {
-        if (this.dialogType == 'multi'&&this.initData) {
-          this.initData=false;
+        if (this.dialogType == 'multi' && this.initData) {
+          this.initData = false;
           this.$refs.multipleTable.store.states.selection = this.clone(this.data);
           this.multipleSelection = this.clone(this.data);
         }
@@ -161,29 +193,33 @@ export default {
     },
     search() {
       this.searchButton = true;
-      if (this.admin !== '') {
-        if (this.admin == 0) {
-          if (this.userInfo.levelNum == 30) {
-            this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
-          } else {
-            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
-          }
-          this.$store.dispatch('getDepById',this.hasSecretary);
-        } else {
-          this.$store.dispatch('setQueryDepId', '');
-          this.$store.dispatch('getDeptList');
-        }
+      if (this.isLeaderDep) {   //是否只显示领导
+
       } else {
-        if (this.isAdmin) {
-          this.$store.dispatch('setQueryDepId', '');
-          this.$store.dispatch('getDeptList');
-        } else {
-          if (this.userInfo.levelNum == 30) {
-            this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+        if (this.admin !== '') {
+          if (this.admin == 0) {
+            if (this.userInfo.levelNum == 30) {
+              this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+            } else {
+              this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+            }
+            this.$store.dispatch('getDepById', this.hasSecretary);
           } else {
-            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+            this.$store.dispatch('setQueryDepId', '');
+            this.$store.dispatch('getDeptList');
           }
-          this.$store.dispatch('getDepById',this.hasSecretary);
+        } else {
+          if (this.isAdmin) {
+            this.$store.dispatch('setQueryDepId', '');
+            this.$store.dispatch('getDeptList');
+          } else {
+            if (this.userInfo.levelNum == 30) {
+              this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+            } else {
+              this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+            }
+            this.$store.dispatch('getDepById', this.hasSecretary);
+          }
         }
       }
       this.$store.dispatch('setQueryPage', 1);
@@ -208,7 +244,7 @@ export default {
       }
     },
     rowKey(row) {
-      return row.empId+row.deptId+row.jobtitle
+      return row.empId + row.deptId + row.jobtitle
     },
     submitPerson() {
       if (this.dialogType == 'radio') {

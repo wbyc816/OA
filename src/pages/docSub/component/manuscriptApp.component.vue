@@ -304,7 +304,8 @@ export default {
           "sendTypeDept": [],
           "sendTypeEmp": {
             "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
-            "ids": this.manuscriptForm.fileSend.personList.map(person => person.empId)
+            "ids": this.manuscriptForm.fileSend.personList.map(person => person.empId),
+            "empPostId":this.manuscriptForm.fileSend.personList.map(person => person.postId)
           }
         },
         "mainSend": {

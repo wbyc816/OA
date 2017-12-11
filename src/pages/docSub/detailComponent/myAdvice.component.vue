@@ -67,7 +67,7 @@
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updatePerson" :admin="docDetail.isAdmin==1&&!hasSecretary()?'1':'0'" :visible.sync="dialogTableVisible" dialogType="radio" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()"></person-dialog>
-    <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :data="signPersons"></person-dialog>
+    <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :isLeaderDep="docDetail.isConfidential==1" :data="signPersons"></person-dialog>
     <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="$route.query.code=='LZS'?'0':''"></person-dialog>
     <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" isSaveInit></dep-dialog>
   </div>

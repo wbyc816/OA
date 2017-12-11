@@ -11,23 +11,25 @@
     <el-col :span="24">
       <h1 class="title">部门会签意见</h1>
       <p class="textContent">
-          <template v-for="adviceBox in otherAdvice.deptSign">
-            <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
-          </template>
-        </p>
+        <template v-for="adviceBox in otherAdvice.deptSign">
+          <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+        </template>
+      </p>
     </el-col>
     <el-col :span="24">
       <h1 class="title">承办部门意见</h1>
       <p class="textContent">
         <template v-for="adviceBox in otherAdvice.taskDeptSign">
-          <span v-for="advice in adviceBox.signInfo" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+          <template v-for="adviceChild in adviceBox.signInfo">
+            <span v-for="advice in adviceChild.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+          </template>
         </template>
       </p>
     </el-col>
     <el-col :span="24">
       <h1 class="title">拟稿部门意见</h1>
       <p class="textContent">
-        <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.taskTime}}</span>
+        <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.startTime}}</span>
       </p>
     </el-col>
   </div>
@@ -35,7 +37,7 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
-  components: {  },
+  components: {},
   props: {
     docDetialInfo: '',
   },
@@ -82,8 +84,6 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.CPDDetail {
-  
-}
+.CPDDetail {}
 
 </style>
