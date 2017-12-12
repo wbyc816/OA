@@ -23,7 +23,7 @@
                     <span class="index">{{item.index}}</span>
                     <p class="title">{{item.docTitle}}</p>
                     <div class="timeline">
-                      <p>截止日</p>
+                      <p v-if="item.endTime">截止日</p>
                       <p>{{item.endTime.slice(0,10)}}</p>
                     </div>
                   </router-link>

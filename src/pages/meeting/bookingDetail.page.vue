@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     getDetail() {
-      this.$http.post('/conference/conferReserveDetails', { reserveId: this.$route.params.id })
+      this.$http.post('/conference/conferReserveDetails', { reserveId: this.$route.params.id,userId:this.userInfo.empId })
         .then(res => {
           if (res.status == 0) {
             this.detail = res.data;
