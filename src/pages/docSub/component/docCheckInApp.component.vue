@@ -17,13 +17,19 @@
         <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="checkInForm.catalogueName" style="width:100%" popper-class="myCascader">
         </el-cascader>
       </el-form-item>
+      <el-form-item label="收文日期" prop="receiveTime">
+        <el-date-picker type="date" v-model="checkInForm.receiveTime" style="width: 100%;" :editable="false" :clearable="false"></el-date-picker>
+      </el-form-item>
       <el-form-item label="来文文号" prop="wordNo">
         <el-input v-model="checkInForm.wordNo" :maxlength="25">
         </el-input>
       </el-form-item>
+      <el-form-item label="来文单位" prop="receiveCompany">
+        <el-input v-model="checkInForm.receiveCompany" :maxlength="100">
+        </el-input>
+      </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
         <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :on-remove="handleRemove" :before-upload="beforeUpload" :file-list="files">
-        <!-- <el-upload class="myUpload" :auto-upload="false" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" ref="myUpload" :on-remove="handleRemove" :disabled="noMore"> -->
           <el-button size="small" type="primary" :disabled="checkInForm.wordFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
@@ -41,15 +47,19 @@ export default {
         classify2: '',
         wordNo: '',
         catalogueName: [],
-        wordFileId: ''
+        wordFileId: '',
+        receiveCompany:'',
+        receiveTime:''
       },
       types: [],
       sendTypes: [],
       rules: {
         classify1: [{ required: true, message: '请选择收文类型', trigger: 'blur' }],
         classify2: [{ required: true, message: '请选择莱文种类', trigger: 'blur' }],
+        receiveTime: [{type:'date', required: true, message: '请选择收文日期', trigger: 'blur' }],
         wordFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
         wordNo: [{ required: true, message: '请输入来文文号', trigger: 'blur' }],
+        receiveCompany: [{ required: true, message: '请输入来文单位', trigger: 'blur' }],
         catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
       },
       catalogueList: [],
@@ -113,6 +123,8 @@ export default {
           classify1: this.checkInForm.classify1,
           classify2: this.checkInForm.classify2,
           wordNo: this.checkInForm.wordNo,
+          receiveTime:+this.checkInForm.receiveTime,
+          receiveCompany: this.checkInForm.receiveCompany,
           catalogueId: this.checkInForm.catalogueName[this.checkInForm.catalogueName.length - 1],
         },
         wordFileId: this.checkInForm.wordFileId

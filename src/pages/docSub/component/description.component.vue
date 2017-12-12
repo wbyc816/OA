@@ -106,7 +106,7 @@ export default {
       upCount: 0,
       isSaveForm: false,
       disableEditSuggest: false,
-      isfirst: true
+      isfirst: true,
     }
   },
   computed: {
@@ -120,19 +120,19 @@ export default {
             } else {
               node.children.forEach((child, childIndex) => {
                 if (childIndex == 0) {
-                  html += '#' + child.typeIdName + ' ';
+                  html += '#' + child.typeIdName+child.remark + ' ';
                 } else if (childIndex == node.children.length - 1) {
-                  html += child.typeIdName + '# ' + arrowHtml;
+                  html += child.typeIdName+child.remark + '# ' + arrowHtml;
                 } else {
-                  html += child.typeIdName + ' '
+                  html += child.typeIdName+child.remark + ' '
                 }
               })
             }
           } else {
             if (index != this.ruleForm.path.length - 1) {
-              html += node.typeIdName + arrowHtml
+              html += node.typeIdName+node.remark + arrowHtml
             } else {
-              html += node.typeIdName
+              html += node.typeIdName+node.remark
             }
           }
         })
@@ -381,7 +381,7 @@ export default {
         } else {
           nodeName = 'task';
         }
-        if (item.nodeName == 'sign') {
+        if (item.nodeName == 'sign'||item.type == 4) {
           nodeName = 'sign';
           if (item.type == 4) {
             nodeName = 'trans';
@@ -393,7 +393,8 @@ export default {
               typeId: child.typeId,
               typeIdName: child.typeIdName,
               type: child.type,
-              docType: this.$route.params.code
+              docType: this.$route.params.code,
+              remark:child.ramark
             })
           })
         } else {
@@ -403,7 +404,8 @@ export default {
             typeId: item.typeId,
             typeIdName: item.typeIdName,
             type: item.type,
-            docType: this.$route.params.code
+            docType: this.$route.params.code,
+            remark:item.remark
           })
         }
       })
@@ -425,11 +427,11 @@ export default {
       var temp = [];
       var start;
       arr.forEach((s, index) => {
-        if (s.type == 4 || s.type == 5) {
+        if (s.type == 4 || s.type == 5) {   //人员或部门会签
           s.nodeName = 'sign';
           s.children = [];
           temp.push(s);
-        } else if (s.type == 7) {
+        } else if (s.type == 7) { 
           if (start) {
             start = 0;
           } else {
@@ -439,7 +441,7 @@ export default {
             temp.push(s);
           }
         } else {
-          if (start) {
+          if (start) {  
             temp[start].children.push(s);
           } else {
             temp.push(s);

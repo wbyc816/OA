@@ -1,7 +1,7 @@
 <template>
   <div class='historyAdvice commonBox'>
     <h4 class='doc-form_title'>历史审批意见</h4>
-    <ul v-for="(task,index) in taskDetail" v-if="index!=0&&task.isFlag!=1" :class="{'hasSign':task.signInfo!=''}" v-show="index<(!moreFlag?4:999)">
+    <ul v-for="(task,index) in taskDetail" v-if="index!=0&&task.isFlag!=1" :class="{'hasSign':task.signInfo!=''}" v-show="index<(!moreFlag?showLenth:999)">
       <li class="personAdvice" :class="{disAgree:task.state==2}">
         <span class="isAgree"><i :class="task.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
         <span class="userName">{{task.taskUserName}}</span>
@@ -9,7 +9,7 @@
         <span class="taskTime">{{task.startTime}}</span>
       </li>
       <ul class="signBox" v-if="task.signInfo.length!=0">
-        <li class="signStart"><i class="el-icon-caret-right"></i>会签开始</li>
+        <li class="signStart"><i class="el-icon-caret-right"></i>{{task.state==6?'承办':'会签'}}开始</li>
         <!-- 部门会签 -->
         <template v-if="task.signType==1">    
           <el-collapse class="depSignBox">
@@ -41,10 +41,10 @@
             <span class="taskTime">{{sign.signTime}}</span>
           </li>
         </template>
-        <li class="signEnd"><i class="el-icon-caret-right"></i>会签结束</li>
+        <li class="signEnd"><i class="el-icon-caret-right"></i>{{task.state==6?'承办':'会签'}}结束</li>
       </ul>
     </ul>
-    <div class="moreHistory" v-if="taskDetail.length>4" :class="{isActive:moreFlag}" @click="moreFlag=!moreFlag">
+    <div class="moreHistory" v-if="taskDetail.length>showLenth" :class="{isActive:moreFlag}" @click="moreFlag=!moreFlag">
       <i class="el-icon-arrow-down"></i> 查看更多审批意见
     </div>
   </div>
@@ -64,6 +64,18 @@ export default {
     }
   },
   computed: {
+    showLenth:function(){
+      var num=4;
+      if(this.taskDetail.length!=0){
+        for(var i=1;i<4;i++){
+          if(this.taskDetail[i]&&this.taskDetail[i].signInfo){
+            num=i;
+            break;
+          }
+        }
+      }
+      return num;
+    },
     ...mapGetters([
       'submitLoading'
     ])
@@ -95,6 +107,7 @@ $main:#0460AE;
       span {
         display: table-cell;
         vertical-align: middle;
+            word-break: break-word;
       }
       $widths: (1: 4%, 2: 12%, 3: 72%, 4: 12%);
       @each $num,

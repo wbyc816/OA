@@ -13,7 +13,7 @@
             </el-input>
           </div>
           <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
-            <el-table-column type="selection" width="55" :reserve-selection="true">
+            <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="filterSel">
             </el-table-column>
             <el-table-column prop="name" label="部门"></el-table-column>
             <el-table-column prop="companyName" label="所属公司"></el-table-column>
@@ -62,7 +62,9 @@ export default {
       },
       searchRes: '',
       initData: true,
-      depVisible: false
+      depVisible: false,
+      initDep:[],
+      isFirst:true
     }
   },
   props: {
@@ -76,7 +78,11 @@ export default {
     },
     data: {   //初始化数据
       type: [Array, Object, String]
-    }
+    },
+    isSaveInit: {
+      type: Boolean,
+      default: false
+    },
   },
   watch: {
     'dialogVisible': function(newVal) {
@@ -103,6 +109,9 @@ export default {
     this.$store.dispatch('getDeptList');
   },
   methods: {
+    filterSel(row,index){
+      return this.initDep.find(d=>d.id==row.id)==undefined;
+    },
     handleCurrentChange(page) {
       if (this.searchRes.records) {
         this.params.pageNumber = page;
@@ -131,7 +140,9 @@ export default {
           })
         }
       } else {
-        this.$refs.multipleTable.toggleRowSelection(row);
+        if(this.filterSel(row)){
+          this.$refs.multipleTable.toggleRowSelection(row);
+        }        
       }
     },
     rowKey(row) {
@@ -176,9 +187,13 @@ export default {
             this.searchRes = res.data
             if (this.$refs.multipleTable) {
               if (this.dialogType == 'multi' && this.initData) {
-                this.initData = false;
+                this.initData = false;                
                 this.$refs.multipleTable.store.states.selection = this.clone(this.data);
                 this.multipleSelection = this.clone(this.data);
+                if(this.isSaveInit&&this.isFirst){
+                  this.isFirst=false;
+                  this.initDep=this.clone(this.data);
+                }                
               }
             }
           }

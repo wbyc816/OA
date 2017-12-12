@@ -9,7 +9,8 @@ const state = {
 
   },
   dutys:[],
-  isReady: false
+  isReady: false,
+  homeHasShow:false
 }
 
 const actions = {
@@ -44,7 +45,7 @@ const getters = {
   userInfo: state => state.userInfo,
   isReady: state => state.isReady,
   dutys: state => state.dutys,
-
+  homeHasShow:state=>state.homeHasShow
 }
 
 const mutations = {
@@ -59,6 +60,9 @@ const mutations = {
   },
   setDutys(state,data){
     state.dutys=data;
+  },
+  setHomeHasShow(state,data){
+    state.homeHasShow=data;
   }
 }
 

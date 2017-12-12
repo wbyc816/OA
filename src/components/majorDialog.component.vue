@@ -10,7 +10,7 @@
               <el-menu-item index="2-1" @click.native="selPerson">人员</el-menu-item>
               <el-menu-item index="2-2" @click.native="selDep">部门</el-menu-item>
             </el-submenu>
-            <el-menu-item index="3">
+            <el-menu-item index="3" v-if="hasLevel">
               安全级别
               <el-select v-model="min" style="display:inline-block">
                 <el-option v-for="item in levels" :key="item" :label="item" :value="item" :disabled="item>max">
@@ -26,8 +26,8 @@
         </el-col>
         <el-col :span='18' class="rightBox">
           <div class="topSearch clearfix">
-            <p class="tips">请选择<span v-show="isAll">所有人安全级别</span>
-              <span v-show="type=='dep'&&!isAll">部门安全级别</span><span v-show="type=='person'&&!isAll">人员</span>
+            <p class="tips">请选择<span v-show="isAll&&hasLevel">所有人安全级别</span>
+              <span v-show="type=='dep'&&!isAll">部门{{hasLevel?'安全级别':''}}</span><span v-show="type=='person'&&!isAll">人员</span>
             </p>
             <el-input class="search" v-model.trim="name" v-show="type=='person'">
               <el-button slot="append" @click="search">搜索</el-button>
@@ -60,11 +60,21 @@
           <div class="selInfoBox">
             <p>已选择条件</p>
             <div class="clearfix selInfo">
-              <el-tag key="all" :closable="true" type="primary" v-show="all.max" @close="closeAll">
-                {{'所有人('+all.min+'-'+all.max+')'}}
+              <el-tag key="all" :closable="true" type="primary" v-show="hasLevel?all.max:all" @close="closeAll">
+                <template v-if="hasLevel">
+                  {{'所有人('+all.min+'-'+all.max+')'}}
+                </template>
+                <template v-else>
+                  所有人
+                </template>
               </el-tag>
               <el-tag :key="dep.id" :closable="true" type="primary" @close="closeDep(index)" v-for="(dep,index) in depList">
+                <template v-if="hasLevel">
                 {{dep.name+'('+dep.min+'-'+dep.max+')'}}
+                </template>
+                <template v-else>
+                  {{dep.name}}
+                </template>
               </el-tag>
               <el-tag :key="person.id" :closable="true" type="primary" @close="closePerson(index)" v-for="(person,index) in personList">
                 {{person.name}}
@@ -118,7 +128,11 @@ export default {
     },
     params: {    //其他参数
       type: Object
-    }
+    },
+    hasLevel: {
+      type: Boolean,
+      default: true
+    },
   },
   watch: {
     'visible': function(newVal) {
@@ -164,19 +178,31 @@ export default {
     },
     selAll() {
       this.isAll = true;
-      this.$confirm('是否选择安全级别为' + this.min + '-' + this.max + '的所有人?', '提示', {
+      var tip='';
+      if(this.hasLevel){
+        tip='是否选择安全级别为' + this.min + '-' + this.max + '的所有人?'
+      }else{
+        tip='是否选择所有人?'
+      }
+      this.$confirm(tip, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.all = {
-          min: this.min,
-          max: this.max
-        }
-        if (this.max == 100 && this.min == 0) {
+        if(this.hasLevel){
+          this.all = {
+            min: this.min,
+            max: this.max
+          }
+          if (this.max == 100 && this.min == 0) {
+            this.depList = [];
+            this.personList = [];
+          }
+        }else{
           this.depList = [];
           this.personList = [];
-        }
+          this.all=true;          
+        }          
       }).catch(() => {
 
       });
@@ -200,14 +226,21 @@ export default {
     },
     addDep(store, data) {
       var temp = this.depList.find((dep, index) => dep.id == data.id);
+      this.all='';
       if (temp) {
         var index = this.depList.indexOf(temp)
-        temp.min = this.min;
-        temp.max = this.max;
+        if(this.hasLevel){
+          temp.min = this.min;
+          temp.max = this.max;
+        }        
         this.depList.splice(index, 1, temp)
       } else {
-        this.depList.push({ id: data.id, name: data.name, min: this.min, max: this.max })
-      }
+        if(this.hasLevel){
+          this.depList.push({ id: data.id, name: data.name, min: this.min, max: this.max })
+        }else{
+          this.depList.push({ id: data.id, name: data.name})
+        }
+      }      
     },
     submitRefdoc: function() {
 
@@ -230,9 +263,10 @@ export default {
     },
     selectPerson(row) {
       this.$refs.multipleTable.toggleRowSelection(row);
+
     },
     rowKey(row) {
-      return row.empId+row.deptId+row.jobtitle
+      return row.empId+row.postId
     },
     submitPerson() {
       this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList })
@@ -240,6 +274,7 @@ export default {
     },
     handleSelectionChange(val) {
       this.personList = val;
+      this.all='';
     },
     reset1() {
       this.searchButton = false;
@@ -262,7 +297,6 @@ export default {
       }
     }
   }
-
 </script>
 <style lang='scss'>
 $main:#0460AE;

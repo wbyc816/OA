@@ -55,7 +55,7 @@
         </el-col>
         <el-col :span="13" class="clearfix">
           <span class="title">短信会议通知</span>
-          <p class="text">{{detail.isCancel==1?'是':'否'}}</p>
+          <p class="text">{{detail.isMessage==1?'是':'否'}}</p>
         </el-col>
         <el-col :span="11" class="clearfix right">
           <span class="title">会议状态</span>

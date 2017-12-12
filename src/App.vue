@@ -118,6 +118,9 @@ export default {
     } else {
       this.baseUrl = urlConfig.loginUrl
     }
+    if(this.getCookie('homeAd')){
+      this.$store.commit('setHomeHasShow',true);
+    }
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));
       this.$store.dispatch('getUserInfo');

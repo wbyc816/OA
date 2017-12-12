@@ -7,7 +7,7 @@
       </div>
       <el-row :gutter="12">
         <el-col :span="6">
-          <el-select v-model="searchParams.taskDeptId" placeholder="呈报部门" clearable>
+          <el-select v-model="searchParams.taskDeptId" placeholder="呈报部门" clearable :disabled="depList.length<2">
             <el-option :key="item.deptId" :label="item.deptName" :value="item.deptId" v-for="item in depList"></el-option>
           </el-select>
         </el-col>
@@ -140,6 +140,7 @@ export default {
         this.searchParams.startTime = '';
         this.searchParams.endTime = '';
       }
+      this.searchParams.userId=this.userInfo.empId;
       this.$http.post("/doc/docStatistics", this.searchParams, { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;
@@ -186,10 +187,11 @@ export default {
     },
     getDepList() {
       if (this.depList.length == 0) {
-        this.$http.post('doc/docTaskDept')
+        this.$http.post('doc/docTaskDept',{userId:this.userInfo.empId})
           .then(res => {
             if (res.status == 0) {
-              this.depList = res.data
+              this.depList = res.data;
+              this.searchParams.taskDeptId=res.data[0].deptId;
             } else {
 
             }

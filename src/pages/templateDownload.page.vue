@@ -43,7 +43,7 @@
               
               label="操作"
               width="500">
-              <template slot-scope="scope">
+              <template scope="scope">
                 <el-button @click="formatUrl(scope.row.url)"  type="text" size="small" class="downPdf">{{scope.row.url}}</el-button>
               </template>
             </el-table-column>

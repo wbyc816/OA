@@ -12,12 +12,12 @@
       <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">
         <tr>
           <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
-          <td>
+          <router-link tag="td" :to="{path:'/doc/docInfo/'+doc.id,query:{code:doc.docTypeCode}}" class="linkTitle">
             <span class="overTime" v-if="doc.isOvertime"><i class="el-icon-information"></i> 超时</span>
             <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
             <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
             <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
-          </td>
+          </router-link>
           <td>{{doc.taskUser}}</td>
           <td>{{doc.taskTime}}</td>
           <td><span>{{doc.currentUser}}</span></td>

@@ -35,12 +35,13 @@
         </el-radio-group>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="$route.params.code=='LZS'?'0':''"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="personAdmin" :hasSecretary="otherAdviceDoc.find(d=>d==$route.params.code)!=undefined"></person-dialog>
   </div>
 </template>
 <script>
 import PersonDialog from '../../../components/personDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
+const otherAdviceDoc = ["FWG", "SWD", "CPD","HTS"]
 export default {
   components: {
     PersonDialog
@@ -85,10 +86,21 @@ export default {
       },
       isDefault: false,
       taskUserList: [],
-      draftFirst: false
+      draftFirst: false,
+      otherAdviceDoc
     }
   },
   computed: {
+    personAdmin:function(){
+      var temp='';
+      if(otherAdviceDoc.find(d=>d==this.$route.params.code)){
+        temp='0'
+      }else if(this.$route.params.code=='LZS'){
+        temp='0'
+      }
+      console.log(temp)
+      return temp
+    },
     ...mapGetters([
       'userInfo',
       'confidentiality',
@@ -100,7 +112,8 @@ export default {
       'searchLoading',
       'searchRes',
       'reciver',
-      'taskUser'
+      'taskUser',
+      'secretaryInfo'
     ])
   },
   watch: {
@@ -115,8 +128,23 @@ export default {
     this.$store.dispatch('getUrgency');
     this.$store.dispatch('getAdminStatus');
     this.getTaskPerson();
+    if(otherAdviceDoc.find(d=>d==this.$route.params.code)!=undefined){
+      this.getSecretaryInfo();
+    }
   },
   methods: {
+    getSecretaryInfo(){
+      if(!this.secretaryInfo){
+        this.$http.post('doc/getSecInfo')
+        .then(res=>{
+          if(res.status == '0'){
+            this.$store.commit('setSecretaryInfo',res.data);
+          }else{
+
+          }
+        })
+      }
+    },
     changeTaskUser(val) {
       var user = this.taskUserList.find(t => (t.deptId + t.jobtitle) == val);
       if (user) {

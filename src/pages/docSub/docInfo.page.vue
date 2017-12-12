@@ -19,6 +19,7 @@
             <h1 class="title">标题</h1>
             <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
+          <component v-bind:is="computeView" :info="docDetialInfo.otherInfo" :docDetialInfo="docDetialInfo" v-if="computeView"></component>
           <el-col :span="24" style="min-height:90px" v-if="$route.query.code!='FWG'">
             <h1 class="title">请示内容</h1>
             <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
@@ -32,7 +33,7 @@
                 <h1 class="title">建议路径</h1>
                 <p class="textContent suggestHtml" v-html="suggestHtml"></p>
               </el-col>
-              <el-col :span="24">
+              <el-col :span="24" v-if="$route.query.code!='FWG'">
                 <h1 class="title">附件</h1>
                 <p class="attch textContent">
                   <template v-if="docDetialInfo&&docDetialInfo.taskFile.length>0">
@@ -50,6 +51,7 @@
           </el-collapse>
         </el-row>
       </div>
+      <history-advice :taskDetail="advice"></history-advice>
       <div class="backButton" v-if="hasBack">
         <el-button type="primary" @click="goBack">返回</el-button>
       </div>
@@ -57,6 +59,11 @@
   </div>
 </template>
 <script>
+import historyAdvice from './detailComponent/historyAdvice.component'
+import FWGD from './detailComponent/FWGDetail.component'
+import SWDD from './detailComponent/SWDDetail.component'
+import CPDD from './detailComponent/CPDDetail.component'
+import HTSD from './detailComponent/HTSDetail.component'
 import YCS from './component/vehicleDetail.component' //用车详情
 import CLS from './component/materialDetail.component' //材料详情
 import FWG from './component/manuscriptDetail.component' //材料详情
@@ -83,9 +90,14 @@ import LZS from './component/empQuitDetail.component.vue' //离职详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
-
+const otherAdviceDoc = ["FWG", "SWD", "CPD","HTS"]
 export default {
   components: {
+    historyAdvice,
+    FWGD,
+    SWDD,
+    CPDD,
+    HTSD,
     YCS,
     CLS,
     FWG,
@@ -115,7 +127,11 @@ export default {
       docDetialInfo: { doc: {}, task: [], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [] },
       suggestHtml: '',
       activeNames: ['1'],
-      hasBack: false
+      hasBack: false,
+      advice:[],
+      otherAdviceDoc,
+      showOtherAdvice:false,
+      otherAdvice:''
     }
   },
   created() {
@@ -135,6 +151,14 @@ export default {
     })
   },
   computed: {
+    computeView(){
+      var view='';
+      var temp=otherAdviceDoc.find(d=>d==this.$route.query.code);
+      if(temp){
+        view=temp+'D'
+      }
+      return view
+    },
     ...mapGetters([
       'userInfo',
       'isAdmin',
@@ -143,6 +167,7 @@ export default {
   },
   methods: {
     getDetail(route) {
+      this.getAdvice();
       var url = "/doc/getDocDetailById";
       var params = {
         docId: route.params.id
@@ -153,7 +178,6 @@ export default {
         params.id = params.docId;
         delete params.docId
       }
-
       this.$http.post(url, params)
         .then(res => {
           if (res.status == 0) {
@@ -175,38 +199,48 @@ export default {
     },
     handleSuggest() {
       if (Array.isArray(this.docDetialInfo.suggests)) {
-        var html = '起草'+ arrowHtml+' ';
+        var html = '起草' + arrowHtml + ' ';
         this.docDetialInfo.suggests.forEach((s, i, arr) => {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
-              html += signFlag + ' ' + s.typeIdName + ' ';
+              html += signFlag + ' ' + s.typeIdName+s.remark + ' ';
             } else if (arr[i + 1].nodeName != 'sign') {
-              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName+s.remark + ' ' + signFlag + '' + arrowHtml;
             } else {
-              html += s.typeIdName + ' ';
+              html += s.typeIdName+s.remark + ' ';
             }
           } else if (s.nodeName == 'trans') {
             if (arr[i - 1].nodeName != 'trans') {
-              html += signFlag + ' ' + s.typeIdName + ' ';
+              html += signFlag + ' ' + s.typeIdName+s.remark + ' ';
             } else if (arr[i + 1].nodeName != 'trans') {
-              html += s.typeIdName + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName+s.remark + ' ' + signFlag + '' + arrowHtml;
             } else {
-              html += s.typeIdName + ' ';
+              html += s.typeIdName+s.remark + ' ';
             }
           } else {
             if (i == arr.length - 1) {
-              html += s.typeIdName
+              html += s.typeIdName+s.remark
             } else {
-              html += s.typeIdName + arrowHtml
+              html += s.typeIdName+s.remark + arrowHtml
             }
           }
         })
-        html+='归档'
+        html += '归档'
         this.suggestHtml = html;
       }
     },
     goBack() {
       this.$router.go(-1);
+    },
+    getAdvice(){
+      this.$http.post('/doc/getTaskDetail',{id:this.$route.params.id})
+      .then(res=>{
+        if(res.status==0){
+          this.advice=res.data;
+        }else{
+
+        }
+      })
     }
   }
 }
@@ -283,6 +317,11 @@ $sub:#1465C0;
     .addButton {
       float: right;
     }
+  }
+  .adviceSpan {
+    display: inline-block;
+    padding-right: 10px;
+    word-break:break-word;
   }
   .suggestHtml {
     i {
