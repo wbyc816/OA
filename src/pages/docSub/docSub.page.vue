@@ -40,6 +40,16 @@
         </el-col>
       </el-row>
     </el-card>
+    <el-card class='doc-block doc-contrast'>
+      <div slot="header" class='doc_title'>
+        <span>航材类合同申请</span>
+      </div>
+      <el-row :gutter='15'>
+        <el-col :span="6" v-for="item in flightData">
+          <doc-list :data='item'></doc-list>
+        </el-col>
+      </el-row>
+    </el-card>
   </div>
 </template>
 <script>
@@ -75,13 +85,21 @@ const ticketData = [
   { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '宾客优惠机票', 'link': '#/doc/docCommonApp/BKY' },
   { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '员工优惠机票', 'link': '#/doc/docCommonApp/YGY' }
 ];
+const flightData = [
+  { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '航材/工具采购', 'link': '#' },
+  { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '价拨/售出', 'link': '#' },
+  { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '租借/借出', 'link': '#' },
+  { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '送修/索赔', 'link': '#' },
+  { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '交换合同', 'link': '#' },
+];
 export default {
   data() {
     return {
       adminData,
       financeData,
       contrastData,
-      ticketData
+      ticketData,
+      flightData
     };
   },
   components: {
