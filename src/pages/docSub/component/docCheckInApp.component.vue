@@ -94,7 +94,8 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
-      this.combineObj(this.checkInForm, obj.checkInForm);
+      this.combineObj(this.checkInForm, obj.checkInForm,['receiveTime']);
+      this.checkInForm.receiveTime=new Date(obj.checkInForm.receiveTime);
       this.files=obj.files;
     },
     handleAvatarSuccess(res, file,fileList) {

@@ -1,7 +1,8 @@
 <template>
   <div id="docTracking">
     <search-options title="公文追踪" @search="setOptions"></search-options>
-    <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading">
+    
+    <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading" >
       <caption>
       </caption>
       <thead align="left">
@@ -41,6 +42,7 @@
       <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
+    
   </div>
 </template>
 <script>
@@ -64,7 +66,7 @@ export default {
       docData: [],
       totalSize: 0,
       searchLoading: false,
-      searchOptions: ''
+      searchOptions: '',
     }
   },
   computed: {
@@ -116,6 +118,7 @@ export default {
             if (res.status == 0) {
               this.$message.success('撤回成功！');
               this.getData();
+              this.$store.dispatch('getDocTips');
             } else {
               this.$message.error(res.message);
             }
@@ -189,6 +192,7 @@ $main: #0460AE;
       }
     }
   }
+  
 }
 
 </style>
