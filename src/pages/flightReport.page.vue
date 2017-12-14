@@ -20,12 +20,12 @@
         </el-table-column>
         <el-table-column prop="atd" label="起飞时间" width="115">
             <template scope="scope">
-                <span>{{ scope.row.atd | time('date')}}</span>
+                <span>{{ scope.row.cldTime | time('second')}}</span>
             </template>
         </el-table-column>
         <el-table-column prop="ata" label="到达时间" width="115">
             <template scope="scope">
-                <span>{{ scope.row.ata | time('date')}}</span>
+                <span>{{ scope.row.dldTime | time('second')}}</span>
             </template>
         </el-table-column>
         
@@ -429,7 +429,7 @@ export default {
   },
   methods: {
     getTip() {
-      this.searchLoading = true;
+      // this.searchLoading = true;
       let params = Object.assign(this.params);
       params.beginTime=document.getElementById("getTip").innerHTML;
       params.endTime=document.getElementById("getTip").innerHTML;
@@ -460,7 +460,7 @@ export default {
         })
     },
     getTipTwo(){
-      this.searchLoading = true;
+      // this.searchLoading = true;
       let params = Object.assign(this.params);
       params.beginTime=this.beginTime;
       params.endTime=this.endTime;
@@ -525,7 +525,7 @@ export default {
         })
     },
     getTipThree(){
-      this.searchLoading = true;
+      // this.searchLoading = true;
       let params = Object.assign(this.params);
       params.beginTime=this.beginTime;
       params.endTime=this.endTime;
@@ -611,6 +611,7 @@ export default {
 
         }, 200)
         if (res.status == 0) {
+           that.searchLoading = false;
           this.recordData = res.data.records;
           this.totalSize = res.data.total;
         //  this.graphdata.datasets[0].data.push(0.5);
@@ -666,6 +667,7 @@ export default {
 
         }, 200)
         if (res.status == 0) {
+           this.searchLoading = false;
           var flightData = res.focVos;
           this.optionOne.series[0].data=[];
           this.optionOne.series[1].data=[];
@@ -708,6 +710,7 @@ export default {
 
         }, 200)
         if (res.status == 0) {
+           this.searchLoading = false;
           var flyData = res.focVos;
           this.optionTwo.series[0].data=[]
           this.optionTwo.series[1].data=[];
@@ -747,6 +750,7 @@ export default {
           this.searchLoading = false;
         }, 200)
         if (res.status == 0) {
+           this.searchLoading = false;
           this.optionFive.series[0].data=[];
           this.optionFive.series[1].data=[];
           this.optionFive.xAxis.categories=[];
@@ -799,6 +803,7 @@ export default {
         }, 200)
         if (res.status == 0) {
         // console.log(this.recordData)
+         this.searchLoading = false;
             var landData = res.focVos;
             this.optionThree.series[0].data=[];
             this.optionThree.series[1].data=[]
@@ -838,6 +843,7 @@ export default {
           this.searchLoading = false;
         }, 200)
         if (res.status == 0) {
+           this.searchLoading = false;
           this.optionFour.series[0].data=[];
           this.optionFour.series[1].data=[];
           this.optionFour.xAxis.categories=[];
