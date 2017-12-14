@@ -166,5 +166,14 @@ export default {
   },
   getTypeTree(){
     return fetch('/doc/getDocTypeTreeList')
+  },
+  getSupplier(id){
+    return fetch('/doc/getSupplier',{empId:id})
+  },
+  getCurrency(){
+    return fetch('/doc/getCurrency')
+  },
+  getDict(code){
+    return fetch('/api/getDict',{dictCode:code})
   }
 }

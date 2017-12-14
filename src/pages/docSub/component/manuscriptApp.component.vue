@@ -223,11 +223,12 @@ export default {
         this.manuscriptForm.issueDate = new Date(obj.manuscriptForm.issueDate);
       }
     },
-    typeChange() {
-      if (!this.isDrafFirst) {
+    typeChange(val) {
+      if (!this.isDrafFirst) {    
         this.manuscriptForm.docFileId = '';
         this.files = [];
-      } else {
+        this.$emit('updateSuggest', val);
+      } else {           //草稿箱第一次
         this.isDrafFirst = false;
       }
     },

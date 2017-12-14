@@ -60,7 +60,7 @@ const adminData = [
   { 'logo': 'icon-car','font': '20px', 'color': '#A5A3FF', 'text': '用车申请', 'link': '#/doc/docCommonApp/YCS' },
   { 'logo': 'icon-plane2','font': '20px', 'color': '#9FD867', 'text': '差旅申请', 'link': '#/doc/docCommonApp/CLV' },
   { 'logo': 'icon-documents','font': '26px', 'color': '#FF5F88', 'text': '材料申请', 'link': '#/doc/docCommonApp/CLS' },
-  { 'logo': 'icon-biaodan','font': '28px', 'color': '#5BB5FC', 'text': '收文登记', 'link': '#/doc/docCommonApp/SWD' },
+  { 'logo': 'icon-biaodan','font': '28px', 'color': '#5BB5FC', 'text': '收文登记处理', 'link': '#/doc/docCommonApp/SWD' },
   { 'logo': 'icon-hetong1','font': '28px', 'color': '#FFE066', 'text': '合同申请', 'link': '#/doc/docCommonApp/HTS' },
 ];
 const financeData = [
@@ -89,7 +89,7 @@ const flightData = [
   { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '航材/工具采购', 'link': '#' },
   { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '价拨/售出', 'link': '#' },
   { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '租借/借出', 'link': '#' },
-  { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '送修/索赔', 'link': '#' },
+  { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '送修/索赔', 'link': '#/doc/docCommonApp/SXS' },
   { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '交换合同', 'link': '#' },
 ];
 export default {

@@ -1,7 +1,7 @@
 <template>
   <div id="docPending">
     <search-options title="公文签批" @search="setOptions" hasOverTime></search-options>
-    <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId=='3BCF6EECB2611212E088D0D91F2ADE9C'" v-loading.body="searchLoading">
+    <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId==leaderEmpid" v-loading.body="searchLoading">
       <el-table-column type="selection" width="35" class-name="selectionColumn" label-class-name="selectionColumnLabel">
       </el-table-column>
       <el-table-column label=" " width="50" class-name="docType">
@@ -74,7 +74,7 @@
       <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
-    <el-card class="taskCard" v-if="userInfo.empId=='3BCF6EECB2611212E088D0D91F2ADE9C'&&docData.length>0">
+    <el-card class="taskCard" v-if="userInfo.empId==leaderEmpid&&docData.length>0">
       <h4 class="title">我的审批意见 <span>已选择<i> {{selDocs.length}} </i>条公文</span></h4>
       <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
         <el-form-item label="审批意见" class="textarea" prop="state">
@@ -103,10 +103,12 @@ import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
 
 const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '操作']
-
+const leaderEmpid='C35215E25CE0CA7858829540EFF44FA8'
+// const leaderEmpid='3BCF6EECB2611212E088D0D91F2ADE9C'  //杨总
 export default {
   data() {
     return {
+      leaderEmpid,
       tableTitle,
       contractView: false,
       params: {
