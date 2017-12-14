@@ -179,6 +179,7 @@ import CLB from './component/travelRemibDetail.component' //预付款详情
 import BKY from './component/guestTicketDetail.component.vue' //宾客机票详情
 import YGY from './component/staffBenefitDetail.component.vue' //员工优惠机票
 import LZS from './component/empQuitDetail.component.vue' //离职详情
+import SXS from './component/airRepairDetail.component.vue' //送修详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -217,7 +218,8 @@ export default {
     BKY,
     YGY,
     LZS,
-    FWGD
+    FWGD,
+    SXS
   },
   data() {
     var checkFileSend = (rule, value, callback) => {

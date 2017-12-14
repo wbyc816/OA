@@ -2,20 +2,14 @@
   <div class="exchangeApp">
     <h4 class='doc-form_title'>合同信息</h4>
     <el-form label-position="left" :model="contractForm" :rules="contractRule" ref="contractForm" label-width="128px">
-      <el-form-item label="合同子类型" prop="contractCode" placeholder="" class="deptArea">
-        <el-select v-model="contractForm.contractCode" style="width:100%">
-          <el-option v-for="item in contractCodeList" :key="item.dictCode" ref="contractCode" :label="item.dictName" :value="item.dictCode">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="填表时间" prop="createTime" class="arrArea">
-        <el-date-picker v-model="contractForm.createTime" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
-      </el-form-item>
       <el-form-item label="合同号" prop="contractNo" class="deptArea">
         <el-input v-model="contractForm.contractNo" :maxlength="20">
         </el-input>
       </el-form-item>
-      <el-form-item label="优先级" prop="priority" placeholder="" class="arrArea">
+      <el-form-item label="填表时间" prop="createTime" class="arrArea">
+        <el-date-picker v-model="contractForm.createTime" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+      </el-form-item>
+      <el-form-item label="优先级" prop="priority" placeholder="" class="deptArea">
         <el-select v-model="contractForm.priority" style="width:100%">
           <el-option v-for="item in priorityList" :key="item.dictCode" ref="priority" :label="item.dictName" :value="item.dictName">
           </el-option>
@@ -29,52 +23,21 @@
         <li>开户银行 {{supplierInfo.accountBank}}</li>
         <li>收款账户 {{supplierInfo.accountName}}</li>
       </ul>
-      <!-- <el-form-item label="送修合同" prop="repairContract">
-        <el-col :span='21' class="repairContract" style="left: -6px;position: relative;">
-          <div class="docsBox">
-            <el-tag type="gray" :closable="true" @close="clearDoc(index)">{{repairContractDoc.docTitle}}</el-tag>
-          </div>
-        </el-col>
-        <el-col :span='3'>
-          <el-button class="addButton" @click="addDoc"> <i class="el-icon-plus"></i></el-button>
-        </el-col>
-      </el-form-item> -->
-      <el-form-item label="选择供应商是否为独家修理厂家" prop="isSupplierUnique" label-width="280px" placeholder="" class="clearBoth">
-        <el-radio-group v-model="contractForm.isSupplierUnique" class="myRadio" @change="isSupplierUniqueChange">
-          <el-radio-button label="1">是<i></i></el-radio-button>
-          <el-radio-button label="0">否<i></i></el-radio-button>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="选择供应商是否为协议供应商" prop="isSupplierProtocol" label-width="280px" placeholder="">
-        <el-radio-group v-model="contractForm.isSupplierProtocol" class="myRadio">
-          <el-radio-button label="1">是<i></i></el-radio-button>
-          <el-radio-button label="0">否<i></i></el-radio-button>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="选择供应商是否为我公司已审核修理厂家" prop="isSupplierCheck" label-width="280px" placeholder="">
-        <el-radio-group v-model="contractForm.isSupplierCheck" class="myRadio">
-          <el-radio-button label="1">是<i></i></el-radio-button>
-          <el-radio-button label="0">否<i></i></el-radio-button>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="新件参考价格" class="deptArea" prop="newReferencePrice">
-        <money-input v-model="contractForm.newReferencePrice" :prepend="false">
-          <template slot="append">元</template>
-        </money-input>
-      </el-form-item>
-      <el-form-item label="购买该送修件参考价格" class="arrArea fixLabel" prop="purchaseReferencePrice">
-        <money-input v-model="contractForm.purchaseReferencePrice" :prepend="false">
-          <template slot="append">元</template>
-        </money-input>
-      </el-form-item>
-      <el-form-item label="修理费与购件费比例" class="deptArea fixLabel" prop="repairPurchasePriceRate">
-        <el-input v-model="contractForm.repairPurchasePriceRate">
+      <el-form-item label="订货周期" class="deptArea" prop="orderCycle">
+        <el-input v-model="contractForm.orderCycle">
         </el-input>
       </el-form-item>
-      <el-form-item label="币种" class="arrArea" prop="currencyId">
+      <el-form-item label="需求日期" prop="requestDate" class="arrArea">
+        <el-date-picker v-model="contractForm.requestDate" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+      </el-form-item>
+      <el-form-item label="币种" class="deptArea" prop="currencyId">
         <el-select v-model="contractForm.currencyId" @change="currencyChange">
           <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="前期询价对比" class="arrArea" prop="earlyInquiryCompare">
+        <el-input v-model="contractForm.earlyInquiryCompare">
+        </el-input>
       </el-form-item>
       <el-form-item label="付款方式" class="deptArea" prop="isAdvancePayment">
         <el-select v-model="contractForm.isAdvancePayment">
@@ -88,38 +51,7 @@
         </money-input>
       </el-form-item>
     </el-form>
-    <h4 class='doc-form_title clearBoth'>厂家信息</h4>
-    <el-form label-position="left" :model="factoryForm" :rules="factoryRule" ref="factoryForm" label-width="128px">
-      <el-form-item label="选择厂家" prop="supplierIds">
-        <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="supplierProp" v-model="factoryForm.supplierIds" style="width:100%" popper-class="myCascader" ref="factorySupplier">
-        </el-cascader>
-      </el-form-item>
-      <el-form-item label="币种" prop="currencyId">
-        <el-select v-model="factoryForm.currencyId">
-          <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
-        </el-select>
-        <p class="uniqueInfo" v-show="contractForm.isSupplierUnique==='1'">供应商为独家修理厂家时只能添加一个厂家</p>
-      </el-form-item>
-      <el-form-item label="报价" prop="offerPrice" class="offerPrice clearfix">
-        <money-input v-model="factoryForm.offerPrice" :prepend="false">
-          <template slot="append">元</template>
-        </money-input>
-        <el-button type="primary" @click="addFactory" :disabled="contractForm.isSupplierUnique==='1'&&factoryTable.length>0"><i class="el-icon-plus"></i> 添加</el-button>
-      </el-form-item>
-    </el-form>
-    <el-table :data="factoryTable" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加厂家" class="factoryTable">
-      <el-table-column type="index" label="序号" width="65"></el-table-column>
-      <el-table-column property="supplierName" label="厂家名称"></el-table-column>
-      <el-table-column property="accurencyName" label="币种" width="120"></el-table-column>
-      <el-table-column property="offerPrice" label="报价" width="120"></el-table-column>
-      <el-table-column label=" " width="55">
-        <template scope="scope">
-          <el-button @click.native.prevent="deleteFactory(scope.$index)" type="text" size="small" icon="delete">
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <h4 class='doc-form_title'>详细信息</h4>
+    <h4 class='doc-form_title clearBoth'>详细信息</h4>
     <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px">
       <el-form-item label="预算年份" class="year">
         {{year}}
@@ -132,37 +64,44 @@
         <li>可用预算{{budgetInfo.budgetRemain | toThousands}}元</li>
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
-      <el-form-item label="器材中文名称" prop="materialNameZn">
-        <el-input v-model="budgetForm.materialNameZn">
+      <el-form-item label="换入器件名称" prop="changeIntoMaterialName">
+        <el-input v-model="budgetForm.changeIntoMaterialName">
         </el-input>
       </el-form-item>
-      <el-form-item label="件号" prop="pieceNo" class="deptArea">
-        <el-input v-model="budgetForm.pieceNo">
+      <el-form-item label="换入件号" prop="changeIntoPieceNo" class="deptArea">
+        <el-input v-model="budgetForm.changeIntoPieceNo">
         </el-input>
       </el-form-item>
-      <el-form-item label="序号" prop="sequenceNo" class="arrArea">
-        <el-input v-model="budgetForm.sequenceNo">
+      <el-form-item label="换入序号" prop="changeIntoSequenceNo" class="arrArea">
+        <el-input v-model="budgetForm.changeIntoSequenceNo">
         </el-input>
       </el-form-item>
-      <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
-        <el-input v-model="budgetForm.pieceNum">
+      <el-form-item label="换入数量" prop="changeIntoNum" class="clearBoth">
+        <money-input v-model="budgetForm.changeIntoNum" type="int" :prepend="false" :append="false" style="width:200px">
+        </money-input>
+      </el-form-item>
+      <el-form-item label="我方支付" prop="ourPayment" class="deptArea">
+        <money-input v-model="budgetForm.ourPayment" :prepend="false" :append="false">
+        </money-input>
+      </el-form-item>
+      <el-form-item label="对方支付" prop="otherPayment" class="arrArea">
+        <money-input v-model="budgetForm.otherPayment" :prepend="false" :append="false">
+        </money-input>
+      </el-form-item>
+      <el-form-item label="换出器件名称" prop="changeOutMaterialName" class="clearBoth">
+        <el-input v-model="budgetForm.changeOutMaterialName">
         </el-input>
       </el-form-item>
-      <el-form-item label="单位" prop="unit" class="arrArea">
-        <el-input v-model="budgetForm.unit">
+      <el-form-item label="换出件号" prop="changeOutPieceNo" class="deptArea">
+        <el-input v-model="budgetForm.changeOutPieceNo">
         </el-input>
       </el-form-item>
-      <el-form-item label="工时费" prop="timePrice" class="deptArea">
-        <el-input v-model="budgetForm.timePrice">
+      <el-form-item label="换出序号" prop="changeOutSequenceNo" class="arrArea">
+        <el-input v-model="budgetForm.changeOutSequenceNo">
         </el-input>
       </el-form-item>
-      <el-form-item label="材料费" prop="materialPrice" class="arrArea">
-        <el-input v-model="budgetForm.materialPrice">
-        </el-input>
-      </el-form-item>
-      <el-form-item label="合计金额" prop="totalItemMoney" class="offerPrice clearfix clearBoth">
-        <money-input v-model="budgetForm.totalItemMoney" :prepend="false">
-          <template slot="append">元</template>
+      <el-form-item label="换出数量" prop="changeOutNum" class="offerPrice clearfix clearBoth">
+        <money-input v-model="budgetForm.changeOutNum" type="int" :prepend="false" :append="false" style="width:200px">
         </money-input>
         <el-button type="primary" @click="addBudget"><i class="el-icon-plus"></i> 添加</el-button>
       </el-form-item>
@@ -174,14 +113,16 @@
             </template>
           </el-table-column>
           <el-table-column property="executeRate" label="执行比例" width="90"></el-table-column>
-          <el-table-column property="materialNameZn" label="器材中文名称" width="200"></el-table-column>
-          <el-table-column property="pieceNo" label="件号" width="90"></el-table-column>
-          <el-table-column property="sequenceNo" label="序号" width="90"></el-table-column>
-          <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
-          <el-table-column property="unit" label="单位" width="90"></el-table-column>
-          <el-table-column property="timePrice" label="工时费" width="90"></el-table-column>
-          <el-table-column property="materialPrice" label="材料费" width="90"></el-table-column>
-          <el-table-column property="totalItemMoney" label="合计金额" width="110"></el-table-column>
+          <el-table-column property="changeIntoMaterialName" label="换入器件名称" width="200"></el-table-column>
+          <el-table-column property="changeIntoPieceNo" label="换入件号" width="90"></el-table-column>
+          <el-table-column property="changeIntoSequenceNo" label="换入序号" width="90"></el-table-column>
+          <el-table-column property="changeIntoNum" label="换入数量" width="90"></el-table-column>
+          <el-table-column property="ourPayment" label="我方支付" width="90"></el-table-column>
+          <el-table-column property="otherPayment" label="对方支付" width="90"></el-table-column>
+          <el-table-column property="changeOutMaterialName" label="换出器件名称" width="200"></el-table-column>
+          <el-table-column property="changeOutPieceNo" label="换出件号" width="90"></el-table-column>
+          <el-table-column property="changeOutSequenceNo" label="换出序号" width="90"></el-table-column>
+          <el-table-column property="changeOutNum" label="换出数量" width="90"></el-table-column>
           <el-table-column label="操作" width="55" fixed="right">
             <template scope="scope">
               <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
@@ -200,28 +141,6 @@
         </el-input>
       </el-form-item>
     </el-form>
-    <!-- <el-dialog title="选择合同子类型" :visible.sync="dialogVisible" size="tiny" :before-close="handleClose">
-      <el-form label-position="left" :model="dialogForm" :rules="dialogRule" ref="dialogForm" label-width="128px">
-        <el-form-item label="合同子类型" prop="contractCode" placeholder="" class="deptArea">
-          <el-select v-model="contractForm.contractCode" style="width:100%">
-            <el-option v-for="item in contractCodeList" :key="item.dictCode" ref="contractCode" :label="item.dictName" :value="item.dictCode">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="送修合同" prop="repairContract">
-          <el-col :span='21' class="repairContract" style="left: -6px;position: relative;">
-            <div class="docsBox">
-              <el-tag type="gray" :closable="true" @close="clearDoc(index)">{{repairContractDoc.docTitle}}</el-tag>
-            </div>
-          </el-col>
-          <el-col :span='3'>
-            <el-button class="addButton" @click="addDoc"> <i class="el-icon-plus"></i></el-button>
-          </el-col>
-        </el-form-item>
-      </el-form>
-      <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
-    </el-dialog> -->
   </div>
 </template>
 <script>
@@ -234,58 +153,41 @@ export default {
       year: new Date().getFullYear(),
       contractForm: {
         createTime: new Date(),
-        contractCode: '',
         contractNo: '',
         priority: '',
         supplierIds: [],
-        isSupplierUnique: '0',
-        isSupplierProtocol: '1',
-        isSupplierCheck: '1',
-        newReferencePrice: '',
-        purchaseReferencePrice: '',
-        repairPurchasePriceRate: '',
-        supplierRepairCheck: '',
+        requestDate: '',
+        orderCycle: '',
         currencyId: '',
+        earlyInquiryCompare: '',
         isAdvancePayment: '1',
         advancePaymentPercent: ''
       },
       contractRule: {
-        contractCode: [{ required: true, message: '请选择合同子类型', trigger: 'blur' }],
         priority: [{ required: true, message: '请选择优先级', trigger: 'blur' }],
         advancePaymentPercent: [{ required: true, message: '请输入预付款百分比', trigger: 'blur' }],
         supplierIds: [{ type: 'array', required: true, message: '请选择供应商', trigger: 'blur' }],
       },
-      dialogForm: {
-        contractCode: '',
-        repairContract: ''
-      },
-      factoryForm: {
-        supplierIds: [],
-        currencyId: '',
-        offerPrice: ''
-      },
-      factoryRule: {
-        supplierIds: [{ type: 'array', required: true, message: '请选择厂家', trigger: 'blur' }],
-        currencyId: [{ required: true, message: '请选择币种', trigger: 'blur' }],
-        offerPrice: [{ required: true, message: '请输入报价', trigger: 'blur' }],
-      },
       budgetForm: {
         budgetDept: [],
-        pieceNo: '', //   件号
-        sequenceNo: '', //   序号
-        pieceNum: '', //   合同数量 即合同里的件数量
-        unit: '', //   单位
-        materialNameZn: '', //   器材中文名称
-        materialPrice: '', //   材料费
-        timePrice: '', // 
-        totalItemMoney: ''
+        changeIntoPieceNo: '', //   件号
+        changeIntoSequenceNo: '', //   序号
+        changeIntoNum: '', //   
+        ourPayment: '',
+        otherPayment: '',
+        changeIntoMaterialName: '', //   
+        changeOutMaterialName: '',
+        changeOutPieceNo: '',
+        changeOutSequenceNo: '',
+        changeOutNum: '',
       },
       budgetRule: {
-        pieceNo: [{ required: true, message: '请输入件号', trigger: 'blur' }],
-        pieceNum: [{ required: true, message: '请输入合同数量', trigger: 'blur' }],
-        budgetDept: [{ type: 'array', required: true, message: '请预算机构', trigger: 'blur' }],
+        changeIntoPieceNo: [{ required: true, message: '请输入换入件号', trigger: 'blur' }],
+        changeIntoNum: [{ required: true, message: '请输入换入数量', trigger: 'blur' }],
+        changeOutNum: [{ required: true, message: '请输入换出数量', trigger: 'blur' }],
+        changeOutPieceNo: [{ required: true, message: '请输入换出件号', trigger: 'blur' }],
+        budgetDept: [{ type: 'array', required: true, message: '请选择预算机构', trigger: 'blur' }],
       },
-      factoryTable: [],
       budgetTable: [],
       repairContractDoc: null,
       supplierInfo: '',
@@ -309,12 +211,13 @@ export default {
         children: 'items'
       },
       isDraft: false,
-      totalRmb: ''
+      totalRmb: '',
+      isfirst:true,
     }
 
   },
   created() {
-    if (this.$route.params.id) {
+    if (this.$route.query.id) {
       this.isDraft = true;
     }
     this.getContractCodeList();
@@ -330,8 +233,8 @@ export default {
       var num = 0;
       if (this.budgetTable.length != 0) {
         this.budgetTable.forEach(b => {
-          if (b.totalItemMoney) {
-            num += parseFloat(b.totalItemMoney);
+          if (b.ourPayment) {
+            num += parseFloat(b.ourPayment);
           }
         })
       }
@@ -353,23 +256,34 @@ export default {
     },
     totalMoney: function(newval) {
       this.getTotalRmb();
+    },
+    supplierList:function(newval){
+      if(this.isDraft&&this.isfirst){
+        this.supplierChange();
+        this.isfirst=false;
+      }
     }
   },
   methods: {
     saveForm() {
       var params = JSON.stringify({
         budgetTable: this.budgetTable,
-        factoryTable: this.factoryTable,
         contractForm: this.contractForm,
       });
-
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
-      this.combineObj(this.contractForm,obj.contractForm,['createTime']);
-      this.contractForm.createTime=new Date(obj.contractForm.createTime);
+      this.combineObj(this.contractForm, obj.contractForm, ['createTime', 'requestDate']);
+      this.contractForm.createTime = new Date(obj.contractForm.createTime);
+      this.contractForm.requestDate = new Date(obj.contractForm.requestDate);
       this.budgetTable = obj.budgetTable;
-      this.factoryTable = obj.factoryTable;
+      if (this.contractForm.supplierIds.length != 0) {
+        if (this.supplierList.length == 0) {
+          this.getSupplier();
+        } else {
+          this.supplierChange();
+        }
+      }
     },
     submitForm() {
       if (this.checkTable()) {
@@ -385,11 +299,6 @@ export default {
       }
     },
     checkTable() {
-      if (this.factoryTable.length == 0) {
-        this.$message.warning('请填加厂家信息');
-        this.$emit('submitMiddle', false);
-        return false;
-      }
       if (this.budgetTable.length == 0) {
         this.$message.warning('请填加预算项');
         this.$emit('submitMiddle', false);
@@ -398,36 +307,28 @@ export default {
       return true;
     },
     submitAll() {
-      var contractType = this.contractCodeList.find(d => d.dictCode == this.contractForm.contractCode);
       var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
-      var airmRor = {
-        docTypeCode: contractType.dictCode, // 合同子类型
-        docTypeName: contractType.dictName, // 合同子类型
+      var airmExchange = {
         priority: this.contractForm.priority, //  优先级   
-        currencyId: currency.currencyCode, //   币种id
+        accurencyName: currency.currencyName, // 币种名
         supplierId: this.supplierInfo.id, //  供应商id
         supplierName: this.supplierInfo.supplierName, //  供应商名
         supplierBank: this.supplierInfo.accountBank, //  供应商开户银行
         supplierBankAccountName: this.supplierInfo.accountName, //  供应商开户账号名
+        supplierBankAccountCode: this.supplierInfo.accountCode, //供应商开户账号编号
         advancePaymentPercent: this.contractForm.advancePaymentPercent, //  预付款百分比
         contractNo: this.contractForm.contractNo, //  合同号
         createTime: +this.contractForm.createTime, //   填表日期（创建日期）（推送日期）
-        isSupplierUnique: this.contractForm.isSupplierUnique, //  选择供应商是否为独家修理厂家
-        accurencyName: currency.currencyName, // 币种名
-        isSupplierProtocol: this.contractForm.isSupplierProtocol, //  选择供应商是否为协议供应商
-        isSupplierCheck: this.contractForm.isSupplierCheck, //  选择供应商是否为我公司已审
         totalMoney: this.totalMoney || 0, //  总合计金额
         rmb: this.totalRmb || 0, //   金额总计根据币种汇率换算出人民币
-        newReferencePrice: this.contractForm.newReferencePrice, //  新件参考价格
-        purchaseReferencePrice: this.contractForm.purchaseReferencePrice, //   购买该送修件参考价格
-        repairPurchasePriceRate: this.contractForm.repairPurchasePriceRate, //   修理费与购件费比例
         isAdvancePayment: this.contractForm.isAdvancePayment, //   付款方式,1预付 0后付
-        // isVerification: this.contractForm.code, //   航材类合同的情况, 是否付款, 1是已付款, 0未付款
         exchangeRateId: currency.exchangeId, //   汇率id
         exchangeRate: currency.exchangeRate, //    汇率
-        // repairContract: this.contractForm.code, //   送修合同
+        orderCycle: this.contractForm.orderCycle,
+        requestDate: +this.contractForm.requestDate,
+        earlyInquiryCompare: this.contractForm.earlyInquiryCompare,
       }
-      this.$emit('submitMiddle', { airmRor: airmRor, airmRorItems: this.budgetTable, airmRorRepairs: this.factoryTable })
+      this.$emit('submitMiddle', { airmExchange: airmExchange, airmExchangeItems: this.budgetTable })
     },
     getContractCodeList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC21' })
@@ -476,11 +377,6 @@ export default {
       }
       this.supplierInfo = temp;
     },
-    isSupplierUniqueChange(val) {
-      if (val === '1') {
-        this.factoryTable.splice(1);
-      }
-    },
     currencyChange(val) {
       if (this.totalMoney) {
         this.getTotalRmb();
@@ -488,33 +384,11 @@ export default {
       if (this.budgetTable.length != 0) {
         var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
         this.budgetTable.forEach(b => {
-          b.currencyName = currency.currencyName;
+          b.acurrencyName = currency.currencyName;
           b.exchangeRateId = currency.exchangeId; //汇率id
           b.exchangeRate = currency.exchangeRate; // 汇率
         })
       }
-    },
-    addFactory() {
-      this.$refs.factoryForm.validate((valid) => {
-        if (valid) {
-          var currency = this.currencyList.find(c => c.currencyCode === this.factoryForm.currencyId);
-          console.log(currency)
-          var item = {
-            supplierName: this.$refs.factorySupplier.currentLabels[this.$refs.factorySupplier.currentLabels.length - 1], //厂家名
-            offerPrice: this.factoryForm.offerPrice, //报价
-            accurencyName: currency.currencyName, //币种名
-            exchangeRateId: currency.exchangeId, //汇率id
-            exchangeRate: currency.exchangeRate, // 汇率
-          }
-          this.factoryTable.push(item);
-          this.factoryForm.supplierIds = [];
-          this.factoryForm.currencyId = '';
-          this.factoryForm.offerPrice = '';
-        } else {}
-      });
-    },
-    deleteFactory(index) {
-      this.factoryTable.splice(index, 1);
     },
     getBudgetDeptList() {
       this.$http.post('/doc/getBudItemTreeList')
@@ -572,29 +446,34 @@ export default {
             budgetDeptId: dep.budgetDeptCode, //   预算部门id
             budgetDeptName: dep.budgetDeptName, //   预算部门名
             budgetYear: this.year, //   预算年份
-            pieceNo: this.budgetForm.pieceNo, //   件号
-            sequenceNo: this.budgetForm.sequenceNo, //   序号
-            pieceNum: this.budgetForm.pieceNum, //   合同数量 即合同里的件数量
-            unit: this.budgetForm.unit, //   单位
-            materialNameZn: this.budgetForm.materialNameZn, //   器材中文名称
-            materialPrice: this.budgetForm.materialPrice, //   材料费
-            timePrice: this.budgetForm.timePrice, //   工时费
+            changeIntoMaterialName: this.budgetForm.changeIntoMaterialName,
+            changeIntoPieceNo: this.budgetForm.changeIntoPieceNo,
+            changeIntoSequenceNo: this.budgetForm.changeIntoSequenceNo,
+            changeIntoNum: this.budgetForm.changeIntoNum,
+            ourPayment: this.budgetForm.ourPayment,
+            otherPayment: this.budgetForm.otherPayment,
+            changeOutMaterialName: this.budgetForm.changeOutMaterialName,
+            changeOutPieceNo: this.budgetForm.changeOutPieceNo,
+            changeOutSequenceNo: this.budgetForm.changeOutSequenceNo,
+            changeOutNum: this.budgetForm.changeOutNum,
             executeRate: this.budgetInfo.execRateStr, //   执行比例
             accurencyName: currency.currencyName, //  币种名
             exchangeRateId: currency.exchangeId, //   汇率id
             exchangeRate: currency.exchangeRate, //   汇率
-            totalItemMoney: this.budgetForm.totalItemMoney, //  项次合计金额
           }
           this.budgetTable.push(item);
           this.budgetForm.budgetDept = [];
-          this.budgetForm.pieceNo = ''; //   件号
-          this.budgetForm.sequenceNo = ''; //   序号
-          this.budgetForm.pieceNum = ''; //   合同数量 即合同里的件数量
-          this.budgetForm.unit = ''; //   单位
-          this.budgetForm.materialNameZn = ''; //   器材中文名称
-          this.budgetForm.materialPrice = ''; //   材料费
-          this.budgetForm.timePrice = ''; // 
-          this.budgetForm.totalItemMoney = '';
+          this.budgetForm.changeIntoMaterialName = '';
+          this.budgetForm.changeIntoPieceNo = '';
+          this.budgetForm.changeIntoSequenceNo = '';
+          this.budgetForm.changeIntoNum = '';
+          this.budgetForm.ourPayment = '';
+          this.budgetForm.otherPayment = '';
+          this.budgetForm.changeOutPieceNo = '';
+          this.budgetForm.changeOutSequenceNo = '';
+          this.budgetForm.changeOutNum = '';
+          this.budgetForm.changeOutMaterialName = '';
+
           this.budgetInfo = '';
         } else {}
       });

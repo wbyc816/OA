@@ -98,7 +98,6 @@ export default {
       }else if(this.$route.params.code=='LZS'){
         temp='0'
       }
-      console.log(temp)
       return temp
     },
     ...mapGetters([

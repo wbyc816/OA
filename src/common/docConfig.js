@@ -164,6 +164,13 @@ export const docConfig = [{
     code: 'SXS',
     url: '/doc/docAirmRor'
   },
+  {
+    docName: '交换合同申请',
+    color: '#D67CAB',
+    shortName: '交换合同',
+    code: 'JHH',
+    url: '/doc/docAirmExchange'
+  },
 ]
 
 

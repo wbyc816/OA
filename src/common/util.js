@@ -14,7 +14,7 @@ Vue.prototype.showDowload = showDowload
 
 
 function showDowload(docName){
-  const docArr=['CPD','BXS','JKS','RSB','PXS','CLB','CLV','FKS','YFK']  //显示导出PDF的公文列表
+  const docArr=['CPD','BXS','JKS','RSB','PXS','CLB','CLV','FKS','YFK','SWD','FWG']  //显示导出PDF的公文列表
   return docArr.find(d=>d==docName)!=undefined
 }
 function getCookie(c_name) {
