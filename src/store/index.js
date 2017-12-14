@@ -7,6 +7,7 @@ import resume from './modules/resume';
 import user from './modules/user';
 import doc from './modules/doc';
 import meeting from './modules/meeting';
+import constant from './modules/constant';
 import * as types from './types'
 
 Vue.use(Vuex);
@@ -56,6 +57,7 @@ export default new Vuex.Store({
     user,
     resume,
     doc,
-    meeting
+    meeting,
+    constant
   }
 });

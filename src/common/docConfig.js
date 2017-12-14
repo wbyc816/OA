@@ -81,7 +81,7 @@ export const docConfig = [{
     url: '/doc/empIntroduce'
   },
   {
-    docName: '收文登记',
+    docName: '收文登记处理',
     color: '#A8D58A',
     shortName: '收文登记',
     code: 'SWD',
@@ -156,6 +156,13 @@ export const docConfig = [{
     shortName: '离职申请',
     code: 'LZS',
     url: '/doc/docEmpDimission'
+  },
+  {
+    docName: '送修/索赔合同申请',
+    color: '#FF8460',
+    shortName: '送修索赔',
+    code: 'SXS',
+    url: '/doc/docAirmRor'
   },
 ]
 

@@ -42,7 +42,12 @@ export default {
     placeholder: {
       type: String,
       default: ''
-    }
+    },
+    default0: {
+      type: Boolean,
+      default: false
+    },
+    max:''
   },
   data() {
     return {}
@@ -59,6 +64,9 @@ export default {
         val = val.toString().match(/^[0-9]([0-9]\,|[0-9]){0,}/)
       }
       if (val) {
+        if(this.max&&parseFloat(val[0])>parseFloat(this.max)){
+          val[0]=this.max.toString();
+        }
         this.$emit('input', val[0]);
         this.$emit('change', val[0]);
         this.$refs.input.setCurrentValue(val[0]);
@@ -83,12 +91,13 @@ export default {
         this.$refs.input.setCurrentValue(temp);
       } else if (this.type == 'int0') {
         var temp = parseFloat(event.target.value);
-        if (temp === 0) {
-          temp=temp+'';
-          this.$emit('input', temp);
-          this.$emit('change', temp);
-          this.$refs.input.setCurrentValue(temp);
+        temp = temp.toString().match(/^[0]{0,}/);
+        if (temp.input == 'NaN') {
+            temp.input = ''
         }
+        this.$emit('input', temp.input);
+        this.$emit('change', temp.input);
+        this.$refs.input.setCurrentValue(temp.input);
       }
     }
   }

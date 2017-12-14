@@ -783,23 +783,6 @@ $main:#0460AE;
       }
     }
   }
-  .supplierInfo {
-    background: #F7F7F7;
-    font-size: 15px;
-    color: $main;
-    margin-bottom: 20px;
-    li {
-      float: left;
-      width: 50%;
-      text-align: center;
-      min-height: 54px;
-      padding-top: 16px;
-      &:nth-child(2) {
-        // width: 40%;
-        border-left: 1px solid #D5DADF;
-      }
-    }
-  }
   .addBudget {
     width: 220px;
     height: 45px;

@@ -21,7 +21,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="培训总预算" prop="trainTotalCost" class="deptArea">
-        <money-input v-model="trainingForm.trainTotalCost" type="int0" :prepend="false" >
+        <money-input v-model="trainingForm.trainTotalCost" type="int0" :prepend="false" :default0="true">
           <template slot="append">元</template>
         </money-input>
       </el-form-item>
