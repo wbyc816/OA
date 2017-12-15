@@ -86,7 +86,7 @@ const ticketData = [
   { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '员工优惠机票', 'link': '#/doc/docCommonApp/YGY' }
 ];
 const flightData = [
-  { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '航材/工具采购', 'link': '#' },
+  { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '航材/工具采购', 'link': '#/doc/docCommonApp/HCG' },
   { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '价拨/售出', 'link': '#' },
   { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '租借/借出', 'link': '#' },
   { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '送修/索赔', 'link': '#/doc/docCommonApp/SXS' },

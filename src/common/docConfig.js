@@ -164,6 +164,13 @@ export const docConfig = [{
     code: 'SXS',
     url: '/doc/docAirmRor'
   },
+  {
+    docName: '航材/工具采购',
+    color: '#FF8460',
+    shortName: '航材/工具采购',
+    code: 'HCG',
+    url: '/doc/docAirmPos'
+  },
 ]
 
 
