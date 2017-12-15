@@ -85,7 +85,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}} 元</span></p>
+        <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
       </div>
       <el-form-item label="收款供应商" prop="supplierIds">
         <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="paymentProp" v-model="paymentForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier">
@@ -186,7 +186,7 @@ export default {
       paymentRule: {
         contractCode: [{ required: true, message: '请选择合同类型', trigger: 'blur' }],
         payMthodCode: [{ required: true, message: '请选择付款方式', trigger: 'blur' }],
-        supplierIds: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
+        supplierIds: [{ type: 'array', required: true, message: '请选择收款供应商', trigger: 'blur' }],
         paymentOthers: [{ required: true, trigger: 'blur', message: '请输入付款方式' }],
         feeType: [{ type: 'array', required: true, trigger: 'blur', message: '请选费用类型' }],
         isAdvancePayment: [{ required: true, trigger: 'blur' }],
@@ -490,7 +490,7 @@ export default {
       var dep = this.getBudgetDep();
       var temp = this.budgetTable.find(b => b.budgetDeptId == dep.budgetDeptCode && b.budgetItemId == dep.budgetItemCode)
       if (temp == undefined) {
-        if (this.budgetInfo.budgetRemain <= 0 && rmb > this.budgetInfo.budgetRemain) {
+        if (this.budgetInfo.budgetRemain <= 0 || rmb > this.budgetInfo.budgetRemain) {
           this.$message.warning('申请金额不能大于可用预算金额');
           return false
         } else {
@@ -690,17 +690,6 @@ export default {
         }
       }
       return temp
-    },
-    getBudgetDep() {
-      var len = this.budgetForm.budgetDept.length;
-      var temp = this.budgetDeptList;
-      for (var i = 0; i < len; i++) {
-        temp = temp.find(dep => dep.budgetItemCode == this.budgetForm.budgetDept[i]);
-        if (temp.items && temp.items.length != 0) {
-          temp = temp.items;
-        }
-      }
-      return temp;
     },
     getAddTax() {
       this.$http.post('/doc/addValueTax', { budgetYear: this.year })

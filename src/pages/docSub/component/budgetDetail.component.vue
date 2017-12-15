@@ -12,7 +12,7 @@
       <el-table-column property="budgetRate" label="执行比例" width="80"></el-table-column>
       <el-table-column property="money" label="申报额度(元)" :formatter="formatMoney" width="130"></el-table-column>
     </el-table>
-    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p>
+    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元 {{totalPrice | moneyCh}}</span></p>
 
   </div>
 </template>

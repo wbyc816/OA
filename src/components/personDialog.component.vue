@@ -116,6 +116,10 @@ export default {
       type: Boolean,
       default: false
     },
+    deptId:{
+      type: String,
+      default: ''
+    }
   },
   watch: {
     'visible': function(newVal) {
@@ -130,7 +134,7 @@ export default {
         } else {
           if (this.admin !== '') {
             if (this.admin == '0') {
-              this.$store.dispatch('getDepById', this.hasSecretary);
+              this.$store.dispatch('getDepById', {hasSecretary:this.hasSecretary,deptId:this.deptId});
             } else {
               this.$store.dispatch('getDeptList');
             }
@@ -138,13 +142,13 @@ export default {
             if (this.isAdmin) {
               this.$store.dispatch('getDeptList');
             } else {
-              this.$store.dispatch('getDepById', this.hasSecretary);
+              this.$store.dispatch('getDepById', {hasSecretary:this.hasSecretary,deptId:this.deptId});
             }
           }
           if (this.userInfo.levelNum == 30) {
-            this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+            this.$store.dispatch('setQueryDepId', this.deptId||this.userInfo.deptId)
           } else {
-            this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+            this.$store.dispatch('setQueryDepId', this.deptId||this.userInfo.deptParentId)
           }
         }
         this.name = "";
@@ -199,11 +203,11 @@ export default {
         if (this.admin !== '') {
           if (this.admin == 0) {
             if (this.userInfo.levelNum == 30) {
-              this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+              this.$store.dispatch('setQueryDepId', this.deptId||this.userInfo.deptId)
             } else {
-              this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+              this.$store.dispatch('setQueryDepId', this.deptId||this.userInfo.deptParentId)
             }
-            this.$store.dispatch('getDepById', this.hasSecretary);
+            this.$store.dispatch('getDepById', {hasSecretary:this.hasSecretary,deptId:this.deptId});
           } else {
             this.$store.dispatch('setQueryDepId', '');
             this.$store.dispatch('getDeptList');
@@ -214,11 +218,11 @@ export default {
             this.$store.dispatch('getDeptList');
           } else {
             if (this.userInfo.levelNum == 30) {
-              this.$store.dispatch('setQueryDepId', this.userInfo.deptId)
+              this.$store.dispatch('setQueryDepId', this.deptId||this.userInfo.deptId)
             } else {
-              this.$store.dispatch('setQueryDepId', this.userInfo.deptParentId)
+              this.$store.dispatch('setQueryDepId', this.deptId||this.userInfo.deptParentId)
             }
-            this.$store.dispatch('getDepById', this.hasSecretary);
+            this.$store.dispatch('getDepById', {hasSecretary:this.hasSecretary,deptId:this.deptId});
           }
         }
       }

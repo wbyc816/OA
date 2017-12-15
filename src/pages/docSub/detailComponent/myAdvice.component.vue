@@ -66,7 +66,7 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :admin="docDetail.isAdmin==1&&!hasSecretary()?'1':'0'" :visible.sync="dialogTableVisible" dialogType="radio" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :admin="normalPersonAdmin" :visible.sync="dialogTableVisible" dialogType="radio" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
     <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :isLeaderDep="docDetail.isConfidential==1" :data="signPersons"></person-dialog>
     <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="$route.query.code=='LZS'?'0':''"></person-dialog>
     <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" isSaveInit></dep-dialog>
@@ -124,7 +124,8 @@ export default {
       type: Object
     },
     taskDetail: '',
-    suggestHtml: ''
+    suggestHtml: '',
+    otherInfo:''
   },
   data() {
     var checkSign = (rule, value, callback) => {
@@ -192,6 +193,18 @@ export default {
       } else {
         return false
       }
+    },
+    normalPersonAdmin:function(){
+      var temp='0';
+      if(this.docDetail.isAdmin==1){   //公文详情里控制是否有跨部门权限
+        temp='1'
+      }
+      if(this.hasSecretary()){    //四类特殊公文且不是机要秘书  不能跨部门
+        if(this.docDetail.isConfidential!=1){   
+          temp='0'
+        }
+      }
+      return temp;                        
     },
     ...mapGetters([
       'userInfo',
@@ -339,18 +352,22 @@ export default {
       this.ruleForm.sign = [];
       this.signDeps = [];
       if (val == 1) {
-        if (this.$route.query.code == 'FWG'&&this.userInfo.deptParentId!=initFWGDeps[0].id) {
+
+        //特定公文类型 发文稿纸、合同申请  呈报人所在部门不在特殊范围 自动添加默认部门
+        if (this.$route.query.code == 'FWG'&&this.otherInfo[0].catalogueId==='公司发文'&&this.docDetail.taskDeptMajorId!=initFWGDeps[0].id&&this.docDetail.taskDeptId!=initFWGDeps[0].id) {
           this.updateSignDep(initFWGDeps);
-        } else if (this.$route.query.code == 'HTS'&&this.userInfo.deptParentId!=initHTSDeps[0].id) {
+        } else if (this.$route.query.code == 'HTS'&&this.docDetail.taskDeptMajorId!=initHTSDeps[0].id&&this.docDetail.taskDeptId!=initHTSDeps[0].id) {
           this.updateSignDep(initHTSDeps);
         }
       }
       this.$refs.ruleForm.validateField('sign');
     },
     ableDepClose(val) {
-      if (this.$route.query.code == 'FWG') {
+
+      //特定公文类型 发文稿纸、合同申请  呈报人所在部门不在特殊范围 自动添加默认部门
+      if (this.$route.query.code == 'FWG'&&this.otherInfo[0].catalogueId==='公司发文'&&this.docDetail.taskDeptMajorId!=initFWGDeps[0].id&&this.docDetail.taskDeptId!=initFWGDeps[0].id) {
         return initFWGDeps.find(d => d.id == val) == undefined
-      } else if (this.$route.query.code == 'HTS') {
+      } else if (this.$route.query.code == 'HTS'&&this.docDetail.taskDeptMajorId!=initHTSDeps[0].id&&this.docDetail.taskDeptId!=initHTSDeps[0].id) {
         return initHTSDeps.find(d => d.id == val) == undefined
       } else {
         return true

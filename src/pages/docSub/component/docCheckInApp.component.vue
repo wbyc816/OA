@@ -13,7 +13,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="发文目录" prop="catalogueName" class="clearBoth">
+      <el-form-item label="收文目录" prop="catalogueName" class="clearBoth">
         <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="checkInForm.catalogueName" style="width:100%" popper-class="myCascader">
         </el-cascader>
       </el-form-item>

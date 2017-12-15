@@ -130,7 +130,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}} 元</span></p>
+        <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
       </div>
       <el-form-item label="金额总计" class="deptArea">
         <el-input v-model="totalMoney" readonly>
@@ -384,7 +384,7 @@ export default {
       if (this.budgetTable.length != 0) {
         var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
         this.budgetTable.forEach(b => {
-          b.acurrencyName = currency.currencyName;
+          b.accurencyName = currency.currencyName;
           b.exchangeRateId = currency.exchangeId; //汇率id
           b.exchangeRate = currency.exchangeRate; // 汇率
         })

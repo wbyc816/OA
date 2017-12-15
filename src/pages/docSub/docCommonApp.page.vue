@@ -49,6 +49,8 @@ import YGY from './component/staffBenefitApp.component.vue'
 import LZS from './component/empQuitApp.component.vue'
 import SXS from './component/airRepairApp.component.vue'
 import JHH from './component/airExchangeApp.component.vue'
+import YSL from './component/commonBudgetApp.component.vue'
+import TYS from './component/commonApp.component.vue'
 
 export default {
   data() {
@@ -106,7 +108,9 @@ export default {
     YGY,
     LZS,
     SXS,
-    JHH
+    JHH,
+    YSL,
+    TYS
   },
   mounted() {
     this.initDoc();
