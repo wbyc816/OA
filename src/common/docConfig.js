@@ -165,6 +165,13 @@ export const docConfig = [{
     url: '/doc/docAirmRor'
   },
   {
+    docName: '航材/工具采购',
+    color: '#FF8460',
+    shortName: '航材/工具采购',
+    code: 'HCG',
+    url: '/doc/docAirmPos'
+  },
+  {
     docName: '交换合同申请',
     color: '#D67CAB',
     shortName: '交换合同',

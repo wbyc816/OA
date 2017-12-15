@@ -47,6 +47,7 @@ import CLB from './component/travelRemibApp.component.vue'
 import BKY from './component/guestTicketApp.component.vue'
 import YGY from './component/staffBenefitApp.component.vue'
 import LZS from './component/empQuitApp.component.vue'
+import HCG from './component/airMaterial.component.vue'
 import SXS from './component/airRepairApp.component.vue'
 import JHH from './component/airExchangeApp.component.vue'
 import YSL from './component/commonBudgetApp.component.vue'
@@ -110,7 +111,8 @@ export default {
     SXS,
     JHH,
     YSL,
-    TYS
+    TYS,
+    HCG
   },
   mounted() {
     this.initDoc();
