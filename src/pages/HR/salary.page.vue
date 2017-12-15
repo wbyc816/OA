@@ -51,21 +51,26 @@
       </div>
       <div class="salaryList" v-if="salaryType==3">
         <el-row>
+            <el-col :span="8">上月外场补贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.outField}}</el-col>
+            <el-col :span="8">上月跟机补贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.followFlight}}</el-col>
+        </el-row>
+
+        <el-row>
+            <el-col :span="8">上月夜班夜餐补贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.nightMeal}}</el-col>
             <el-col :span="8">上月夜班夜餐天数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.nightMealDays}}</el-col>
-            <el-col :span="8">上月节假日加班天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.overtimeDays}}</el-col>
         </el-row>
+
         <el-row>
             <el-col :span="8">上月跟机小时数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.followFlightHours}}</el-col>
-            <el-col :span="8">上月培训课时</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.trainNumber}}</el-col>
+            <el-col :span="8">长途补贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.longDistance}}</el-col>
         </el-row>
-        <el-row>
-            <el-col :span="8">驻外天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.stationedAbroadDays}}</el-col>
-        </el-row>
+
         <el-row>
             <el-col :span="24">
               上述各项小时生产数据由人力资源部薪酬管理处根据各业务部门所提供的生产数据核算，如有疑问可与部门考勤专员联系，点此<a href="http://efile.donghaiair.cn/backstage/illustrate/%E5%B7%A5%E8%B5%84%E5%8D%95%E8%AE%A1%E7%AE%97%E8%AF%B4%E6%98%8E.pdf">查询联系方式及计算公式。</a>
@@ -74,64 +79,55 @@
       </div>
       <div class="salaryList" v-if="salaryType==2">
         <el-row>
-            <el-col :span="8">技术等级</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.technicalGrade}}</el-col>
+            <el-col :span="8">差旅补贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.businessTravel}}</el-col>
+            <el-col :span="8">飞模津贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.flightModel}}</el-col>
+        </el-row>
+
+         <el-row>
+            <el-col :span="8">本场小时津贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.campaingHour}}</el-col>
+            <el-col :span="8">试飞小时津贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.trialFlight}}</el-col>
+        </el-row>
+
+         <el-row>
+            <el-col :span="8">因公加机组补贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.addFlight}}</el-col>
+            <el-col :span="8">起降补贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.risingLanding}}</el-col>
+        </el-row>
+
+         <el-row>
+            <el-col :span="8">飞行安全奖</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.monthlySafetyAward}}</el-col>
+            <el-col :span="8">年度安全奖</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.safeYear}}</el-col>
+        </el-row>
+
+         <el-row>
+            <el-col :span="8">飞行员还款</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.subPilotRepayment}}</el-col>
             <el-col :span="8">本场训练时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.trainTime}}</el-col>
         </el-row>
+
         <el-row>
-            <el-col :span="8">小时标准费</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.standardHour}}</el-col>
             <el-col :span="8">模拟机时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.simulationTime}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">国内航线飞行时间</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.inlandFlightTime}}</el-col>
             <el-col :span="8">试飞时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.trialTime}}</el-col>
         </el-row>
+
         <el-row>
-            <el-col :span="8">国外航线飞行时间</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.foreignFlightTime}}</el-col>
-            <el-col :span="8">国内总承包时间</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.inlandTotalContractTime}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">飞行乘务课时</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.crewLesson}}</el-col>
             <el-col :span="8">飞行员加机组时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.addFlightTime}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">超时时间</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.overtimeTime}}</el-col>
             <el-col :span="8">飞行特殊机场起落总次数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.specialFlightNumber}}</el-col>
         </el-row>
-        <el-row>
-            <el-col :span="8">备份天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.backupsDays}}</el-col>
-            <el-col :span="8">空勤人员过夜天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.overnightDays}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">上月夜班夜餐天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.nightMealDays}}</el-col>
-            <el-col :span="8">上月跟机小时数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.followFlightHours}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">驻外天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.stationedAbroadDays}}</el-col>
-            <el-col :span="8">上月节假日加班天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.overtimeDays}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">上月培训课时</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.trainNumber}}</el-col>
-        
-        </el-row>
+
+       
         <el-row>
             <el-col :span="24">
               上述各项小时生产数据由人力资源部薪酬管理处根据各业务部门所提供的生产数据核算，如有疑问可与部门考勤专员联系，点此<a href="http://efile.donghaiair.cn/backstage/illustrate/%E5%B7%A5%E8%B5%84%E5%8D%95%E8%AE%A1%E7%AE%97%E8%AF%B4%E6%98%8E.pdf">查询联系方式及计算公式。</a>
@@ -140,58 +136,46 @@
       </div>
       <div class="salaryList" v-if="salaryType==1">
         <el-row>
-            <el-col :span="8">技术等级</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.technicalGrade}}</el-col>
-            <el-col :span="8">双照人员担任双职时间</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.doubleLicenseTime}}</el-col>
+            <el-col :span="8">开航贡献奖</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.founder}}</el-col>
+            <el-col :span="8">升舱提成</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.upgrade}}</el-col>
         </el-row>
+
         <el-row>
-            <el-col :span="8">小时标准费</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.standardHour}}</el-col>
+            <el-col :span="8">机上广播津贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.broadcast}}</el-col>
+            <el-col :span="8">调组乘机津贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.othercompanyFlying}}</el-col>
+        </el-row>
+
+        <el-row>
+            <el-col :span="8">双照人员担任双职津贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.doubleLicense}}</el-col>
+            <el-col :span="8">安全服务奖</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.serviceSafe}}</el-col>
+        </el-row>
+
+        <el-row>
+            <el-col :span="8">备份补贴</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.backups}}</el-col>
             <el-col :span="8">超时时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.overtimeTime}}</el-col>
         </el-row>
-        <el-row>
-            <el-col :span="8">国内航线飞行时间</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.inlandFlightTime}}</el-col>
-            <el-col :span="8">备份天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.backupsDays}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">国外航线飞行时间</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.foreignFlightTime}}</el-col>
-            <el-col :span="8">国内总承包时间</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.inlandTotalContract}}</el-col>
-        </el-row>
+
         <el-row>
             <el-col :span="8">机上广播时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.broadcastTime}}</el-col>
+            <el-col :span="8">双照人员担任双职时间</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.doubleLicenseTime}}</el-col>
+        </el-row>
+
+        <el-row>
             <el-col :span="8">乘务员安全员调组乘机时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.othercompanyFlyingTime}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">飞行乘务课时</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.crewLesson}}</el-col>
-            <el-col :span="8">空勤人员过夜天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.overnightDays}}</el-col>
-        </el-row>
-          <el-row>
-            <el-col :span="8">上月夜班夜餐天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.nightMealDays}}</el-col>
-            <el-col :span="8">上月跟机小时数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.followFlightHours}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">驻外天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.stationedAbroadDays}}</el-col>
-            <el-col :span="8">上月节假日加班天数</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.overtimeDays}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="8">上月培训课时</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.trainNumber}}</el-col>
+       </el-row>
+
         
-        </el-row>
         <el-row>
             <el-col :span="24">
               上述各项小时生产数据由人力资源部薪酬管理处根据各业务部门所提供的生产数据核算，如有疑问可与部门考勤专员联系，点此<a :href="salaryDesUrl" target="http://efile.donghaiair.cn/backstage/illustrate/%E5%B7%A5%E8%B5%84%E5%8D%95%E8%AE%A1%E7%AE%97%E8%AF%B4%E6%98%8E.pdf">查询联系方式及计算公式。</a>
