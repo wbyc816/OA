@@ -200,28 +200,30 @@
         </el-input>
       </el-form-item>
     </el-form>
-    <!-- <el-dialog title="选择合同子类型" :visible.sync="dialogVisible" size="tiny" :before-close="handleClose">
+    <el-dialog title="选择合同子类型" :visible.sync="dialogVisible" size="small" custom-class="repairContractDialog" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <el-form label-position="left" :model="dialogForm" :rules="dialogRule" ref="dialogForm" label-width="128px">
-        <el-form-item label="合同子类型" prop="contractCode" placeholder="" class="deptArea">
-          <el-select v-model="contractForm.contractCode" style="width:100%">
+        <el-form-item label="合同子类型" prop="contractCode" placeholder="">
+          <el-select v-model="contractForm.contractCode">
             <el-option v-for="item in contractCodeList" :key="item.dictCode" ref="contractCode" :label="item.dictName" :value="item.dictCode">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="送修合同" prop="repairContract">
-          <el-col :span='21' class="repairContract" style="left: -6px;position: relative;">
+          <el-col :span='18' class="repairContract" style="left: -6px;position: relative;">
             <div class="docsBox">
-              <el-tag type="gray" :closable="true" @close="clearDoc(index)">{{repairContractDoc.docTitle}}</el-tag>
+              <el-tag type="gray" v-show="repairContractDoc">{{repairContractDoc.docTitle}}</el-tag>
             </div>
           </el-col>
-          <el-col :span='3'>
-            <el-button class="addButton" @click="addDoc"> <i class="el-icon-plus"></i></el-button>
+          <el-col :span='6'>
+            <el-button class="repairContractButton" @click="addDoc">选择</el-button>
           </el-col>
         </el-form-item>
       </el-form>
-      <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      <div class="confirmBox">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </div>
       </span>
-    </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -259,6 +261,10 @@ export default {
         contractCode: '',
         repairContract: ''
       },
+      dialogRule: {
+
+      },
+      repairContractDoc: '',
       factoryForm: {
         supplierIds: [],
         currencyId: '',
@@ -283,11 +289,10 @@ export default {
       budgetRule: {
         pieceNo: [{ required: true, message: '请输入件号', trigger: 'blur' }],
         pieceNum: [{ required: true, message: '请输入合同数量', trigger: 'blur' }],
-        budgetDept: [{ type: 'array', required: true, message: '请预算机构', trigger: 'blur' }],
+        budgetDept: [{ type: 'array', required: true, message: '请选择预算机构', trigger: 'blur' }],
       },
       factoryTable: [],
       budgetTable: [],
-      repairContractDoc: null,
       supplierInfo: '',
       budgetInfo: '',
       contractCodeList: [],
@@ -309,13 +314,17 @@ export default {
         children: 'items'
       },
       isDraft: false,
-      totalRmb: ''
+      isfirst: true,
+      totalRmb: '',
+      dialogVisible: false
     }
 
   },
   created() {
-    if (this.$route.params.id) {
+    if (this.$route.query.id) {
       this.isDraft = true;
+    } else {
+      this.dialogVisible = true;
     }
     this.getContractCodeList();
     this.getPriorityList();
@@ -353,6 +362,12 @@ export default {
     },
     totalMoney: function(newval) {
       this.getTotalRmb();
+    },
+    supplierList: function(newval) {
+      if (this.isDraft && this.isfirst) {
+        this.supplierChange();
+        this.isfirst = false;
+      }
     }
   },
   methods: {
@@ -366,10 +381,17 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
-      this.combineObj(this.contractForm,obj.contractForm,['createTime']);
-      this.contractForm.createTime=new Date(obj.contractForm.createTime);
+      this.combineObj(this.contractForm, obj.contractForm, ['createTime']);
+      this.contractForm.createTime = new Date(obj.contractForm.createTime);
       this.budgetTable = obj.budgetTable;
       this.factoryTable = obj.factoryTable;
+      if (this.contractForm.supplierIds.length != 0) {
+        if (this.supplierList.length == 0) {
+          this.getSupplier();
+        } else {
+          this.supplierChange();
+        }
+      }
     },
     submitForm() {
       if (this.checkTable()) {
@@ -428,6 +450,9 @@ export default {
         // repairContract: this.contractForm.code, //   送修合同
       }
       this.$emit('submitMiddle', { airmRor: airmRor, airmRorItems: this.budgetTable, airmRorRepairs: this.factoryTable })
+    },
+    addDoc(){
+
     },
     getContractCodeList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC21' })
@@ -488,7 +513,7 @@ export default {
       if (this.budgetTable.length != 0) {
         var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
         this.budgetTable.forEach(b => {
-          b.currencyName = currency.currencyName;
+          b.acurrencyName = currency.currencyName;
           b.exchangeRateId = currency.exchangeId; //汇率id
           b.exchangeRate = currency.exchangeRate; // 汇率
         })
@@ -681,6 +706,24 @@ $sub:#1465C0;
     }
     td {
       border-bottom: none;
+    }
+  }
+  .repairContractDialog{
+      width:600px;
+    .el-form{
+      min-height:150px;
+    }
+    .repairContractButton{
+      width:100%;
+      height:45px;
+    }
+    .confirmBox{
+      text-align:center;
+      button{
+        width:100px;
+        border-radius:3px;
+        height:45px;
+      }
     }
   }
 }

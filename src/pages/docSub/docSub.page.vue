@@ -90,7 +90,7 @@ const flightData = [
   { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '价拨/售出', 'link': '#' },
   { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '租借/借出', 'link': '#' },
   { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '送修/索赔', 'link': '#/doc/docCommonApp/SXS' },
-  { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '交换合同', 'link': '#' },
+  { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '交换合同', 'link': '#/doc/docCommonApp/JHH' },
 ];
 export default {
   data() {
