@@ -451,9 +451,7 @@ export default {
       
     var airmPos= {
 
-      "airmPos":that.airMaterialTable.map(function(val) {
-          return {
-            arrivalDays:val.arrivalDays, //到货天数
+      
             "budgetYear":that.year,         //预算年度
             supplierId: that.supplierInfo.id, //  供应商id
             supplierName: that.supplierInfo.supplierName, //  供应商名
@@ -470,13 +468,13 @@ export default {
             priority: that.contractForm.priority, //  优先级   
             "contractSubType": contractType.dictCode,   //合同子类型
             "rmb": that.totalRmb || 0,  //人民币
-          }
-        })
+          
+        
     };
 
       console.log(airmPosItems)
       console.log(airmPos)
-      this.$emit('submitMiddle', { airmPos:airmPos.airmPosItems,  airmPosItems:airmPosItems.airmPosItems })
+      this.$emit('submitMiddle', { airmPos:airmPos,  airmPosItems:airmPosItems.airmPosItems })
     },
     getContractCodeList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC21' })
