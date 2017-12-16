@@ -16,7 +16,7 @@
       <el-table-column property="materialPrice" label="材料费" width="90"></el-table-column>
       <el-table-column property="totalItemMoney" label="合计金额" width="110"></el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].airmRor.rmb | toThousands}} 元</span></p>
+    <p class="totalMoney">合计金额 人民币 <span>{{info[0].airmRor.rmb | toThousands}}元 {{info[0].airmRor.rmb | moneyCh}}</span></p>
     <el-table :data="info[0].airmRorRepairs" :stripe="true" highlight-current-row style="width: 100%" class="appTable budgetTable ">
       <el-table-column type="index" label="序号" width="65"></el-table-column>
       <el-table-column property="supplierName" label="厂家名称"></el-table-column>

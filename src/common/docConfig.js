@@ -178,6 +178,20 @@ export const docConfig = [{
     code: 'JHH',
     url: '/doc/docAirmExchange'
   },
+  {
+    docName: '预算类通用申请',
+    color: '#A8D58A',
+    shortName: '预算通用',
+    code: 'YSL',
+    url: '/doc/docCommonFin'
+  },
+  {
+    docName: '通用申请',
+    color: '#A89FFF',
+    shortName: '通用申请',
+    code: 'TYS',
+    url: '/doc/docCommon'
+  },
 ]
 
 

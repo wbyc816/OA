@@ -120,7 +120,12 @@ export default {
             } else {
               node.children.forEach((child, childIndex) => {
                 if (childIndex == 0) {
-                  html += '#' + child.typeIdName+child.remark + ' ';
+                  html += '#' + child.typeIdName+child.remark;
+                  if(childIndex == node.children.length - 1){
+                    html +='# ' + arrowHtml
+                  }else{
+                    html += ' '
+                  }
                 } else if (childIndex == node.children.length - 1) {
                   html += child.typeIdName+child.remark + '# ' + arrowHtml;
                 } else {
@@ -512,50 +517,7 @@ $sub:#1465C0;
         margin-right: 5px;
       }
     }
-  } // .tempBox {
-  //   // background :$sub;
-  //   position: absolute;
-  //   right: 0;
-  //   top: 0;
-  //   height: 25px;
-  //   color: $sub; // transform:rotate(45deg);
-  //   cursor: pointer;
-  //   &:before {
-  //     content: '';
-  //     position: absolute;
-  //     right: 0;
-  //     top: 0;
-  //   }
-  //   span {
-  //     display: inline-block;
-  //     border-left: 25px solid transparent;
-  //     border-top: 25px solid $sub;
-  //   }
-  //   div {
-  //     position: absolute;
-  //     right: 0;
-  //     top: 0;
-  //     width: 25px;
-  //     height: 25px;
-  //     transition: all .3s;
-  //     background: $sub;
-  //     padding-left: 10px;
-  //     line-height: 28px;
-  //     color: #fff;
-  //     border-bottom-left-radius: 15px;
-  //     color: #fff;
-  //     opacity: 0;
-  //     &:hover {
-  //       width: 65px;
-  //       height: 28px;
-  //       opacity: 1;
-  //     }
-  //   }
-  //   i {
-  //     margin-right: 3px;
-  //     font-size: 12px;
-  //   }
-  // }
+  }
   .remainNum {
     position: absolute;
     right: -121px;
@@ -652,29 +614,7 @@ $sub:#1465C0;
         float: right;
       }
     }
-  } // .personDialogBox {
-  // .selInfoBox {
-  //   p {
-  //     font-size: 16px;
-  //     padding-left: 15px;
-  //     line-height: 40px;
-  //   }
-  //   .selInfo {
-  //     background-color: #E5E7EF;
-  //     line-height: 50px; // line-height
-  //     padding-left: 15px;
-  //     font-size: 15px;
-  //     >span {
-  //       color: $main;
-  //     }
-  //     button {
-  //       float: right;
-  //       height: 50px;
-  //       width: 100px;
-  //     }
-  //   }
-  // }
-  // }
+  } 
 }
 
 </style>

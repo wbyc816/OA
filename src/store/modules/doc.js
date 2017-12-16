@@ -149,12 +149,15 @@ const actions = {
 
   },
   //根据部门ID获取组织结构
-  getDepById({ commit, state, rootState, rootGetters }, hasSecretary) {
-    api.getDepById(rootGetters.userInfo.deptId)
+  getDepById({ commit, state, rootState, rootGetters }, payLoad) {
+    var deptId;
+    if(payLoad){
+      deptId=payLoad.deptId;
+    }
+    api.getDepById(deptId||rootGetters.userInfo.deptId)
       .then(res => {
         if (res.status == '0') {
-          console.log(hasSecretary)
-          if(hasSecretary){
+          if(payLoad&&payLoad.hasSecretary){
             res.data.deptList.push(state.secretaryInfo)
           }
           commit(types.GET_DEPT_LIST, res, { root: true })

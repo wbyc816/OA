@@ -33,7 +33,7 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" admin="0" :visible.sync="dialogTableVisible" dialogType="radio"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" admin="0" :deptId="docDetail.deptId" :visible.sync="dialogTableVisible" dialogType="radio"></person-dialog>
   </div>
 </template>
 <script>

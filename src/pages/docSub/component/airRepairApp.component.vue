@@ -189,7 +189,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}} 元</span></p>
+        <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
       </div>
       <el-form-item label="金额总计" class="deptArea">
         <el-input v-model="totalMoney" readonly>
@@ -203,19 +203,19 @@
     <el-dialog title="选择合同子类型" :visible.sync="dialogVisible" size="small" custom-class="repairContractDialog" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <el-form label-position="left" :model="dialogForm" :rules="dialogRule" ref="dialogForm" label-width="128px">
         <el-form-item label="合同子类型" prop="contractCode" placeholder="">
-          <el-select v-model="contractForm.contractCode">
+          <el-select v-model="dialogForm.contractCode">
             <el-option v-for="item in contractCodeList" :key="item.dictCode" ref="contractCode" :label="item.dictName" :value="item.dictCode">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="送修合同" prop="repairContract">
+        <el-form-item label="送修合同" prop="repairContract" v-if="dialogForm.contractCode==='DOC2102'">
           <el-col :span='18' class="repairContract" style="left: -6px;position: relative;">
             <div class="docsBox">
-              <el-tag type="gray" v-show="repairContractDoc">{{repairContractDoc.docTitle}}</el-tag>
+              <el-tag type="gray" v-show="dialogForm.repairContract">{{dialogForm.repairContract}}</el-tag>
             </div>
           </el-col>
           <el-col :span='6'>
-            <el-button class="repairContractButton" @click="addDoc">选择</el-button>
+            <el-button class="repairContractButton" @click="dialogTableVisible=true">选择</el-button>
           </el-col>
         </el-form-item>
       </el-form>
@@ -224,13 +224,33 @@
       </div>
       </span>
     </el-dialog>
+    <el-dialog :visible.sync="dialogTableVisible" size="large" class="docDialog">
+      <div class="topSearch clearfix">
+        <p class="tips">选择公文<span>请双击公文选择</span></p>
+      </div>
+      <search-options @search="setOptions" notype noPerson></search-options>
+      <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="250" :row-class-name="tableRowClassName" v-loading="searchLoading">
+        <el-table-column prop="docNo" label="公文编号" width="200"></el-table-column>
+        <el-table-column prop="docTitle" label="标题"></el-table-column>
+        <el-table-column prop="taskTime" label="呈报时间" width="175">
+          <template scope="scope">
+            {{scope.row.createTime | time('all')}}
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pageBox" v-show="extraDocs.length>0">
+        <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="5" layout="total, prev, pager, next, jumper" :total="totalSize">
+        </el-pagination>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import MoneyInput from '../../../components/moneyInput.component'
+import SearchOptions from '../../../components/searchOptions.component'
 import { mapGetters } from 'vuex'
 export default {
-  components: { MoneyInput },
+  components: { MoneyInput,SearchOptions },
   data() {
     return {
       year: new Date().getFullYear(),
@@ -262,7 +282,8 @@ export default {
         repairContract: ''
       },
       dialogRule: {
-
+        contractCode: [{ required: true, message: '请选择合同子类型', trigger: 'blur' }],
+        repairContract: [{ required: true, message: '请选择送修合同', trigger: 'blur' }],
       },
       repairContractDoc: '',
       factoryForm: {
@@ -316,7 +337,16 @@ export default {
       isDraft: false,
       isfirst: true,
       totalRmb: '',
-      dialogVisible: false
+      dialogVisible: false,
+      dialogTableVisible: false,
+      searchOptions:'',
+      searchLoading:false,
+      extraDocs:[],
+      params: {
+        "pageNumber": 1,
+        "pageSize": 5
+      },
+      totalSize: 0,
     }
 
   },
@@ -451,7 +481,7 @@ export default {
       }
       this.$emit('submitMiddle', { airmRor: airmRor, airmRorItems: this.budgetTable, airmRorRepairs: this.factoryTable })
     },
-    addDoc(){
+    addDoc() {
 
     },
     getContractCodeList() {
@@ -513,7 +543,7 @@ export default {
       if (this.budgetTable.length != 0) {
         var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
         this.budgetTable.forEach(b => {
-          b.acurrencyName = currency.currencyName;
+          b.accurencyName = currency.currencyName;
           b.exchangeRateId = currency.exchangeId; //汇率id
           b.exchangeRate = currency.exchangeRate; // 汇率
         })
@@ -647,7 +677,42 @@ export default {
             console.log('货币兑换失败')
           }
         })
-    }
+    },
+    tableRowClassName(row, index) {
+      return this.repairContractDoc.id===row.id?'selDoc':'';
+    },
+    selectDoc(row) {
+      this.dialogForm.repairContract=row.docTitle;
+      this.repairContractDoc=row;
+      this.dialogTableVisible = false;
+    },
+    setOptions(options) {
+      this.searchOptions = options;
+      this.params.pageNumber = 1;
+      this.getData();
+    },
+    handleCurrentChange(page) {
+      this.params.pageNumber = page;
+      this.getData()
+    },
+    getData() {
+      this.searchLoading = true;
+      var params = Object.assign({ userId: this.userInfo.empId }, this.params, this.searchOptions);
+      this.$http.post("/doc/getAirmRorList", params, { body: true }).then(res => {
+        setTimeout(()=> {
+          this.searchLoading = false;
+        }, 200)
+        if (res.status == 0) {
+          this.extraDocs = res.data.pagedList;
+          this.totalSize = res.data.totalSize;
+        } else {
+          this.extraDocs = [];
+          this.totalSize = 0;
+        }
+      }, res => {
+
+      })
+    },
   }
 }
 
@@ -708,21 +773,83 @@ $sub:#1465C0;
       border-bottom: none;
     }
   }
-  .repairContractDialog{
-      width:600px;
-    .el-form{
-      min-height:150px;
+  .repairContractDialog {
+    width: 600px;
+    .el-form {
+      min-height: 130px;
     }
-    .repairContractButton{
-      width:100%;
-      height:45px;
+    .repairContractButton {
+      width: 100%;
+      height: 45px;
     }
-    .confirmBox{
-      text-align:center;
-      button{
-        width:100px;
-        border-radius:3px;
-        height:45px;
+    .confirmBox {
+      text-align: center;
+      button {
+        width: 100px;
+        border-radius: 3px;
+        height: 45px;
+      }
+    }
+  }
+  .docDialog {
+    .el-dialog--large {
+      width: 900px;
+      top: 50%!important;
+      transform: translate(-50%, -50%);
+      margin-top: 0;
+      .el-dialog__header {
+        display: none;
+      }
+      .el-dialog__body {
+        padding: 0;
+      }
+    }
+    .topSearch {
+      padding: 10px;
+      line-height: 47px;
+      .tips {
+        float: left;
+        font-size: 18px;
+        span {
+          font-size: 14px;
+          margin-left: 5px;
+        }
+      }
+    }
+    .searchOptions {
+      .el-card {
+        box-shadow: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+      .el-card__body .el-col {
+        margin-bottom: 13px;
+        margin-top: 0;
+      }
+    }
+    .myTable {
+      &:before {
+        display: none;
+      }
+      .selDoc {
+        cursor: not-allowed;
+        background-color: #eef1f6;
+        .cell {
+          color: #bfcbd9;
+        }
+      }
+      tr {
+        cursor: pointer;
+      }
+    }
+    .pageBox {
+      overflow: hidden;
+      padding-right: 10px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #D5DADF;
+      .el-pagination {
+        float: right;
       }
     }
   }

@@ -160,7 +160,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalFee}} 元</span></p>
+        <p class="totalMoney">合计金额 人民币 <span>{{totalFee}}元 {{totalFee | moneyCh}}</span></p>
       </div>
       <!-- 预算 -->
       <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px">
@@ -223,7 +223,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
+        <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
       </div>
       <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea" style="width:51%">
         <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType" @change="payMthodChange">

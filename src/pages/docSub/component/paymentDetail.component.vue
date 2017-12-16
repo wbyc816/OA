@@ -24,7 +24,7 @@
       </el-table-column>
       <el-table-column property="rmb" label="人民币(元)" :formatter="formatMoney" width="110"></el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].finPayment.totalMoney | toThousands}} 元</span></p>
+    <p class="totalMoney">合计金额 人民币 <span>{{info[0].finPayment.totalMoney | toThousands}}元 {{info[0].finPayment.totalMoney | moneyCh}}</span></p>
     <el-table :data="info[0].execstatis" :stripe="true" highlight-current-row style="width: 100%" class="appTable budgetTable ">
       <el-table-column label="预算年度" property="budgetYear" width="80"></el-table-column>
       <el-table-column property="budgetDeptName" label="预算机构/科目">

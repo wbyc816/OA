@@ -39,7 +39,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice | toThousands}}元</span></p>
+    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice | toThousands}}元 {{totalPrice | moneyCh}}</span></p>
   </div>
 </template>
 <script>

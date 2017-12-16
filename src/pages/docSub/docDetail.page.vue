@@ -83,7 +83,7 @@
       </div>
       <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
       </quit-advice>
-      <my-advice :docDetail="docDetialInfo.doc" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice">
+      <my-advice :docDetail="docDetialInfo.doc" :otherInfo="docDetialInfo.otherInfo" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice">
         <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true;getFileSend();" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
@@ -180,7 +180,12 @@ import BKY from './component/guestTicketDetail.component.vue' //宾客机票详�
 import YGY from './component/staffBenefitDetail.component.vue' //员工优惠机票
 import LZS from './component/empQuitDetail.component.vue' //离职详情
 import SXS from './component/airRepairDetail.component.vue' //送修详情
+
 import HCG from './component/airMaterialDetail.component.vue' //航材工具详情
+
+import YSL from './component/commonBudgetDetail.component.vue' //通用预算详情
+import TYS from './component/commonDetail.component.vue' //通用申请详情
+
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -197,6 +202,8 @@ export default {
     SWDD,
     CPDD,
     HTSD,
+    YSL,
+    TYS,
     YCS,
     CLS,
     FWG,
@@ -367,7 +374,7 @@ export default {
               this.getSendType();
             }
             this.handleSuggest();
-            if (route.query.code != 'FWG'||route.query.code != 'SWD') {
+            if (route.query.code != 'CPD'&&route.query.code != 'HTS') {
               this.activeContent = [];
             }
           }
@@ -392,16 +399,22 @@ export default {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
               html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
+              if(arr[i + 1].nodeName != 'sign'){
+                html +=signFlag + ' ' + arrowHtml
+              }
             } else if (arr[i + 1].nodeName != 'sign') {
-              html += s.typeIdName + s.remark + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName + s.remark + ' ' + signFlag + ' ' + arrowHtml;
             } else {
               html += s.typeIdName + s.remark + ' ';
             }
           } else if (s.nodeName == 'trans') {
             if (arr[i - 1].nodeName != 'trans') {
               html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
+              if(arr[i + 1].nodeName != 'trans'){
+                html +=signFlag + ' ' + arrowHtml
+              }
             } else if (arr[i + 1].nodeName != 'trans') {
-              html += s.typeIdName + s.remark + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName + s.remark + ' ' + signFlag + ' ' + arrowHtml;
             } else {
               html += s.typeIdName + s.remark + ' ';
             }
@@ -697,9 +710,6 @@ $sub:#1465C0;
         font-style: normal;
       }
     }
-  }
-  .el-card__header {
-    // margin-bottom: 10px;
   }
   .attch {
     color: $main;

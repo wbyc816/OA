@@ -87,7 +87,8 @@ import BKY from './component/guestTicketDetail.component.vue' //宾客机票详�
 import YGY from './component/staffBenefitDetail.component.vue' //员工优惠机票
 import LZS from './component/empQuitDetail.component.vue' //离职详情
 import SXS from './component/airRepairDetail.component.vue' //送修详情
-
+import YSL from './component/commonBudgetDetail.component.vue' //通用预算详情
+import TYS from './component/commonDetail.component.vue' //通用申请详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -99,7 +100,9 @@ export default {
     SWDD,
     CPDD,
     HTSD,
+    YSL,
     YCS,
+    TYS,
     CLS,
     FWG,
     CLV,
@@ -191,7 +194,7 @@ export default {
               this.currentView = this.docDetialInfo.doc.pageCode;
             }
             this.handleSuggest();
-            if (route.query.code != 'FWG') {
+            if (route.query.code != 'CPD'&&route.query.code != 'HTS') {
               this.activeContent = [];              
             }
           }
@@ -205,25 +208,31 @@ export default {
         this.docDetialInfo.suggests.forEach((s, i, arr) => {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
-              html += signFlag + ' ' + s.typeIdName+s.remark + ' ';
+              html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
+              if(arr[i + 1].nodeName != 'sign'){
+                html +=signFlag + ' ' + arrowHtml
+              }
             } else if (arr[i + 1].nodeName != 'sign') {
-              html += s.typeIdName+s.remark + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName + s.remark + ' ' + signFlag + ' ' + arrowHtml;
             } else {
-              html += s.typeIdName+s.remark + ' ';
+              html += s.typeIdName + s.remark + ' ';
             }
           } else if (s.nodeName == 'trans') {
             if (arr[i - 1].nodeName != 'trans') {
-              html += signFlag + ' ' + s.typeIdName+s.remark + ' ';
+              html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
+              if(arr[i + 1].nodeName != 'trans'){
+                html +=signFlag + ' ' + arrowHtml
+              }
             } else if (arr[i + 1].nodeName != 'trans') {
-              html += s.typeIdName+s.remark + ' ' + signFlag + '' + arrowHtml;
+              html += s.typeIdName + s.remark + ' ' + signFlag + ' ' + arrowHtml;
             } else {
-              html += s.typeIdName+s.remark + ' ';
+              html += s.typeIdName + s.remark + ' ';
             }
           } else {
             if (i == arr.length - 1) {
-              html += s.typeIdName+s.remark
+              html += s.typeIdName + s.remark
             } else {
-              html += s.typeIdName+s.remark + arrowHtml
+              html += s.typeIdName + s.remark + arrowHtml
             }
           }
         })
@@ -374,14 +383,15 @@ $sub:#1465C0;
     border-bottom: 1px dashed #D5DADF;
   }
   .baseInfoBox {
-    margin-top: 15px;
     padding-bottom: 10px;
     .el-col {
       border-bottom: 1px solid #D5DADF;
-      padding: 15px 18px 15px 24px;
+      padding: 5px 18px 5px 24px;
+      min-height: 57px;
       overflow: hidden;
-      display: flex;
+      display: table;
       font-size: 15px;
+      table-layout: fixed;
     }
     .rightBorder {
       border-right: 1px solid #D5DADF;
@@ -391,11 +401,17 @@ $sub:#1465C0;
     }
     .title {
       width: 140px;
+      display: table-cell;
+      vertical-align: middle;
+      word-wrap: break-word;
     }
     .textContent {
-      flex: 1;
+      word-wrap: break-word;
+      display: table-cell;
+      vertical-align: middle;
       overflow: hidden;
       word-wrap: break-word;
+      line-height: 19px;
       &.blackText {
         font-weight: bold;
       }

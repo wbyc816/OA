@@ -55,7 +55,7 @@
       <el-table-column property="rmb" label="人民币(元)" width="125">
       </el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].travelpay.totalMoney | toThousands}} 元</span></p>
+    <p class="totalMoney">合计金额 人民币 <span>{{info[0].travelpay.totalMoney | toThousands}}元 {{info[0].travelpay.totalMoney | moneyCh}}</span></p>
     <el-table :data="budgetTable" :stripe="true" highlight-current-row style="width: 100%" class="appTable budgetTable ">
       <el-table-column label="预算年度" property="budgetYear" width="80"></el-table-column>
       <el-table-column property="budgetDeptName" label="预算机构/科目">
@@ -77,7 +77,7 @@
       <el-table-column property="cExecRate" label="执行比例" width="80"></el-table-column>
       <el-table-column property="rmb" label="报销金额人民币(元)" width="100"></el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].travelpay.totalMoney | toThousands}} 元</span></p>
+    <p class="totalMoney">合计金额 人民币 <span>{{info[0].travelpay.totalMoney | toThousands}}元 {{info[0].travelpay.totalMoney | moneyCh}}</span></p>
     <p class="borderBox clearBoth"></p>
     <el-row>
       <el-col :span="12" class="rightBorder">

@@ -8,7 +8,7 @@
       <el-table-column property="quantity" label="数量" width="90"></el-table-column>
       <el-table-column property="remark" label="备注"></el-table-column>
     </el-table>
-    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice | toThousands}}元</span></p>
+    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice | toThousands}}元 {{totalPrice | moneyCh}}</span></p>
   </div>
 </template>
 <script>

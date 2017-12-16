@@ -50,6 +50,8 @@ import LZS from './component/empQuitApp.component.vue'
 import HCG from './component/airMaterialApp.component.vue'
 import SXS from './component/airRepairApp.component.vue'
 import JHH from './component/airExchangeApp.component.vue'
+import YSL from './component/commonBudgetApp.component.vue'
+import TYS from './component/commonApp.component.vue'
 
 export default {
   data() {
@@ -107,8 +109,10 @@ export default {
     YGY,
     LZS,
     SXS,
-    HCG,
-    JHH
+    JHH,
+    YSL,
+    TYS,
+    HCG
   },
   mounted() {
     this.initDoc();

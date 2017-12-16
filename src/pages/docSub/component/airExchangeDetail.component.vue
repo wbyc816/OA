@@ -18,7 +18,7 @@
       <el-table-column property="changeOutSequenceNo" label="换出序号" width="90"></el-table-column>
       <el-table-column property="changeOutNum" label="换出数量" width="90"></el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].rmb | toThousands}} 元</span></p>
+    <p class="totalMoney">合计金额 人民币 <span>{{info[0].rmb | toThousands}}元 {{info[0].rmb | moneyCh}}</span></p>
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
       <el-col :span="12" class="rightBorder">
         <h1 class="title">优先级</h1>
