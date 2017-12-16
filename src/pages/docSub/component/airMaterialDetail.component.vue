@@ -1,5 +1,5 @@
 <template>
-  <div class="airMaterial clearfix">
+  <div class="airRepairDetail clearfix">
     <el-table :data="info[0].airmPosItems" :stripe="true" highlight-current-row style="width: 100%" class="appTable">
         <el-table-column type="index" label=" " width="40"></el-table-column>
         <el-table-column property="budgetItemName" label="选择预算科目" width="120"></el-table-column>
@@ -16,6 +16,13 @@
         <el-table-column property="arrivalDays" label="要求到货天数" width="120"></el-table-column>
         <el-table-column property="claimMonth" label="索赔期/月" width="100"></el-table-column>
         <el-table-column property="totalPrice" label="总价"></el-table-column>
+    </el-table>
+    <p class="totalMoney">合计金额 人民币 <span>{{info[0].airmPos.rmb | toThousands}} 元</span></p>
+    <!-- <el-table :data="info[0].airmPos" :stripe="true" highlight-current-row style="width: 100%" class="appTable budgetTable ">
+      <el-table-column type="index" label="序号" width="65"></el-table-column>
+      <el-table-column property="supplierName" label="厂家名称"></el-table-column>
+      <el-table-column property="accurencyName" label="币种" width="120"></el-table-column>
+      <el-table-column property="offerPrice" label="报价" width="120"></el-table-column>
     </el-table>
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
       <el-col :span="12" class="rightBorder">
@@ -50,30 +57,13 @@
         <h1 class="title">金额总计</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.rmb | toThousands}}元</p>
       </el-col>
-      <el-col :span="24">
-        <h1 class="title" style="width:380px">选择供应商是否为独家修理厂家</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.isSupplierUnique==1?'是':'否'}}</p>
-      </el-col>
-      <el-col :span="24">
-        <h1 class="title" style="width:380px">选择供应商是否为协议供应商</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.isSupplierProtocol==1?'是':'否'}}</p>
-      </el-col>
-      <el-col :span="24">
-        <h1 class="title" style="width:380px">选择供应商是否为我公司已审核修理厂家</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.isSupplierCheck==1?'是':'否'}}</p>
-      </el-col>
-      <el-col :span="24">
-        <h1 class="title" style="width:380px">新件参考价格</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.newReferencePrice}}</p>
-      </el-col>
-      <el-col :span="24">
-        <h1 class="title" style="width:380px">购买该送修件参考价格</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.purchaseReferencePrice}}</p>
-      </el-col>
-      <el-col :span="24">
-        <h1 class="title" style="width:380px">修理费与购件费比例</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.repairPurchasePriceRate}}</p>
-      </el-col>
+
+
+      <el-col :span="12">
+        <h1 class="title">付款方式</h1>
+        <p v-if="info" class="textContent">{{info[0].airmRor.rmb | toThousands}}元</p>
+      </el-col> -->
+     
     </el-row>
   </div>
 </template>
@@ -93,18 +83,22 @@ export default {
   computed: {
     ...mapGetters([
       'submitLoading'
-    ])
-    
+    ]),
+  },
+  created() {
+    this.tesst();
   },
   methods: {
-     
-  
+     tesst() {
+      console.log(this.info)
+    }
+  }
 }
 
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.airMaterial {
+.airRepairDetail {
   padding: 20px 0 0;
   clear: both; // border-bottom: 1px solid #D5DADF;
   .totalMoney {

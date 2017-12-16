@@ -55,6 +55,9 @@
         <el-col :span="6">
           <el-button class="searchButton" @click="submitParam">搜索</el-button>
         </el-col>
+         <!-- <el-col :span="6">
+          <el-button class="searchButton" @click="toggleBtn">切换</el-button>
+        </el-col> -->
       </el-row>
     </el-card>
   </div>
@@ -132,6 +135,9 @@ export default {
         "departureAirport": "",
         "arrivalAirport": "",
         flightNo:"",
+    },
+    paramsTwo:{
+        first:false
     },
       isPay: "",
       reportDatas: [],
@@ -254,6 +260,9 @@ export default {
         });
       }
      
+    },
+    toggleBtn() {
+         this.$emit('searchTwo',this.paramsTwo)
     },
   }
 }
