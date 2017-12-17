@@ -472,8 +472,6 @@ export default {
         
     };
 
-      console.log(airmPosItems)
-      console.log(airmPos)
       this.$emit('submitMiddle', { airmPos:airmPos,  airmPosItems:airmPosItems.airmPosItems })
     },
     getContractCodeList() {

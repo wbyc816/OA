@@ -111,6 +111,9 @@ const templateDownload = () =>
 const flightReport = () =>
   import ('pages/flightReport.page')
 
+const flightException = () =>
+  import ('pages/flightException.page')
+
 
 Vue.use(Router)
 
@@ -153,6 +156,13 @@ const router = new Router({
       component: flightReport,
       meta: {
         breadcrumb: "飞行报表",
+      }
+    },{
+      path: '/flightException',
+      name: 'flightException',
+      component: flightException,
+      meta: {
+        breadcrumb: "飞行计划书数据异常报表",
       }
     }, {
       path: '/diningMenu',
