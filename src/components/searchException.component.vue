@@ -167,7 +167,8 @@ export default {
     ...mapGetters([
       'userInfo',
       'confidentiality',
-      'typeTree'
+      'typeTree',
+      'baseUrl'
     ])
   },
   created() {
@@ -183,7 +184,8 @@ export default {
   },
   methods: {
     exportExcel(){
-       window.open("/foc/export2Excel?flightNo="+this.params.flightNo+"&beginTime="+this.params.beginTime +"&endTime="+this.params.endTime+"&departureAirport="+this.params.departureAirport+"&arrivalAirport="+this.params.arrivalAirport )
+      
+       window.open(this.baseUrl+"/foc/export2Excel?flightNo="+this.params.flightNo+"&beginTime="+this.params.beginTime +"&endTime="+this.params.endTime+"&departureAirport="+this.params.departureAirport+"&arrivalAirport="+this.params.arrivalAirport )
 
     },
     getDate(){
