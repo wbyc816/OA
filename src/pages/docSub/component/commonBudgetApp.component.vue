@@ -105,7 +105,7 @@ export default {
       },
       paymentRule: {
         supplierIds: [{ type: 'array', required: true, message: '请选择收款供应商', trigger: 'blur' }],
-        // docCommonTypeCode: [{ required: true, message: '请选择呈批单类型', trigger: 'blur' }],
+         docCommonTypeCode: [{ required: true, message: '请选择呈批单类型', trigger: 'blur' }],
       },
       childTypeList: [],
       activeCurrency: '',
@@ -158,6 +158,7 @@ export default {
     }
   },
   created() {
+    this.getChildTypeList();
     if (this.$route.query.id) {
       this.isDraft = true;
     }
@@ -213,6 +214,18 @@ export default {
         "totalMoneyRmb": this.totalMoney, //合计金额
       };
       this.$emit('submitMiddle', { docCommonFin: docCommonFin, docCommonFinItem: this.budgetTable })
+    },
+    getChildTypeList() {
+      this.$http.post('/api/getDict', { dictCode: 'DOC24' })
+        .then(res => {
+          if (res.status == '0') {
+            this.childTypeList = res.data;
+          } else {
+            console.log('获取公文子类型失败')
+          }
+        }, res => {
+
+        })
     },
     checkBudgetTable() {
       if (this.budgetTable.length != 0) {
