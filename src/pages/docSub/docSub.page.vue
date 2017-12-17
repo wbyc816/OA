@@ -5,7 +5,7 @@
         <span>行政申请</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" v-for="item in adminData">
+        <el-col :span="6" v-for="item in adminData" v-if="item.require?userInfo.isConfidential==1:true">
           <doc-list :data='item'></doc-list>
         </el-col>
       </el-row>
@@ -63,6 +63,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
  import DocList from '../../components/doc'
 const adminData = [
   { 'logo': 'icon-write', 'color': '#FF754F', 'text': '呈批单', 'link': '#/doc/docCommonApp/CPD' },
@@ -70,7 +71,7 @@ const adminData = [
   { 'logo': 'icon-car','font': '20px', 'color': '#A5A3FF', 'text': '用车申请', 'link': '#/doc/docCommonApp/YCS' },
   { 'logo': 'icon-plane2','font': '20px', 'color': '#9FD867', 'text': '差旅申请', 'link': '#/doc/docCommonApp/CLV' },
   { 'logo': 'icon-documents','font': '26px', 'color': '#FF5F88', 'text': '材料申请', 'link': '#/doc/docCommonApp/CLS' },
-  { 'logo': 'icon-biaodan','font': '28px', 'color': '#5BB5FC', 'text': '收文登记处理', 'link': '#/doc/docCommonApp/SWD' },
+  { 'logo': 'icon-biaodan','font': '28px', 'color': '#5BB5FC', 'text': '收文登记处理', 'link': '#/doc/docCommonApp/SWD',"require":true },
   { 'logo': 'icon-hetong1','font': '28px', 'color': '#FFE066', 'text': '合同申请', 'link': '#/doc/docCommonApp/HTS' },
 ];
 const financeData = [
@@ -116,6 +117,11 @@ export default {
       flightData,
       commonData
     };
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+    ])
   },
   components: {
     DocList

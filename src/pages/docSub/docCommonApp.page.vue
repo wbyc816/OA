@@ -76,7 +76,8 @@ export default {
       'selUrgency',
       'reciver',
       'isSubmit',
-      'taskUser'
+      'taskUser',
+      'isReady'
     ])
   },
   beforeRouteLeave(to, from, next) {
@@ -114,8 +115,30 @@ export default {
     TYS,
     HCG
   },
+  created() {
+  },
+  beforeRouteUpdate(to, from, next){
+    if(to.params.code == 'SWD' && this.userInfo.isConfidential != 1){
+      this.$router.push(from.path);
+    }else{
+      next();
+    }
+  },
   mounted() {
-    this.initDoc();
+    if (this.isReady && this.$route.params.code == 'SWD' && this.userInfo.isConfidential != 1) {
+      this.$router.push('/doc/docSub');
+    } else {
+      this.initDoc();
+    }
+  },
+  watch: {
+    isReady: function(val) {
+      if (val) {
+        if (this.$route.params.code == 'SWD' && this.userInfo.isConfidential != 1) {
+          this.$router.push('/doc/docSub');
+        }
+      }
+    }
   },
   methods: {
     initDoc() {

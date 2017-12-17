@@ -166,8 +166,8 @@ export const docConfig = [{
   },
   {
     docName: '航材/工具采购',
-    color: '#FF8460',
-    shortName: '航材/工具采购',
+    color: '#A89FFF',
+    shortName: '航材采购',
     code: 'HCG',
     url: '/doc/docAirmPos'
   },

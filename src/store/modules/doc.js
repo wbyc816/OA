@@ -8,7 +8,7 @@ const state = {
   confidentiality: [], //机密程度
   urgency: [], //重要程度
   docType: [], //公文类别
-  typeTree:[],
+  typeTree: [],
   isAdmin: false,
   docTitle: '',
   taskUser: '',
@@ -21,7 +21,7 @@ const state = {
     "reciUserId": '',
     "reciUserJobTitle": "", //接收人职位
     "reciPostrankId": "", //职位id
-    "reciEmpPostId":"",
+    "reciEmpPostId": "",
     "reciPostrankName": "", //职级名称
     "reciSupervisory": "", //安全级别
   },
@@ -46,7 +46,7 @@ const state = {
   },
   staticsPower: '', //1所有 2无审批者 0无
   isSubmit: false,
-  secretaryInfo:''
+  secretaryInfo: ''
 }
 
 const actions = {
@@ -65,14 +65,18 @@ const actions = {
   },
   //重置
   clear({ commit, state }) {
-    commit('setConfident', {
-      "docDenseTypeCode": state.confidentiality[0].dictCode,
-      "docDenseType": state.confidentiality[0].dictName
-    })
-    commit('setUrgency', {
-      "docImportTypeCode": state.urgency[0].dictCode,
-      "docImportType": state.urgency[0].dictName,
-    })
+    if (state.confidentiality.length != 0) {
+      commit('setConfident', {
+        "docDenseTypeCode": state.confidentiality[0].dictCode,
+        "docDenseType": state.confidentiality[0].dictName
+      })
+    }
+    if (state.urgency.length != 0) {
+      commit('setUrgency', {
+        "docImportTypeCode": state.urgency[0].dictCode,
+        "docImportType": state.urgency[0].dictName,
+      })
+    }
     commit('setDocTtile', '')
     commit('setReciver', '')
   },
@@ -151,13 +155,13 @@ const actions = {
   //根据部门ID获取组织结构
   getDepById({ commit, state, rootState, rootGetters }, payLoad) {
     var deptId;
-    if(payLoad){
-      deptId=payLoad.deptId;
+    if (payLoad) {
+      deptId = payLoad.deptId;
     }
-    api.getDepById(deptId||rootGetters.userInfo.deptId)
+    api.getDepById(deptId || rootGetters.userInfo.deptId)
       .then(res => {
         if (res.status == '0') {
-          if(payLoad&&payLoad.hasSecretary){
+          if (payLoad && payLoad.hasSecretary) {
             res.data.deptList.push(state.secretaryInfo)
           }
           commit(types.GET_DEPT_LIST, res, { root: true })
@@ -285,7 +289,7 @@ const getters = {
   staticsPower: state => state.staticsPower,
   isSubmit: state => state.isSubmit,
   taskUser: state => state.taskUser,
-  secretaryInfo:state=>state.secretaryInfo
+  secretaryInfo: state => state.secretaryInfo
 }
 
 const mutations = {

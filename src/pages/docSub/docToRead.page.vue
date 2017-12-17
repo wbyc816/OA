@@ -1,6 +1,6 @@
 <template>
   <div id="docToRead">
-    <search-options title="公文待阅" @search="setOptions"></search-options>
+    <search-options title="公文待阅" @search="setOptions" hasArchive></search-options>
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>

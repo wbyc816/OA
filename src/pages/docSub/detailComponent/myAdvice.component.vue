@@ -11,7 +11,7 @@
           <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
             <el-radio-button label="1">同意<i></i></el-radio-button>
             <el-radio-button label="2">不同意<i></i></el-radio-button>
-            <el-radio-button label="6" class="isChen" v-if="docDetail.isConfidential==1&&hasSecretary()">承办部门办理<i></i></el-radio-button>
+            <el-radio-button label="6" class="isChen" v-if="docDetail.isTaskUser==1&&hasSecretary()">承办部门办理<i></i></el-radio-button>
           </el-radio-group>
         </el-col>
       </el-form-item>
@@ -113,7 +113,7 @@ const initHTSDeps = [{
   updateTime: "",
   updateUser: ""
 }]
-const secretaryDoc=['FWG','HTS','SWD','CPD']
+const secretaryDoc = ['FWG', 'HTS', 'SWD', 'CPD']
 export default {
   components: {
     PersonDialog,
@@ -125,7 +125,7 @@ export default {
     },
     taskDetail: '',
     suggestHtml: '',
-    otherInfo:''
+    otherInfo: ''
   },
   data() {
     var checkSign = (rule, value, callback) => {
@@ -179,7 +179,7 @@ export default {
       adminReci: '',
       initFWGDeps,
       initHTSDeps,
-      disableApproval:false
+      disableApproval: false
     }
   },
   computed: {
@@ -194,17 +194,17 @@ export default {
         return false
       }
     },
-    normalPersonAdmin:function(){
-      var temp='0';
-      if(this.docDetail.isAdmin==1){   //公文详情里控制是否有跨部门权限
-        temp='1'
+    normalPersonAdmin: function() {
+      var temp = '0';
+      if (this.docDetail.isAdmin == 1) { //公文详情里控制是否有跨部门权限
+        temp = '1'
       }
-      if(this.hasSecretary()){    //四类特殊公文且不是机要秘书  不能跨部门
-        if(this.docDetail.isConfidential!=1){   
-          temp='0'
+      if (this.hasSecretary()) { //四类特殊公文且不是机要秘书  不能跨部门
+        if (this.docDetail.isConfidential != 1) {
+          temp = '0'
         }
       }
-      return temp;                        
+      return temp;
     },
     ...mapGetters([
       'userInfo',
@@ -214,7 +214,7 @@ export default {
     ])
   },
   created() {
-    if(this.hasSecretary()){
+    if (this.hasSecretary()) {
       this.getSecretaryInfo();
     }
     this.currentView = this.docDetail.pageCode;
@@ -225,20 +225,20 @@ export default {
     }
   },
   methods: {
-    getSecretaryInfo(){
-      if(!this.secretaryInfo){
+    getSecretaryInfo() {
+      if (!this.secretaryInfo) {
         this.$http.post('doc/getSecInfo')
-        .then(res=>{
-          if(res.status == '0'){
-            this.$store.commit('setSecretaryInfo',res.data);
-          }else{
+          .then(res => {
+            if (res.status == '0') {
+              this.$store.commit('setSecretaryInfo', res.data);
+            } else {
 
-          }
-        })
+            }
+          })
       }
     },
-    hasSecretary(){
-      return secretaryDoc.find(d=>d==this.$route.query.code)!=undefined;
+    hasSecretary() {
+      return secretaryDoc.find(d => d == this.$route.query.code) != undefined;
     },
     getAdminReci() {
       if (this.adminReci) {
@@ -327,7 +327,7 @@ export default {
     adviceChange(val) {
       if (val == 1) {
         this.ruleForm.taskContent = '同意。';
-        this.disableApproval=false;
+        this.disableApproval = false;
         if (this.signType == 0) {
           if (this.docDetail.defaultSuggestVo.reciUserId) {
             this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
@@ -336,40 +336,49 @@ export default {
             this.chooseDisable = false;
           }
         }
-      } else if(val==2) {
-        this.disableApproval=false;
+      } else if (val == 2) {
+        this.disableApproval = false;
         this.ruleForm.taskContent = "不同意。";
         if (this.signType == 0) {
           this.getAdminReci();
         }
-      }else{
+      } else {
         this.ruleForm.taskContent = "同意。";
-        this.disableApproval=true;
-        this.signType='1'
+        this.disableApproval = true;
+        this.signType = '1';
+        if (this.signType == 1) {
+          this.ruleForm.sign = [];
+          this.signDeps = [];
+        }
       }
     },
     signTypeChange(val) {
       this.ruleForm.sign = [];
       this.signDeps = [];
-      if (val == 1) {
+      if (val == 1 && this.ruleForm.state != 6) {
 
         //特定公文类型 发文稿纸、合同申请  呈报人所在部门不在特殊范围 自动添加默认部门
-        if (this.$route.query.code == 'FWG'&&this.otherInfo[0].catalogueId==='公司发文'&&this.docDetail.taskDeptMajorId!=initFWGDeps[0].id&&this.docDetail.taskDeptId!=initFWGDeps[0].id) {
+        if (this.$route.query.code == 'FWG' && this.otherInfo[0].catalogueId === '公司发文' && this.docDetail.taskDeptMajorId != initFWGDeps[0].id && this.docDetail.taskDeptId != initFWGDeps[0].id) {
           this.updateSignDep(initFWGDeps);
-        } else if (this.$route.query.code == 'HTS'&&this.docDetail.taskDeptMajorId!=initHTSDeps[0].id&&this.docDetail.taskDeptId!=initHTSDeps[0].id) {
+        } else if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {
           this.updateSignDep(initHTSDeps);
         }
       }
       this.$refs.ruleForm.validateField('sign');
     },
     ableDepClose(val) {
+      if (this.ruleForm.state != 6) {
 
-      //特定公文类型 发文稿纸、合同申请  呈报人所在部门不在特殊范围 自动添加默认部门
-      if (this.$route.query.code == 'FWG'&&this.otherInfo[0].catalogueId==='公司发文'&&this.docDetail.taskDeptMajorId!=initFWGDeps[0].id&&this.docDetail.taskDeptId!=initFWGDeps[0].id) {
-        return initFWGDeps.find(d => d.id == val) == undefined
-      } else if (this.$route.query.code == 'HTS'&&this.docDetail.taskDeptMajorId!=initHTSDeps[0].id&&this.docDetail.taskDeptId!=initHTSDeps[0].id) {
-        return initHTSDeps.find(d => d.id == val) == undefined
-      } else {
+
+        //特定公文类型 发文稿纸、合同申请  呈报人所在部门不在特殊范围 自动添加默认部门
+        if (this.$route.query.code == 'FWG' && this.otherInfo[0].catalogueId === '公司发文' && this.docDetail.taskDeptMajorId != initFWGDeps[0].id && this.docDetail.taskDeptId != initFWGDeps[0].id) {
+          return initFWGDeps.find(d => d.id == val) == undefined
+        } else if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {
+          return initHTSDeps.find(d => d.id == val) == undefined
+        } else {
+          return true
+        }
+      }else{
         return true
       }
     },
@@ -564,7 +573,7 @@ $main:#0460AE;
       line-height: 45px;
       padding: 0;
     }
-    .isChen .el-radio-button__inner{
+    .isChen .el-radio-button__inner {
       width: 150px!important;
     }
   }

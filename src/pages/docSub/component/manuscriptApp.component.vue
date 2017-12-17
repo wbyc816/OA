@@ -3,7 +3,7 @@
     <el-form label-position="left" :model="manuscriptForm" :rules="rules" ref="manuscriptForm" label-width="128px">
       <el-form-item label="发文类型" prop="classify1" placeholder="">
         <el-select v-model="manuscriptForm.classify1" style="width:100%" @change="typeChange">
-          <el-option v-for="item in types" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
+          <el-option v-for="item in types" :key="item.dictCode" :label="item.dictName" :value="item.dictCode" v-if="item.dictCode==='ADM0406'?userInfo.deptId==='88AE6372CFDC5DF69A976E893F4D554B':true">
           </el-option>
         </el-select>
       </el-form-item>
@@ -196,7 +196,8 @@ export default {
   computed: {
     ...mapGetters([
       'submitLoading',
-      'baseURL'
+      'baseURL',
+      'userInfo'
     ])
   },
   created() {
@@ -252,18 +253,18 @@ export default {
     },
     beforeUpload(file) {
       var isJPG;
-      if (this.manuscriptForm.classify1 == 'ADM0406' || this.manuscriptForm.classify1 == 'ADM0404') {
-        // 公司新闻，部门发文
-        if (file.type) {
-          isJPG = file.type === 'application/pdf';
-        } else {
-          var regExp = new RegExp("\.pdf$", "i");
-          isJPG = regExp.test(file.name);
-        }
-        if (!isJPG) {
-          this.$message.error('上传文件只能是 PDF 格式!');
-        }
-      } else {
+      // if (this.manuscriptForm.classify1 == 'ADM0406' || this.manuscriptForm.classify1 == 'ADM0404') {
+      //   // 公司新闻，部门发文
+      //   if (file.type) {
+      //     isJPG = file.type === 'application/pdf';
+      //   } else {
+      //     var regExp = new RegExp("\.pdf$", "i");
+      //     isJPG = regExp.test(file.name);
+      //   }
+      //   if (!isJPG) {
+      //     this.$message.error('上传文件只能是 PDF 格式!');
+      //   }
+      // } else {
         if (file.type) {
           isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
         } else {
@@ -273,7 +274,8 @@ export default {
         if (!isJPG) {
           this.$message.error('上传文件只能是 DOCX 格式!');
         }
-      }
+      // }
+
       const isLt10M = file.size / 1024 / 1024 < 10;
 
       if (!isLt10M) {
