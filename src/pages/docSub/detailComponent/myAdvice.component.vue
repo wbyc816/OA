@@ -11,7 +11,7 @@
           <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
             <el-radio-button label="1">同意<i></i></el-radio-button>
             <el-radio-button label="2">不同意<i></i></el-radio-button>
-            <el-radio-button label="6" class="isChen" v-if="docDetail.isConfidential==1&&hasSecretary()">承办部门办理<i></i></el-radio-button>
+            <el-radio-button label="6" class="isChen" v-if="docDetail.isTaskUser==1&&hasSecretary()">承办部门办理<i></i></el-radio-button>
           </el-radio-group>
         </el-col>
       </el-form-item>
