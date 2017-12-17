@@ -179,8 +179,9 @@ export default {
     if (!this.notype) {
       this.$store.dispatch('getDocTree');
     }
+    this.getDate();
     this.getData();
-    this.getDate()
+   
   },
   methods: {
     exportExcel(){
@@ -191,6 +192,7 @@ export default {
     getDate(){
       this.params.endTime=util.formatTime((new Date()).getTime(), 'yyyy-MM-dd');
       this.params.beginTime= util.formatTime((new Date()).getTime() - 3600 * 1000 * 24 * 30, 'yyyy-MM-dd');
+      // console.log(this.params.beginTime)
     },
     changeDate(){
       // console.log(this.time);

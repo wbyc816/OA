@@ -1,7 +1,7 @@
 <template>
   <div id="flightException" >
     <div >
-    <search-exception title="飞行计划书数据异常报表" @search="setReport" @searchTwo="setReportTwo" hasOverTime></search-exception>
+    <search-exception :title="topTitle" @search="setReport" @searchTwo="setReportTwo" hasOverTime></search-exception>
         <el-table :data="recordData" stripe style="width: 100%" :fit="true" v-loading.body="searchLoading" >
         <el-table-column prop="flightNo" label="航班号" width="90">
         </el-table-column>
@@ -12,17 +12,17 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="out" label="A滑出时间" width="180">
+        <el-table-column prop="out" label="A滑出时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.out | time('nosecond')}}</span>
+                <span>{{ scope.row.out | time('hours')}}</span>
             </template>
         </el-table-column>
 
        
 
-         <el-table-column prop="engonTime" label="Q开车时间" width="180">
+         <el-table-column prop="engonTime" label="Q开车时间" width="100">
              <template scope="scope">
-                <span>{{ scope.row.engonTime | time('nosecond')}}</span>
+                <span>{{ scope.row.engonTime | time('hours')}}</span>
             </template>
         </el-table-column>
 
@@ -33,17 +33,17 @@
             </template>
         </el-table-column>
 
-         <el-table-column prop="acarsAtd" label="A起飞时间" width="180">
+         <el-table-column prop="acarsAtd" label="A起飞时间" width="100">
              <template scope="scope">
-                <span>{{ scope.row.acarsAtd | time('nosecond')}}</span>
+                <span>{{ scope.row.acarsAtd | time('hours')}}</span>
             </template>
         </el-table-column>
 
         
 
-         <el-table-column prop="takeoffTime" label="Q起飞时间" width="180">
+         <el-table-column prop="takeoffTime" label="Q起飞时间" width="100">
              <template scope="scope">
-                <span>{{ scope.row.takeoffTime | time('nosecond')}}</span>
+                <span>{{ scope.row.takeoffTime | time('hours')}}</span>
             </template>
         </el-table-column>
 
@@ -54,17 +54,17 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="acarsAta" label="A降落时间" width="180">
+        <el-table-column prop="acarsAta" label="A降落时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.acarsAta | time('nosecond')}}</span>
+                <span>{{ scope.row.acarsAta | time('hours')}}</span>
             </template>
         </el-table-column>
 
        
 
-        <el-table-column prop="landingTime" label="Q降落时间" width="180">
+        <el-table-column prop="landingTime" label="Q降落时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.landingTime | time('nosecond')}}</span>
+                <span>{{ scope.row.landingTime | time('hours')}}</span>
             </template>
         </el-table-column>
 
@@ -75,18 +75,18 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="inn" label="A滑入时间" width="180">
+        <el-table-column prop="inn" label="A滑入时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.inn | time('nosecond')}}</span>
+                <span>{{ scope.row.inn | time('hours')}}</span>
             </template>
         </el-table-column>
 
     
         
 
-        <el-table-column prop="engoffTime" label="Q关车时间" width="180">
+        <el-table-column prop="engoffTime" label="Q关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.engoffTime | time('nosecond')}}</span>
+                <span>{{ scope.row.engoffTime | time('hours')}}</span>
             </template>
         </el-table-column>
 
@@ -116,7 +116,7 @@
         </div>
 
         <div slot="header">
-        <div style="background:white;font-size:18px;padding:10px">飞行数据异常数据</div>
+        <div style="background:white;font-size:18px;padding:10px">{{bottomTitle}}</div>
         
         </div>
 
@@ -130,17 +130,17 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="out" label="A滑出时间" width="180">
+        <el-table-column prop="out" label="A滑出时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.out | time('nosecond')}}</span>
+                <span>{{ scope.row.out | time('hours')}}</span>
             </template>
         </el-table-column>
 
        
 
-         <el-table-column prop="engonTime" label="Q开车时间" width="180">
+         <el-table-column prop="engonTime" label="Q开车时间" width="100">
              <template scope="scope">
-                <span>{{ scope.row.engonTime | time('nosecond')}}</span>
+                <span>{{ scope.row.engonTime | time('hours')}}</span>
             </template>
         </el-table-column>
 
@@ -151,17 +151,17 @@
             </template>
         </el-table-column>
 
-         <el-table-column prop="acarsAtd" label="A起飞时间" width="180">
+         <el-table-column prop="acarsAtd" label="A起飞时间" width="100">
              <template scope="scope">
-                <span>{{ scope.row.acarsAtd | time('nosecond')}}</span>
+                <span>{{ scope.row.acarsAtd | time('hours')}}</span>
             </template>
         </el-table-column>
 
         
 
-         <el-table-column prop="takeoffTime" label="Q起飞时间" width="180">
+         <el-table-column prop="takeoffTime" label="Q起飞时间" width="100">
              <template scope="scope">
-                <span>{{ scope.row.takeoffTime | time('nosecond')}}</span>
+                <span>{{ scope.row.takeoffTime | time('hours')}}</span>
             </template>
         </el-table-column>
 
@@ -172,17 +172,17 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="acarsAta" label="A降落时间" width="180">
+        <el-table-column prop="acarsAta" label="A降落时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.acarsAta | time('nosecond')}}</span>
+                <span>{{ scope.row.acarsAta | time('hours')}}</span>
             </template>
         </el-table-column>
 
        
 
-        <el-table-column prop="landingTime" label="Q降落时间" width="180">
+        <el-table-column prop="landingTime" label="Q降落时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.landingTime | time('nosecond')}}</span>
+                <span>{{ scope.row.landingTime | time('hours')}}</span>
             </template>
         </el-table-column>
 
@@ -193,18 +193,18 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="inn" label="A滑入时间" width="180">
+        <el-table-column prop="inn" label="A滑入时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.inn | time('nosecond')}}</span>
+                <span>{{ scope.row.inn | time('hours')}}</span>
             </template>
         </el-table-column>
 
     
         
 
-        <el-table-column prop="engoffTime" label="Q关车时间" width="180">
+        <el-table-column prop="engoffTime" label="Q关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.engoffTime | time('nosecond')}}</span>
+                <span>{{ scope.row.engoffTime | time('hours')}}</span>
             </template>
         </el-table-column>
 
@@ -259,6 +259,8 @@ export default {
       pageNumber:1,
       pageNumberTwo:1,
       sortoil:{},
+      topTitle:"",
+      bottomTitle:"",
       params: {
         "beginTime":"",
         "endTime": "",
@@ -304,12 +306,17 @@ export default {
     searchException,
   },
   created() {
+    this.getDate();
     this.getData();
     this.getFlightTrends();
   },
   methods: {
 
-   
+    getDate(){
+      this.params.endTime=util.formatTime((new Date()).getTime(), 'yyyy-MM-dd');
+      this.params.beginTime= util.formatTime((new Date()).getTime() - 3600 * 1000 * 24 *30, 'yyyy-MM-dd');
+      // console.log(this.params.beginTime)
+    },
     getFlightTrends() {
       this.$http.post('/index/getFlightTrends', { flightDate: this.timeFilter(new Date().getTime(), 'date') })
         .then(res => {
@@ -320,9 +327,12 @@ export default {
    })
     },
     getData() {
+      this.topTitle="飞行计划任务书数据监控"+" "+this.params.beginTime+"到"+this.params.endTime;
+      this.bottomTitle="飞行计划任务书数据异常报表"+" "+this.params.beginTime+"到"+this.params.endTime;
       var that = this;
-     that.searchLoading = true;
+      that.searchLoading = true;
       var params = Object.assign(this.params);
+      console.log(params)
       this.$http.post("/foc/getQAR?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
         that.searchLoading = false;
