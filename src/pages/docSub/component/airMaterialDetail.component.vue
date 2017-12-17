@@ -5,11 +5,11 @@
         <el-table-column property="budgetItemName" label="选择预算科目" width="120"></el-table-column>
         <el-table-column property="budgetYear" label="预算年度" width="90"></el-table-column>
         <el-table-column property="budgetDeptName" label="费用归属部门" width="120"></el-table-column>
-        <el-table-column property="execRateStr" label="执行比例" width="90"></el-table-column>
+        <el-table-column property="info[0].airmPosItems.executeRate" label="执行比例" width="90"></el-table-column>
         <el-table-column property="pieceNo" label="件号"></el-table-column>
         <el-table-column property="airmaterialNameZn" label="航材中文名称" width="120"></el-table-column>
         <el-table-column property="airmaterialNameEn" label="航材英文名称" width="120"></el-table-column>
-        <el-table-column property="pieceState" label="件状态" ></el-table-column>
+        <el-table-column property="pieceStatus" label="件状态" ></el-table-column>
         <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
         <el-table-column property="unit" label="单位"></el-table-column>
         <el-table-column property="unitPrice" label="单价"></el-table-column>
@@ -17,54 +17,52 @@
         <el-table-column property="claimMonth" label="索赔期/月" width="100"></el-table-column>
         <el-table-column property="totalPrice" label="总价"></el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].airmPos.rmb | toThousands}} 元</span></p>
-    <!-- <el-table :data="info[0].airmPos" :stripe="true" highlight-current-row style="width: 100%" class="appTable budgetTable ">
-      <el-table-column type="index" label="序号" width="65"></el-table-column>
-      <el-table-column property="supplierName" label="厂家名称"></el-table-column>
-      <el-table-column property="accurencyName" label="币种" width="120"></el-table-column>
-      <el-table-column property="offerPrice" label="报价" width="120"></el-table-column>
-    </el-table>
+    <p class="totalMoney">合计金额 人民币 <span>{{info[0].airmPos.rmb | toThousands}} 元 {{info[0].airmPos.rmb | moneyCh}}</span></p>
+
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
       <el-col :span="12" class="rightBorder">
         <h1 class="title">优先级</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.priority}}</p>
+        <p v-if="info" class="textContent">{{info[0].airmPos.priority}}</p>
       </el-col>
       <el-col :span="12">
         <h1 class="title">币种</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.accurencyName}}</p>
+        <p v-if="info" class="textContent">{{info[0].airmPos.accurencyName }}</p>
       </el-col>
       <el-col :span="12" class="rightBorder">
         <h1 class="title">供应商名称</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.supplierName}}</p>
+        <p v-if="info" class="textContent">{{info[0].airmPos.supplierName}}</p>
       </el-col>
       <el-col :span="12">
         <h1 class="title">开户行</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.supplierBank}}</p>
+        <p v-if="info" class="textContent">{{info[0].airmPos.supplierBank}}</p>
       </el-col>
       <el-col :span="12" class="rightBorder">
         <h1 class="title">收款账户</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.supplierBankAccountName}}</p>
+        <p v-if="info" class="textContent">{{info[0].airmPos.supplierBankAccountName}}</p>
       </el-col>
       <el-col :span="12" class="rightBorder">
         <h1 class="title">付款方式</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.isAdvancePayment==1?'预付':'后付'}}</p>
+        <p v-if="info" class="textContent">{{info[0].airmPos.isAdvancePayment==1?'预付':'后付'}}</p>
       </el-col>
       <el-col :span="12" class="rightBorder">
         <h1 class="title">填表日期</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.createTime | time('date')}}</p>
+        <p v-if="info" class="textContent">{{info[0].airmPos.createTime | time('date')}}</p>
       </el-col>
       <el-col :span="12">
         <h1 class="title">金额总计</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.rmb | toThousands}}元</p>
+        <p v-if="info" class="textContent">{{info[0].airmPos.rmb | toThousands}}元</p>
       </el-col>
 
 
-      <el-col :span="12">
-        <h1 class="title">付款方式</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.rmb | toThousands}}元</p>
-      </el-col> -->
      
-    </el-row>
+
+       <el-col :span="24">
+        <h1 class="title">合同子类型</h1>
+        <p v-if="info" class="textContent">{{info[0].airmPos.contractSubType}}</p>
+      </el-col> 
+     
+     
+     </el-row>
   </div>
 </template>
 <script>
@@ -77,7 +75,7 @@ export default {
   },
   data() {
     return {
-
+      accurencyName:"",
     }
   },
   computed: {

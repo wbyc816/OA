@@ -10,7 +10,9 @@
           <el-input placeholder="航班号" v-model.trim="params.flightNo" :maxlength="50"></el-input>
         </el-col>
 
-        
+        <el-col :span="6">
+          <el-input placeholder="机号" v-model.trim="params.acReg" :maxlength="50" ></el-input>
+        </el-col>
 
         <el-col :span="6">
           <el-select v-model="params.departureAirport" ref="takeOffData"  filterable placeholder="起飞四字码">
@@ -55,9 +57,9 @@
         <el-col :span="6">
           <el-button class="searchButton" @click="submitParam">搜索</el-button>
         </el-col>
-         <!-- <el-col :span="6">
-          <el-button class="searchButton" @click="toggleBtn">切换</el-button>
-        </el-col> -->
+         <el-col :span="6">
+          <el-button class="searchButton" @click="exportExcel">导出</el-button>
+        </el-col>
       </el-row>
     </el-card>
   </div>
@@ -83,6 +85,14 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+    watch: {
+      first(curVal,oldVal){
+　　　　　console.log(curVal);
+　       console.log(oldVal);
+　　　},
+    
+   
   },
   data() {
     var validateFourChar = (rule, value, callback) => {
@@ -135,10 +145,10 @@ export default {
         "departureAirport": "",
         "arrivalAirport": "",
         flightNo:"",
+        acReg:"",
     },
-    paramsTwo:{
-        first:false
-    },
+
+
       isPay: "",
       reportDatas: [],
       defaultProp: {
@@ -172,12 +182,16 @@ export default {
     this.getDate()
   },
   methods: {
+    exportExcel(){
+       window.open("/foc/export2Excel?flightNo="+this.params.flightNo+"&beginTime="+this.params.beginTime +"&endTime="+this.params.endTime+"&departureAirport="+this.params.departureAirport+"&arrivalAirport="+this.params.arrivalAirport )
+
+    },
     getDate(){
       this.params.endTime=util.formatTime((new Date()).getTime(), 'yyyy-MM-dd');
       this.params.beginTime= util.formatTime((new Date()).getTime() - 3600 * 1000 * 24 * 30, 'yyyy-MM-dd');
     },
     changeDate(){
-      console.log(this.time);
+      // console.log(this.time);
       this.params.beginTime=util.formatTime(this.time[0], 'yyyy-MM-dd');
       this.params.endTime=util.formatTime(this.time[1], 'yyyy-MM-dd');
     },
@@ -193,7 +207,7 @@ export default {
         }).then(res => {
             if (res.status == 0) {
               this.takeOffData = res.list
-              console.log(this.takeOffData)
+              // console.log(this.takeOffData)
             } else {
 
             }
@@ -261,9 +275,7 @@ export default {
       }
      
     },
-    toggleBtn() {
-         this.$emit('searchTwo',this.paramsTwo)
-    },
+   
   }
 }
 
