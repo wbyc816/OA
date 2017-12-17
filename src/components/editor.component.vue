@@ -54,6 +54,7 @@ export default {
       that.result();
     };
     editor.create();
+    this.$refs.editor.blur();
     this.editor = editor;
   },
   methods: {

@@ -5,7 +5,10 @@
       <li class="personAdvice" :class="{disAgree:task.state==2}">
         <span class="isAgree"><i :class="task.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
         <span class="userName">{{task.taskUserName}}</span>
-        <span class="taskContent">{{task.taskContent}}</span>
+        <span class="taskContent">
+        {{task.taskContent}}
+        <p class="taskFile" v-for="item in task.taskFiles"><a :href="item.filePath">{{item.fileNameNew}}</a></p>
+      </span>
         <span class="taskTime">{{task.startTime}}</span>
       </li>
       <ul class="signBox" v-if="task.signInfo.length!=0">
@@ -136,6 +139,12 @@ $main:#0460AE;
       }
       .taskTime {
         color: #9B9B9B;
+      }
+      .taskFile{
+        padding-bottom:5px;
+        a{
+          color:$main;
+        }
       }
     }
     .depSignBox {

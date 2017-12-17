@@ -1,6 +1,6 @@
 <template>
   <div class='descriptionBox'>
-    <h4 class='doc-form_title'>详情信息</h4>
+    <h4 class='doc-form_title' v-if="showTitle">详情信息</h4>
     <slot></slot>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
       <el-form-item :label="options.desTitle||'请示内容'" prop="des" :rules="[{ required: true,validator:checkDes,trigger: 'blur,change' }]" v-if="$route.params.code!='FWG'">
@@ -64,6 +64,7 @@ import PathDialog from '../../../components/pathDialog.component'
 import Editor from '../../../components/editor.component'
 import { mapGetters, mapMutations } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
+const noTitleDocs=['HCG','JBC','ZJJ','SXS','JHH']
 export default {
   components: {
     SearchOptions,
@@ -144,6 +145,9 @@ export default {
       }
       html += '归档'
       return html;
+    },
+    showTitle:function(){
+      return noTitleDocs.find(d=>d===this.$route.params.code)=== undefined;
     },
     ...mapGetters([
       'baseURL',

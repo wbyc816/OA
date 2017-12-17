@@ -83,18 +83,18 @@
       </div>
       <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
       </quit-advice>
-      <my-advice :docDetail="docDetialInfo.doc" :otherInfo="docDetialInfo.otherInfo" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice">
+      <my-advice :docDetail="docDetialInfo.doc" :otherInfo="docDetialInfo.otherInfo" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice" ref="myAdvice">
         <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true;getFileSend();" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
     </el-card>
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
       <span slot="title">公文归档</span>
-      <el-form :model="fileForm" :inline="!isRedFile" :rules="fileRules" ref="fileForm" class="fileForm" :class="{fileRed:isRedFile}">
+      <el-form :model="fileForm" :inline="!isRedFile&&!isInArray(addFileDoc,$route.query.code)" :rules="fileRules" ref="fileForm" class="fileForm" :class="{fileRed:isRedFile||isInArray(addFileDoc,$route.query.code)}">
         <el-form-item label="建议发文号:" v-if="isRedFile">
           <p class="fwNo">{{docDetialInfo.doc.fwNo}}</p>
         </el-form-item>
-        <el-form-item label="发布正文" prop="taskFileId" v-if="isRedFile&&archiveState==1">
+        <el-form-item label="发布正文" prop="taskFileId" v-if="isRedFile&&archiveState==1" :rules="[{ required: true, message: '请上传正文！' }]">
           <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
             <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''">上传发布正文<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
@@ -112,6 +112,12 @@
             </el-tag>
           </div>
           <el-button class="addButton" @click="showArchive"><i class="el-icon-plus"></i></el-button>
+        </el-form-item>
+        <el-form-item label="上传附件" prop="fileIds" v-if="isInArray(addFileDoc,$route.query.code)">
+          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.query.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
+            <el-button size="small" type="primary" :disabled="fileForm.fileIds.length>4">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+          </el-upload>
+          <p class="uploadInfo">最多上传5个附件</p>
         </el-form-item>
         <el-form-item label="归档状态" class="textarea" prop="state">
           <el-radio-group class="myRadio" v-model="archiveState">
@@ -185,7 +191,8 @@ import TYS from './component/commonDetail.component.vue' //通用申请详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
-const otherAdviceDoc = ["FWG", "SWD", "CPD","HTS"]
+const otherAdviceDoc = ["FWG", "SWD", "CPD", "HTS"]
+const addFileDoc = ["CPD", "HTS"]
 export default {
   components: {
     PersonDialog,
@@ -245,7 +252,6 @@ export default {
       docDetialInfo: { doc: {}, task: [{ state: '' }], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [], suggests: '' },
       archiveFormRule: {},
       fileRules: {
-        taskFileId: [{ required: true, message: '请上传正文！' }],
         fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
       },
       fileForm: {
@@ -255,6 +261,7 @@ export default {
           all: '',
           depList: []
         },
+        fileIds: []
       },
       activeNames: [],
       topDistData: [],
@@ -267,7 +274,8 @@ export default {
       showOtherAdvice: false,
       otherAdviceDoc,
       fileSendVisible: false,
-      sendTypes: []
+      sendTypes: [],
+      addFileDoc
     }
   },
   created() {
@@ -281,11 +289,11 @@ export default {
 
   },
   computed: {
-    computeView(){
-      var view='';
-      var temp=otherAdviceDoc.find(d=>d==this.$route.query.code);
-      if(temp){
-        view=temp+'D'
+    computeView() {
+      var view = '';
+      var temp = otherAdviceDoc.find(d => d == this.$route.query.code);
+      if (temp) {
+        view = temp + 'D'
       }
       return view
     },
@@ -315,38 +323,42 @@ export default {
       this.fileSendVisible = true;
     },
     getFileSend() {
-      this.$http.post("/doc/getFileSend", { id: this.$route.params.id })
-        .then(res => {
-          if (res.status == 0) {
-            if (res.data.sendTypeAll.max) {
-              this.fileForm.fileSend.all = { max: res.data.sendTypeAll.max, min: res.data.sendTypeAll.min }
-            } else {
-              this.fileForm.fileSend.depList=[];
-              this.fileForm.fileSend.personList=[];
-              res.data.sendTypeDept.forEach(d => {
-                this.fileForm.fileSend.depList.push({
-                  id: d.id,
-                  name: d.name,
-                  min: d.min,
-                  max: d.max
-                })
-              })
-              res.data.sendTypeEmp.ids.forEach((d, index) => {
-                this.fileForm.fileSend.personList.push({
-                  empId: d,
-                  postId:res.data.sendTypeEmp.empPostId[index],
-                  name: res.data.sendTypeEmp.names[index],
-                })
-              })
-            }
-          } else {
+      if (this.isRedFile) {
 
-          }
-        })
+
+        this.$http.post("/doc/getFileSend", { id: this.$route.params.id })
+          .then(res => {
+            if (res.status == 0) {
+              if (res.data.sendTypeAll.max) {
+                this.fileForm.fileSend.all = { max: res.data.sendTypeAll.max, min: res.data.sendTypeAll.min }
+              } else {
+                this.fileForm.fileSend.depList = [];
+                this.fileForm.fileSend.personList = [];
+                res.data.sendTypeDept.forEach(d => {
+                  this.fileForm.fileSend.depList.push({
+                    id: d.id,
+                    name: d.name,
+                    min: d.min,
+                    max: d.max
+                  })
+                })
+                res.data.sendTypeEmp.ids.forEach((d, index) => {
+                  this.fileForm.fileSend.personList.push({
+                    empId: d,
+                    postId: res.data.sendTypeEmp.empPostId[index],
+                    name: res.data.sendTypeEmp.names[index],
+                  })
+                })
+              }
+            } else {
+
+            }
+          })
+      }
     },
-    
+
     getDetail(route) {
-      
+
       var url = "/doc/getDocDetailInfo";
       if (route.query.code == 'LZS') {
         url = '/doc/getDocDimissionInfo'
@@ -364,12 +376,12 @@ export default {
             if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
               this.getDistInfo();
             }
-            if (this.docDetialInfo.doc.isConfidential == 1 && route.query.code == 'FWG') {
+            if (route.query.code == 'FWG') {
               this.isRedFile = true;
               this.getSendType();
             }
             this.handleSuggest();
-            if (route.query.code != 'CPD'&&route.query.code != 'HTS') {
+            if (route.query.code != 'CPD' && route.query.code != 'HTS') {
               this.activeContent = [];
             }
           }
@@ -394,8 +406,8 @@ export default {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
               html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
-              if(arr[i + 1].nodeName != 'sign'){
-                html +=signFlag + ' ' + arrowHtml
+              if (arr[i + 1].nodeName != 'sign') {
+                html += signFlag + ' ' + arrowHtml
               }
             } else if (arr[i + 1].nodeName != 'sign') {
               html += s.typeIdName + s.remark + ' ' + signFlag + ' ' + arrowHtml;
@@ -405,8 +417,8 @@ export default {
           } else if (s.nodeName == 'trans') {
             if (arr[i - 1].nodeName != 'trans') {
               html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
-              if(arr[i + 1].nodeName != 'trans'){
-                html +=signFlag + ' ' + arrowHtml
+              if (arr[i + 1].nodeName != 'trans') {
+                html += signFlag + ' ' + arrowHtml
               }
             } else if (arr[i + 1].nodeName != 'trans') {
               html += s.typeIdName + s.remark + ' ' + signFlag + ' ' + arrowHtml;
@@ -454,30 +466,37 @@ export default {
             "taskUserName": this.userInfo.name,
             "taskUserId": this.userInfo.empId,
             "state": this.archiveState,
-            "taskFileId": this.fileForm.taskFileId
+            "taskFileId": '',
+            "taskContent": this.$refs.myAdvice.ruleForm.taskContent
           }
-          if (this.isRedFile && this.archiveState == 1) {
-            params.fileSend = {
-              "sendTypeAll": {
-                "sendType": this.sendTypes.find(type => type.dictEname == 'all').dictCode, //发布范围i人类型
-                "max": this.fileForm.fileSend.all.max, //最大
-                "min": this.fileForm.fileSend.all.min //最小
-              },
-              "sendTypeDept": [],
-              "sendTypeEmp": {
-                "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
-                "ids": this.fileForm.fileSend.personList.map(person => person.empId),
-                "empPostId": this.fileForm.fileSend.personList.map(person => person.postId),
+          if (this.archiveState == 1) {
+            if (this.isRedFile) {
+              params.taskFileId = this.fileForm.taskFileId;
+              params.fileSend = {
+                "sendTypeAll": {
+                  "sendType": this.sendTypes.find(type => type.dictEname == 'all').dictCode, //发布范围i人类型
+                  "max": this.fileForm.fileSend.all.max, //最大
+                  "min": this.fileForm.fileSend.all.min //最小
+                },
+                "sendTypeDept": [],
+                "sendTypeEmp": {
+                  "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
+                  "ids": this.fileForm.fileSend.personList.map(person => person.empId),
+                  "empPostId": this.fileForm.fileSend.personList.map(person => person.postId),
+                }
               }
+              params.fileSend.sendTypeDept = this.fileForm.fileSend.depList.map(function(dep) {
+                return {
+                  sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
+                  id: dep.id,
+                  max: dep.max,
+                  min: dep.min
+                }
+              });
             }
-            params.fileSend.sendTypeDept = this.fileForm.fileSend.depList.map(function(dep) {
-              return {
-                sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
-                id: dep.id,
-                max: dep.max,
-                min: dep.min
-              }
-            });
+          }
+          if (this.isInArray(addFileDoc, this.$route.query.code)) {
+            params.fileIds = this.fileForm.fileIds.map(f => f.response.data);
           }
           console.log(params)
           this.$http.post('/doc/docArchive', params, { body: true })
@@ -605,25 +624,33 @@ export default {
 
         })
     },
-    handleAvatarSuccess(res, file) {
-      this.fileForm.taskFileId = res.data;
+    handleAvatarSuccess(res, file, fileList) {
+      if (this.isRedFile) {
+        this.fileForm.taskFileId = res.data;
+      } else {
+        this.fileForm.fileIds = fileList;
+      }
     },
     beforeUpload(file) {
       // const isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       const isJPG = file.type === 'application/pdf';
-      const isLt10M = file.size / 1024 / 1024 < 10;
+      const isLt10M = file.size / 1024 / 1024 < 500;
 
       if (!isJPG) {
         // this.$message.error('上传文件只能是 DOCX 格式!');
         this.$message.error('上传文件只能是 PDF 格式!');
       }
       if (!isLt10M) {
-        this.$message.error('上传文件大小不能超过 10MB!');
+        this.$message.error('上传文件大小不能超过 500MB!');
       }
       return isJPG && isLt10M;
     },
-    handleRemove() {
-      this.fileForm.taskFileId = '';
+    handleRemove(file, fileList) {
+      if (this.isRedFile) {
+        this.fileForm.taskFileId = '';
+      } else {
+        this.fileForm.fileIds = fileList;
+      }
     },
 
   }
@@ -743,7 +770,7 @@ $sub:#1465C0;
   .adviceSpan {
     display: inline-block;
     padding-right: 10px;
-    word-break:break-word;
+    word-break: break-word;
   }
   .baseInfoBox {
     padding-bottom: 10px;
@@ -884,6 +911,15 @@ $sub:#1465C0;
           }
         }
       }
+    }
+    .uploadInfo {
+      position: absolute;
+      right: 0;
+      font-size: 13px;
+      color: #9a9a9a;
+      line-height: 15px;
+      bottom: -23px;
+      white-space: nowrap;
     }
   }
   .archiveSubmitDialog {

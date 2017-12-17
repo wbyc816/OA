@@ -209,14 +209,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="送修合同" prop="repairContract" v-if="dialogForm.contractCode==='DOC2102'">
-          <el-col :span='18' class="repairContract" style="left: -6px;position: relative;">
-            <div class="docsBox">
-              <el-tag type="gray" v-show="dialogForm.repairContract">{{dialogForm.repairContract}}</el-tag>
-            </div>
-          </el-col>
-          <el-col :span='6'>
-            <el-button class="repairContractButton" @click="dialogTableVisible=true">选择</el-button>
-          </el-col>
+          <el-row :gutter="0">
+            <el-col :span='18' class="repairContract">
+              <div class="docsBox">
+                {{dialogForm.repairContract}}
+              </div>
+            </el-col>
+            <el-col :span='6'>
+              <el-button class="repairContractButton" @click="dialogTableVisible=true">选择</el-button>
+            </el-col>
+          </el-row>
         </el-form-item>
       </el-form>
       <div class="confirmBox">
@@ -224,7 +226,7 @@
       </div>
       </span>
     </el-dialog>
-    <el-dialog :visible.sync="dialogTableVisible" size="large" class="docDialog">
+    <el-dialog :visible.sync="dialogTableVisible" size="large" class="docDialog" @open="getData" @close="clearParams">
       <div class="topSearch clearfix">
         <p class="tips">选择公文<span>请双击公文选择</span></p>
       </div>
@@ -250,7 +252,7 @@ import MoneyInput from '../../../components/moneyInput.component'
 import SearchOptions from '../../../components/searchOptions.component'
 import { mapGetters } from 'vuex'
 export default {
-  components: { MoneyInput,SearchOptions },
+  components: { MoneyInput, SearchOptions },
   data() {
     return {
       year: new Date().getFullYear(),
@@ -339,9 +341,9 @@ export default {
       totalRmb: '',
       dialogVisible: false,
       dialogTableVisible: false,
-      searchOptions:'',
-      searchLoading:false,
-      extraDocs:[],
+      searchOptions: '',
+      searchLoading: false,
+      extraDocs: [],
       params: {
         "pageNumber": 1,
         "pageSize": 5
@@ -679,11 +681,11 @@ export default {
         })
     },
     tableRowClassName(row, index) {
-      return this.repairContractDoc.id===row.id?'selDoc':'';
+      return this.repairContractDoc.id === row.id ? 'selDoc' : '';
     },
     selectDoc(row) {
-      this.dialogForm.repairContract=row.docTitle;
-      this.repairContractDoc=row;
+      this.dialogForm.repairContract = row.docTitle;
+      this.repairContractDoc = row;
       this.dialogTableVisible = false;
     },
     setOptions(options) {
@@ -699,7 +701,7 @@ export default {
       this.searchLoading = true;
       var params = Object.assign({ userId: this.userInfo.empId }, this.params, this.searchOptions);
       this.$http.post("/doc/getAirmRorList", params, { body: true }).then(res => {
-        setTimeout(()=> {
+        setTimeout(() => {
           this.searchLoading = false;
         }, 200)
         if (res.status == 0) {
@@ -713,6 +715,10 @@ export default {
 
       })
     },
+    clearParams() {
+      this.searchOptions = '';
+      this.params.pageNumber = 1;
+    }
   }
 }
 
@@ -778,9 +784,17 @@ $sub:#1465C0;
     .el-form {
       min-height: 130px;
     }
+    .repairContract {
+      min-height: 45px;
+      border-bottom: 1px solid #D5DADF;
+      padding-top: 13px;
+      padding-right: 5px;
+      line-height: 19px;
+    }
     .repairContractButton {
-      width: 100%;
+      width: 92%;
       height: 45px;
+      float: right;
     }
     .confirmBox {
       text-align: center;

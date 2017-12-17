@@ -11,10 +11,11 @@ Vue.prototype.getCookie = getCookie
 Vue.prototype.setCookie = setCookie
 Vue.prototype.delCookie = delCookie
 Vue.prototype.showDowload = showDowload
+Vue.prototype.isInArray = isInArray
 
 
 function showDowload(docName){
-  const docArr=['CPD','BXS','JKS','RSB','PXS','CLB','CLV','FKS','YFK','SWD','FWG']  //显示导出PDF的公文列表
+  const docArr=['CPD','BXS','JKS','RSB','PXS','CLB','CLV','FKS','YFK','FWG']  //显示导出PDF的公文列表
   return docArr.find(d=>d==docName)!=undefined
 }
 function getCookie(c_name) {
@@ -125,5 +126,9 @@ function loginOut() {
   if (!document.getElementById('payUrl')) document.body.appendChild(a);
   delCookie('userId');
   a.click();
+}
+
+function isInArray(arr,child){
+  return arr.find(c=>c==child)!=undefined
 }
 export default { combineObj, formatTime, preventEmpty,loginOut,getCookie,delCookie,setCookie }
