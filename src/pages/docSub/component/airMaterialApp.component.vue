@@ -442,8 +442,8 @@ export default {
             "unitPrice": tabel.unitPrice,  //单价
             "totalPrice": tabel.totalPrice,  //总价=单位*单价
             "airmaterialNameEn": tabel.airmaterialNameEn,  //航材英文名称
-            "claimMonth": tabel.claimMonth //索赔期/月
-
+            "claimMonth": tabel.claimMonth ,//索赔期/月
+            arrivalDays:tabel.arrivalDays//到货天数
           }
         })
           
@@ -451,7 +451,7 @@ export default {
       
     var airmPos= {
 
-      
+
             "budgetYear":that.year,         //预算年度
             supplierId: that.supplierInfo.id, //  供应商id
             supplierName: that.supplierInfo.supplierName, //  供应商名
@@ -462,7 +462,7 @@ export default {
             "isAdvancePayment": that.contractForm.isAdvancePayment,  //付款方式,1预付 0后付
             createTime: that.contractForm.createTime, //   填表日期（创建日期）（推送日期）
             contractNo: that.contractForm.contractNo, //  合同号
-            "accurencyName":  currency.currencyCode,  //币种
+            "accurencyName":  currency.currencyName,  //币种
             "exchangeRateId": currency.exchangeId ,  //汇率
             "exchangeRate": currency.exchangeRate,  //汇率id
             priority: that.contractForm.priority, //  优先级   
