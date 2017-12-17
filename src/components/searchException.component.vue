@@ -168,7 +168,7 @@ export default {
       'userInfo',
       'confidentiality',
       'typeTree',
-      'baseUrl'
+      'baseURL'
     ])
   },
   created() {
@@ -184,8 +184,8 @@ export default {
   },
   methods: {
     exportExcel(){
-      
-       window.open(this.baseUrl+"/foc/export2Excel?flightNo="+this.params.flightNo+"&beginTime="+this.params.beginTime +"&endTime="+this.params.endTime+"&departureAirport="+this.params.departureAirport+"&arrivalAirport="+this.params.arrivalAirport )
+      console.log(this.baseURL)
+       window.open(this.baseURL+"/foc/export2Excel?flightNo="+this.params.flightNo+"&beginTime="+this.params.beginTime +"&endTime="+this.params.endTime+"&departureAirport="+this.params.departureAirport+"&arrivalAirport="+this.params.arrivalAirport )
 
     },
     getDate(){

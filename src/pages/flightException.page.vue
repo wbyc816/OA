@@ -14,7 +14,7 @@
 
         <el-table-column prop="out" label="A滑出时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.out | time('all')}}</span>
+                <span>{{ scope.row.out | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -22,7 +22,7 @@
 
          <el-table-column prop="engonTime" label="Q开车时间" width="180">
              <template scope="scope">
-                <span>{{ scope.row.engonTime | time('all')}}</span>
+                <span>{{ scope.row.engonTime | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -35,7 +35,7 @@
 
          <el-table-column prop="acarsAtd" label="A起飞时间" width="180">
              <template scope="scope">
-                <span>{{ scope.row.acarsAtd | time('all')}}</span>
+                <span>{{ scope.row.acarsAtd | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -43,7 +43,7 @@
 
          <el-table-column prop="takeoffTime" label="Q起飞时间" width="180">
              <template scope="scope">
-                <span>{{ scope.row.takeoffTime | time('all')}}</span>
+                <span>{{ scope.row.takeoffTime | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -56,15 +56,15 @@
 
         <el-table-column prop="acarsAta" label="A降落时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.acarsAta | time('all')}}</span>
+                <span>{{ scope.row.acarsAta | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
        
 
-        <el-table-column prop="landingTime" label="Q落地时间" width="180">
+        <el-table-column prop="landingTime" label="Q降落时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.landingTime | time('all')}}</span>
+                <span>{{ scope.row.landingTime | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -77,7 +77,7 @@
 
         <el-table-column prop="inn" label="A滑入时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.inn | time('all')}}</span>
+                <span>{{ scope.row.inn | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -86,7 +86,7 @@
 
         <el-table-column prop="engoffTime" label="Q关车时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.engoffTime | time('all')}}</span>
+                <span>{{ scope.row.engoffTime | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -114,6 +114,12 @@
             <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
             </el-pagination>
         </div>
+
+        <div slot="header">
+        <div style="background:white;font-size:18px;padding:10px">飞行数据异常数据</div>
+        
+        </div>
+
         <el-table :data="compareData" stripe style="width: 100%" :fit="true" v-loading.body="searchLoading">
         <el-table-column prop="flightNo" label="航班号" width="90">
         </el-table-column>
@@ -124,17 +130,17 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="out" label="A滑出时间" width="130">
+        <el-table-column prop="out" label="A滑出时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.out | time('second')}}</span>
+                <span>{{ scope.row.out | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
        
 
-         <el-table-column prop="engonTime" label="Q开车时间" width="130">
+         <el-table-column prop="engonTime" label="Q开车时间" width="180">
              <template scope="scope">
-                <span>{{ scope.row.engonTime | time('second')}}</span>
+                <span>{{ scope.row.engonTime | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -145,17 +151,17 @@
             </template>
         </el-table-column>
 
-         <el-table-column prop="acarsAtd" label="A起飞时间" width="130">
+         <el-table-column prop="acarsAtd" label="A起飞时间" width="180">
              <template scope="scope">
-                <span>{{ scope.row.acarsAtd | time('second')}}</span>
+                <span>{{ scope.row.acarsAtd | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
         
 
-         <el-table-column prop="takeoffTime" label="Q起飞时间" width="130">
+         <el-table-column prop="takeoffTime" label="Q起飞时间" width="180">
              <template scope="scope">
-                <span>{{ scope.row.takeoffTime | time('second')}}</span>
+                <span>{{ scope.row.takeoffTime | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -166,17 +172,17 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="acarsAta" label="A降落时间" width="130">
+        <el-table-column prop="acarsAta" label="A降落时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.acarsAta | time('second')}}</span>
+                <span>{{ scope.row.acarsAta | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
        
 
-        <el-table-column prop="landingTime" label="Q落地时间" width="130">
+        <el-table-column prop="landingTime" label="Q降落时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.landingTime | time('second')}}</span>
+                <span>{{ scope.row.landingTime | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -187,18 +193,18 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="inn" label="A滑入时间" width="130">
+        <el-table-column prop="inn" label="A滑入时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.inn | time('second')}}</span>
+                <span>{{ scope.row.inn | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
     
         
 
-        <el-table-column prop="engoffTime" label="Q关车时间" width="130">
+        <el-table-column prop="engoffTime" label="Q关车时间" width="180">
             <template scope="scope">
-                <span>{{ scope.row.engoffTime | time('second')}}</span>
+                <span>{{ scope.row.engoffTime | time('nosecond')}}</span>
             </template>
         </el-table-column>
 
@@ -225,7 +231,7 @@
     
     
     <div class="pageBox" >
-      <el-pagination @current-change="handleCurrentChangeTwo" :current-page="params.pageNumberTwo" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSizeTwo">
+      <el-pagination @current-change="handleCurrentChangeTwo" :current-page="params.pageNumberTwo" :page-size="20" layout="total, prev, pager, next, jumper" :total="totalSizeTwo">
       </el-pagination>
     </div>
 
@@ -337,7 +343,7 @@ export default {
 
         })
 
-        this.$http.post("/foc/getUnusual?pageNumber="+this.pageNumberTwo+"&pageSize=10", params, { body: true }).then(res => {
+        this.$http.post("/foc/getUnusual?pageNumber="+this.pageNumberTwo+"&pageSize=20", params, { body: true }).then(res => {
         setTimeout(function() {
         that.searchLoading = false;
 
