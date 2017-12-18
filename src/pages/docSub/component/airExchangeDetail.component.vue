@@ -1,6 +1,11 @@
 <template>
   <div class="airExchangeDetail clearfix">
     <el-table :data="info[0].items" :stripe="true" highlight-current-row style="width: 100%" class="appTable">
+      <el-table-column property="changeOutMaterialName" label="换出器件名称" width="200"></el-table-column>
+      <el-table-column property="changeOutNum" label="换出数量" width="90"></el-table-column>
+      <el-table-column property="changeOutPieceNo" label="换出件号" width="90"></el-table-column>
+      <el-table-column property="changeOutSequenceNo" label="换出序号" width="90"></el-table-column>
+      <el-table-column property="changeOutSequenceNo" label="换出序号" width="90"></el-table-column>
       <el-table-column property="budgetDeptName" label="预算机构/科目" width="200">
         <template scope="scope">
           {{scope.row.budgetDeptName}}/{{scope.row.budgetItemName}}
@@ -13,10 +18,6 @@
       <el-table-column property="changeIntoNum" label="换入数量" width="90"></el-table-column>
       <el-table-column property="ourPayment" label="我方支付" width="90"></el-table-column>
       <el-table-column property="otherPayment" label="对方支付" width="90"></el-table-column>
-      <el-table-column property="changeOutMaterialName" label="换出器件名称" width="200"></el-table-column>
-      <el-table-column property="changeOutPieceNo" label="换出件号" width="90"></el-table-column>
-      <el-table-column property="changeOutSequenceNo" label="换出序号" width="90"></el-table-column>
-      <el-table-column property="changeOutNum" label="换出数量" width="90"></el-table-column>
     </el-table>
     <p class="totalMoney">合计金额 人民币 <span>{{info[0].rmb | toThousands}}元 {{info[0].rmb | moneyCh}}</span></p>
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">

@@ -69,7 +69,7 @@
     <person-dialog @updatePerson="updatePerson" :admin="normalPersonAdmin" :visible.sync="dialogTableVisible" dialogType="radio" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
     <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :isLeaderDep="docDetail.isConfidential==1" :data="signPersons"></person-dialog>
     <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="$route.query.code=='LZS'?'0':''"></person-dialog>
-    <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" isSaveInit></dep-dialog>
+    <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" :disableDep="disableDep" isSaveInit></dep-dialog>
   </div>
 </template>
 <script>
@@ -206,6 +206,20 @@ export default {
       }
       return temp;
     },
+    disableDep: function() {
+      var dep = [];
+      if (this.ruleForm.state != 6) { //非承办部门办理
+        if (this.docDetail && this.otherInfo && this.$route.query.code == 'FWG') { //只针对发文稿纸
+          var typeName = this.otherInfo[0].classify1;
+          if ((typeName === '公司发文' || typeName === '会议纪要') && (this.docDetail.taskDeptMajorId == initFWGDeps[0].id || this.docDetail.taskDeptId == initFWGDeps[0].id)) {
+
+            dep = initFWGDeps;
+            
+          }
+        }
+      }
+      return dep
+    },
     ...mapGetters([
       'userInfo',
       'submitLoading',
@@ -341,6 +355,8 @@ export default {
         this.ruleForm.taskContent = "不同意。";
         if (this.signType == 0) {
           this.getAdminReci();
+        } else if (this.signType == 1) {
+          this.signTypeChange('1')
         }
       } else {
         this.ruleForm.taskContent = "同意。";
@@ -358,8 +374,14 @@ export default {
       if (val == 1 && this.ruleForm.state != 6) {
 
         //特定公文类型 发文稿纸、合同申请  呈报人所在部门不在特殊范围 自动添加默认部门
-        if (this.$route.query.code == 'FWG' && this.otherInfo[0].catalogueId === '公司发文' && this.docDetail.taskDeptMajorId != initFWGDeps[0].id && this.docDetail.taskDeptId != initFWGDeps[0].id) {
-          this.updateSignDep(initFWGDeps);
+        if (this.$route.query.code == 'FWG') {
+          var typeName = this.otherInfo[0].classify1;
+
+          //发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 添加默认部门
+          if ((typeName === '公司发文' || typeName === '会议纪要') && this.docDetail.taskDeptMajorId != initFWGDeps[0].id && this.docDetail.taskDeptId != initFWGDeps[0].id) {
+            this.updateSignDep(initFWGDeps);
+          }
+
         } else if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {
           this.updateSignDep(initHTSDeps);
         }
@@ -369,16 +391,25 @@ export default {
     ableDepClose(val) {
       if (this.ruleForm.state != 6) {
 
-
         //特定公文类型 发文稿纸、合同申请  呈报人所在部门不在特殊范围 自动添加默认部门
-        if (this.$route.query.code == 'FWG' && this.otherInfo[0].catalogueId === '公司发文' && this.docDetail.taskDeptMajorId != initFWGDeps[0].id && this.docDetail.taskDeptId != initFWGDeps[0].id) {
-          return initFWGDeps.find(d => d.id == val) == undefined
+        if (this.$route.query.code == 'FWG') {
+          var typeName = this.otherInfo[0].classify1;
+
+          //发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 添加默认部门
+          if ((typeName === '公司发文' || typeName === '会议纪要') && this.docDetail.taskDeptMajorId != initFWGDeps[0].id && this.docDetail.taskDeptId != initFWGDeps[0].id) {
+
+            return initFWGDeps.find(d => d.id == val) == undefined;
+          }else{
+            return true
+          }
         } else if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {
-          return initHTSDeps.find(d => d.id == val) == undefined
+
+          return initHTSDeps.find(d => d.id == val) == undefined;
+
         } else {
           return true
         }
-      }else{
+      } else {
         return true
       }
     },

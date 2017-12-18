@@ -15,7 +15,7 @@ Vue.prototype.isInArray = isInArray
 
 
 function showDowload(docName){
-  const docArr=['CPD','BXS','JKS','RSB','PXS','CLB','CLV','FKS','YFK','FWG']  //显示导出PDF的公文列表
+  const docArr=['CPD','BXS','JKS','RSB','PXS','CLB','CLV','FKS','YFK','FWG','HTS']  //显示导出PDF的公文列表
   return docArr.find(d=>d==docName)!=undefined
 }
 function getCookie(c_name) {

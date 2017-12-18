@@ -63,12 +63,12 @@ export default {
       searchRes: '',
       initData: true,
       depVisible: false,
-      initDep:[],
-      isFirst:true
+      initDep: [],
+      isFirst: true
     }
   },
   props: {
-    dialogType: {    //单选或多选，默认单选
+    dialogType: { //单选或多选，默认单选
       type: String,
       default: 'radio'
     },
@@ -76,13 +76,16 @@ export default {
       type: Boolean,
       default: false
     },
-    data: {   //初始化数据
+    data: { //初始化数据
       type: [Array, Object, String]
     },
     isSaveInit: {
       type: Boolean,
       default: false
     },
+    disableDep: {
+      type: [Array]
+    }
   },
   watch: {
     'dialogVisible': function(newVal) {
@@ -109,8 +112,12 @@ export default {
     this.$store.dispatch('getDeptList');
   },
   methods: {
-    filterSel(row,index){
-      return this.initDep.find(d=>d.id==row.id)==undefined;
+    filterSel(row, index) {
+      if (this.disableDep.length != 0) {
+        return this.disableDep.find(d => d.id == row.id)==undefined;
+      } else {
+        return this.initDep.find(d => d.id == row.id) == undefined;
+      }
     },
     handleCurrentChange(page) {
       if (this.searchRes.records) {
@@ -140,9 +147,9 @@ export default {
           })
         }
       } else {
-        if(this.filterSel(row)){
+        if (this.filterSel(row)) {
           this.$refs.multipleTable.toggleRowSelection(row);
-        }        
+        }
       }
     },
     rowKey(row) {
@@ -187,13 +194,13 @@ export default {
             this.searchRes = res.data
             if (this.$refs.multipleTable) {
               if (this.dialogType == 'multi' && this.initData) {
-                this.initData = false;                
+                this.initData = false;
                 this.$refs.multipleTable.store.states.selection = this.clone(this.data);
                 this.multipleSelection = this.clone(this.data);
-                if(this.isSaveInit&&this.isFirst){
-                  this.isFirst=false;
-                  this.initDep=this.clone(this.data);
-                }                
+                if (this.isSaveInit && this.isFirst) {
+                  this.isFirst = false;
+                  this.initDep = this.clone(this.data);
+                }
               }
             }
           }
