@@ -1,20 +1,47 @@
 <template>
   <div class="airRepairDetail clearfix">
     <el-table :data="info[0].airmRorItems" :stripe="true" highlight-current-row style="width: 100%" class="appTable">
-      <el-table-column property="budgetDeptName" label="预算机构/科目" width="200">
-        <template scope="scope">
-          {{scope.row.budgetDeptName}}/{{scope.row.budgetItemName}}
+      <el-table-column type="expand">
+        <template scope="props">
+          <div class='tableExpandBox'>
+            <div class="width50">
+              <div>
+                <span>预算机构/科目</span>
+                <p>{{props.row.budgetDeptName}}/{{props.row.budgetItemName}}</p>
+              </div>
+              <div>
+                <span>预算年度</span>
+                <p>{{props.row.budgetYear}}</p>
+              </div>
+            </div>
+            <div class="width50">
+              <div>
+                <span>执行比例</span>
+                <p>{{props.row.executeRate}}%</p>
+              </div>
+              <div>
+                <span>单位</span>
+                <p>{{props.row.unit}}</p>
+              </div>
+            </div>
+            <div class="width50">
+              <div>
+                <span>材料费</span>
+                <p>{{props.row.materialPrice}}</p>
+              </div>
+              <div>
+                <span>合计金额</span>
+                <p>{{props.row.totalItemMoney}}</p>
+              </div>
+            </div>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column property="executeRate" label="执行比例" width="90"></el-table-column>
-      <el-table-column property="materialNameZn" label="器材中文名称" width="200"></el-table-column>
-      <el-table-column property="pieceNo" label="件号" width="90"></el-table-column>
-      <el-table-column property="sequenceNo" label="序号" width="90"></el-table-column>
+      <el-table-column property="materialNameZn" label="器材中文名称"></el-table-column>
+      <el-table-column property="pieceNo" label="件号" width="120"></el-table-column>
       <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
-      <el-table-column property="unit" label="单位" width="90"></el-table-column>
-      <el-table-column property="timePrice" label="工时费" width="90"></el-table-column>
-      <el-table-column property="materialPrice" label="材料费" width="90"></el-table-column>
-      <el-table-column property="totalItemMoney" label="合计金额" width="110"></el-table-column>
+      <el-table-column property="sequenceNo" label="序号" width="120"></el-table-column>
+      <el-table-column property="timePrice" label="工时费" width="120"></el-table-column>
     </el-table>
     <p class="totalMoney">合计金额 人民币 <span>{{info[0].airmRor.rmb | toThousands}}元 {{info[0].airmRor.rmb | moneyCh}}</span></p>
     <el-table :data="info[0].airmRorRepairs" :stripe="true" highlight-current-row style="width: 100%" class="appTable budgetTable ">
@@ -125,7 +152,7 @@ $main:#0460AE;
     }
   }
   .budgetTable {
-    margin-top: 20px; 
+    margin-top: 20px;
     .el-table__header th {
       background: #939393;
     }

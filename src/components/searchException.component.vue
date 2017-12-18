@@ -168,7 +168,7 @@ export default {
       'userInfo',
       'confidentiality',
       'typeTree',
-      'baseUrl'
+      'baseURL'
     ])
   },
   created() {
@@ -179,18 +179,20 @@ export default {
     if (!this.notype) {
       this.$store.dispatch('getDocTree');
     }
+    this.getDate();
     this.getData();
-    this.getDate()
+   
   },
   methods: {
     exportExcel(){
-      
+      console.log(this.baseURL)
        window.open(this.baseURL+"/foc/export2Excel?flightNo="+this.params.flightNo+"&beginTime="+this.params.beginTime +"&endTime="+this.params.endTime+"&departureAirport="+this.params.departureAirport+"&arrivalAirport="+this.params.arrivalAirport )
 
     },
     getDate(){
       this.params.endTime=util.formatTime((new Date()).getTime(), 'yyyy-MM-dd');
       this.params.beginTime= util.formatTime((new Date()).getTime() - 3600 * 1000 * 24 * 30, 'yyyy-MM-dd');
+      // console.log(this.params.beginTime)
     },
     changeDate(){
       // console.log(this.time);

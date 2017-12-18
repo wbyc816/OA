@@ -241,7 +241,14 @@ export default {
   methods: {
     getSecretaryInfo() {
       if (!this.secretaryInfo) {
-        this.$http.post('doc/getSecInfo')
+        var roleUserState=0;  // 机要秘书
+        var typeName = this.otherInfo[0].classify1;
+
+          //发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 添加默认部门
+          if ((typeName === '公司发文' || typeName === '会议纪要') && this.userInfo.deptId != initFWGDeps[0].id && this.userInfo.deptParentId != initFWGDeps[0].id) {
+            roleUserState=1; 
+          }
+        this.$http.post('doc/getSecInfo',{roleUserState:roleUserState})
           .then(res => {
             if (res.status == '0') {
               this.$store.commit('setSecretaryInfo', res.data);

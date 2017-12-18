@@ -1,15 +1,21 @@
 <template>
-  <div class="exchangeApp">
+  <div class="airLoanApp">
     <h4 class='doc-form_title'>合同信息</h4>
     <el-form label-position="left" :model="contractForm" :rules="contractRule" ref="contractForm" label-width="128px">
-      <el-form-item label="合同号" prop="contractNo" class="deptArea">
-        <el-input v-model="contractForm.contractNo" :maxlength="20">
-        </el-input>
+      <el-form-item label="合同子类型" prop="contractCode" placeholder="" class="deptArea">
+        <el-select v-model="contractForm.contractCode" style="width:100%" ref="contractCode">
+          <el-option v-for="item in contractCodeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="填表时间" prop="createTime" class="arrArea">
         <el-date-picker v-model="contractForm.createTime" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
-      <el-form-item label="优先级" prop="priority" placeholder="" class="deptArea">
+      <el-form-item label="合同号" prop="contractNo" class="deptArea">
+        <el-input v-model="contractForm.contractNo" :maxlength="20">
+        </el-input>
+      </el-form-item>
+      <el-form-item label="优先级" prop="priority" placeholder="" class="arrArea">
         <el-select v-model="contractForm.priority" style="width:100%">
           <el-option v-for="item in priorityList" :key="item.dictCode" ref="priority" :label="item.dictName" :value="item.dictName">
           </el-option>
@@ -23,29 +29,18 @@
         <li>开户银行 {{supplierInfo.accountBank}}</li>
         <li>收款账户 {{supplierInfo.accountName}}</li>
       </ul>
-      <el-form-item label="订货周期" class="deptArea" prop="orderCycle">
-        <el-input v-model="contractForm.orderCycle">
-        </el-input>
-      </el-form-item>
-      <el-form-item label="需求日期" prop="requestDate" class="arrArea">
-        <el-date-picker v-model="contractForm.requestDate" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
-      </el-form-item>
       <el-form-item label="币种" class="deptArea" prop="currencyId">
         <el-select v-model="contractForm.currencyId" @change="currencyChange">
           <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="前期询价对比" class="arrArea" prop="earlyInquiryCompare">
-        <el-input v-model="contractForm.earlyInquiryCompare">
-        </el-input>
-      </el-form-item>
-      <el-form-item label="付款方式" class="deptArea" prop="isAdvancePayment">
+      <el-form-item label="付款方式" class="arrArea" prop="isAdvancePayment">
         <el-select v-model="contractForm.isAdvancePayment">
           <el-option label="预付" value="1"></el-option>
           <el-option label="后付" value="0"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="预付款百分比" prop="advancePaymentPercent" v-if="contractForm.isAdvancePayment==='1'" class="arrArea">
+      <el-form-item label="预付款百分比" prop="advancePaymentPercent" v-if="contractForm.isAdvancePayment==='1'" class="deptArea">
         <money-input v-model="contractForm.advancePaymentPercent" :prepend="false" :max="100">
           <template slot="append">%</template>
         </money-input>
@@ -64,44 +59,81 @@
         <li>可用预算{{budgetInfo.budgetRemain | toThousands}}元</li>
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
-      <el-form-item label="换入器件名称" prop="changeIntoMaterialName">
-        <el-input v-model="budgetForm.changeIntoMaterialName">
+      <el-form-item label="器材中文名称" prop="airmaterialNameZn">
+        <el-input v-model="budgetForm.airmaterialNameZn">
         </el-input>
       </el-form-item>
-      <el-form-item label="换入件号" prop="changeIntoPieceNo" class="deptArea">
-        <el-input v-model="budgetForm.changeIntoPieceNo">
+      <el-form-item label="器材英文名称" prop="airmaterialNameEg">
+        <el-input v-model="budgetForm.airmaterialNameEg">
         </el-input>
       </el-form-item>
-      <el-form-item label="换入序号" prop="changeIntoSequenceNo" class="arrArea">
-        <el-input v-model="budgetForm.changeIntoSequenceNo">
+      <el-form-item label="件号" prop="pieceNo" class="deptArea">
+        <el-input v-model="budgetForm.pieceNo">
         </el-input>
       </el-form-item>
-      <el-form-item label="换入数量" prop="changeIntoNum" class="clearBoth">
-        <money-input v-model="budgetForm.changeIntoNum" type="int" :prepend="false" :append="false" style="width:200px">
+      <el-form-item label="序号" prop="airmaterialCode" class="arrArea">
+        <el-input v-model="budgetForm.airmaterialCode">
+        </el-input>
+      </el-form-item>
+      <el-form-item label="件状态" prop="pieceStatus" class="deptArea">
+        <el-select v-model="budgetForm.pieceStatus">
+          <el-option :label="item.dictName" :value="item.dictName" v-for="item in pieceStatusList"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="单位" prop="unit" class="arrArea">
+        <el-input v-model="budgetForm.unit">
+        </el-input>
+      </el-form-item>
+      <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
+        <money-input v-model="budgetForm.pieceNum" type="int" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
-      <el-form-item label="我方支付" prop="ourPayment" class="deptArea">
-        <money-input v-model="budgetForm.ourPayment" :prepend="false" :append="false">
+      <el-form-item label="单价" prop="unitPrice" class="arrArea">
+        <money-input v-model="budgetForm.unitPrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
-      <el-form-item label="对方支付" prop="otherPayment" class="arrArea">
-        <money-input v-model="budgetForm.otherPayment" :prepend="false" :append="false">
+      <el-form-item label="总价" prop="totalPrice" class="deptArea">
+        <money-input v-model="budgetForm.totalPrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
-      <el-form-item label="换出器件名称" prop="changeOutMaterialName" class="clearBoth">
-        <el-input v-model="budgetForm.changeOutMaterialName">
-        </el-input>
+      <el-form-item label="单日租金" prop="singleDayRentMoney" class="arrArea">
+        <money-input v-model="budgetForm.singleDayRentMoney" :prepend="false" :append="false">
+        </money-input>
       </el-form-item>
-      <el-form-item label="换出件号" prop="changeOutPieceNo" class="deptArea">
-        <el-input v-model="budgetForm.changeOutPieceNo">
-        </el-input>
+      <el-form-item label="租赁天数" prop="rentDayNum" class="deptArea">
+        <money-input v-model="budgetForm.rentDayNum" type="int" :prepend="false" :append="false">
+        </money-input>
       </el-form-item>
-      <el-form-item label="换出序号" prop="changeOutSequenceNo" class="arrArea">
-        <el-input v-model="budgetForm.changeOutSequenceNo">
-        </el-input>
+      <el-form-item label="归还检测费" prop="returnTestCost" class="arrArea">
+        <money-input v-model="budgetForm.returnTestCost" :prepend="false" :append="false">
+        </money-input>
       </el-form-item>
-      <el-form-item label="换出数量" prop="changeOutNum" class="offerPrice clearfix clearBoth">
-        <money-input v-model="budgetForm.changeOutNum" type="int" :prepend="false" :append="false" style="width:200px">
+      <el-form-item label="修理费" prop="repairCost" class="deptArea">
+        <money-input v-model="budgetForm.repairCost" :prepend="false" :append="false">
+        </money-input>
+      </el-form-item>
+      <el-form-item label="循环小时费/小时使用费" prop="circulatoryHourCost" class="arrArea">
+        <money-input v-model="budgetForm.circulatoryHourCost" :prepend="false" :append="false">
+        </money-input>
+      </el-form-item>
+      <el-form-item label="循环数费" prop="circulatoryNumCost" class="deptArea">
+        <money-input v-model="budgetForm.circulatoryNumCost" :prepend="false" :append="false">
+        </money-input>
+      </el-form-item>
+      <el-form-item label="运费" prop="transportCost" class="arrArea">
+        <money-input v-model="budgetForm.transportCost" :prepend="false" :append="false">
+        </money-input>
+      </el-form-item>
+      <el-form-item label="其他" prop="otherCost" class="deptArea">
+        <money-input v-model="budgetForm.otherCost" :prepend="false" :append="false">
+        </money-input>
+      </el-form-item>
+      <el-form-item label="租赁费" prop="rentCost" class="arrArea">
+        <money-input v-model="budgetForm.rentCost" :prepend="false" :append="false">
+        </money-input>
+      </el-form-item>
+      <el-form-item label="共计金额" prop="rentTotalMoney" class="offerPrice clearfix clearBoth">
+        <money-input v-model="budgetForm.rentTotalMoney" :prepend="false" :append="false" style="width:200px">
         </money-input>
         <el-button type="primary" @click="addBudget"><i class="el-icon-plus"></i> 添加</el-button>
       </el-form-item>
@@ -126,38 +158,84 @@
                     <p>{{props.row.executeRate}}</p>
                   </div>
                   <div>
-                    <span>换入器件名称</span>
-                    <p>{{props.row.changeIntoMaterialName}}</p>
+                    <span>合同数量</span>
+                    <p>{{props.row.pieceNum}}</p>
                   </div>
                 </div>
                 <div class="width50">
                   <div>
-                    <span>换入件号</span>
-                    <p>{{props.row.changeIntoPieceNo}}</p>
+                    <span>件状态</span>
+                    <p>{{props.row.pieceStatus}}</p>
                   </div>
                   <div>
-                    <span>换入数量</span>
-                    <p>{{props.row.changeIntoNum}}</p>
+                    <span>单位</span>
+                    <p>{{props.row.unit}}</p>
                   </div>
                 </div>
                 <div class="width50">
                   <div>
-                    <span>对方支付</span>
-                    <p>{{props.row.otherPayment}}</p>
+                    <span>单价</span>
+                    <p>{{props.row.unitPrice}}</p>
                   </div>
                   <div>
-                    <span>我方支付</span>
-                    <p>{{props.row.ourPayment}}</p>
+                    <span>总价</span>
+                    <p>{{props.row.totalPrice}}</p>
+                  </div>
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>单日租金</span>
+                    <p>{{props.row.singleDayRentMoney}}</p>
+                  </div>
+                  <div>
+                    <span>租赁天数</span>
+                    <p>{{props.row.rentDayNum}}</p>
+                  </div>
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>归还检测费</span>
+                    <p>{{props.row.returnTestCost}}</p>
+                  </div>
+                  <div>
+                    <span>修理费</span>
+                    <p>{{props.row.repairCost}}</p>
+                  </div>
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>循环小时费/小时使用费</span>
+                    <p>{{props.row.circulatoryHourCost}}</p>
+                  </div>
+                  <div>
+                    <span>循环数费</span>
+                    <p>{{props.row.circulatoryNumCost}}</p>
+                  </div>
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>运费</span>
+                    <p>{{props.row.transportCost}}</p>
+                  </div>
+                  <div>
+                    <span>其他</span>
+                    <p>{{props.row.otherCost}}</p>
+                  </div>
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>租赁费</span>
+                    <p>{{props.row.rentCost}}</p>
                   </div>
                 </div>
               </div>
             </template>
           </el-table-column>
-          <el-table-column property="changeOutMaterialName" label="换出器件名称"></el-table-column>
-          <el-table-column property="changeOutNum" label="换出数量" width="90"></el-table-column>
-          <el-table-column property="changeOutPieceNo" label="换出件号" width="120"></el-table-column>
-          <el-table-column property="changeOutSequenceNo" label="换出序号" width="120"></el-table-column>
-          <el-table-column property="ourPayment" label="金额总计" width="150"></el-table-column>
+          <el-table-column property="airmaterialNameZn" label="器材中文名称"></el-table-column>
+          <el-table-column property="airmaterialNameEg" label="器材英文名称"></el-table-column>
+          <el-table-column property="pieceNo" label="件号" width="120"></el-table-column>
+          <el-table-column property="airmaterialCode" label="序号" width="120"></el-table-column>
+          <el-table-column property="rentTotalMoney" label="共计金额" width="150"></el-table-column>
           <el-table-column label="操作" width="55">
             <template scope="scope">
               <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
@@ -167,12 +245,8 @@
         </el-table>
         <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
       </div>
-      <el-form-item label="金额总计" class="deptArea">
+      <el-form-item label="租金合计总价" class="deptArea">
         <el-input v-model="totalMoney" readonly>
-        </el-input>
-      </el-form-item>
-      <el-form-item label="人民币" class="arrArea">
-        <el-input v-model="totalRmb" readonly>
         </el-input>
       </el-form-item>
     </el-form>
@@ -188,46 +262,57 @@ export default {
       year: new Date().getFullYear(),
       contractForm: {
         createTime: new Date(),
+        contractCode: '',
         contractNo: '',
         priority: '',
         supplierIds: [],
-        requestDate: '',
-        orderCycle: '',
         currencyId: '',
-        earlyInquiryCompare: '',
         isAdvancePayment: '1',
         advancePaymentPercent: ''
       },
       contractRule: {
         priority: [{ required: true, message: '请选择优先级', trigger: 'blur' }],
+        contractCode: [{ required: true, message: '请选择合同子类型', trigger: 'blur' }],
         advancePaymentPercent: [{ required: true, message: '请输入预付款百分比', trigger: 'blur' }],
         supplierIds: [{ type: 'array', required: true, message: '请选择供应商', trigger: 'blur' }],
       },
       budgetForm: {
-        budgetDept: [],
-        changeIntoPieceNo: '', //   件号
-        changeIntoSequenceNo: '', //   序号
-        changeIntoNum: '', //   
-        ourPayment: '',
-        otherPayment: '',
-        changeIntoMaterialName: '', //   
-        changeOutMaterialName: '',
-        changeOutPieceNo: '',
-        changeOutSequenceNo: '',
-        changeOutNum: '',
+        "budgetDept": [],
+        "airmaterialNameZn": "", //航材中文名称，件号中文名称
+        "airmaterialNameEg":"",
+        "airmaterialCode": "", //器材编码
+        "pieceNo": "", //件号
+        "pieceStatus": "", //件状态
+        "pieceNum": "", //合同数量 即合同里的件数量
+        "unit": "", //单位
+        "unitPrice": "", //单价
+        "totalPrice": "", //总价（合同数量*单价）
+        "singleDayRentMoney": "", //单日租金
+        "rentDayNum": "", // 租赁天数
+        "rentCost": "", //租赁费
+        "returnTestCost": "0", //归还检测费（默认为0）
+        "repairCost": "0", //修理费（默认为0）
+        "otherCost": "0", //其他花费（默认为0）
+        "transportCost": "0", //运费（默认为0）
+        "rentTotalMoney": "", //租金总价（默认为0）
+        "circulatoryHourCost": "", //循环小时费/小时使用费
+        "circulatoryNumCost": "", //循环数费
       },
       budgetRule: {
-        changeIntoPieceNo: [{ required: true, message: '请输入换入件号', trigger: 'blur' }],
-        changeIntoNum: [{ required: true, message: '请输入换入数量', trigger: 'blur' }],
-        changeOutNum: [{ required: true, message: '请输入换出数量', trigger: 'blur' }],
-        changeOutPieceNo: [{ required: true, message: '请输入换出件号', trigger: 'blur' }],
+        pieceNo: [{ required: true, message: '请输入件号', trigger: 'blur' }],
+        pieceStatus: [{ required: true, message: '请选择件状态', trigger: 'blur' }],
+        pieceNum: [{ required: true, message: '请输入合同数量', trigger: 'blur' }],
+        singleDayRentMoney: [{ required: true, message: '请输入单日租金', trigger: 'blur' }],
+        rentDayNum: [{ required: true, message: '请输入租赁天数', trigger: 'blur' }],
+        rentCost: [{ required: true, message: '请输入租赁费', trigger: 'blur' }],
+        rentTotalMoney: [{ required: true, message: '请输入共计金额', trigger: 'blur' }],
         budgetDept: [{ type: 'array', required: true, message: '请选择预算机构', trigger: 'blur' }],
       },
       budgetTable: [],
-      repairContractDoc: null,
       supplierInfo: '',
       budgetInfo: '',
       contractCodeList: [],
+      pieceStatusList:[],
       priorityList: [],
       budgetDeptList: [],
       pickerOptions0: {
@@ -262,14 +347,15 @@ export default {
     }
     this.getCurrencyList();
     this.getBudgetDeptList();
+    this.getPieceStatusList();
   },
   computed: {
     totalMoney() {
       var num = 0;
       if (this.budgetTable.length != 0) {
         this.budgetTable.forEach(b => {
-          if (b.ourPayment) {
-            num += parseFloat(b.ourPayment);
+          if (b.rentTotalMoney) {
+            num += parseFloat(b.rentTotalMoney);
           }
         })
       }
@@ -308,9 +394,8 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
-      this.combineObj(this.contractForm, obj.contractForm, ['createTime', 'requestDate']);
+      this.combineObj(this.contractForm, obj.contractForm, ['createTime']);
       this.contractForm.createTime = new Date(obj.contractForm.createTime);
-      this.contractForm.requestDate = new Date(obj.contractForm.requestDate);
       this.budgetTable = obj.budgetTable;
       if (this.contractForm.supplierIds.length != 0) {
         if (this.supplierList.length == 0) {
@@ -343,30 +428,30 @@ export default {
     },
     submitAll() {
       var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
-      var airmExchange = {
+      var airmLend = {
+        contractSubtypeCode: this.contractForm.contractCode,
+        contractSubtypeName: this.$refs.contractCode.selectedLabel,
         priority: this.contractForm.priority, //  优先级   
         accurencyName: currency.currencyName, // 币种名
+        accurencyCode:currency.currencyCode,
         supplierId: this.supplierInfo.id, //  供应商id
         supplierName: this.supplierInfo.supplierName, //  供应商名
         supplierBank: this.supplierInfo.accountBank, //  供应商开户银行
-        supplierBankAccountName: this.supplierInfo.accountName, //  供应商开户账号名
-        supplierBankAccountCode: this.supplierInfo.accountCode, //供应商开户账号编号
+        supplierBankAccoutName: this.supplierInfo.accountName, //  供应商开户账号名
+        supplierBankAccoutCode: this.supplierInfo.accountCode, //供应商开户账号编号
         advancePaymentPercent: this.contractForm.advancePaymentPercent, //  预付款百分比
         contractNo: this.contractForm.contractNo, //  合同号
-        createTime: +this.contractForm.createTime, //   填表日期（创建日期）（推送日期）
-        totalMoney: this.totalMoney || 0, //  总合计金额
-        rmb: this.totalRmb || 0, //   金额总计根据币种汇率换算出人民币
+        createTime: +this.contractForm.createTime, //   填表日期（创建日期）（推送日期）        
         isAdvancePayment: this.contractForm.isAdvancePayment, //   付款方式,1预付 0后付
         exchangeRateId: currency.exchangeId, //   汇率id
         exchangeRate: currency.exchangeRate, //    汇率
-        orderCycle: this.contractForm.orderCycle,
-        requestDate: +this.contractForm.requestDate,
-        earlyInquiryCompare: this.contractForm.earlyInquiryCompare,
+        lendTotalManey: this.totalMoney, //租金合计总价，（所有项次租金总价合计）（借出）
+        rmbTotalMoney: this.totalRmb, //人民币总金额
       }
-      this.$emit('submitMiddle', { airmExchange: airmExchange, airmExchangeItems: this.budgetTable })
+      this.$emit('submitMiddle', { airmLend: airmLend, items: this.budgetTable })
     },
     getContractCodeList() {
-      this.$http.post('/api/getDict', { dictCode: 'DOC21' })
+      this.$http.post('/api/getDict', { dictCode: 'DOC20' })
         .then(res => {
           if (res.status == '0') {
             this.contractCodeList = res.data;
@@ -382,6 +467,18 @@ export default {
         .then(res => {
           if (res.status == '0') {
             this.priorityList = res.data;
+          } else {
+
+          }
+        }, res => {
+
+        })
+    },
+    getPieceStatusList() {
+      this.$http.post('/api/getDict', { dictCode: 'DOC17' })
+        .then(res => {
+          if (res.status == '0') {
+            this.pieceStatusList = res.data;
           } else {
 
           }
@@ -415,14 +512,6 @@ export default {
     currencyChange(val) {
       if (this.totalMoney) {
         this.getTotalRmb();
-      }
-      if (this.budgetTable.length != 0) {
-        var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
-        this.budgetTable.forEach(b => {
-          b.accurencyName = currency.currencyName;
-          b.exchangeRateId = currency.exchangeId; //汇率id
-          b.exchangeRate = currency.exchangeRate; // 汇率
-        })
       }
     },
     getBudgetDeptList() {
@@ -481,33 +570,31 @@ export default {
             budgetDeptId: dep.budgetDeptCode, //   预算部门id
             budgetDeptName: dep.budgetDeptName, //   预算部门名
             budgetYear: this.year, //   预算年份
-            changeIntoMaterialName: this.budgetForm.changeIntoMaterialName,
-            changeIntoPieceNo: this.budgetForm.changeIntoPieceNo,
-            changeIntoSequenceNo: this.budgetForm.changeIntoSequenceNo,
-            changeIntoNum: this.budgetForm.changeIntoNum,
-            ourPayment: this.budgetForm.ourPayment,
-            otherPayment: this.budgetForm.otherPayment,
-            changeOutMaterialName: this.budgetForm.changeOutMaterialName,
-            changeOutPieceNo: this.budgetForm.changeOutPieceNo,
-            changeOutSequenceNo: this.budgetForm.changeOutSequenceNo,
-            changeOutNum: this.budgetForm.changeOutNum,
-            executeRate: this.budgetInfo.execRateStr, //   执行比例
-            accurencyName: currency.currencyName, //  币种名
-            exchangeRateId: currency.exchangeId, //   汇率id
-            exchangeRate: currency.exchangeRate, //   汇率
+            excutionRatio: this.budgetInfo.execRateStr, //   执行比例
           }
+          item = Object.assign(item, this.budgetForm);
+          delete item.budgetDept;
           this.budgetTable.push(item);
           this.budgetForm.budgetDept = [];
-          this.budgetForm.changeIntoMaterialName = '';
-          this.budgetForm.changeIntoPieceNo = '';
-          this.budgetForm.changeIntoSequenceNo = '';
-          this.budgetForm.changeIntoNum = '';
-          this.budgetForm.ourPayment = '';
-          this.budgetForm.otherPayment = '';
-          this.budgetForm.changeOutPieceNo = '';
-          this.budgetForm.changeOutSequenceNo = '';
-          this.budgetForm.changeOutNum = '';
-          this.budgetForm.changeOutMaterialName = '';
+          this.budgetForm.airmaterialNameZn = "";
+          this.budgetForm.airmaterialNameEg = "";
+          this.budgetForm.airmaterialCode = "";
+          this.budgetForm.pieceNo = "";
+          this.budgetForm.pieceStatus = "";
+          this.budgetForm.pieceNum = "";
+          this.budgetForm.unit = "";
+          this.budgetForm.unitPrice = "";
+          this.budgetForm.totalPrice = "";
+          this.budgetForm.singleDayRentMoney = "";
+          this.budgetForm.rentDayNum = "";
+          this.budgetForm.rentCost = "";
+          this.budgetForm.returnTestCost = "0";
+          this.budgetForm.repairCost = "0";
+          this.budgetForm.otherCost = "0";
+          this.budgetForm.transportCost = "0";
+          this.budgetForm.rentTotalMoney = "0";
+          this.budgetForm.circulatoryHourCost = "";
+          this.budgetForm.circulatoryNumCost = "";
 
           this.budgetInfo = '';
         } else {}
@@ -544,7 +631,7 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 $sub:#1465C0;
-.exchangeApp {
+.airLoanApp {
   .offerPrice {
     .moenyInput {
       float: left;
@@ -560,6 +647,11 @@ $sub:#1465C0;
     float: right;
     color: #9a9a9a;
     line-height: 45px;
+  }
+  .budgetTable {
+    .el-table__body-wrapper {
+      overflow-x: auto;
+    }
   }
   .el-radio-button__inner {
     padding: 0;

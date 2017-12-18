@@ -192,6 +192,20 @@ export const docConfig = [{
     code: 'TYS',
     url: '/doc/docCommon'
   },
+  {
+    docName: '租借/借出合同申请',
+    color: '#FF72A0',
+    shortName: '租借借出',
+    code: 'ZJJ',
+    url: '/doc/docAirmLend'
+  },
+  {
+    docName: '价拨/售出合同申请',
+    color: '#4E96D3',
+    shortName: '价拨售出',
+    code: 'JBC',
+    url: '/doc/docAirmSell'
+  },
 ]
 
 

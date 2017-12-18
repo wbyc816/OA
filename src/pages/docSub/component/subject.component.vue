@@ -134,7 +134,7 @@ export default {
   methods: {
     getSecretaryInfo(){
       if(!this.secretaryInfo){
-        this.$http.post('doc/getSecInfo')
+        this.$http.post('doc/getSecInfo',{roleUserState:0})
         .then(res=>{
           if(res.status == '0'){
             this.$store.commit('setSecretaryInfo',res.data);

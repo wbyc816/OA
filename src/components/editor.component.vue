@@ -59,7 +59,6 @@ export default {
   },
   methods: {
     result() {
-      console.log(1111)
       this.$emit('input', this.editor.$txt.html());
       this.calcNum();
     },

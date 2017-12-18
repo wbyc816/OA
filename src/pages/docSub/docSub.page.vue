@@ -98,8 +98,8 @@ const ticketData = [
 ];
 const flightData = [
   { 'logo': 'icon-caigou','font': '28px', 'color': '#FF5F88', 'text': '航材/工具采购', 'link': '#/doc/docCommonApp/HCG' },
-  { 'logo': 'icon-xiaoshouchuku','font': '28px', 'color': '#9FD867', 'text': '价拨/售出', 'link': '#' },
-  { 'logo': 'icon-jiechu','font': '28px', 'color': '#A5A3FF', 'text': '租借/借出', 'link': '#' },
+  { 'logo': 'icon-xiaoshouchuku','font': '28px', 'color': '#9FD867', 'text': '价拨/售出', 'link': '#/doc/docCommonApp/JBC' },
+  { 'logo': 'icon-jiechu','font': '28px', 'color': '#A5A3FF', 'text': '租借/借出', 'link': '#/doc/docCommonApp/ZJJ' },
   { 'logo': 'icon-xiuli','font': '28px', 'color': '#5BB5FC', 'text': '送修/索赔', 'link': '#/doc/docCommonApp/SXS' },
   { 'logo': 'icon-jiaohuan','font': '28px', 'color': '#FF754F', 'text': '交换合同', 'link': '#/doc/docCommonApp/JHH' },
 ];

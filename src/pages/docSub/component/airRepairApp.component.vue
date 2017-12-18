@@ -4,7 +4,7 @@
     <el-form label-position="left" :model="contractForm" :rules="contractRule" ref="contractForm" label-width="128px">
       <el-form-item label="合同子类型" prop="contractCode" placeholder="" class="deptArea">
         <el-select v-model="contractForm.contractCode" style="width:100%">
-          <el-option v-for="item in contractCodeList" :key="item.dictCode" ref="contractCode" :label="item.dictName" :value="item.dictCode">
+          <el-option v-for="item in contractCodeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
       </el-form-item>
@@ -168,21 +168,48 @@
       </el-form-item>
       <div class="appTable clearBoth" style="width:750px">
         <el-table :data="budgetTable" :stripe="true" highlight-current-row style="width:100%" empty-text="未添预算项" class="budgetTable">
-          <el-table-column property="budgetDeptName" label="预算机构/科目" width="200">
-            <template scope="scope">
-              {{scope.row.budgetDeptName}}/{{scope.row.budgetItemName}}
+          <el-table-column type="expand">
+            <template scope="props">
+              <div class='tableExpandBox'>
+                <div class="width50">
+                  <div>
+                    <span>预算机构/科目</span>
+                    <p>{{props.row.budgetDeptName}}/{{props.row.budgetItemName}}</p>
+                  </div>
+                  <div>
+                    <span>预算年度</span>
+                    <p>{{props.row.budgetYear}}</p>
+                  </div>
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>执行比例</span>
+                    <p>{{props.row.executeRate}}%</p>
+                  </div>
+                  <div>
+                    <span>单位</span>
+                    <p>{{props.row.unit}}</p>
+                  </div>
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>材料费</span>
+                    <p>{{props.row.materialPrice}}</p>
+                  </div>
+                  <div>
+                    <span>合计金额</span>
+                    <p>{{props.row.totalItemMoney}}</p>
+                  </div>
+                </div>
+              </div>
             </template>
           </el-table-column>
-          <el-table-column property="executeRate" label="执行比例" width="90"></el-table-column>
-          <el-table-column property="materialNameZn" label="器材中文名称" width="200"></el-table-column>
-          <el-table-column property="pieceNo" label="件号" width="90"></el-table-column>
-          <el-table-column property="sequenceNo" label="序号" width="90"></el-table-column>
+          <el-table-column property="materialNameZn" label="器材中文名称"></el-table-column>
+          <el-table-column property="pieceNo" label="件号" width="120"></el-table-column>
           <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
-          <el-table-column property="unit" label="单位" width="90"></el-table-column>
-          <el-table-column property="timePrice" label="工时费" width="90"></el-table-column>
-          <el-table-column property="materialPrice" label="材料费" width="90"></el-table-column>
-          <el-table-column property="totalItemMoney" label="合计金额" width="110"></el-table-column>
-          <el-table-column label="操作" width="55" fixed="right">
+          <el-table-column property="sequenceNo" label="序号" width="120"></el-table-column>
+          <el-table-column property="timePrice" label="工时费" width="120"></el-table-column>
+          <el-table-column label="操作" width="55">
             <template scope="scope">
               <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
               </el-button>
@@ -203,8 +230,8 @@
     <el-dialog title="选择合同子类型" :visible.sync="dialogVisible" size="small" custom-class="repairContractDialog" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <el-form label-position="left" :model="dialogForm" :rules="dialogRule" ref="dialogForm" label-width="128px">
         <el-form-item label="合同子类型" prop="contractCode" placeholder="">
-          <el-select v-model="dialogForm.contractCode">
-            <el-option v-for="item in contractCodeList" :key="item.dictCode" ref="contractCode" :label="item.dictName" :value="item.dictCode">
+          <el-select v-model="dialogForm.contractCode" ref="contractCode">
+            <el-option v-for="item in contractCodeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
             </el-option>
           </el-select>
         </el-form-item>
@@ -555,7 +582,7 @@ export default {
       this.$refs.factoryForm.validate((valid) => {
         if (valid) {
           var currency = this.currencyList.find(c => c.currencyCode === this.factoryForm.currencyId);
-          console.log(currency)
+          // console.log(currency)
           var item = {
             supplierName: this.$refs.factorySupplier.currentLabels[this.$refs.factorySupplier.currentLabels.length - 1], //厂家名
             offerPrice: this.factoryForm.offerPrice, //报价
@@ -742,11 +769,6 @@ $sub:#1465C0;
     float: right;
     color: #9a9a9a;
     line-height: 45px;
-  }
-  .budgetTable {
-    .el-table__body-wrapper {
-      overflow-x: auto;
-    }
   }
   .el-radio-button__inner {
     padding: 0;

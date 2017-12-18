@@ -52,6 +52,8 @@ import SXS from './component/airRepairApp.component.vue'
 import JHH from './component/airExchangeApp.component.vue'
 import YSL from './component/commonBudgetApp.component.vue'
 import TYS from './component/commonApp.component.vue'
+import ZJJ from './component/airLoanApp.component.vue'
+import JBC from './component/airSellApp.component.vue'
 
 export default {
   data() {
@@ -113,7 +115,9 @@ export default {
     JHH,
     YSL,
     TYS,
-    HCG
+    HCG,
+    ZJJ,
+    JBC
   },
   created() {
   },

@@ -204,7 +204,7 @@ export default {
             } else {
               this.$emit('submitEnd', {
                 taskContent: this.ruleForm.des,
-                qutoes: this.docs[0].quoteDocId ? this.docs : [],
+                qutoes: this.docs.filter(d=>d.quoteDocId),
                 fileId: this.ruleForm.attchment.map(f => f.response.data),
                 suggests: this.handlePath(this.ruleForm.path)
               });
@@ -261,7 +261,7 @@ export default {
         if (this.checkSuggest()) {
           var params = {
             taskContent: this.ruleForm.des, //请示内容
-            qutoes: this.docs[0].quoteDocId ? this.docs : [],
+            qutoes: this.docs.filter(d=>d.quoteDocId),
             suggests: this.handlePath(this.ruleForm.path),
             files: JSON.stringify(this.ruleForm.attchment)
           }
@@ -302,7 +302,7 @@ export default {
       if (this.upCount == this.difLength) {
         var params = {
           taskContent: this.ruleForm.des,
-          qutoes: this.docs[0].quoteDocId ? this.docs : [],
+          qutoes: this.docs.filter(d=>d.quoteDocId),
           suggests: this.handlePath(this.ruleForm.path)
         }
         if (this.isSaveForm) {
