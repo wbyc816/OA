@@ -152,7 +152,7 @@
             <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')" v-if="userInfo.isDocsec&&userInfo.isDocsec[0]==1"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="6" @click.native="goToOthers('/supplier')"><i class="iconfont icon-geren"></i>客户维护<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="7" @click.native="goToOthers('/flightReport')" v-if="userInfo.isDocsec&&userInfo.isDocsec[2]==1"><i class="iconfont icon-99"></i>飞行报表<i class="el-icon-arrow-right"></i></el-menu-item>
-            <el-menu-item index="8" @click.native="goToOthers('/flightException')" v-if="userInfo.isDocsec&&userInfo.isDocsec[2]==1"><i class="iconfont icon-plane1"></i>飞行任务书数据异常监控<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="8" @click.native="goToOthers('/flightException')" v-if="userInfo.isDocsec&&userInfo.isDocsec[3]==1"><i class="iconfont icon-plane1"></i>飞行任务书数据异常监控<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">

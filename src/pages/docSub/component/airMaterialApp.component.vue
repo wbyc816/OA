@@ -475,7 +475,7 @@ export default {
       this.$emit('submitMiddle', { airmPos:airmPos,  airmPosItems:airmPosItems.airmPosItems })
     },
     getContractCodeList() {
-      this.$http.post('/api/getDict', { dictCode: 'DOC21' })
+      this.$http.post('/api/getDict', { dictCode: 'DOC18' })
         .then(res => {
           if (res.status == '0') {
             this.contractCodeList = res.data;
