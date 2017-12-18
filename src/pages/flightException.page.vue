@@ -97,10 +97,10 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="departureAirportName" label="起飞机场四字码" width="130">
+        <el-table-column prop="departureAirportName" label="出发地" width="130">
         </el-table-column>
 
-        <el-table-column prop="arrivalAirportName" label="到达机场四字码" width="130">
+        <el-table-column prop="arrivalAirportName" label="目的地" width="130">
         </el-table-column>
 
         <el-table-column prop="leftPersonName" label="机组人员" width="200">
@@ -215,10 +215,10 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="departureAirportName" label="起飞机场四字码" width="130">
+        <el-table-column prop="departureAirportName" label="出发地" width="130">
         </el-table-column>
 
-        <el-table-column prop="arrivalAirportName" label="到达机场四字码" width="130">
+        <el-table-column prop="arrivalAirportName" label="目的地" width="130">
         </el-table-column>
 
         <el-table-column prop="leftPersonName" label="机组人员" width="200">
