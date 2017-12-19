@@ -77,9 +77,11 @@
       </el-select>
     </el-form-item>
       <div style="clear:both"></div>
-      <el-form-item label="合同数量" prop="pieceNum" class="deptArea" >
-        <el-input ref="pieceNum" v-model="airMaterialForm.pieceNum" :maxlength="50" @change="changePieceNum">
-        </el-input>
+    
+
+      <el-form-item label="合同数量" class="deptArea" prop="pieceNum">
+        <money-input ref="pieceNum" v-model="airMaterialForm.pieceNum" :prepend="false"  @change="changePieceNum">
+        </money-input>
       </el-form-item>
 
       <el-form-item label="索赔期/月" prop="claimMonth" class="arrArea" >
@@ -87,14 +89,14 @@
           </el-input>
       </el-form-item>
         
-        <el-form-item label="单位" prop="unit" class="deptArea" >
+      <el-form-item label="单位" prop="unit" class="deptArea" >
         <el-input ref="unit" v-model="airMaterialForm.unit" >
         </el-input>
       </el-form-item>
 
-      <el-form-item label="单价" prop="unitPrice" class="arrArea" >
-          <el-input ref="unitPrice" v-model="airMaterialForm.unitPrice" :maxlength="50" @change="changeUnitPrice">
-          </el-input>
+      <el-form-item label="单价" class="deptArea" prop="unitPrice">
+        <money-input ref="unitPrice" v-model="airMaterialForm.unitPrice" :prepend="false"  @change="changeUnitPrice">
+        </money-input>
       </el-form-item>
 
       <el-form-item label="总价" prop="totalPrice" class="deptArea" >
@@ -119,7 +121,7 @@
 
 
 
-      <el-button type="primary" @click="addBudget"><i class="el-icon-plus"></i> 添加</el-button>
+      <el-button type="primary" @click="addBudget" style="float:right"><i class="el-icon-plus"></i> 添加</el-button>
       <!-- <el-form-item label="合计金额" prop="totalItemMoney" class="offerPrice clearfix clearBoth">
         <money-input v-model="airMaterialForm.totalItemMoney" :prepend="false">
           <template slot="append">元</template>
@@ -128,22 +130,70 @@
       </el-form-item> -->
       <div class="appTable clearBoth" style="width:750px">
         <el-table :data="airMaterialTable" :stripe="true" highlight-current-row style="width:100%" empty-text="未添预算项" class="airMaterialTable">
-          <el-table-column type="index" label=" " width="40"></el-table-column>
-          <el-table-column property="budgetItemName" label="选择预算科目" width="120"></el-table-column>
-          <el-table-column property="budgetYear" label="预算年度" width="90"></el-table-column>
-          <el-table-column property="budgetDeptName" label="费用归属部门" width="120"></el-table-column>
-          <el-table-column property="execRateStr" label="执行比例" width="90"></el-table-column>
-          <el-table-column property="pieceNo" label="件号"></el-table-column>
+          <el-table-column type="expand">
+            <template scope="props">
+              <div class='tableExpandBox'>
+                <div class="width50">
+                  <div>
+                    <span>预算机构/科目</span>
+                    <p>{{props.row.budgetDeptName}}/{{props.row.budgetItemName}}</p>
+                  </div>
+                  <div>
+                    <span>预算年度</span>
+                    <p>{{props.row.budgetYear}}</p>
+                  </div>
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>费用归属部门</span>
+                    <p>{{props.row.budgetDeptName}}</p>
+                  </div>
+                  <div>
+                    <span>执行比例</span>
+                    <p>{{props.row.execRateStr}}</p>
+                  </div>
+                  
+                </div>
+                <div class="width50">
+                    <div>
+                    <span>航材英文名称</span>
+                    <p>{{props.row.airmaterialNameEn}}</p>
+                  </div>
+                  <div>
+                    <span>件状态</span>
+                    <p>{{props.row.pieceState}}</p>
+                  </div>
+                 
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>单位</span>
+                    <p>{{props.row.unit}}</p>
+                  </div>
+                  <div>
+                    <span>要求到货天数</span>
+                    <p>{{props.row.arrivalDays}}</p>
+                  </div>
+                </div>
+               
+                <div class="width50">
+                  <div>
+                    <span>索赔期/月</span>
+                    <p>{{props.row.claimMonth}}</p>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column property="airmaterialNameZn" label="航材中文名称" width="120"></el-table-column>
-          <el-table-column property="airmaterialNameEn" label="航材英文名称" width="120"></el-table-column>
-          <el-table-column property="pieceState" label="件状态" ></el-table-column>
+          <el-table-column property="pieceNo" label="件号"></el-table-column>
           <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
-          <el-table-column property="unit" label="单位"></el-table-column>
           <el-table-column property="unitPrice" label="单价"></el-table-column>
-          <el-table-column property="arrivalDays" label="要求到货天数" width="120"></el-table-column>
-          <el-table-column property="claimMonth" label="索赔期/月" width="100"></el-table-column>
           <el-table-column property="totalPrice" label="总价"></el-table-column>
-          <el-table-column label="操作" width="55" fixed="right">
+
+ 
+          
+          <el-table-column label="操作" width="55">
             <template scope="scope">
               <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
               </el-button>
@@ -360,11 +410,11 @@ export default {
       val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
       if (val) {
         this.airMaterialForm.unitPrice = val[0];
-        this.$refs.unitPrice.setCurrentValue(val[0]);
-         this.airMaterialForm.totalPrice=this.airMaterialForm.pieceNum*this.airMaterialForm.unitPrice;
+        // this.$refs.unitPrice.setCurrentValue(val[0]);
+        this.airMaterialForm.totalPrice=this.airMaterialForm.pieceNum*this.airMaterialForm.unitPrice;
       } else {
-         this.airMaterialForm.unitPrice = '';
-        this.$refs.unitPrice.setCurrentValue('')
+        this.airMaterialForm.unitPrice = '';
+        // this.$refs.unitPrice.setCurrentValue('')
       }
     },
     changePieceNum(val){
@@ -372,11 +422,11 @@ export default {
       val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
       if (val) {
         this.airMaterialForm.pieceNum = val[0];
-        this.$refs.pieceNum.setCurrentValue(val[0]);
+        // this.$refs.pieceNum.setCurrentValue(val[0]);
          this.airMaterialForm.totalPrice=this.airMaterialForm.pieceNum*this.airMaterialForm.unitPrice;
       } else {
          this.airMaterialForm.pieceNum = '';
-        this.$refs.pieceNum.setCurrentValue('')
+        // this.$refs.pieceNum.setCurrentValue('')
       }
     },
     saveForm() {
@@ -423,7 +473,7 @@ export default {
        
         "airmPosItems": that.airMaterialTable.map(function(tabel) {
           return {
-            "budgetDeptId": tabel.budgetDeptId, //预算部门id
+            "budgetDeptId": tabel.budgetDeptCode, //预算部门id
             "budgetDeptName": tabel.budgetDeptName, //预算部门名字
             "budgetItemName": tabel.budgetItemName, //-预算科目名字
             "budgetItemId": tabel.budgetItemId, //预算科目id
@@ -611,7 +661,7 @@ export default {
       this.$refs.airMaterialForm.validate((valid) => {
         if (valid) {
             // var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
-            // var dep = this.getBudgetDep();
+             var dep = this.getBudgetDep();
             // console.log(this.$refs.budgetDept);
             // var temp = {};
             // temp.budgetDept = this.$refs.budgetDept.currentLabels[0] + "/" + this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
@@ -638,6 +688,7 @@ export default {
            
 
             var temp = {};
+            temp.budgetDeptCode = dep.budgetDeptCode;
             temp.budgetDept = this.$refs.budgetDept.currentLabels[0] + "/" + this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
             temp.budgetDeptName = this.airMaterialForm.budgetDeptName;
             temp.execRateStr = this. airMaterialInfo.execRateStr;
