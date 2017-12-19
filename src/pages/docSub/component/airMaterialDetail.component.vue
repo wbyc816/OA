@@ -1,21 +1,67 @@
 <template>
   <div class="airRepairDetail clearfix">
     <el-table :data="info[0].airmPosItems" :stripe="true" highlight-current-row style="width: 100%" class="appTable">
-        <el-table-column type="index" label=" " width="40"></el-table-column>
-        <el-table-column property="budgetItemName" label="选择预算科目" width="120"></el-table-column>
-        <el-table-column property="budgetYear" label="预算年度" width="90"></el-table-column>
-        <el-table-column property="budgetDeptName" label="费用归属部门" width="120"></el-table-column>
-        <el-table-column property="info[0].airmPosItems.executeRate" label="执行比例" width="90"></el-table-column>
-        <el-table-column property="pieceNo" label="件号"></el-table-column>
-        <el-table-column property="airmaterialNameZn" label="航材中文名称" width="120"></el-table-column>
-        <el-table-column property="airmaterialNameEn" label="航材英文名称" width="120"></el-table-column>
-        <el-table-column property="pieceStatus" label="件状态" ></el-table-column>
-        <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
-        <el-table-column property="unit" label="单位"></el-table-column>
-        <el-table-column property="unitPrice" label="单价"></el-table-column>
-        <el-table-column property="arrivalDays" label="要求到货天数" width="120"></el-table-column>
-        <el-table-column property="claimMonth" label="索赔期/月" width="100"></el-table-column>
-        <el-table-column property="totalPrice" label="总价"></el-table-column>
+       <el-table-column type="expand">
+            <template scope="props">
+              <div class='tableExpandBox'>
+                <div class="width50">
+                  <div>
+                    <span>预算机构/科目</span>
+                    <p>{{props.row.budgetDeptName}}/{{props.row.budgetItemName}}</p>
+                  </div>
+                  <div>
+                    <span>预算年度</span>
+                    <p>{{props.row.budgetYear}}</p>
+                  </div>
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>费用归属部门</span>
+                    <p>{{props.row.budgetDeptName}}</p>
+                  </div>
+                  <div>
+                    <span>执行比例</span>
+                    <p>{{cExecRate}}</p>
+                  </div>
+                  
+                </div>
+                <div class="width50">
+                    <div>
+                    <span>航材英文名称</span>
+                    <p>{{props.row.airmaterialNameEn}}</p>
+                  </div>
+                  <div>
+                    <span>件状态</span>
+                    <p>{{props.row.pieceStatus}}</p>
+                  </div>
+                 
+                </div>
+                <div class="width50">
+                  <div>
+                    <span>单位</span>
+                    <p>{{props.row.unit}}</p>
+                  </div>
+                  <div>
+                    <span>要求到货天数</span>
+                    <p>{{props.row.arrivalDays}}</p>
+                  </div>
+                </div>
+               
+                <div class="width50">
+                  <div>
+                    <span>索赔期/月</span>
+                    <p>{{props.row.claimMonth}}</p>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column property="airmaterialNameZn" label="航材中文名称"></el-table-column>
+          <el-table-column property="pieceNo" label="件号"></el-table-column>
+          <el-table-column property="pieceNum" label="合同数量"></el-table-column>
+          <el-table-column property="unitPrice" label="单价"></el-table-column>
+          <el-table-column property="totalPrice" label="总价"></el-table-column>
+
     </el-table>
     <p class="totalMoney">合计金额 人民币 <span>{{info[0].airmPos.rmb | toThousands}} 元 {{info[0].airmPos.rmb | moneyCh}}</span></p>
 
@@ -75,6 +121,7 @@ export default {
   },
   data() {
     return {
+      cExecRate:"",
       accurencyName:"",
     }
   },
@@ -88,7 +135,9 @@ export default {
   },
   methods: {
      tesst() {
-      console.log(this.info)
+       console.log()
+       this.cExecRate=this.info[0].budgetExeststisVoList[0].cExecRate
+      // console.log(this.info)
     }
   }
 }
