@@ -12,6 +12,9 @@
             </template>
         </el-table-column>
 
+         <el-table-column prop="acReg" label="机号" width="90">
+        </el-table-column>
+
         <el-table-column prop="out" label="A滑出时间" width="100">
             <template scope="scope">
                 <span>{{ scope.row.out | time('hours')}}</span>
@@ -128,6 +131,9 @@
             <template scope="scope">
                 <span>{{ scope.row.flightDate | time('date')}}</span>
             </template>
+        </el-table-column>
+
+         <el-table-column prop="acReg" label="机号" width="90">
         </el-table-column>
 
         <el-table-column prop="out" label="A滑出时间" width="100">
