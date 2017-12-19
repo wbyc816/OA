@@ -517,6 +517,7 @@ export default {
             "exchangeRate": currency.exchangeRate,  //汇率id
             priority: that.contractForm.priority, //  优先级   
             "contractSubType": contractType.dictCode,   //合同子类型
+            "contractSubName": contractType.dictName,   //合同子类型
             "rmb": that.totalRmb || 0,  //人民币
           
         
