@@ -186,6 +186,9 @@ import BKY from './component/guestTicketDetail.component.vue' //宾客机票详�
 import YGY from './component/staffBenefitDetail.component.vue' //员工优惠机票
 import LZS from './component/empQuitDetail.component.vue' //离职详情
 import SXS from './component/airRepairDetail.component.vue' //送修详情
+import JHH from './component/airExchangeDetail.component.vue' //交换详情
+import ZJJ from './component/airLoanDetail.component.vue' //租借详情
+import JBC from './component/airSellDetail.component.vue' //售出详情
 
 import HCG from './component/airMaterialDetail.component.vue' //航材工具详情
 
@@ -235,7 +238,10 @@ export default {
     LZS,
     FWGD,
     SXS,
-    HCG
+    HCG,
+    JHH,
+    ZJJ,
+    JBC
   },
   data() {
     var checkFileSend = (rule, value, callback) => {

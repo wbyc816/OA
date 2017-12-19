@@ -90,6 +90,10 @@ import SXS from './component/airRepairDetail.component.vue' //送修详情
 import YSL from './component/commonBudgetDetail.component.vue' //通用预算详情
 import TYS from './component/commonDetail.component.vue' //通用申请详情
 import HCG from './component/airMaterialDetail.component.vue'//航材合同/工具详情
+import JHH from './component/airExchangeDetail.component.vue' //交换详情
+import ZJJ from './component/airLoanDetail.component.vue' //租借详情
+import JBC from './component/airSellDetail.component.vue' //售出详情
+
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -126,7 +130,11 @@ export default {
     YGY,
     LZS,
     SXS,
-    HCG
+    HCG,
+    ZJJ,
+    JBC,
+    JHH
+
   },
   data() {
     return {

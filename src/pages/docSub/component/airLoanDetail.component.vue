@@ -1,5 +1,5 @@
 <template>
-  <div class="airExchangeDetail clearfix">
+  <div class="airLoanDetail clearfix">
     <el-table :data="info[0].items" :stripe="true" highlight-current-row style="width: 100%" class="appTable">
       <el-table-column type="expand">
         <template scope="props">
@@ -17,43 +17,89 @@
             <div class="width50">
               <div>
                 <span>执行比例</span>
-                <p>{{props.row.executeRate}}</p>
+                <p>{{props.row.excutionRatio}}</p>
               </div>
               <div>
-                <span>换入器件名称</span>
-                <p>{{props.row.changeIntoMaterialName}}</p>
-              </div>
-            </div>
-            <div class="width50">
-              <div>
-                <span>换入件号</span>
-                <p>{{props.row.changeIntoPieceNo}}</p>
-              </div>
-              <div>
-                <span>换入数量</span>
-                <p>{{props.row.changeIntoNum}}</p>
+                <span>合同数量</span>
+                <p>{{props.row.pieceNum}}</p>
               </div>
             </div>
             <div class="width50">
               <div>
-                <span>对方支付</span>
-                <p>{{props.row.otherPayment}}</p>
+                <span>件状态</span>
+                <p>{{props.row.pieceStatus}}</p>
               </div>
               <div>
-                <span>我方支付</span>
-                <p>{{props.row.ourPayment}}</p>
+                <span>单位</span>
+                <p>{{props.row.unit}}</p>
+              </div>
+            </div>
+            <div class="width50">
+              <div>
+                <span>单价</span>
+                <p>{{props.row.unitPrice}}</p>
+              </div>
+              <div>
+                <span>总价</span>
+                <p>{{props.row.totalPrice}}</p>
+              </div>
+            </div>
+            <div class="width50">
+              <div>
+                <span>单日租金</span>
+                <p>{{props.row.singleDayRentMoney}}</p>
+              </div>
+              <div>
+                <span>租借天数</span>
+                <p>{{props.row.rentDayNum}}</p>
+              </div>
+            </div>
+            <div class="width50">
+              <div>
+                <span>归还检测费</span>
+                <p>{{props.row.returnTestCost}}</p>
+              </div>
+              <div>
+                <span>修理费</span>
+                <p>{{props.row.repairCost}}</p>
+              </div>
+            </div>
+            <div class="width50">
+              <div>
+                <span>循环小时费/小时使用费</span>
+                <p>{{props.row.circulatoryHourCost}}</p>
+              </div>
+              <div>
+                <span>循环数费</span>
+                <p>{{props.row.circulatoryNumCost}}</p>
+              </div>
+            </div>
+            <div class="width50">
+              <div>
+                <span>运费</span>
+                <p>{{props.row.transportCost}}</p>
+              </div>
+              <div>
+                <span>其他</span>
+                <p>{{props.row.otherCost}}</p>
+              </div>
+            </div>
+            <div class="width50">
+              <div>
+                <span>租赁费</span>
+                <p>{{props.row.rentCost}}</p>
               </div>
             </div>
           </div>
         </template>
       </el-table-column>
-      <el-table-column property="changeOutMaterialName" label="换出器件名称"></el-table-column>
-      <el-table-column property="changeOutNum" label="换出数量" width="90"></el-table-column>
-      <el-table-column property="changeOutPieceNo" label="换出件号" width="120"></el-table-column>
-      <el-table-column property="changeOutSequenceNo" label="换出序号" width="120"></el-table-column>
-      <el-table-column property="ourPayment" label="金额总计" width="150"></el-table-column>
+      <el-table-column property="airmaterialNameZn" label="器材中文名称"></el-table-column>
+      <el-table-column property="airmaterialNameEg" label="器材英文名称"></el-table-column>
+      <el-table-column property="pieceNo" label="件号" width="120"></el-table-column>
+      <el-table-column property="airmaterialCode" label="序号" width="120"></el-table-column>
+      <el-table-column property="rentTotalMoney" label="共计金额" width="150"></el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].rmb | toThousands}}元 {{info[0].rmb | moneyCh}}</span></p>
+    <p class="totalMoney">合计金额 人民币 <span>{{info[0].rmbTotalMoney | toThousands}}元 {{info[0].rmbTotalMoney | moneyCh}}</span></p>
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
       <el-col :span="12" class="rightBorder">
         <h1 class="title">优先级</h1>
@@ -80,28 +126,16 @@
         <p v-if="info" class="textContent">{{info[0].supplierBankAccoutCode}}</p>
       </el-col>
       <el-col :span="12" class="rightBorder">
-        <h1 class="title">订货周期</h1>
-        <p v-if="info" class="textContent">{{info[0].orderCycle}}</p>
-      </el-col>
-      <el-col :span="12">
-        <h1 class="title">需求日期</h1>
-        <p v-if="info" class="textContent">{{info[0].requestDate | time('date')}}</p>
-      </el-col>
-      <el-col :span="12" class="rightBorder">
-        <h1 class="title">前期询价对比</h1>
-        <p v-if="info" class="textContent">{{info[0].earlyInquiryCompare}}</p>
-      </el-col>
-      <el-col :span="12">
-        <h1 class="title">付款方式</h1>
-        <p v-if="info" class="textContent">{{info[0].isAdvancePayment==1?'预付':'后付'}}</p>
-      </el-col>
-      <el-col :span="12" class="rightBorder">
         <h1 class="title">填表日期</h1>
         <p v-if="info" class="textContent">{{info[0].createTime | time('date')}}</p>
       </el-col>
       <el-col :span="12">
+        <h1 class="title">付款方式</h1>
+        <p v-if="info" class="textContent">{{info[0].isAdvancePayment==1?'预付':'后付'}}</p>
+      </el-col>      
+      <el-col :span="24">
         <h1 class="title">金额总计</h1>
-        <p v-if="info" class="textContent">{{info[0].rmb | toThousands}}元</p>
+        <p v-if="info" class="textContent">{{info[0].rmbTotalMoney | toThousands}}元</p>
       </el-col>
     </el-row>
   </div>
@@ -132,7 +166,7 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.airExchangeDetail {
+.airLoanDetail {
   padding: 20px 0 0;
   clear: both; // border-bottom: 1px solid #D5DADF;
   .totalMoney {
