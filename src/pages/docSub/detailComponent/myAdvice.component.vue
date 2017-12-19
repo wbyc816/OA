@@ -68,7 +68,7 @@
     </el-form>
     <person-dialog @updatePerson="updatePerson" :admin="normalPersonAdmin" :visible.sync="dialogTableVisible" dialogType="radio" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
     <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :isLeaderDep="docDetail.isConfidential==1" :data="signPersons"></person-dialog>
-    <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="$route.query.code=='LZS'?'0':''"></person-dialog>
+    <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="normalPersonAdmin" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
     <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" :disableDep="disableDep" isSaveInit></dep-dialog>
   </div>
 </template>
@@ -214,7 +214,7 @@ export default {
           if ((typeName === '公司发文' || typeName === '会议纪要') && (this.docDetail.taskDeptMajorId == initFWGDeps[0].id || this.docDetail.taskDeptId == initFWGDeps[0].id)) {
 
             dep = initFWGDeps;
-            
+
           }
         }
       }
@@ -241,14 +241,16 @@ export default {
   methods: {
     getSecretaryInfo() {
       if (!this.secretaryInfo) {
-        var roleUserState=0;  // 机要秘书
-        var typeName = this.otherInfo[0].classify1;
-
-          //发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 添加默认部门
-          if ((typeName === '公司发文' || typeName === '会议纪要') && this.userInfo.deptId != initFWGDeps[0].id && this.userInfo.deptParentId != initFWGDeps[0].id) {
-            roleUserState=1; 
-          }
-        this.$http.post('doc/getSecInfo',{roleUserState:roleUserState})
+        var roleUserState = 0; // 机要秘书
+        var typeName;
+        if (this.$route.query.code=='FWG') {
+          typeName = this.otherInfo[0].classify1;
+        }
+        //发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 添加默认部门
+        if ((typeName === '公司发文' || typeName === '会议纪要') && this.userInfo.deptId != initFWGDeps[0].id && this.userInfo.deptParentId != initFWGDeps[0].id) {
+          roleUserState = 1;  // 综合管理部
+        }
+        this.$http.post('doc/getSecInfo', { roleUserState: roleUserState })
           .then(res => {
             if (res.status == '0') {
               this.$store.commit('setSecretaryInfo', res.data);
@@ -392,7 +394,7 @@ export default {
         } else if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {
           this.updateSignDep(initHTSDeps);
         }
-      }else if(val==0){
+      } else if (val == 0) {
         this.getAdminReci();
       }
       this.chooseDisable = false;
@@ -409,7 +411,7 @@ export default {
           if ((typeName === '公司发文' || typeName === '会议纪要') && this.docDetail.taskDeptMajorId != initFWGDeps[0].id && this.docDetail.taskDeptId != initFWGDeps[0].id) {
 
             return initFWGDeps.find(d => d.id == val) == undefined;
-          }else{
+          } else {
             return true
           }
         } else if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {

@@ -98,6 +98,10 @@ export default {
         temp = '0'
       } else if (this.$route.params.code == 'LZS') {
         temp = '0'
+      }else if(this.isAdmin){
+        temp='1';
+      }else{
+        temp='0';
       }
       return temp
     },
