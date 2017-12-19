@@ -5,13 +5,13 @@
         <el-card class="pdfBox">
           <div class="formDown" slot="header">
             <el-row :gutter="20">
-              <el-col class="formInfo" :span='19'>
+              <el-col class="formInfo" :span='16'>
                 <p class="title">{{detail.title}}<i class=""></i></p>
                 <p class="others"><i class="iconfont icon-eye"></i> <span>{{detail.browse}}</span><span class="time">{{detail.createTime | time('date')}}</span><span class="person">签发人 {{detail.createUser}}</span><span class="person">校对人 {{detail.verifyName}}</span></p>
               </el-col>
-              <el-col :span='5' class="downBox">
+              <el-col :span='8' class="downBox">
                 <p>下载</p>
-                <a :href="detail.url" target="_blank" class="link">{{detail.title}}</a>
+                <a :href="item.fileUrlNew" target="_blank" class="link" v-for="item in detail.basicFileList">{{item.fileNameNew}}</a>
               </el-col>
             </el-row>
           </div>
@@ -149,6 +149,7 @@ $sub:#1465C0;
       .downBox {
         font-size: 13px;
         .link {
+          display:block;
           color: $main;
           cursor: pointer;
         }

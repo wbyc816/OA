@@ -392,7 +392,10 @@ export default {
         } else if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {
           this.updateSignDep(initHTSDeps);
         }
+      }else if(val==0){
+        this.getAdminReci();
       }
+      this.chooseDisable = false;
       this.$refs.ruleForm.validateField('sign');
     },
     ableDepClose(val) {

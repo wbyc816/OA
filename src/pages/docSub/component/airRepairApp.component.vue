@@ -3,7 +3,7 @@
     <h4 class='doc-form_title'>合同信息</h4>
     <el-form label-position="left" :model="contractForm" :rules="contractRule" ref="contractForm" label-width="128px">
       <el-form-item label="合同子类型" prop="contractCode" placeholder="" class="deptArea">
-        <el-select v-model="contractForm.contractCode" style="width:100%">
+        <el-select v-model="contractForm.contractCode" style="width:100%" disabled>
           <el-option v-for="item in contractCodeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -11,18 +11,30 @@
       <el-form-item label="填表时间" prop="createTime" class="arrArea">
         <el-date-picker v-model="contractForm.createTime" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
+      <el-form-item label="送修合同" prop="repairContract" v-if="isRead" class="clearBoth">
+        <el-row :gutter="0">
+          <el-col :span='18' class="repairContract">
+            <div class="docsBox">
+              {{dialogForm.repairContract}}
+            </div>
+          </el-col>
+          <el-col :span='6'>
+            <el-button class="repairContractButton" @click="dialogTableVisible=true">选择</el-button>
+          </el-col>
+        </el-row>
+      </el-form-item>
       <el-form-item label="合同号" prop="contractNo" class="deptArea">
-        <el-input v-model="contractForm.contractNo" :maxlength="20">
+        <el-input v-model="contractForm.contractNo" :maxlength="20" :disabled="isRead">
         </el-input>
       </el-form-item>
       <el-form-item label="优先级" prop="priority" placeholder="" class="arrArea">
-        <el-select v-model="contractForm.priority" style="width:100%">
+        <el-select v-model="contractForm.priority" style="width:100%" :disabled="isRead">
           <el-option v-for="item in priorityList" :key="item.dictCode" ref="priority" :label="item.dictName" :value="item.dictName">
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="收款供应商" prop="supplierIds" class="clearBoth">
-        <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="supplierProp" v-model="contractForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier">
+        <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="supplierProp" v-model="contractForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier" :disabled="isRead">
         </el-cascader>
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
@@ -40,7 +52,7 @@
         </el-col>
       </el-form-item> -->
       <el-form-item label="选择供应商是否为独家修理厂家" prop="isSupplierUnique" label-width="280px" placeholder="" class="clearBoth">
-        <el-radio-group v-model="contractForm.isSupplierUnique" class="myRadio" @change="isSupplierUniqueChange">
+        <el-radio-group v-model="contractForm.isSupplierUnique" class="myRadio" @change="isSupplierUniqueChange" :disabled="isRead">
           <el-radio-button label="1">是<i></i></el-radio-button>
           <el-radio-button label="0">否<i></i></el-radio-button>
         </el-radio-group>
@@ -72,18 +84,18 @@
         </el-input>
       </el-form-item>
       <el-form-item label="币种" class="arrArea" prop="currencyId">
-        <el-select v-model="contractForm.currencyId" @change="currencyChange">
+        <el-select v-model="contractForm.currencyId" @change="currencyChange" :disabled="isRead">
           <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="付款方式" class="deptArea" prop="isAdvancePayment">
-        <el-select v-model="contractForm.isAdvancePayment">
+        <el-select v-model="contractForm.isAdvancePayment" :disabled="isRead">
           <el-option label="预付" value="1"></el-option>
           <el-option label="后付" value="0"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="预付款百分比" prop="advancePaymentPercent" v-if="contractForm.isAdvancePayment==='1'" class="arrArea">
-        <money-input v-model="contractForm.advancePaymentPercent" :prepend="false" :max="100">
+        <money-input v-model="contractForm.advancePaymentPercent" :prepend="false" :max="100" :disabled="isRead">
           <template slot="append">%</template>
         </money-input>
       </el-form-item>
@@ -91,20 +103,20 @@
     <h4 class='doc-form_title clearBoth'>厂家信息</h4>
     <el-form label-position="left" :model="factoryForm" :rules="factoryRule" ref="factoryForm" label-width="128px">
       <el-form-item label="选择厂家" prop="supplierIds">
-        <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="supplierProp" v-model="factoryForm.supplierIds" style="width:100%" popper-class="myCascader" ref="factorySupplier">
+        <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="supplierProp" v-model="factoryForm.supplierIds" style="width:100%" popper-class="myCascader" ref="factorySupplier" :disabled="isRead">
         </el-cascader>
       </el-form-item>
       <el-form-item label="币种" prop="currencyId">
-        <el-select v-model="factoryForm.currencyId">
+        <el-select v-model="factoryForm.currencyId" :disabled="isRead">
           <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
         </el-select>
         <p class="uniqueInfo" v-show="contractForm.isSupplierUnique==='1'">供应商为独家修理厂家时只能添加一个厂家</p>
       </el-form-item>
       <el-form-item label="报价" prop="offerPrice" class="offerPrice clearfix">
-        <money-input v-model="factoryForm.offerPrice" :prepend="false">
+        <money-input v-model="factoryForm.offerPrice" :prepend="false" :disabled="isRead">
           <template slot="append">元</template>
         </money-input>
-        <el-button type="primary" @click="addFactory" :disabled="contractForm.isSupplierUnique==='1'&&factoryTable.length>0"><i class="el-icon-plus"></i> 添加</el-button>
+        <el-button type="primary" @click="addFactory" :disabled="(contractForm.isSupplierUnique==='1'&&factoryTable.length>0)||isRead"><i class="el-icon-plus"></i> 添加</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="factoryTable" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加厂家" class="factoryTable">
@@ -114,7 +126,7 @@
       <el-table-column property="offerPrice" label="报价" width="120"></el-table-column>
       <el-table-column label=" " width="55">
         <template scope="scope">
-          <el-button @click.native.prevent="deleteFactory(scope.$index)" type="text" size="small" icon="delete">
+          <el-button @click.native.prevent="deleteFactory(scope.$index)" type="text" size="small" icon="delete" :disabled="isRead">
           </el-button>
         </template>
       </el-table-column>
@@ -125,7 +137,7 @@
         {{year}}
       </el-form-item>
       <el-form-item label="预算机构/科目" prop="budgetDept">
-        <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%"></el-cascader>
+        <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%" :disabled="isRead"></el-cascader>
       </el-form-item>
       <ul class="budgetInfo clearfix clearBoth" v-show="budgetInfo">
         <li>年度预算{{budgetInfo.budgetTotal | toThousands}}元</li>
@@ -133,38 +145,37 @@
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
       <el-form-item label="器材中文名称" prop="materialNameZn">
-        <el-input v-model="budgetForm.materialNameZn">
+        <el-input v-model="budgetForm.materialNameZn" :disabled="isRead">
         </el-input>
       </el-form-item>
       <el-form-item label="件号" prop="pieceNo" class="deptArea">
-        <el-input v-model="budgetForm.pieceNo">
+        <el-input v-model="budgetForm.pieceNo" :disabled="isRead">
         </el-input>
       </el-form-item>
       <el-form-item label="序号" prop="sequenceNo" class="arrArea">
-        <el-input v-model="budgetForm.sequenceNo">
+        <el-input v-model="budgetForm.sequenceNo" :disabled="isRead">
         </el-input>
       </el-form-item>
       <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
-        <el-input v-model="budgetForm.pieceNum">
+        <el-input v-model="budgetForm.pieceNum" :disabled="isRead">
         </el-input>
       </el-form-item>
       <el-form-item label="单位" prop="unit" class="arrArea">
-        <el-input v-model="budgetForm.unit">
+        <el-input v-model="budgetForm.unit" :disabled="isRead">
         </el-input>
       </el-form-item>
       <el-form-item label="工时费" prop="timePrice" class="deptArea">
-        <el-input v-model="budgetForm.timePrice">
+        <el-input v-model="budgetForm.timePrice" :disabled="isRead">
         </el-input>
       </el-form-item>
       <el-form-item label="材料费" prop="materialPrice" class="arrArea">
-        <el-input v-model="budgetForm.materialPrice">
+        <el-input v-model="budgetForm.materialPrice" :disabled="isRead">
         </el-input>
       </el-form-item>
       <el-form-item label="合计金额" prop="totalItemMoney" class="offerPrice clearfix clearBoth">
-        <money-input v-model="budgetForm.totalItemMoney" :prepend="false">
-          <template slot="append">元</template>
+        <money-input v-model="budgetForm.totalItemMoney" :prepend="false" :append="false" :disabled="isRead">
         </money-input>
-        <el-button type="primary" @click="addBudget"><i class="el-icon-plus"></i> 添加</el-button>
+        <el-button type="primary" @click="addBudget" :disabled="isRead"><i class="el-icon-plus"></i> 添加</el-button>
       </el-form-item>
       <div class="appTable clearBoth" style="width:750px">
         <el-table :data="budgetTable" :stripe="true" highlight-current-row style="width:100%" empty-text="未添预算项" class="budgetTable">
@@ -192,11 +203,11 @@
                   </div>
                 </div>
                 <div class="width50">
-                  <div>
-                    <span>材料费</span>
-                    <p>{{props.row.materialPrice}}</p>
+                  <div v-if="isRead">
+                    <span>工时费</span>
+                    <p>{{props.row.timePrice}}</p>
                   </div>
-                  <div>
+                  <div v-if="!isRead">
                     <span>合计金额</span>
                     <p>{{props.row.totalItemMoney}}</p>
                   </div>
@@ -205,13 +216,23 @@
             </template>
           </el-table-column>
           <el-table-column property="materialNameZn" label="器材中文名称"></el-table-column>
-          <el-table-column property="pieceNo" label="件号" width="120"></el-table-column>
+          <el-table-column property="pieceNo" label="件号" width="90"></el-table-column>
           <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
-          <el-table-column property="sequenceNo" label="序号" width="120"></el-table-column>
-          <el-table-column property="timePrice" label="工时费" width="120"></el-table-column>
+          <el-table-column property="sequenceNo" label="序号" width="90"></el-table-column>
+          <el-table-column property="timePrice" label="工时费" width="120" v-if="!isRead"></el-table-column>
+          <el-table-column property="materialPrice" label="材料费" width="120" v-if="isRead">
+            <template scope="scope">
+              <money-input v-model="scope.row.materialPrice" :prepend="false" :append="false" min="0"></money-input>
+            </template>
+          </el-table-column>
+          <el-table-column property="totalItemMoney" label="合计金额" width="120" v-if="isRead">
+            <template scope="scope">
+              <money-input v-model="scope.row.totalItemMoney" :prepend="false" :append="false" min="0"></money-input>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="55">
             <template scope="scope">
-              <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
+              <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete" :disabled="isRead">
               </el-button>
             </template>
           </el-table-column>
@@ -249,7 +270,7 @@
         </el-form-item>
       </el-form>
       <div class="confirmBox">
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="confirmType">确 定</el-button>
       </div>
       </span>
     </el-dialog>
@@ -257,10 +278,11 @@
       <div class="topSearch clearfix">
         <p class="tips">选择公文<span>请双击公文选择</span></p>
       </div>
-      <search-options @search="setOptions" notype noPerson></search-options>
+      <search-options @search="setOptions" notype></search-options>
       <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="250" :row-class-name="tableRowClassName" v-loading="searchLoading">
         <el-table-column prop="docNo" label="公文编号" width="200"></el-table-column>
         <el-table-column prop="docTitle" label="标题"></el-table-column>
+        <el-table-column prop="taskUserName" label="呈报人" width="120"></el-table-column>
         <el-table-column prop="taskTime" label="呈报时间" width="175">
           <template scope="scope">
             {{scope.row.createTime | time('all')}}
@@ -295,7 +317,6 @@ export default {
         newReferencePrice: '',
         purchaseReferencePrice: '',
         repairPurchasePriceRate: '',
-        supplierRepairCheck: '',
         currencyId: '',
         isAdvancePayment: '1',
         advancePaymentPercent: ''
@@ -339,6 +360,7 @@ export default {
       budgetRule: {
         pieceNo: [{ required: true, message: '请输入件号', trigger: 'blur' }],
         pieceNum: [{ required: true, message: '请输入合同数量', trigger: 'blur' }],
+        totalItemMoney: [{ required: true, message: '请输入合计金额', trigger: 'blur' }],
         budgetDept: [{ type: 'array', required: true, message: '请选择预算机构', trigger: 'blur' }],
       },
       factoryTable: [],
@@ -376,6 +398,7 @@ export default {
         "pageSize": 5
       },
       totalSize: 0,
+      isRead: false
     }
 
   },
@@ -403,7 +426,7 @@ export default {
           }
         })
       }
-      return num || ''
+      return num
     },
     ...mapGetters([
       'submitLoading',
@@ -435,6 +458,7 @@ export default {
         budgetTable: this.budgetTable,
         factoryTable: this.factoryTable,
         contractForm: this.contractForm,
+        dialogForm:this.dialogForm
       });
 
       this.$emit('saveMiddle', params);
@@ -442,6 +466,10 @@ export default {
     getDraft(obj) {
       this.combineObj(this.contractForm, obj.contractForm, ['createTime']);
       this.contractForm.createTime = new Date(obj.contractForm.createTime);
+      if(this.contractForm.contractCode=='DOC2102'){
+        this.isRead=true;
+      }
+      this.dialogForm=obj.dialogForm;
       this.budgetTable = obj.budgetTable;
       this.factoryTable = obj.factoryTable;
       if (this.contractForm.supplierIds.length != 0) {
@@ -473,6 +501,11 @@ export default {
       }
       if (this.budgetTable.length == 0) {
         this.$message.warning('请填加预算项');
+        this.$emit('submitMiddle', false);
+        return false;
+      }
+      if (this.totalMoney == 0) {
+        this.$message.warning('合计金额不能为0');
         this.$emit('submitMiddle', false);
         return false;
       }
@@ -714,6 +747,9 @@ export default {
       this.dialogForm.repairContract = row.docTitle;
       this.repairContractDoc = row;
       this.dialogTableVisible = false;
+      if (!this.dialogVisible) {
+        this.handleRead();
+      }
     },
     setOptions(options) {
       this.searchOptions = options;
@@ -731,7 +767,7 @@ export default {
         setTimeout(() => {
           this.searchLoading = false;
         }, 200)
-        if (res.status == 0) {
+        if (res.status == 0 && res.data) {
           this.extraDocs = res.data.pagedList;
           this.totalSize = res.data.totalSize;
         } else {
@@ -745,6 +781,42 @@ export default {
     clearParams() {
       this.searchOptions = '';
       this.params.pageNumber = 1;
+    },
+    confirmType() {
+      this.$refs.dialogForm.validate((valid) => {
+        if (valid) {
+          this.dialogVisible = false;
+          if (this.dialogForm.contractCode == 'DOC2102') {
+            this.isRead = true;
+            this.handleRead();
+          }
+          this.contractForm.contractCode = this.dialogForm.contractCode;
+        } else {
+          return false;
+        }
+      });
+    },
+    handleRead() {
+      this.factoryTable = this.repairContractDoc.airmRorRepairs; //  厂家
+      this.budgetTable = this.repairContractDoc.airmRorItems; //预算
+      this.year = this.repairContractDoc.airmRorItems[0].budgetYear;
+      this.combineObj(this.contractForm, this.repairContractDoc.airmRor, ['createTime', 'isSupplierProtocol', 'isSupplierCheck', 'newReferencePrice', 'purchaseReferencePrice', 'repairPurchasePriceRate']);
+      this.setSupplier(this.repairContractDoc.airmRor.supplierId);
+    },
+    setSupplier(id) {
+      var temp = [];
+      this.supplierList.forEach((item) => {
+        item.supplier.forEach(child => {
+          if (child.id === id) {
+            console.log(id)
+            temp.push(item.id);
+            temp.push(child.id);
+            this.contractForm.supplierIds = temp;
+            this.supplierChange();
+            return false;
+          }
+        })
+      })
     }
   }
 }
@@ -801,23 +873,24 @@ $sub:#1465C0;
       border-bottom: none;
     }
   }
+  .repairContract {
+    min-height: 45px;
+    border-bottom: 1px solid #D5DADF;
+    padding-top: 13px;
+    padding-right: 5px;
+    line-height: 19px;
+  }
+  .repairContractButton {
+    width: 92%;
+    height: 45px;
+    float: right;
+  }
   .repairContractDialog {
     width: 600px;
     .el-form {
       min-height: 130px;
     }
-    .repairContract {
-      min-height: 45px;
-      border-bottom: 1px solid #D5DADF;
-      padding-top: 13px;
-      padding-right: 5px;
-      line-height: 19px;
-    }
-    .repairContractButton {
-      width: 92%;
-      height: 45px;
-      float: right;
-    }
+
     .confirmBox {
       text-align: center;
       button {
@@ -868,10 +941,10 @@ $sub:#1465C0;
         display: none;
       }
       .selDoc {
-        cursor: not-allowed;
-        background-color: #eef1f6;
+        cursor: auto;
+        background: #EEEEEE;
         .cell {
-          color: #bfcbd9;
+          color: #393939;
         }
       }
       tr {

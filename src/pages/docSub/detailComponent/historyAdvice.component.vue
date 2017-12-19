@@ -119,6 +119,10 @@ $main:#0460AE;
           width: $width;
         }
       }
+      .taskContent{
+        padding: 5px 0;
+        line-height:18px;
+      }
       .isAgree {
         i {
           color: #00A0DC;
