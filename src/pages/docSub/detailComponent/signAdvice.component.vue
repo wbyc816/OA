@@ -176,8 +176,8 @@ export default {
         })
     },
     endDepSign() { //部门结束会签
-      this.$refs.ruleForm.validateField('state', (errorMessage) => {
-        if (errorMessage == '') {
+      this.$refs.ruleForm.validate((valid)=> {
+        if (valid) {
           var params = {
             docId: this.docDetail.id,
             "taskDeptMajorName": this.userInfo.deptVo.fatherDept,

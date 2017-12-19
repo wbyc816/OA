@@ -344,6 +344,8 @@ export default {
     submitAll() {
       var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
       var airmExchange = {
+        contractSubtypeCode: this.contractForm.contractCode,
+        contractSubtypeName: this.$refs.contractCode.selectedLabel,
         priority: this.contractForm.priority, //  优先级   
         accurencyName: currency.currencyName, // 币种名
         supplierId: this.supplierInfo.id, //  供应商id

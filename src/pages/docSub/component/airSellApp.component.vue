@@ -578,11 +578,6 @@ $sub:#1465C0;
     color: #9a9a9a;
     line-height: 45px;
   }
-  .budgetTable {
-    .el-table__body-wrapper {
-      overflow-x: auto;
-    }
-  }
   .el-radio-button__inner {
     padding: 0;
     line-height: 44px;

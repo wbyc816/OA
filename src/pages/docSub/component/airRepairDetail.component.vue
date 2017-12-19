@@ -52,22 +52,26 @@
     </el-table>
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
       <el-col :span="12" class="rightBorder">
+        <h1 class="title">合同子类型</h1>
+        <p v-if="info" class="textContent">{{info[0].airmRor.docTypeName}}</p>
+      </el-col>
+      <el-col :span="12">
         <h1 class="title">优先级</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.priority}}</p>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="12" class="rightBorder">
         <h1 class="title">币种</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.accurencyName}}</p>
       </el-col>
-      <el-col :span="12" class="rightBorder">
+      <el-col :span="12">
         <h1 class="title">供应商名称</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.supplierName}}</p>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="12" class="rightBorder">
         <h1 class="title">开户行</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.supplierBank}}</p>
       </el-col>
-      <el-col :span="12" class="rightBorder">
+      <el-col :span="12">
         <h1 class="title">收款账户</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.supplierBankAccountName}}</p>
       </el-col>
@@ -75,11 +79,11 @@
         <h1 class="title">付款方式</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.isAdvancePayment==1?'预付':'后付'}}</p>
       </el-col>
-      <el-col :span="12" class="rightBorder">
+      <el-col :span="12">
         <h1 class="title">填表日期</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.createTime | time('date')}}</p>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="24">
         <h1 class="title">金额总计</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.rmb | toThousands}}元</p>
       </el-col>

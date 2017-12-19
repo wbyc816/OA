@@ -11,7 +11,7 @@
     <el-col :span="24">
       <h1 class="title">法律部审批意见</h1>
       <p class="textContent">
-        <span v-for="advice in otherAdvice.givenDeptSign" class="adviceSpan">{{advice.taskContent}} {{advice.signUserName}} {{advice.startTime}}</span>
+        <span v-for="advice in otherAdvice.givenDeptSign" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.startTime}}</span>
       </p>
     </el-col>
     <el-col :span="24">

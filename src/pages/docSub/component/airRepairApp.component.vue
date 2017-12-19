@@ -70,13 +70,11 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="新件参考价格" class="deptArea" prop="newReferencePrice">
-        <money-input v-model="contractForm.newReferencePrice" :prepend="false">
-          <template slot="append">元</template>
+        <money-input v-model="contractForm.newReferencePrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
       <el-form-item label="购买该送修件参考价格" class="arrArea fixLabel" prop="purchaseReferencePrice">
-        <money-input v-model="contractForm.purchaseReferencePrice" :prepend="false">
-          <template slot="append">元</template>
+        <money-input v-model="contractForm.purchaseReferencePrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
       <el-form-item label="修理费与购件费比例" class="deptArea fixLabel" prop="repairPurchasePriceRate">
@@ -113,8 +111,7 @@
         <p class="uniqueInfo" v-show="contractForm.isSupplierUnique==='1'">供应商为独家修理厂家时只能添加一个厂家</p>
       </el-form-item>
       <el-form-item label="报价" prop="offerPrice" class="offerPrice clearfix">
-        <money-input v-model="factoryForm.offerPrice" :prepend="false" :disabled="isRead">
-          <template slot="append">元</template>
+        <money-input v-model="factoryForm.offerPrice" :prepend="false" :append="false" :disabled="isRead">
         </money-input>
         <el-button type="primary" @click="addFactory" :disabled="(contractForm.isSupplierUnique==='1'&&factoryTable.length>0)||isRead"><i class="el-icon-plus"></i> 添加</el-button>
       </el-form-item>
