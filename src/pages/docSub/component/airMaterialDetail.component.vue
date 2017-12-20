@@ -92,7 +92,7 @@
       </el-col>
       <el-col :span="12" class="rightBorder">
         <h1 class="title">填表日期</h1>
-        <p v-if="info" class="textContent">{{info[0].airmPos.createTime | time('date')}}</p>
+        <p v-if="info" class="textContent">{{ Date.parse(info[0].airmPos.createTime) | time('date')}}</p>
       </el-col>
       <el-col :span="12">
         <h1 class="title">金额总计</h1>
@@ -104,7 +104,7 @@
 
        <el-col :span="24">
         <h1 class="title">合同子类型</h1>
-        <p v-if="info" class="textContent">{{info[0].airmPos.contractSubType}}</p>
+        <p v-if="info" class="textContent">{{info[0].airmPos.contractSubName}}</p>
       </el-col> 
      
      
@@ -137,7 +137,7 @@ export default {
      tesst() {
        console.log()
        this.cExecRate=this.info[0].budgetExeststisVoList[0].cExecRate
-      // console.log(this.info)
+      console.log(this.info)
     }
   }
 }
