@@ -443,6 +443,13 @@ export default {
       this.contractForm.createTime=new Date(obj.contractForm.createTime);
       this.airMaterialTable = obj.airMaterialTable;
       this.factoryTable = obj.factoryTable;
+      if (this.contractForm.supplierIds.length != 0) {
+        if (this.supplierList.length == 0) {
+          this.getSupplier();
+        } else {
+          this.supplierChange();
+        }
+      }
     },
     submitForm() {
       if (this.checkTable()) {
