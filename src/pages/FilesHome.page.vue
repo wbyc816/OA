@@ -26,7 +26,7 @@
                      <el-button type="primary">
                       {{choose_type}}<i class="iconfont icon-xiasanjiao-copy"></i>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown"class="choose_menu">
+                    <el-dropdown-menu slot="dropdown" class="choose_menu">
                       <el-dropdown-item  :command="['','选择类型']">全部类型</el-dropdown-item>
                       <el-dropdown-item  v-for="leftFileType in leftFileTypes" :command="[leftFileType.dictCode,leftFileType.dictName]">{{leftFileType.dictName}}</el-dropdown-item>
                     </el-dropdown-menu>
@@ -41,7 +41,7 @@
                     <div class="content_li">
                       <span>{{fileData.taskDeptMajorName }}</span> 
                       <span class="content_right">
-                          <span class="iconfontColor"><i class="iconfont icon-dianzan"></i></span><span>{{fileData.praise}}</span>
+                          <!-- <span class="iconfontColor"><i class="iconfont icon-dianzan"></i></span><span>{{fileData.praise}}</span> -->
                       <span class="iconfontColor"><i class="iconfont icon-eye"></i></span><span>{{fileData.browse}}</span>
                       <span>{{fileData.createTime | time('nosecond')}}</span>
                       </span>
@@ -292,6 +292,7 @@ export default {
       this.params.classify1 = command[0];
       this.choose_type = command[1];
       this.getData();
+      this.title=command[1]
     },
     handleCommand_dept(command) {
       console.log(command);
