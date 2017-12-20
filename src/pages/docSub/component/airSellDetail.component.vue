@@ -67,7 +67,7 @@
       </el-col>
       <el-col :span="12">
         <h1 class="title">收款账户</h1>
-        <p v-if="info" class="textContent">{{info[0].supplierBankAccountName}}</p>
+        <p v-if="info" class="textContent">{{info[0].supplierBankAccoutName}}</p>
       </el-col>
       <el-col :span="12" class="rightBorder">
         <h1 class="title">银行账号</h1>
