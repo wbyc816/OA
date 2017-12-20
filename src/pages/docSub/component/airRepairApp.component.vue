@@ -536,7 +536,7 @@ export default {
         // isVerification: this.contractForm.code, //   航材类合同的情况, 是否付款, 1是已付款, 0未付款
         exchangeRateId: currency.exchangeId, //   汇率id
         exchangeRate: currency.exchangeRate, //    汇率
-        // repairContract: this.contractForm.code, //   送修合同
+        repairContract: this.repairContractDoc.id, //   送修合同
       }
       this.$emit('submitMiddle', { airmRor: airmRor, airmRorItems: this.budgetTable, airmRorRepairs: this.factoryTable })
     },

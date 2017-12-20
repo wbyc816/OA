@@ -114,7 +114,8 @@ export default {
         name: '',
         mobileNumber: '',
         workNo: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        allParams:''
       },
       rules: {
         mobileNumber: [{ validator: validatePhone, trigger: 'blur,change' }]
@@ -151,7 +152,8 @@ export default {
 
     if (this.$route.params.name) {
       this.$store.dispatch('setQueryDepId', '')
-      this.searchForm.name = this.$route.params.name;
+      this.searchForm.allParams = this.$route.params.name;
+      this.searchButton = true;
       this.$store.dispatch('queryEmpList', this.searchForm);
     } else {
       if (this.isReady) {
@@ -170,7 +172,6 @@ export default {
   },
   methods: {
     handleCurrentChange(page) {
-      console.log(this.searchRes)
       if (this.searchRes.empVoList) {
         this.$store.dispatch('setQueryPage', page);
         if (this.searchButton) {
@@ -183,6 +184,7 @@ export default {
     submitForm() {
       this.$refs['searchForm'].validate((valid) => {
         if (valid) {
+          this.searchForm.allParams='';
           this.searchButton = true;
           this.$store.dispatch('setQueryDepId', '')
           this.$store.dispatch('setQueryPage', 1);
@@ -204,7 +206,8 @@ export default {
         name: '',
         mobileNumber: '',
         workNo: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        allParams:''
       }
     }
   }

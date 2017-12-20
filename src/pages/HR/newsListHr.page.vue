@@ -36,11 +36,13 @@ export default {
     return {
       newList: [],
       newsType: {
+        'FIL03': '所有文件',
         'FIL0301': '人事任免',
         'FIL0302': 'HR政策',
         'FIL0303': '规章制度',
         'FIL0304': '使用手册',
-        'FIL0305': '办事指南'
+        'FIL0305': '办事指南',
+        'FIL0306': '各类模板'
       },
       params: {
         classify2: "",

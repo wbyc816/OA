@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span='5' class="downBox">
             <p>下载</p>
-            <a :href="detail.fileUrlNew" class="link">{{detail.fileNameOld}}</a>
+            <a :href="detail.fileUrlNew" class="link" target="_blank">{{detail.fileNameOld}}</a>
           </el-col>
         </el-row>
       </div>

@@ -111,7 +111,7 @@
                 <div class="width50">
                   <div>
                     <span>执行比例</span>
-                    <p>{{props.row.executeRate}}</p>
+                    <p>{{props.row.excutionRatio}}</p>
                   </div>
                   <div>
                     <span>合同数量</span>
@@ -133,65 +133,14 @@
                     <span>单价</span>
                     <p>{{props.row.unitPrice}}</p>
                   </div>
-                  <div>
-                    <span>总价</span>
-                    <p>{{props.row.totalPrice}}</p>
-                  </div>
-                </div>
-                <div class="width50">
-                  <div>
-                    <span>单日租金</span>
-                    <p>{{props.row.singleDayRentMoney}}</p>
-                  </div>
-                  <div>
-                    <span>租赁天数</span>
-                    <p>{{props.row.rentDayNum}}</p>
-                  </div>
-                </div>
-                <div class="width50">
-                  <div>
-                    <span>归还检测费</span>
-                    <p>{{props.row.returnTestCost}}</p>
-                  </div>
-                  <div>
-                    <span>修理费</span>
-                    <p>{{props.row.repairCost}}</p>
-                  </div>
-                </div>
-                <div class="width50">
-                  <div>
-                    <span>循环小时费/小时使用费</span>
-                    <p>{{props.row.circulatoryHourCost}}</p>
-                  </div>
-                  <div>
-                    <span>循环数费</span>
-                    <p>{{props.row.circulatoryNumCost}}</p>
-                  </div>
-                </div>
-                <div class="width50">
-                  <div>
-                    <span>运费</span>
-                    <p>{{props.row.transportCost}}</p>
-                  </div>
-                  <div>
-                    <span>其他</span>
-                    <p>{{props.row.otherCost}}</p>
-                  </div>
-                </div>
-                <div class="width50">
-                  <div>
-                    <span>租赁费</span>
-                    <p>{{props.row.rentCost}}</p>
-                  </div>
                 </div>
               </div>
             </template>
           </el-table-column>
           <el-table-column property="airmaterialNameZn" label="器材中文名称"></el-table-column>
-          <el-table-column property="airmaterialNameZn" label="器材英文名称"></el-table-column>
           <el-table-column property="pieceNo" label="件号" width="120"></el-table-column>
           <el-table-column property="airmaterialCode" label="序号" width="120"></el-table-column>
-          <el-table-column property="rentTotalMoney" label="共计金额" width="150"></el-table-column>
+          <el-table-column property="totalPrice" label="共计金额" width="150"></el-table-column>
           <el-table-column label="操作" width="55">
             <template scope="scope">
               <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">

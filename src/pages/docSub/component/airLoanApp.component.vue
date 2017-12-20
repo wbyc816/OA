@@ -155,7 +155,7 @@
                 <div class="width50">
                   <div>
                     <span>执行比例</span>
-                    <p>{{props.row.executeRate}}</p>
+                    <p>{{props.row.excutionRatio}}</p>
                   </div>
                   <div>
                     <span>合同数量</span>
