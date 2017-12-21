@@ -265,6 +265,8 @@ export default {
         priority: [{ required: true, message: '请选择优先级', trigger: 'blur' }],
         advancePaymentPercent: [{ required: true, message: '请输入预付款百分比', trigger: 'blur' }],
         supplierIds: [{ type: 'array', required: true, message: '请选择供应商', trigger: 'blur' }],
+        currencyId: [{ required: true, message: '请选择币种', trigger: 'blur' }],
+        isAdvancePayment: [{ required: true, message: '请选择付款方式', trigger: 'blur' }],
       },
       dialogForm: {
         contractCode: '',
@@ -275,12 +277,7 @@ export default {
         currencyId: '',
         offerPrice: ''
       },
-      factoryRule: {
-        supplierIds: [{ type: 'array', required: true, message: '请选择厂家', trigger: 'blur' }],
-        currencyId: [{ required: true, message: '请选择币种', trigger: 'blur' }],
-        offerPrice: [{ required: true, message: '请输入报价', trigger: 'blur' }],
-      
-      },
+     
       pieceStates:[],
       bookTypes: [],
       budgetDate: {},
@@ -312,6 +309,9 @@ export default {
         pieceState: [{ required: true, message: '请选择件状态', trigger: 'blur' }],
         arrivalDays: [{ required: true, message: '请输入要求到货天数', trigger: 'blur' }],
         unitPrice: [{ required: true, message: '请输入要求到货天数', trigger: 'blur' }],
+        unit: [{ required: true, message: '请输入单位', trigger: 'blur' }],
+        airmaterialNameZn: [{ required: true, message: '请输入航材中文名称', trigger: 'blur' }],
+        airmaterialNameEn: [{ required: true, message: '请输入航材英文名称', trigger: 'blur' }],
       },
       factoryTable: [],
       airMaterialTable: [],
