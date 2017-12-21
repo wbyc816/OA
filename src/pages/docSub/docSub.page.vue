@@ -32,20 +32,20 @@
     </el-card>
     <el-card class='doc-block doc-contrast'>
       <div slot="header" class='doc_title'>
-        <span>业务类申请</span>
+        <span>航材类合同申请</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" v-for="item in commonData">
+        <el-col :span="6" v-for="item in flightData">
           <doc-list :data='item'></doc-list>
         </el-col>
       </el-row>
     </el-card>
     <el-card class='doc-block doc-contrast'>
       <div slot="header" class='doc_title'>
-        <span>航材类合同申请</span>
+        <span>业务类申请</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" v-for="item in flightData">
+        <el-col :span="6" v-for="item in commonData">
           <doc-list :data='item'></doc-list>
         </el-col>
       </el-row>

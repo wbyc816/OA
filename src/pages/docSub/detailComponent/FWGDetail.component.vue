@@ -74,7 +74,7 @@
       <h1 class="title">打印份数</h1>
       <p v-if="info[0]" class="textContent">{{info[0].printNum}}</p>
     </el-col>
-    <el-col :span="12" class="rightBorder">
+    <el-col :span="12">
       <h1 class="title">存档份数</h1>
       <p v-if="info[0]" class="textContent">{{info[0].storeNum}}</p>
     </el-col>
@@ -85,7 +85,7 @@
     <div class="pdfBox clearBoth" v-if="info[0]">
       <div class="pdfScrollBox" ref="pdfScroll" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}">
         <pdf :src="info[0].pdfUrl" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
-        <pdf :src="info[0].pdfUrl" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
+        <!-- <pdf :src="info[0].pdfUrl" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf> -->
       </div>
       <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
       </el-pagination>
@@ -94,7 +94,8 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import pdf from 'vue-pdf'
+// import pdf from 'vue-pdf'
+import pdf from '../../../components/pdf.component'
 export default {
   components: { pdf },
   props: {
@@ -152,7 +153,7 @@ export default {
       }
     },
     pageLoad(num) {
-      this.pdfHeight = this.$refs.pdfPage.$el.clientHeight;
+      this.pdfHeight = this.$refs.pdfPage.$refs.page1[0].clientHeight;            
     },
     pdfError(obj) {
       this.$message.error('PDF文件加载失败！')

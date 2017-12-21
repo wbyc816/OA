@@ -98,7 +98,7 @@
         </money-input>
       </el-form-item>
     </el-form>
-    <h4 class='doc-form_title clearBoth'>厂家信息</h4>
+    <h4 class='doc-form_title clearBoth'>询价信息</h4>
     <el-form label-position="left" :model="factoryForm" :rules="factoryRule" ref="factoryForm" label-width="128px">
       <el-form-item label="选择厂家" prop="supplierIds">
         <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="supplierProp" v-model="factoryForm.supplierIds" style="width:100%" popper-class="myCascader" ref="factorySupplier" :disabled="isRead">
@@ -246,6 +246,7 @@
       </el-form-item>
     </el-form>
     <el-dialog title="选择合同子类型" :visible.sync="dialogVisible" size="small" custom-class="repairContractDialog" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+      <i class="el-icon-close backButton" @click="$router.go(-1)"></i>
       <el-form label-position="left" :model="dialogForm" :rules="dialogRule" ref="dialogForm" label-width="128px">
         <el-form-item label="合同子类型" prop="contractCode" placeholder="">
           <el-select v-model="dialogForm.contractCode" ref="contractCode">
@@ -309,13 +310,13 @@ export default {
         priority: '',
         supplierIds: [],
         isSupplierUnique: '0',
-        isSupplierProtocol: '1',
+        isSupplierProtocol: '0',
         isSupplierCheck: '1',
         newReferencePrice: '',
         purchaseReferencePrice: '',
         repairPurchasePriceRate: '',
         currencyId: '',
-        isAdvancePayment: '1',
+        isAdvancePayment: '0',
         advancePaymentPercent: ''
       },
       contractRule: {
@@ -887,7 +888,12 @@ $sub:#1465C0;
     .el-form {
       min-height: 130px;
     }
-
+    .backButton{
+      position:absolute;
+      top:10px;
+      right:10px;
+      cursor:pointer;
+    }
     .confirmBox {
       text-align: center;
       button {

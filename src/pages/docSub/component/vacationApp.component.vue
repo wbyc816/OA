@@ -74,9 +74,9 @@ export default {
         workHandover: [{ required: true, message: '请填写工作交接情况', trigger: 'blur' }],
       },
       pickerOptions0: {
-        disabledDate(time) {
-          return time.getTime() < Date.now() - 8.64e7;
-        }
+        // disabledDate(time) {
+        //   return time.getTime() < Date.now() - 8.64e7;
+        // }
       },
       types: [],
       params: '',

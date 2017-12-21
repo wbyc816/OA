@@ -17,7 +17,7 @@
           </div>
           <div class="pdfScrollBox" ref="pdfScroll" v-loading="loading" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}">
             <pdf :src="detail.url" v-if="detail.url" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
-            <pdf :src="detail.url" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
+            <!-- <pdf :src="detail.url" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf> -->
           </div>
           <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
           </el-pagination>
@@ -39,7 +39,8 @@
 import SidePersonSearch from '../../components/sidePersonSearch.component'
 import Duty from '../../components/duty.component'
 import { mapGetters } from 'vuex'
-import pdf from 'vue-pdf'
+// import pdf from 'vue-pdf'
+import pdf from '../../components/pdf.component'
 export default {
   components: { SidePersonSearch, Duty, pdf },
   data() {
@@ -86,7 +87,7 @@ export default {
     },
     pageLoad(num) {
       this.loading = false;
-      this.pdfHeight = this.$refs.pdfPage.$el.clientHeight;
+      this.pdfHeight = this.$refs.pdfPage.$refs.page1[0].clientHeight;      
     },
     pdfError(obj) {
       this.loading = false;

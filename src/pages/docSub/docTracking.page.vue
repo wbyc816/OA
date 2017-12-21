@@ -1,6 +1,6 @@
 <template>
   <div id="docTracking">
-    <search-options title="公文追踪" @search="setOptions"></search-options>
+    <search-options title="公文追踪" @search="setOptions" isCollapse></search-options>
     
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading" >
       <caption>
@@ -39,7 +39,7 @@
       </tbody>
     </table>
     <div class="pageBox" v-show="docData.length>0">
-      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="15" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
     
@@ -61,7 +61,7 @@ export default {
       detailView: false,
       params: {
         "pageNumber": 1,
-        "pageSize": 10
+        "pageSize": 15
       },
       docData: [],
       totalSize: 0,

@@ -66,9 +66,9 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :admin="normalPersonAdmin" :visible.sync="dialogTableVisible" dialogType="radio" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
-    <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :isLeaderDep="docDetail.isConfidential==1" :data="signPersons"></person-dialog>
-    <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="normalPersonAdmin" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :admin="normalPersonAdmin" :visible.sync="dialogTableVisible" dialogType="radio" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
+    <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :deptId="docDetail.deptId" :data="signPersons"></person-dialog>
+    <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="normalPersonAdmin" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
     <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" :disableDep="disableDep" isSaveInit></dep-dialog>
   </div>
 </template>

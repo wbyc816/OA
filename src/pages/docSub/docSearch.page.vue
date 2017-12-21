@@ -1,6 +1,6 @@
 <template>
   <div id="docSearch">
-    <search-options title="公文查询" @search="setOptions" payStatus hasArchive></search-options>
+    <search-options title="公文查询" @search="setOptions" payStatus hasArchive isCollapse></search-options>
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>
@@ -31,7 +31,7 @@
       </tbody>
     </table>
     <div class="pageBox" v-show="docData.length>0">
-      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="15" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
   </div>
@@ -51,7 +51,7 @@ export default {
       tableTitle,
       params: {
         "pageNumber": 1,
-        "pageSize": 10
+        "pageSize": 15
       },
       docData: [],
       totalSize: 0,
