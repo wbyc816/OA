@@ -21,7 +21,7 @@
             <el-table-column prop="jobtitle" label="职务"></el-table-column>
             <el-table-column prop="moblieNumber" label="状态" width="80"></el-table-column>
           </el-table>
-          <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
+          <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @row-dblclick="dbclick" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
             <el-table-column prop="name" label="姓名" width="110"></el-table-column>
             <el-table-column prop="depts" label="部门" width="250"></el-table-column>
             <el-table-column prop="jobtitle" label="职务"></el-table-column>
@@ -252,6 +252,28 @@ export default {
     },
     rowKey(row) {
       return row.empId + row.deptId + row.jobtitle
+    },
+    dbclick(row){
+
+      if (this.dialogType == 'radio') {
+
+        if (this.selfDisable) {
+          if (row.empId != this.userInfo.empId) {
+            this.selPerson = row;
+            this.submitPerson();
+          } else {
+            this.$message({
+              message: '收件人不能为本人！',
+              type: 'warning'
+            })
+          }
+        } else {
+          this.selPerson = row;
+          this.submitPerson();
+        }
+      } else {
+        this.$refs.multipleTable.toggleRowSelection(row);
+      }
     },
     submitPerson() {
       if (this.dialogType == 'radio') {

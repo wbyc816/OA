@@ -88,6 +88,7 @@ import { mapGetters } from 'vuex'
 import '../static/urlConfig'
 import Vue from 'vue'
 import router from './router'
+import jquery from 'jquery'
 export default {
   name: 'app',
   data: function() {
@@ -228,7 +229,10 @@ export default {
       this.getHomePics();
       this.outBreadcrumbs();
       // window.scrollTo(0, 0);
-      window.scrollTo({ "behavior": "smooth", "top": 0 })
+      // if(window.scroll){
+      //   window.scroll({ "behavior": "smooth", "top": 0 })
+      // }
+      jquery('body,html').animate({scrollTop:0},10);
     },
   }
 }
