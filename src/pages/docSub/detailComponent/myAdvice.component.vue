@@ -50,7 +50,9 @@
       </el-form-item>
       <el-form-item label="审批内容" prop="taskContent" class="textarea">
         <el-col :span='18'>
-          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="500"></el-input>
+          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="500">
+          </el-input>
+          <!-- <task-content v-model="ruleForm.taskContent"></task-content> -->
         </el-col>
       </el-form-item>
       <el-form-item label="约定离职日期" class="textarea" prop="planDate" v-if="currentView=='LZS'&&docDetail.isDept==1">
@@ -76,6 +78,7 @@
 import { mapGetters } from 'vuex'
 import PersonDialog from '../../../components/personDialog.component'
 import DepDialog from '../../../components/depDialog.component'
+import TaskContent from '../../../components/taskContent.component'
 
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -117,7 +120,8 @@ const secretaryDoc = ['FWG', 'HTS', 'SWD', 'CPD']
 export default {
   components: {
     PersonDialog,
-    DepDialog
+    DepDialog,
+    TaskContent
   },
   props: {
     docDetail: {
@@ -243,12 +247,12 @@ export default {
       if (!this.secretaryInfo) {
         var roleUserState = 0; // 机要秘书
         var typeName;
-        if (this.$route.query.code=='FWG') {
+        if (this.$route.query.code == 'FWG') {
           typeName = this.otherInfo[0].classify1;
         }
         //发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 添加默认部门
         if ((typeName === '公司发文' || typeName === '会议纪要') && this.userInfo.deptId != initFWGDeps[0].id && this.userInfo.deptParentId != initFWGDeps[0].id) {
-          roleUserState = 1;  // 综合管理部
+          roleUserState = 1; // 综合管理部
         }
         this.$http.post('doc/getSecInfo', { roleUserState: roleUserState })
           .then(res => {
@@ -598,6 +602,7 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
+$sub:#1465C0;
 .myAdvice {
   .exportButton {
     float: right;
@@ -661,6 +666,7 @@ $main:#0460AE;
     border-radius: 3px;
     float: right;
   }
+  
 }
 
 </style>

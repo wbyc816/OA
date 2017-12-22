@@ -19,7 +19,7 @@
       </el-form-item>
       <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px" class="clearBoth">
         <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
-          <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%" :disabled="paymentForm.isAdvancePayment==1"></el-cascader>
+          <el-cascader :clearable="true" :options="budgetDeptList" filterable :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%" :disabled="paymentForm.isAdvancePayment==1"></el-cascader>
         </el-form-item>
         <ul class="budgetInfo clearfix clearBoth" v-show="budgetInfo">
           <li>年度预算{{budgetInfo.budgetTotal | toThousands}}元</li>

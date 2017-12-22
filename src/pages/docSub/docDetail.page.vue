@@ -84,7 +84,7 @@
       <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
       </quit-advice>
       <my-advice :docDetail="docDetialInfo.doc" :otherInfo="docDetialInfo.otherInfo" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice" ref="myAdvice">
-        <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true;getFileSend();" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
+        <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true;getFileSend();" v-if="showdArchiveButton" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
     </el-card>
@@ -287,7 +287,7 @@ export default {
       fileSendVisible: false,
       sendTypes: [],
       addFileDoc,
-      taskFile:[]
+      taskFile: []
     }
   },
   created() {
@@ -320,6 +320,20 @@ export default {
       } else {
         return false
       }
+    },
+    showdArchiveButton() {
+      var isShow = false;
+      if (this.docDetialInfo.doc != {} && this.docDetialInfo.doc.isFied == 1) {
+        if (this.currentView == 'FWG') {
+          if(this.docDetialInfo.doc.isConfidential==1&&(this.docDetialInfo.otherInfo[0].classify1==='会议纪要'||this.docDetialInfo.otherInfo[0].classify1==='公司发文')){
+            isShow=true;
+          }
+        } else {
+          isShow = true;
+        }
+      }
+
+      return isShow
     },
     ...mapGetters([
       'userInfo',
@@ -639,7 +653,7 @@ export default {
     handleAvatarSuccess(res, file, fileList) {
       if (this.isRedFile) {
         this.fileForm.taskFileId = res.data;
-        this.taskFile=fileList;
+        this.taskFile = fileList;
       } else {
         this.fileForm.fileIds = fileList;
       }
@@ -670,7 +684,7 @@ export default {
       if (!isLt10M) {
         this.$message.error('上传文件大小不能超过 500MB!');
       }
-      return isJPG && isLt10M;
+      return  isLt10M;
     },
     handleRemove(file, fileList) {
       if (this.isRedFile) {

@@ -27,7 +27,7 @@ export default {
       type: Number,
       default: 10,
     },
-    type: { //类型，默认money，可选int(整数)、int0（整数含0）、invoice(发票号)
+    type: { //类型，默认money，可选int(整数)、int0（整数含0）、invoice(发票号)、bankCode(银行账号)
       type: String,
       default: 'money'
     },
@@ -59,7 +59,7 @@ export default {
         val = val.toString().match(/^[1-9]([0-9]{0,})+(?:\.\d{0,2})?/);
       } else if (this.type == 'int') {
         val = val.toString().match(/^[1-9][0-9]{0,}/)
-      } else if (this.type == 'int0') {
+      } else if (this.type == 'int0'||this.type =='bankCode') {
         val = val.toString().match(/^[0-9]{0,}/)
       } else if (this.type == 'invoice') {
         val = val.toString().match(/^[0-9]([0-9]\,|[0-9]){0,}/)
@@ -98,7 +98,7 @@ export default {
         this.$emit('change', temp);
         this.$refs.input.setCurrentValue(temp);
       } else if (this.type == 'int0') {
-        var temp = parseFloat(event.target.value);
+        var temp = parseInt(event.target.value);
         temp = temp.toString().match(/^[0]{0,}/);
         if (temp.input == 'NaN') {
           temp.input = ''

@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item label="预算机构/科目" prop="budgetDept">
         <div>
-          <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept" @active-item-change="handleItemChange" @change="changeDept" popper-class="myCascader" class="budgetDept" ref="budgetDept"></el-cascader>
+          <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept" @active-item-change="handleItemChange" filterable @change="changeDept" popper-class="myCascader" class="budgetDept" ref="budgetDept"></el-cascader>
         </div>
       </el-form-item>
       <div class="change_data" v-show="showData==1">

@@ -39,7 +39,7 @@
                   <li v-for="fileData in fileDatas" @click="goTo(fileData)">
                     <div class="title_li"><span class="docTitle">{{fileData.docTitle}}</span><span class="docnew" v-if="fileData.isRead==='0'">NEW</span></div>
                     <div class="content_li">
-                      <span>{{fileData.taskDeptMajorName }}</span> 
+                      <span>{{fileData.taskDeptMajorName }}</span>
                       <span class="content_right">
                           <!-- <span class="iconfontColor"><i class="iconfont icon-dianzan"></i></span><span>{{fileData.praise}}</span> -->
                       <span class="iconfontColor"><i class="iconfont icon-eye"></i></span><span>{{fileData.browse}}</span>
@@ -72,13 +72,11 @@
         <el-card class="filebox_second">
           <el-menu>
             <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">
-             
               <span class="title">{{fileType[0]}}</span>
               <span class="num">{{fileType[2]}}</span>
             </el-menu-item>
           </el-menu>
         </el-card>
-        
       </el-col>
     </el-row>
   </div>
@@ -293,7 +291,7 @@ export default {
       this.params.classify1 = command[0];
       this.choose_type = command[1];
       this.getData();
-      this.title=command[1]
+      this.title = command[1]
     },
     handleCommand_dept(command) {
       console.log(command);
@@ -346,6 +344,7 @@ $main: #0460AE;
   margin-top: 45px;
   height: 200px;
   overflow: auto;
+  top: 138px !important;
 }
 
 #filesHome {
@@ -354,17 +353,17 @@ $main: #0460AE;
     color: #1465C0;
   }
   & .file_ul {
-     .docnew{
+    .docnew {
       font-size: 12px;
       background: #FF9300;
       color: #fff;
       border-radius: 3px;
       padding: 0 2px;
       vertical-align: bottom;
-      margin-left:2px;
+      margin-left: 2px;
     }
-    .docTitle{
-      display:inline-block;
+    .docTitle {
+      display: inline-block;
       max-width: 330px;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -535,11 +534,9 @@ $main: #0460AE;
       margin-left: 0px
     }
     & .num {
-       height: 40px;
-       position: absolute;
-       right:20px;
-        
-     
+      height: 40px;
+      position: absolute;
+      right: 20px;
     }
   }
 

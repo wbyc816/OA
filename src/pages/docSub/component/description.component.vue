@@ -5,9 +5,6 @@
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
       <el-form-item :label="options.desTitle||'请示内容'" prop="des" :rules="[{ required: true,validator:checkDes,trigger: 'blur,change' }]" v-if="$route.params.code!='FWG'">
         <!-- <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des" :maxlength="5000"></el-input> -->
-        <!-- <div class="tempBox" @click="ruleForm.des=tempText"><span></span>
-          <div><i class="iconfont icon-moban"></i>模板</div>
-        </div> -->
         <editor @input="desChange" @updateLen="updateLen" :data="ruleForm.des" ref="editor"></editor>
       </el-form-item>
       <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
@@ -64,7 +61,7 @@ import PathDialog from '../../../components/pathDialog.component'
 import Editor from '../../../components/editor.component'
 import { mapGetters, mapMutations } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
-const noTitleDocs=['HCG','JBC','ZJJ','SXS','JHH']
+const noTitleDocs = ['HCG', 'JBC', 'ZJJ', 'SXS', 'JHH']
 export default {
   components: {
     SearchOptions,
@@ -121,24 +118,24 @@ export default {
             } else {
               node.children.forEach((child, childIndex) => {
                 if (childIndex == 0) {
-                  html += '#' + child.typeIdName+child.remark;
-                  if(childIndex == node.children.length - 1){
-                    html +='# ' + arrowHtml
-                  }else{
+                  html += '#' + child.typeIdName + child.remark;
+                  if (childIndex == node.children.length - 1) {
+                    html += '# ' + arrowHtml
+                  } else {
                     html += ' '
                   }
                 } else if (childIndex == node.children.length - 1) {
-                  html += child.typeIdName+child.remark + '# ' + arrowHtml;
+                  html += child.typeIdName + child.remark + '# ' + arrowHtml;
                 } else {
-                  html += child.typeIdName+child.remark + ' '
+                  html += child.typeIdName + child.remark + ' '
                 }
               })
             }
           } else {
             if (index != this.ruleForm.path.length - 1) {
-              html += node.typeIdName+node.remark + arrowHtml
+              html += node.typeIdName + node.remark + arrowHtml
             } else {
-              html += node.typeIdName+node.remark
+              html += node.typeIdName + node.remark
             }
           }
         })
@@ -146,8 +143,8 @@ export default {
       html += '归档'
       return html;
     },
-    showTitle:function(){
-      return noTitleDocs.find(d=>d===this.$route.params.code)=== undefined;
+    showTitle: function() {
+      return noTitleDocs.find(d => d === this.$route.params.code) === undefined;
     },
     ...mapGetters([
       'baseURL',
@@ -166,7 +163,7 @@ export default {
   watch: {
     taskUser: function(newval) {
       if (newval) {
-        if (!this.$route.query.id || !this.isfirst) {   //草稿箱第一次不调用建议路径模板
+        if (!this.$route.query.id || !this.isfirst) { //草稿箱第一次不调用建议路径模板
           this.getSuggestTemp();
         }
       }
@@ -204,7 +201,7 @@ export default {
             } else {
               this.$emit('submitEnd', {
                 taskContent: this.ruleForm.des,
-                qutoes: this.docs.filter(d=>d.quoteDocId),
+                qutoes: this.docs.filter(d => d.quoteDocId),
                 fileId: this.ruleForm.attchment.map(f => f.response.data),
                 suggests: this.handlePath(this.ruleForm.path)
               });
@@ -261,7 +258,7 @@ export default {
         if (this.checkSuggest()) {
           var params = {
             taskContent: this.ruleForm.des, //请示内容
-            qutoes: this.docs.filter(d=>d.quoteDocId),
+            qutoes: this.docs.filter(d => d.quoteDocId),
             suggests: this.handlePath(this.ruleForm.path),
             files: JSON.stringify(this.ruleForm.attchment)
           }
@@ -302,7 +299,7 @@ export default {
       if (this.upCount == this.difLength) {
         var params = {
           taskContent: this.ruleForm.des,
-          qutoes: this.docs.filter(d=>d.quoteDocId),
+          qutoes: this.docs.filter(d => d.quoteDocId),
           suggests: this.handlePath(this.ruleForm.path)
         }
         if (this.isSaveForm) {
@@ -390,7 +387,7 @@ export default {
         } else {
           nodeName = 'task';
         }
-        if (item.nodeName == 'sign'||item.type == 4) {
+        if (item.nodeName == 'sign' || item.type == 4) {
           nodeName = 'sign';
           if (item.type == 4) {
             nodeName = 'trans';
@@ -403,7 +400,7 @@ export default {
               typeIdName: child.typeIdName,
               type: child.type,
               docType: this.$route.params.code,
-              remark:child.ramark
+              remark: child.ramark
             })
           })
         } else {
@@ -414,7 +411,7 @@ export default {
             typeIdName: item.typeIdName,
             type: item.type,
             docType: this.$route.params.code,
-            remark:item.remark
+            remark: item.remark
           })
         }
       })
@@ -423,7 +420,7 @@ export default {
     getSuggestTemp(param) {
       this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.taskUser.empId, deptId: this.taskUser.deptParentId, docTypeSubCode: param })
         .then(res => {
-          this.isfirst=false;
+          this.isfirst = false;
           if (res.status == 0) {
             this.disableEditSuggest = res.data.isEdit == 0 ? false : true;
             this.handleSuggestTemp(res.data.paths);
@@ -436,11 +433,11 @@ export default {
       var temp = [];
       var start;
       arr.forEach((s, index) => {
-        if (s.type == 4 || s.type == 5) {   //人员或部门会签
+        if (s.type == 4 || s.type == 5) { //人员或部门会签
           s.nodeName = 'sign';
           s.children = [];
           temp.push(s);
-        } else if (s.type == 7) { 
+        } else if (s.type == 7) {
           if (start) {
             start = 0;
           } else {
@@ -450,7 +447,7 @@ export default {
             temp.push(s);
           }
         } else {
-          if (start) {  
+          if (start) {
             temp[start].children.push(s);
           } else {
             temp.push(s);
@@ -618,7 +615,7 @@ $sub:#1465C0;
         float: right;
       }
     }
-  } 
+  }
 }
 
 </style>

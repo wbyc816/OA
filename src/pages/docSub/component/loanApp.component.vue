@@ -34,7 +34,7 @@
       </el-form-item>
 
       <el-form-item label="收款账户" prop="bankAccount" class="flw50" >
-         <el-input v-model="loanAppForm.bankAccount" ref="bankAccount" :maxlength="50" @change="changeBankAccount"></el-input>
+         <money-input v-model="loanAppForm.bankAccount" type="bankCode" :prepend="false" :append="false" ref="bankAccount" :maxlength="50"></money-input>
       </el-form-item>
       </div>
     </el-form>
@@ -44,9 +44,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import PersonDialog from '../../../components/personDialog.component'
+import MoneyInput from '../../../components/moneyInput.component'
   import util from '../../../common/util'
 export default {
-  components: { PersonDialog },
+  components: { PersonDialog,MoneyInput },
   data() {
     var checkDate = (rule, value, callback) => {
       if (value) {

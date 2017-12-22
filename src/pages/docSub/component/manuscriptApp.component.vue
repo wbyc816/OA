@@ -141,7 +141,7 @@ export default {
         catalogueName: [],
         signName: '',
         signId: '',
-        issueDate: '',
+        issueDate: new Date(),
         printNum: '',
         storeNum: '',
         fileSend: {

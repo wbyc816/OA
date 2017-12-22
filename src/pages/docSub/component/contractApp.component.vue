@@ -2,7 +2,7 @@
   <div class="contractApp">
     <el-form label-position="left" :model="contractForm" :rules="rules" ref="contractForm" label-width="128px">
       <el-form-item label="供应商" prop="supplierIds" class="clearBoth">
-        <el-cascader expand-trigger="hover" :options="supplierList" :props="defaultProp" v-model="contractForm.supplierIds" style="width:100%" popper-class="myCascader" ref="supplier">
+        <el-cascader expand-trigger="hover" :options="supplierList" :props="defaultProp" v-model="contractForm.supplierIds" filterable style="width:100%" popper-class="myCascader" ref="supplier">
         </el-cascader>
       </el-form-item>
       <el-form-item label="合同类型" prop="contractCode" placeholder="" class="width60">
@@ -19,9 +19,9 @@
         <el-date-picker v-model="contractForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
       <el-form-item label="押金" label-width="100px" class="width40">
-        <el-input v-model="contractForm.contractCashPledge" ref="contractCashPledge" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
+        <money-input v-model="contractForm.contractCashPledge" :prepend="false">
           <template slot="append">元</template>
-        </el-input>
+        </money-input>
       </el-form-item>
       <el-form-item label="公司范本" prop="isContractModel" placeholder="" class="deptArea">
         <el-radio-group v-model="contractForm.isContractModel" class="myRadio">
@@ -39,9 +39,10 @@
   </div>
 </template>
 <script>
+import MoneyInput from '../../../components/moneyInput.component'
 import { mapGetters } from 'vuex'
 export default {
-  components: {},
+  components: {MoneyInput},
   data() {
     return {
       contractForm: {

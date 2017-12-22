@@ -523,9 +523,7 @@ $brown: #985D55;
   }
 }
 
-.el-dropdown-menu {
-  top: 138px !important;
-}
+
 
 footer {
   position: absolute;

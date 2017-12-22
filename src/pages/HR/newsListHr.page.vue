@@ -4,7 +4,7 @@
       <div slot="header" class="clearfix">
         <span>{{newsType[params.classify2]}}</span>
         <span v-show="params.title" class="headLeft">按搜索条件 "<i>{{params.title}}</i>" 查询结果</span>
-        <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="catalogueName" popper-class="myCascader" class="headRight" clearable @change="catalogueChange">
+        <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="catalogueName" popper-class="myCascader" class="headRight" clearable @change="catalogueChange" placeholder="所有">
         </el-cascader>
       </div>
       <el-row>
