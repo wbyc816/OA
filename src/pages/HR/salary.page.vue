@@ -18,7 +18,7 @@
         <div class="alignCenter" @click="checkPassword" v-if="salaryType==0"><br>暂无数据<br></div>
         <el-row class="salaryList" v-if="salaryType>0">
           <el-col :span="12">
-            <el-row v-for="salary in salaryLeft" v-if="salaryData[salary.name]">
+            <el-row v-for="salary in salaryLeft" v-if="salaryData[salary.name]!=''&&typeof(salaryData[salary.name])=='string'||typeof(salaryData[salary.name])=='number'">
               <el-col :span="12">
                 {{salary.label}}
               </el-col>
@@ -28,7 +28,7 @@
             </el-row>
           </el-col>
           <el-col :span="12">
-            <el-row v-for="salary in salaryRight" v-if="salaryData[salary.name]">
+            <el-row v-for="salary in salaryRight" v-if="salaryData[salary.name]!=''&&typeof(salaryData[salary.name])=='string'||typeof(salaryData[salary.name])=='number'">
               <el-col :span="12">
                 {{salary.label}}
               </el-col>
