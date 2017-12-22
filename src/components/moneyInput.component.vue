@@ -47,7 +47,8 @@ export default {
       type: Boolean,
       default: false
     },
-    max:''
+    max: '',
+    min: ''
   },
   data() {
     return {}
@@ -64,8 +65,8 @@ export default {
         val = val.toString().match(/^[0-9]([0-9]\,|[0-9]){0,}/)
       }
       if (val) {
-        if(this.max&&parseFloat(val[0])>parseFloat(this.max)){
-          val[0]=this.max.toString();
+        if (this.max && parseFloat(val[0]) > parseFloat(this.max)) {
+          val[0] = this.max.toString();
         }
         this.$emit('input', val[0]);
         this.$emit('change', val[0]);
@@ -79,10 +80,17 @@ export default {
     blurInput(event) {
       if (this.type == 'money') {
         var temp = event.target.value.split('.');
+
         if (temp.length == 2 && (temp[1] == undefined || temp[1] == '' || temp[1] == null)) {
           this.$emit('input', temp[0]);
           this.$emit('change', temp[0]);
           this.$refs.input.setCurrentValue(temp[0]);
+        } else if (temp[0] === '') {
+          if (this.min) {
+            this.$emit('input', this.min);
+            this.$emit('change', this.min);
+            this.$refs.input.setCurrentValue(this.min);
+          }
         }
       } else if (this.type == 'invoice') {
         var temp = event.target.value.replace(/\,$/, '');
@@ -93,7 +101,7 @@ export default {
         var temp = parseFloat(event.target.value);
         temp = temp.toString().match(/^[0]{0,}/);
         if (temp.input == 'NaN') {
-            temp.input = ''
+          temp.input = ''
         }
         this.$emit('input', temp.input);
         this.$emit('change', temp.input);

@@ -58,7 +58,7 @@ export default {
       rules: {
         signUserName: [{ required: true, message: '请选择会签接收人' }],
         state: [{ required: true, message: '请选择会签意见' }],
-        taskContent:[{required: true, message: '请填写会签内容' }]
+        taskContent: [{ required: true, message: '请填写会签内容' }]
       },
       dialogTableVisible: false,
       reciver: '',
@@ -176,32 +176,38 @@ export default {
         })
     },
     endDepSign() { //部门结束会签
-      this.$refs.ruleForm.validateField('state', (errorMessage) => {
-        if (errorMessage == '') {
-          var params = {
-            docId: this.docDetail.id,
-            "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
-            "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
-            "taskDeptName": this.userInfo.deptVo.dept,
-            "taskDeptId": this.userInfo.deptVo.deptId,
-            "taskUserName": this.userInfo.name,
-            "taskUserId": this.userInfo.empId,
-            taskContent: this.ruleForm.taskContent,
-            state: this.ruleForm.state,
-            submitType: 3,
-            operateType: '1'
-          }
-          this.$http.post('/doc/docTask', params, { body: true })
-            .then(res => {
-              if (res.status == '0') {
-                this.$message.success('结束会签成功');
-                this.$router.push('/doc/docTracking');
-              } else {
-                this.$message.error('结束会签失败。' + res.message);
+      this.$refs.ruleForm.validateField('state', (error) => {
+        if (error == '') {
+          this.$refs.ruleForm.validateField('taskContent', (error1) => {
+            if (error1 == '') {
+              var params = {
+                docId: this.docDetail.id,
+                "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
+                "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
+                "taskDeptName": this.userInfo.deptVo.dept,
+                "taskDeptId": this.userInfo.deptVo.deptId,
+                "taskUserName": this.userInfo.name,
+                "taskUserId": this.userInfo.empId,
+                taskContent: this.ruleForm.taskContent,
+                state: this.ruleForm.state,
+                submitType: 3,
+                operateType: '1'
               }
-            }, res => {
+              this.$http.post('/doc/docTask', params, { body: true })
+                .then(res => {
+                  if (res.status == '0') {
+                    this.$message.success('结束会签成功');
+                    this.$router.push('/doc/docTracking');
+                  } else {
+                    this.$message.error('结束会签失败。' + res.message);
+                  }
+                }, res => {
 
-            })
+                })
+            } else {
+              return false
+            }
+          })
         } else {
           return false
         }

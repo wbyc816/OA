@@ -1,6 +1,6 @@
 <template>
   <div id="docPending">
-    <search-options title="公文签批" @search="setOptions" hasOverTime></search-options>
+    <search-options title="公文签批" @search="setOptions" hasOverTime isCollapse></search-options>
     <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId==leaderEmpid" v-loading.body="searchLoading">
       <el-table-column type="selection" width="35" class-name="selectionColumn" label-class-name="selectionColumnLabel">
       </el-table-column>
@@ -71,7 +71,7 @@
       </tbody>
     </table>
     <div class="pageBox" v-show="docData.length>0">
-      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
+      <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="15" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
     <el-card class="taskCard" v-if="userInfo.empId==leaderEmpid&&docData.length>0">
@@ -113,7 +113,7 @@ export default {
       contractView: false,
       params: {
         "pageNumber": 1,
-        "pageSize": 10
+        "pageSize": 15
       },
       docData: [],
       totalSize: 0,

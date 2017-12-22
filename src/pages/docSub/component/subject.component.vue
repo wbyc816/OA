@@ -35,13 +35,13 @@
         </el-radio-group>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="personAdmin" :hasSecretary="otherAdviceDoc.find(d=>d==$route.params.code)!=undefined"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="personAdmin" :hasSecretary="otherAdviceDoc.find(d=>d==$route.params.code)!=undefined&&isAdmin"></person-dialog>
   </div>
 </template>
 <script>
 import PersonDialog from '../../../components/personDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
-const otherAdviceDoc = ["FWG", "SWD", "CPD","HTS"]
+const otherAdviceDoc = ["FWG", "SWD", "CPD", "HTS"]
 export default {
   components: {
     PersonDialog
@@ -87,16 +87,21 @@ export default {
       isDefault: false,
       taskUserList: [],
       draftFirst: false,
-      otherAdviceDoc
+      otherAdviceDoc,
+      isAdmin:false
     }
   },
   computed: {
-    personAdmin:function(){
-      var temp='';
-      if(otherAdviceDoc.find(d=>d==this.$route.params.code)){
-        temp='0'
-      }else if(this.$route.params.code=='LZS'){
-        temp='0'
+    personAdmin: function() {
+      var temp = '';
+      if (otherAdviceDoc.find(d => d == this.$route.params.code)) {
+        temp = '0'
+      } else if (this.$route.params.code == 'LZS') {
+        temp = '0'
+      }else if(this.isAdmin){
+        temp='1';
+      }else{
+        temp='0';
       }
       return temp
     },
@@ -123,25 +128,26 @@ export default {
     }
   },
   created() {
+    this.getIsAdmin();
     this.$store.dispatch('getConfident');
     this.$store.dispatch('getUrgency');
     this.$store.dispatch('getAdminStatus');
     this.getTaskPerson();
-    if(otherAdviceDoc.find(d=>d==this.$route.params.code)!=undefined){
+    if (otherAdviceDoc.find(d => d == this.$route.params.code) != undefined) {
       this.getSecretaryInfo();
     }
   },
   methods: {
-    getSecretaryInfo(){
-      if(!this.secretaryInfo){
-        this.$http.post('doc/getSecInfo',{roleUserState:0})
-        .then(res=>{
-          if(res.status == '0'){
-            this.$store.commit('setSecretaryInfo',res.data);
-          }else{
+    getSecretaryInfo() {
+      if (!this.secretaryInfo) {
+        this.$http.post('doc/getSecInfo', { roleUserState: 0 })
+          .then(res => {
+            if (res.status == '0') {
+              this.$store.commit('setSecretaryInfo', res.data);
+            } else {
 
-          }
-        })
+            }
+          })
       }
     },
     changeTaskUser(val) {
@@ -265,6 +271,18 @@ export default {
             } else {
               this.$store.commit('setReciver', '');
               this.ruleForm.rec = '';
+            }
+          } else {
+
+          }
+        })
+    },
+    getIsAdmin() {
+      this.$http.post('doc/isAdmin', { empId: this.userInfo.empId,docTypeCode:this.$route.params.code })
+        .then(res => {
+          if (res.status == '0') {
+            if(res.data==1){
+              this.isAdmin=true;
             }
           } else {
 

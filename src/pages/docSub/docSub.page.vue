@@ -32,16 +32,6 @@
     </el-card>
     <el-card class='doc-block doc-contrast'>
       <div slot="header" class='doc_title'>
-        <span>优惠机票申请</span>
-      </div>
-      <el-row :gutter='15'>
-        <el-col :span="6" v-for="item in ticketData">
-          <doc-list :data='item'></doc-list>
-        </el-col>
-      </el-row>
-    </el-card>
-    <el-card class='doc-block doc-contrast'>
-      <div slot="header" class='doc_title'>
         <span>航材类合同申请</span>
       </div>
       <el-row :gutter='15'>
@@ -60,27 +50,37 @@
         </el-col>
       </el-row>
     </el-card>
+    <el-card class='doc-block doc-contrast'>
+      <div slot="header" class='doc_title'>
+        <span>优惠机票申请</span>
+      </div>
+      <el-row :gutter='15'>
+        <el-col :span="6" v-for="item in ticketData">
+          <doc-list :data='item'></doc-list>
+        </el-col>
+      </el-row>
+    </el-card>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
- import DocList from '../../components/doc'
+import DocList from '../../components/doc'
 const adminData = [
   { 'logo': 'icon-write', 'color': '#FF754F', 'text': '呈批单', 'link': '#/doc/docCommonApp/CPD' },
   { 'logo': 'icon-file11', 'color': '#FF5F88', 'text': '发文稿纸', 'link': '#/doc/docCommonApp/FWG' },
-  { 'logo': 'icon-car','font': '20px', 'color': '#A5A3FF', 'text': '用车申请', 'link': '#/doc/docCommonApp/YCS' },
-  { 'logo': 'icon-plane2','font': '20px', 'color': '#9FD867', 'text': '差旅申请', 'link': '#/doc/docCommonApp/CLV' },
-  { 'logo': 'icon-documents','font': '26px', 'color': '#FF5F88', 'text': '材料申请', 'link': '#/doc/docCommonApp/CLS' },
-  { 'logo': 'icon-biaodan','font': '28px', 'color': '#5BB5FC', 'text': '收文登记处理', 'link': '#/doc/docCommonApp/SWD',"require":true },
-  { 'logo': 'icon-hetong1','font': '28px', 'color': '#FFE066', 'text': '合同申请', 'link': '#/doc/docCommonApp/HTS' },
+  { 'logo': 'icon-car', 'font': '20px', 'color': '#A5A3FF', 'text': '用车申请', 'link': '#/doc/docCommonApp/YCS' },
+  { 'logo': 'icon-plane2', 'font': '20px', 'color': '#9FD867', 'text': '差旅申请', 'link': '#/doc/docCommonApp/CLV' },
+  { 'logo': 'icon-documents', 'font': '26px', 'color': '#FF5F88', 'text': '材料申请', 'link': '#/doc/docCommonApp/CLS' },
+  { 'logo': 'icon-biaodan', 'font': '28px', 'color': '#5BB5FC', 'text': '收文登记处理', 'link': '#/doc/docCommonApp/SWD', "require": true },
+  { 'logo': 'icon-hetong1', 'font': '28px', 'color': '#FFE066', 'text': '合同申请', 'link': '#/doc/docCommonApp/HTS' },
 ];
 const financeData = [
-  { 'logo': 'icon-yusuan','font': '28px', 'color': '#5BB5FC', 'text': '预算申请', 'link': '#/doc/docCommonApp/YSS' },
+  { 'logo': 'icon-yusuan', 'font': '28px', 'color': '#5BB5FC', 'text': '预算申请', 'link': '#/doc/docCommonApp/YSS' },
   { 'logo': 'icon-fkcg', 'color': '#FF754F', 'text': '付款申请', 'link': '#/doc/docCommonApp/FKS' },
-  { 'logo': 'icon-fukuan1','font': '30px', 'color': '#A5A3FF', 'text': '报销申请', 'link': '#/doc/docCommonApp/BXS' },
-  { 'logo': 'icon-yusuankongzhi','font': '28px', 'color': '#FF5F88', 'text': '借款申请', 'link': '#/doc/docCommonApp/JKS' },
-  { 'logo': 'icon-imgtag','font': '28px', 'color': '#5BB5FC', 'text': '差旅报销申请', 'link': '#/doc/docCommonApp/CLB' },
-  { 'logo': 'icon-manage','font': '26px', 'color': '#9FD867', 'text': '预付款核销申请', 'link': '#/doc/docCommonApp/YFK' },
+  { 'logo': 'icon-fukuan1', 'font': '30px', 'color': '#A5A3FF', 'text': '报销申请', 'link': '#/doc/docCommonApp/BXS' },
+  { 'logo': 'icon-yusuankongzhi', 'font': '28px', 'color': '#FF5F88', 'text': '借款申请', 'link': '#/doc/docCommonApp/JKS' },
+  { 'logo': 'icon-imgtag', 'font': '28px', 'color': '#5BB5FC', 'text': '差旅报销申请', 'link': '#/doc/docCommonApp/CLB' },
+  { 'logo': 'icon-manage', 'font': '26px', 'color': '#9FD867', 'text': '预付款核销申请', 'link': '#/doc/docCommonApp/YFK' },
 ];
 const contrastData = [
   { 'logo': 'icon-rili', 'color': '#A5A3FF', 'text': '请假申请', 'link': '#/doc/docCommonApp/QJS' },
@@ -88,24 +88,24 @@ const contrastData = [
   { 'logo': 'icon-book-copy', 'color': '#9FD867', 'text': '转正申请', 'link': '#/doc/docCommonApp/ZZS' },
   { 'logo': 'icon-hetong', 'color': '#FF5F88', 'text': '培训申请', 'link': '#/doc/docCommonApp/PXS' },
   { 'logo': 'icon-file1', 'color': '#5BB5FC', 'text': '人事变动', 'link': '#/doc/docCommonApp/RSB' },
-  { 'logo': 'icon-laodonggongshang','font': '28px', 'color': '#FF754F', 'text': '工伤申请', 'link': '#/doc/docCommonApp/GSS' },
-  { 'logo': 'icon-lizhiyuanyin','font': '24px', 'color': '#FFE066', 'text': '离职申请', 'link': '#/doc/docCommonApp/LZS' },
+  { 'logo': 'icon-laodonggongshang', 'font': '28px', 'color': '#FF754F', 'text': '工伤申请', 'link': '#/doc/docCommonApp/GSS' },
+  { 'logo': 'icon-lizhiyuanyin', 'font': '24px', 'color': '#FFE066', 'text': '离职申请', 'link': '#/doc/docCommonApp/LZS' },
   { 'logo': 'icon-jinshengguanliline', 'color': '#9FD867', 'text': '晋升申请', 'link': '#/doc/docCommonApp/JJS' },
 ];
 const ticketData = [
-  { 'logo': 'icon-qiaquan','font': '28px', 'color': '#FF754F', 'text': '宾客优惠机票', 'link': '#/doc/docCommonApp/BKY' },
-  { 'logo': 'icon-jipiao1','font': '28px', 'color': '#FF5F88', 'text': '员工优惠机票', 'link': '#/doc/docCommonApp/YGY' }
+  { 'logo': 'icon-qiaquan', 'font': '28px', 'color': '#FF754F', 'text': '宾客优惠机票', 'link': '#/doc/docCommonApp/BKY' },
+  { 'logo': 'icon-jipiao1', 'font': '28px', 'color': '#FF5F88', 'text': '员工优惠机票', 'link': '#/doc/docCommonApp/YGY' }
 ];
 const flightData = [
-  { 'logo': 'icon-caigou','font': '28px', 'color': '#FF5F88', 'text': '航材/工具采购', 'link': '#/doc/docCommonApp/HCG' },
-  { 'logo': 'icon-xiaoshouchuku','font': '28px', 'color': '#9FD867', 'text': '价拨/售出', 'link': '#/doc/docCommonApp/JBC' },
-  { 'logo': 'icon-jiechu','font': '28px', 'color': '#A5A3FF', 'text': '租借/借出', 'link': '#/doc/docCommonApp/ZJJ' },
-  { 'logo': 'icon-xiuli','font': '28px', 'color': '#5BB5FC', 'text': '送修/索赔', 'link': '#/doc/docCommonApp/SXS' },
-  { 'logo': 'icon-jiaohuan','font': '28px', 'color': '#FF754F', 'text': '交换合同', 'link': '#/doc/docCommonApp/JHH' },
+  { 'logo': 'icon-caigou', 'font': '28px', 'color': '#FF5F88', 'text': '航材/工具采购申请', 'link': '#/doc/docCommonApp/HCG' },
+  { 'logo': 'icon-xiaoshouchuku', 'font': '28px', 'color': '#9FD867', 'text': '价拨/售出申请', 'link': '#/doc/docCommonApp/JBC' },
+  { 'logo': 'icon-jiechu', 'font': '28px', 'color': '#A5A3FF', 'text': '租借/借出申请', 'link': '#/doc/docCommonApp/ZJJ' },
+  { 'logo': 'icon-xiuli', 'font': '28px', 'color': '#5BB5FC', 'text': '送修/索赔申请', 'link': '#/doc/docCommonApp/SXS' },
+  { 'logo': 'icon-jiaohuan', 'font': '28px', 'color': '#FF754F', 'text': '交换合同申请', 'link': '#/doc/docCommonApp/JHH' },
 ];
 const commonData = [
-  { 'logo': 'icon-yusuan1','font': '28px', 'color': '#A5A3FF', 'text': '预算类通用申请', 'link': '#/doc/docCommonApp/YSL' },
-  { 'logo': 'icon-tongyong','font': '30px', 'color': '#FF5F88', 'text': '通用申请', 'link': '#/doc/docCommonApp/TYS' },
+  { 'logo': 'icon-yusuan1', 'font': '28px', 'color': '#A5A3FF', 'text': '预算类通用申请', 'link': '#/doc/docCommonApp/YSL' },
+  { 'logo': 'icon-tongyong', 'font': '30px', 'color': '#FF5F88', 'text': '通用申请', 'link': '#/doc/docCommonApp/TYS' },
 ];
 export default {
   data() {

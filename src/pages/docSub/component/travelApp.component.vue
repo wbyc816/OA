@@ -299,7 +299,7 @@ $main:#0460AE;
   .bookType {
     float: right;
     .el-radio-button__inner {
-      width: 140px;
+      width: 135px;
     }
     .el-radio-button {
       margin-right: 0;

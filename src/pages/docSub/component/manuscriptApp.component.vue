@@ -276,10 +276,10 @@ export default {
         }
       // }
 
-      const isLt10M = file.size / 1024 / 1024 < 10;
+      const isLt10M = file.size / 1024 / 1024 < 50;
 
       if (!isLt10M) {
-        this.$message.error('上传文件大小不能超过 10MB!');
+        this.$message.error('上传文件大小不能超过 50MB!');
       }
       return isJPG && isLt10M;
     },

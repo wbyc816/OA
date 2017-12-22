@@ -14,14 +14,14 @@
             </el-input>
           </div>
           <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
-            <el-table-column type="selection" width="55" :reserve-selection="true">
+            <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="filterSel">
             </el-table-column>
             <el-table-column prop="name" label="姓名" width="110"></el-table-column>
             <el-table-column prop="depts" label="部门" width="250"></el-table-column>
             <el-table-column prop="jobtitle" label="职务"></el-table-column>
             <el-table-column prop="moblieNumber" label="状态" width="80"></el-table-column>
           </el-table>
-          <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
+          <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @row-dblclick="dbclick" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
             <el-table-column prop="name" label="姓名" width="110"></el-table-column>
             <el-table-column prop="depts" label="部门" width="250"></el-table-column>
             <el-table-column prop="jobtitle" label="职务"></el-table-column>
@@ -185,6 +185,9 @@ export default {
     open() {
       // console.log(this.$refs.multipleTable);
     },
+    filterSel(row, index) {
+      return true
+    },
     handleCurrentChange(page) {
       if (this.searchRes.empVoList) {
         this.$store.dispatch('setQueryPage', page);
@@ -250,6 +253,28 @@ export default {
     rowKey(row) {
       return row.empId + row.deptId + row.jobtitle
     },
+    dbclick(row){
+
+      if (this.dialogType == 'radio') {
+
+        if (this.selfDisable) {
+          if (row.empId != this.userInfo.empId) {
+            this.selPerson = row;
+            this.submitPerson();
+          } else {
+            this.$message({
+              message: '收件人不能为本人！',
+              type: 'warning'
+            })
+          }
+        } else {
+          this.selPerson = row;
+          this.submitPerson();
+        }
+      } else {
+        this.$refs.multipleTable.toggleRowSelection(row);
+      }
+    },
     submitPerson() {
       if (this.dialogType == 'radio') {
         if (this.selPerson) {
@@ -285,6 +310,7 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      console.log(val)
     },
     reset1() {
       this.searchButton = false;

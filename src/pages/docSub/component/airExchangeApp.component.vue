@@ -2,6 +2,7 @@
   <div class="exchangeApp">
     <h4 class='doc-form_title'>合同信息</h4>
     <el-form label-position="left" :model="contractForm" :rules="contractRule" ref="contractForm" label-width="128px">
+      
       <el-form-item label="合同号" prop="contractNo" class="deptArea">
         <el-input v-model="contractForm.contractNo" :maxlength="20">
         </el-input>
@@ -196,7 +197,7 @@ export default {
         currencyId: '',
         earlyInquiryCompare: '',
         isAdvancePayment: '1',
-        advancePaymentPercent: ''
+        advancePaymentPercent: '',
       },
       contractRule: {
         priority: [{ required: true, message: '请选择优先级', trigger: 'blur' }],
@@ -227,7 +228,6 @@ export default {
       repairContractDoc: null,
       supplierInfo: '',
       budgetInfo: '',
-      contractCodeList: [],
       priorityList: [],
       budgetDeptList: [],
       pickerOptions0: {
@@ -255,7 +255,6 @@ export default {
     if (this.$route.query.id) {
       this.isDraft = true;
     }
-    this.getContractCodeList();
     this.getPriorityList();
     if (!this.isDraft) {
       this.getSupplier(); //收款供应商
@@ -364,18 +363,6 @@ export default {
         earlyInquiryCompare: this.contractForm.earlyInquiryCompare,
       }
       this.$emit('submitMiddle', { airmExchange: airmExchange, airmExchangeItems: this.budgetTable })
-    },
-    getContractCodeList() {
-      this.$http.post('/api/getDict', { dictCode: 'DOC21' })
-        .then(res => {
-          if (res.status == '0') {
-            this.contractCodeList = res.data;
-          } else {
-
-          }
-        }, res => {
-
-        })
     },
     getPriorityList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC16' })

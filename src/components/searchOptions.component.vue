@@ -4,55 +4,59 @@
     <el-card class="borderCard">
       <div slot="header" v-if="title">
         <span>{{title}}</span>
-        <!-- <i class="iconfont icon-shuaxin"></i> -->
+        <span class="detailButton" @click="showDetail=!showDetail" v-if="isCollapse">{{!showDetail?'高级搜索':'收起'}}</span>
       </div>
-      <el-row :gutter="10">
-        <el-col :span="6">
-          <el-select v-model="params.docImportType" placeholder="重要程度" clearable>
-            <el-option v-for="item in urgency" :label="item.dictName" :value="item.dictCode"></el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="6" v-if="!notype">
-          <el-cascader :clearable="true" :options="typeTree" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
-        </el-col>
-        <el-col :span="6" v-if="!noPerson">
-          <el-select v-model="params.taskUserId" filterable clearable remote placeholder="呈报人" :remote-method="remoteMethod" :loading="loading" style="width:100%">
-            <el-option v-for="item in personList" :key="item.empId" :label="item.name" :value="item.empId">
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="titleWidth">
-          <el-input placeholder="公文标题" v-model.trim="params.keyWords" @keyup.enter.native="submitParam" :maxlength="50"></el-input>
-        </el-col>
-        <el-col :span="6">
-          <el-input placeholder="公文编号" v-model="params.docNo" @keyup.enter.native="submitParam" :maxlength="25"></el-input>
-        </el-col>
-        <el-col :span="(hasOverTime||isPayStatus||hasArchive)?6:12">
-          <el-date-picker v-model="params.startTime" @change="dateChange" type="date" :editable="false" placeholder="选择呈报日期">
-          </el-date-picker>
-        </el-col>
-        <el-col :span="6" v-if="hasOverTime">
-          <el-select v-model="isOverTime" placeholder="是否超时" clearable>
-            <el-option label="全部" value="0"></el-option>
-            <el-option label="超时" value="1"></el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="6" v-if="isPayStatus">
-          <el-select v-model="isPay" placeholder="是否付款" clearable>
-            <el-option label="已付款" value="1"></el-option>
-            <el-option label="未付款" value="0"></el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="6" v-if="hasArchive">
-          <el-select v-model="isArchive" placeholder="归档是否通过" clearable>
-            <el-option label="归档通过" value="3"></el-option>
-            <el-option label="归档不通过" value="4"></el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="6">
-          <el-button class="searchButton" @click="submitParam">搜索</el-button>
-        </el-col>
-      </el-row>
+      <el-collapse-transition>
+        <div v-show="showDetail">
+          <el-row :gutter="10">
+            <el-col :span="6">
+              <el-select v-model="params.docImportType" placeholder="重要程度" clearable>
+                <el-option v-for="item in urgency" :label="item.dictName" :value="item.dictCode"></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="6" v-if="!notype">
+              <el-cascader :clearable="true" :options="typeTree" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
+            </el-col>
+            <el-col :span="6" v-if="!noPerson">
+              <el-select v-model="params.taskUserId" filterable clearable remote placeholder="呈报人" :remote-method="remoteMethod" :loading="loading" style="width:100%">
+                <el-option v-for="item in personList" :key="item.empId" :label="item.name" :value="item.empId">
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="titleWidth">
+              <el-input placeholder="公文标题" v-model.trim="params.keyWords" @keyup.enter.native="submitParam" :maxlength="50"></el-input>
+            </el-col>
+            <el-col :span="6">
+              <el-input placeholder="公文编号" v-model="params.docNo" @keyup.enter.native="submitParam" :maxlength="25"></el-input>
+            </el-col>
+            <el-col :span="(hasOverTime||isPayStatus||hasArchive)?6:12">
+              <el-date-picker v-model="params.startTime" @change="dateChange" type="date" :editable="false" placeholder="选择呈报日期">
+              </el-date-picker>
+            </el-col>
+            <el-col :span="6" v-if="hasOverTime">
+              <el-select v-model="isOverTime" placeholder="是否超时" clearable>
+                <el-option label="全部" value="0"></el-option>
+                <el-option label="超时" value="1"></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="6" v-if="isPayStatus">
+              <el-select v-model="isPay" placeholder="是否付款" clearable>
+                <el-option label="已付款" value="1"></el-option>
+                <el-option label="未付款" value="0"></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="6" v-if="hasArchive">
+              <el-select v-model="isArchive" placeholder="归档是否通过" clearable>
+                <el-option label="归档通过" value="3"></el-option>
+                <el-option label="归档不通过" value="4"></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="6">
+              <el-button class="searchButton" @click="submitParam">搜索</el-button>
+            </el-col>
+          </el-row>
+        </div>
+      </el-collapse-transition>
     </el-card>
   </div>
 </template>
@@ -64,15 +68,15 @@ export default {
     title: {
       type: String
     },
-    notype: {    //是否显示公文类型
+    notype: { //是否显示公文类型
       type: Boolean,
       default: false
     },
-    noPerson:{  //是否显示呈报人
+    noPerson: { //是否显示呈报人
       type: Boolean,
       default: false
     },
-    hasOverTime: {   //是否显示超时
+    hasOverTime: { //是否显示超时
       type: Boolean,
       default: false
     },
@@ -81,6 +85,10 @@ export default {
       default: false
     },
     hasArchive: {
+      type: Boolean,
+      default: false
+    },
+    isCollapse:{
       type: Boolean,
       default: false
     }
@@ -93,20 +101,21 @@ export default {
         "docNo": "",
         "docType": "",
         "startTime": "",
-        "taskUserId":""
+        "taskUserId": ""
       },
       isOverTime: "",
       isPay: "",
-      isArchive:"",
+      isArchive: "",
       docTypes: [],
       defaultProp: {
         label: 'dictName',
         value: 'dictCode',
         children: 'childDict'
       },
-      loading:false,
-      meTimeout:null,
-      personList:[]
+      loading: false,
+      meTimeout: null,
+      personList: [],
+      showDetail: false
     }
   },
   computed: {
@@ -119,13 +128,13 @@ export default {
         return false
       }
     },
-    titleWidth:function(){
-      var width=6;
-      if(this.notype){
-        width+=6;
+    titleWidth: function() {
+      var width = 6;
+      if (this.notype) {
+        width += 6;
       }
-      if(this.noPerson){
-        width+=6;
+      if (this.noPerson) {
+        width += 6;
       }
       return width
     },
@@ -138,6 +147,9 @@ export default {
     ])
   },
   created() {
+    if(!this.isCollapse){
+      this.showDetail=true;
+    }
     if (this.$route.params.isOverTime) {
       this.isOverTime = '1';
     }
@@ -164,8 +176,8 @@ export default {
       if (this.isPayStatus) {
         this.params.isPay = this.isPay;
       }
-      if(this.hasArchive){
-        this.params.isAgree=this.isArchive;
+      if (this.hasArchive) {
+        this.params.isAgree = this.isArchive;
       }
       this.$emit('search', this.params)
     },
@@ -198,6 +210,11 @@ $sub:#1465C0;
 .searchOptions {
   .el-card {
     padding-bottom: 10px;
+    .detailButton {
+      float: right;
+      color: $main;
+      cursor: pointer;
+    }
   }
   .el-card__body {
     .el-col {

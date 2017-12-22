@@ -46,6 +46,10 @@
               <span class="infoTittle">邮箱</span>
               <p class="infoText">{{empDetial.workEmail}}</p>
             </div>
+            <div class="infoItem">
+              <span class="infoTittle">我的上级</span>
+              <p class="infoText">{{empDetial.subordinateName}}</p>
+            </div>
           </el-col>
         </el-row>
         <el-row :gutter="20" class="contactDetail">

@@ -7,7 +7,7 @@
         <span class="userName">{{task.taskUserName}}</span>
         <span class="taskContent">
         {{task.taskContent}}
-        <p class="taskFile" v-for="item in task.taskFiles"><a :href="item.filePath">{{item.fileNameNew}}</a></p>
+        <p class="taskFile" v-for="item in task.taskFiles"><a :href="item.filePath" target="_blank">{{item.fileNameNew}}</a></p>
       </span>
         <span class="taskTime">{{task.startTime}}</span>
       </li>
@@ -118,6 +118,10 @@ $main:#0460AE;
         span:nth-child(#{$num}) {
           width: $width;
         }
+      }
+      .taskContent{
+        padding: 5px 0;
+        line-height:18px;
       }
       .isAgree {
         i {

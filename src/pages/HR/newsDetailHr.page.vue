@@ -11,13 +11,13 @@
           </el-col>
           <el-col :span='5' class="downBox">
             <p>下载</p>
-            <a :href="detail.fileUrlNew" class="link">{{detail.fileNameOld}}</a>
+            <a :href="detail.fileUrlOld" class="link" target="_blank">{{detail.fileNameOld}}</a>
           </el-col>
         </el-row>
       </div>
       <div class="pdfScrollBox" ref="pdfScroll" v-loading="loading" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}">
         <pdf :src="detail.fileUrlNew" v-if="detail.fileUrlNew" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
-        <pdf :src="detail.fileUrlNew" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf>
+        <!-- <pdf :src="detail.fileUrlNew" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf> -->
       </div>
       <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
       </el-pagination>
@@ -28,8 +28,8 @@
 import { mapGetters } from 'vuex'
 import SidePersonSearch from '../../components/sidePersonSearch.component'
 import Duty from '../../components/duty.component'
-import pdf from 'vue-pdf'
-
+// import pdf from 'vue-pdf'
+import pdf from '../../components/pdf.component'
 export default {
   components: { SidePersonSearch, Duty, pdf },
   data() {
@@ -73,7 +73,7 @@ export default {
     },
     pageLoad(num) {
       this.loading = false;
-      this.pdfHeight = this.$refs.pdfPage.$el.clientHeight;
+      this.pdfHeight = this.$refs.pdfPage.$refs.page1[0].clientHeight;
     },
     pdfError(obj) {
       this.loading = false;

@@ -92,7 +92,7 @@ export default {
       },
       selFile: '',
       formLabelWidth: '210px',
-      fileLink:[],
+      fileLink:[{dictCode:'FIL03',dictName:'所有'}],
       searchTitle:''
     }
   },
@@ -136,7 +136,7 @@ export default {
       this.$http.post('/api/getDict',{dictCode:'FIL03'}).
       then(res=>{
         if(res.status==0){
-          this.fileLink=res.data;
+          this.fileLink=this.fileLink.concat(res.data);
           this.selFile=this.fileLink[0].dictCode;
         }else{
 

@@ -77,7 +77,7 @@
       </el-col>
       <el-col :span="12">
         <h1 class="title">银行账号</h1>
-        <p v-if="info" class="textContent">{{info[0].supplierBankAccoutCode}}</p>
+        <p v-if="info" class="textContent">{{info[0].supplierBankAccountCode}}</p>
       </el-col>
       <el-col :span="12" class="rightBorder">
         <h1 class="title">订货周期</h1>

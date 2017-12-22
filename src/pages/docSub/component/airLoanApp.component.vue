@@ -155,7 +155,7 @@
                 <div class="width50">
                   <div>
                     <span>执行比例</span>
-                    <p>{{props.row.executeRate}}</p>
+                    <p>{{props.row.excutionRatio}}</p>
                   </div>
                   <div>
                     <span>合同数量</span>
@@ -647,11 +647,6 @@ $sub:#1465C0;
     float: right;
     color: #9a9a9a;
     line-height: 45px;
-  }
-  .budgetTable {
-    .el-table__body-wrapper {
-      overflow-x: auto;
-    }
   }
   .el-radio-button__inner {
     padding: 0;

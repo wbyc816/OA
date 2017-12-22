@@ -147,6 +147,7 @@
           <el-menu>
             <el-menu-item index="1" @click.native="goToOthers('/HR/newsListHr/FIL0302')"><i class="iconfont icon-hr"></i>HR政策<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="2" @click.native="goToOthers('/HR/newsListHr/FIL0304')"><i class="iconfont icon-shouce"></i>使用手册<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="9" @click.native="goToOthers('/HR/newsListHr/FIL0306')"><i class="iconfont icon-xiazai1"></i>各类模板下载<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="3" @click.native="goToOthers('/PresidentMailbox')"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')" v-if="userInfo.isDocsec&&userInfo.isDocsec[0]==1"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
@@ -207,7 +208,7 @@ var msgs = [
 ];
 
 const otherLinks = [
-  { "icon": "xiazai1", "text": "各类模板下载", "link": "/templateDownload" },
+  // { "icon": "xiazai1", "text": "各类模板下载", "link": "/templateDownload" },
   { "icon": "changyong", "text": "常用办公软件", "link": "/softDownload" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },

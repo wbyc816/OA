@@ -12,13 +12,13 @@
               <el-button slot="append" @click="search" :maxlength="20">搜索</el-button>
             </el-input>
           </div>
-          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'">
+          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'"  v-if="searchRes">
             <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="filterSel">
             </el-table-column>
             <el-table-column prop="name" label="部门"></el-table-column>
             <el-table-column prop="companyName" label="所属公司"></el-table-column>
           </el-table>
-          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'">
+          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" :height="430" @selection-change="handleSelectionChange" v-show="dialogType!='multi'" v-if="searchRes">
             <el-table-column prop="name" label="部门"></el-table-column>
             <el-table-column prop="companyName" label="所属公司"></el-table-column>
           </el-table>
@@ -60,7 +60,7 @@ export default {
         pageNumber: 1,
         pageSize: 10
       },
-      searchRes: '',
+      searchRes:'',
       initData: true,
       depVisible: false,
       initDep: [],
@@ -84,7 +84,10 @@ export default {
       default: false
     },
     disableDep: {
-      type: [Array]
+      type: [Array],
+      default: function () {
+        return []
+      }
     }
   },
   watch: {

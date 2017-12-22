@@ -58,15 +58,6 @@
         </el-row>
       </el-col>
       <el-col :span='7' class="sideNav">
-        <el-card class="filebox_second">
-          <el-menu>
-            <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">
-             
-              <span class="title">{{fileType[0]}}</span>
-              <span class="num">{{fileType[2]}}</span>
-            </el-menu-item>
-          </el-menu>
-        </el-card>
         <el-card class="highSearch">
           <span class="title_label">标题</span>
           <el-input class="" placeholder="" v-model.trim="params.docTitle" @keyup.enter.native="click_Search">
@@ -78,6 +69,16 @@
           </div>
           <el-button type="primary" class="click_Search" @click="click_Search">搜索</el-button>
         </el-card>
+        <el-card class="filebox_second">
+          <el-menu>
+            <el-menu-item v-for="fileType in fileTypes" index="1" @click="search_type(fileType)">
+             
+              <span class="title">{{fileType[0]}}</span>
+              <span class="num">{{fileType[2]}}</span>
+            </el-menu-item>
+          </el-menu>
+        </el-card>
+        
       </el-col>
     </el-row>
   </div>
