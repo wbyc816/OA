@@ -475,7 +475,7 @@ export default {
          var infor= res.focVos;
          var avroil=infor[0].avrOil;
 
-              this.searchLoading = true;
+              // this.searchLoading = true;
               let paramPeoples = Object.assign(this.params);
               paramPeoples.leftPersonName=document.getElementById("getTipTwo").innerHTML.split(",")[0];
               paramPeoples.rightPersonName=document.getElementById("getTipTwo").innerHTML.split(",")[1];
@@ -533,7 +533,7 @@ export default {
       params.rightPersonName="";
       this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
-          this.searchLoading = false;
+          // this.searchLoading = false;
 
         }, 200)
         if (res.status == 0) {
@@ -547,7 +547,7 @@ export default {
               paramPersons.rightPersonName="";
               this.$http.post("/foc/getFocOil?pageNumber="+this.pageNumber+"&pageSize=10", paramPersons, { body: true }).then(res => {
               setTimeout(function() {
-                this.searchLoading = false;
+                // this.searchLoading = false;
 
               }, 200)
               if (res.status == 0) {
@@ -603,7 +603,7 @@ export default {
     },
     getData() {
       var that = this;
-     that.searchLoading = true;
+    //  that.searchLoading = true;
       var params = Object.assign(this.params);
       this.$http.post("/foc/getFocs?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
@@ -840,10 +840,10 @@ export default {
         //某航段某日期区间内日油耗chart统计
         this.$http.post("/foc/getFocOil", this.params, { body: true }).then(res => {//
         setTimeout(function() {
-          this.searchLoading = false;
+          // this.searchLoading = false;
         }, 200)
         if (res.status == 0) {
-           this.searchLoading = false;
+          //  this.searchLoading = false;
           this.optionFour.series[0].data=[];
           this.optionFour.series[1].data=[];
           this.optionFour.xAxis.categories=[];
