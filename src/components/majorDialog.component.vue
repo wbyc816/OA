@@ -284,16 +284,22 @@ export default {
       this.$emit('update:visible', false)
     },
     renderContent(h, { node, data, store }) {
-      return ( <span >
-        <span >
-        <span > { data.name } < /span> < /span > <span style = "float: right; margin-right: 20px" >
-        <el-button class = "depAdd"
-        type = "primary"
-        icon = "plus"
-        size = "mini"
-        on-click = {
-          () => this.addDep(store, data)
-        } > 添加 < /el-button> < /span > </span>);
+      if(data.name!='东海航空有限公司'){
+        return ( <span >
+          <span >
+          <span > { data.name } < /span> < /span > <span style = "float: right; margin-right: 20px" >
+          <el-button class = "depAdd"
+          type = "primary"
+          icon = "plus"
+          size = "mini"
+          on-click = {
+            () => this.addDep(store, data)
+          } > 添加 < /el-button> < /span > </span>);
+        }else{
+          return (<span >
+          <span >
+          <span > { data.name } < /span> < /span ></span>)
+        }
       }
     }
   }

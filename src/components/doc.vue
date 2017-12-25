@@ -94,9 +94,10 @@ export default {
         event.preventDefault();
         this.$message.info(this.disableText);
       } else {
-        if (!/^http/.test(this.data.link)) {
-          this.$router.push(this.data.link);
-        }
+        // if (!/^http/.test(this.data.link)) {
+        //   console.log(this.data.link)
+        //   this.$router.push(this.data.link);
+        // }
       }
     }
   }

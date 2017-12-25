@@ -35,7 +35,7 @@
         </el-radio-group>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="personAdmin" :deptId="taskUser.deptParentId" :hasSecretary="otherAdviceDoc.find(d=>d==$route.params.code)!=undefined&&isAdmin"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="personAdmin" :deptId="taskUser.deptParentId" :hasSecretary="otherAdviceDoc.find(d=>d==$route.params.code)!=undefined&&isAdmin&&userInfo.isTaskUser != 1"></person-dialog>
   </div>
 </template>
 <script>
@@ -88,20 +88,24 @@ export default {
       taskUserList: [],
       draftFirst: false,
       otherAdviceDoc,
-      isAdmin:false
+      isAdmin: false
     }
   },
   computed: {
     personAdmin: function() {
       var temp = '';
       if (otherAdviceDoc.find(d => d == this.$route.params.code)) {
-        temp = '0'
+        if (this.userInfo.isTaskUser == 1) {
+          temp = '1'
+        } else {
+          temp = '0'
+        }
       } else if (this.$route.params.code == 'LZS') {
         temp = '0'
-      }else if(this.isAdmin){
-        temp='1';
-      }else{
-        temp='0';
+      } else if (this.isAdmin) {
+        temp = '1';
+      } else {
+        temp = '0';
       }
       return temp
     },
@@ -278,11 +282,11 @@ export default {
         })
     },
     getIsAdmin() {
-      this.$http.post('doc/isAdmin', { empId: this.userInfo.empId,docTypeCode:this.$route.params.code })
+      this.$http.post('doc/isAdmin', { empId: this.userInfo.empId, docTypeCode: this.$route.params.code })
         .then(res => {
           if (res.status == '0') {
-            if(res.data==1){
-              this.isAdmin=true;
+            if (res.data == 1) {
+              this.isAdmin = true;
             }
           } else {
 
