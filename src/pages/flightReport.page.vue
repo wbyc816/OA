@@ -73,8 +73,8 @@
         </el-table-column>
         <!-- <el-table-column prop="distance" label="距离" >
         </el-table-column> -->
-        <el-table-column prop="takeoffWeight" label="飞行高度" width="90">
-        </el-table-column>
+        <!-- <el-table-column prop="takeoffWeight" label="飞行高度" width="90">
+        </el-table-column> -->
 
         </el-table>
  
@@ -488,7 +488,8 @@ export default {
                 if (res.status == 0) {
                 var infora= res.focVos;
                 console.log(infora)
-                this.tip=" 左座:"+document.getElementById("getTipTwo").innerHTML.split(",")[0]+" 右座:"+document.getElementById("getTipTwo").innerHTML.split(",")[1]+" 航班号:"+infora[0].flightNo+" 日期："+infora[0].flyDate+" 油耗"+document.getElementById("getTipTwo").innerHTML.split(",")[2]+" 平均油耗"+avroil;
+                this.tip=" 左座:"+document.getElementById("getTipTwo").innerHTML.split(",")[0]+" 右座:"+document.getElementById("getTipTwo").innerHTML.split(",")[1]+" 航班号:"+infora[0].flightNo+" 日期："+infora[0].flyDate;
+                //+" 油耗"+document.getElementById("getTipTwo").innerHTML.split(",")[2]+" 平均油耗"+avroil
                   this.$notify({
                     title: '机组详细信息',
                     message: this.tip,
@@ -538,7 +539,8 @@ export default {
         }, 200)
         if (res.status == 0) {
          var infor= res.focVos;
-         var tips=" 日期："+document.getElementById("getTipThree").innerHTML.split(",")[0]+" 油耗"+ document.getElementById("getTipThree").innerHTML.split(",")[1]+" 平均油耗"+infor[0].avrOil;
+         var tips=" 日期："+document.getElementById("getTipThree").innerHTML.split(",")[0];
+         //+" 油耗"+ document.getElementById("getTipThree").innerHTML.split(",")[1]+" 平均油耗"+infor[0].avrOil
            
               let paramPersons = Object.assign(this.params);
               paramPersons.beginTime= document.getElementById("getTipThree").innerHTML.split(",")[0];
@@ -603,7 +605,7 @@ export default {
     },
     getData() {
       var that = this;
-    //  that.searchLoading = true;
+     that.searchLoading = true;
       var params = Object.assign(this.params);
       this.$http.post("/foc/getFocs?pageNumber="+this.pageNumber+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
@@ -858,7 +860,6 @@ export default {
             this.optionFour.title.text=oilData[oilData.length-1].flyDate+"到"+oilData[0].flyDate+" "+this.params.departureAirport+"-"+this.params.arrivalAirport+" "+"耗油量折线图";
           }else{
             this.optionFour.title.text=oilData[oilData.length-1].flyDate+"到"+oilData[0].flyDate+" "+"耗油量折线图";
-
           }
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerOne, this.optionOne);
           this.chart = new Highcharts.Chart(this.$refs.highchartsContainerTwo, this.optionTwo);
