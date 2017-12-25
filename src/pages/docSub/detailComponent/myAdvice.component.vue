@@ -50,9 +50,9 @@
       </el-form-item>
       <el-form-item label="审批内容" prop="taskContent" class="textarea">
         <el-col :span='18'>
-          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="500">
-          </el-input>
-          <!-- <task-content v-model="ruleForm.taskContent"></task-content> -->
+          <!-- <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="500">
+          </el-input> -->
+          <task-content v-model="ruleForm.taskContent"></task-content>
         </el-col>
       </el-form-item>
       <el-form-item label="约定离职日期" class="textarea" prop="planDate" v-if="currentView=='LZS'&&docDetail.isDept==1">

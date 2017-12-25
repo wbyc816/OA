@@ -116,10 +116,12 @@ export default {
   },
   methods: {
     filterSel(row, index) {
-      if(row.id==='84F7E69969DEA92A925508F7C1F9579A'){   //市场销售部
-        return this.multipleSelection.find(d=>d.id=='FC3CF452D3DA8402BEBB765225CE8C0E')==undefined
-      }else if(row.id==='FC3CF452D3DA8402BEBB765225CE8C0E'){   //运力网络部
-        return this.multipleSelection.find(d=>d.id=='84F7E69969DEA92A925508F7C1F9579A')==undefined
+      if (this.$route.name === 'docDetail') {
+        if (row.id === '84F7E69969DEA92A925508F7C1F9579A') { //市场销售部
+          return this.multipleSelection.find(d => d.id == 'FC3CF452D3DA8402BEBB765225CE8C0E') == undefined
+        } else if (row.id === 'FC3CF452D3DA8402BEBB765225CE8C0E') { //运力网络部
+          return this.multipleSelection.find(d => d.id == '84F7E69969DEA92A925508F7C1F9579A') == undefined
+        }
       }
       if (this.disableDep.length != 0) {
         return this.disableDep.find(d => d.id == row.id) == undefined;
@@ -190,9 +192,11 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      var sindex=this.multipleSelection.find(d=>d.id=='FC3CF452D3DA8402BEBB765225CE8C0E');
-      var tindex=this.multipleSelection.find(d=>d.id=='84F7E69969DEA92A925508F7C1F9579A');
-      if(sindex&&tindex){
+      if (this.$route.name === 'docDetail') {
+        var sindex = this.multipleSelection.find(d => d.id == 'FC3CF452D3DA8402BEBB765225CE8C0E');
+        var tindex = this.multipleSelection.find(d => d.id == '84F7E69969DEA92A925508F7C1F9579A');
+      }
+      if (sindex && tindex) {
         this.$refs.multipleTable.toggleRowSelection(tindex)
       }
     },
