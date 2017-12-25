@@ -29,8 +29,8 @@
         </el-input>
       </el-form-item>
       <el-form-item label="正文" prop="wordFileId">
-        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :on-remove="handleRemove" :before-upload="beforeUpload" :file-list="files">
-          <el-button size="small" type="primary" :disabled="checkInForm.wordFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
+        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :on-remove="handleRemove" :before-upload="beforeUpload" :file-list="files" :on-progress="handleProgress">
+          <el-button size="small" type="primary" :disabled="checkInForm.wordFileId!=''||disabledUpload" v-show="!isIE()||(checkInForm.wordFileId==''&&!disabledUpload)">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -49,7 +49,7 @@ export default {
         catalogueName: [],
         wordFileId: '',
         receiveCompany:'',
-        receiveTime:''
+        receiveTime:new Date()
       },
       types: [],
       sendTypes: [],
@@ -71,6 +71,7 @@ export default {
       },
       sucessFlag: 0,
       noMore: false,
+      disabledUpload:false,
       files:[]
     }
   },
@@ -103,11 +104,16 @@ export default {
       this.files=fileList
     },
     beforeUpload(file) {
-      const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
+      var isJPG;
       const isLt10M = file.size / 1024 / 1024 < 10;
-
+      if (file.type) {
+          isJPG = file.type === 'application/pdf';
+        } else {
+          var regExp = new RegExp("\.pdf$", "i");
+          isJPG = regExp.test(file.name);
+        }
       if (!isJPG) {
-        this.$message.error('上传文件只能是 JPG或PDF 格式!');
+        this.$message.error('上传文件只能是 PDF 格式!');
       }
       if (!isLt10M) {
         this.$message.error('上传文件大小不能超过 10MB!');
@@ -186,6 +192,14 @@ export default {
             console.log('获取发文目录失败')
           }
         })
+    },
+    handleProgress(event, file, fileList){
+      this.disabledUpload=true;
+      if(event.percent==100){
+        setTimeout(()=>{
+          this.disabledUpload=false;
+        },2000)        
+      }
     }
   }
 }

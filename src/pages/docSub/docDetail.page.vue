@@ -95,8 +95,8 @@
           <p class="fwNo">{{docDetialInfo.doc.fwNo}}</p>
         </el-form-item>
         <el-form-item label="发布正文" prop="taskFileId" v-if="isRedFile&&archiveState==1" :rules="[{ required: true, message: '请上传正文！' }]">
-          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" :file-list="taskFile" ref="myUpload" :before-upload="beforeUploadFWG" :on-remove="handleRemove">
-            <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''">上传发布正文<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" :file-list="taskFile" ref="myUpload" :before-upload="beforeUploadFWG" :on-remove="handleRemove" :on-progress="handleProgress" :disabled="fileForm.taskFileId!=''||disabledUpload">
+            <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''||disabledUpload" v-show="!isIE()||(fileForm.taskFileId==''&&!disabledUpload)">上传发布正文<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
         </el-form-item>
         <el-form-item label="发布范围" class='reciverWrap' prop="fileSend" v-if="isRedFile&&archiveState==1">
@@ -114,8 +114,8 @@
           <el-button class="addButton" @click="showArchive"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="上传附件" prop="fileIds" v-if="isInArray(addFileDoc,$route.query.code)">
-          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.query.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
-            <el-button size="small" type="primary" :disabled="fileForm.fileIds.length>4">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.query.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove" :on-progress="handleProgress" :disabled="fileForm.fileIds.length>4||disabledUpload">
+            <el-button size="small" type="primary" :disabled="fileForm.fileIds.length>4||disabledUpload"  v-show="!isIE()||(fileForm.fileIds.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
           <p class="uploadInfo">最多上传5个附件</p>
         </el-form-item>
@@ -287,7 +287,9 @@ export default {
       fileSendVisible: false,
       sendTypes: [],
       addFileDoc,
-      taskFile: []
+      taskFile: [],
+      disabledUpload:false,
+
     }
   },
   created() {
@@ -324,13 +326,7 @@ export default {
     showdArchiveButton() {
       var isShow = false;
       if (this.docDetialInfo.doc != {} && this.docDetialInfo.doc.isFied == 1) {
-        if (this.currentView == 'FWG') {
-          if(this.docDetialInfo.doc.isConfidential==1&&(this.docDetialInfo.otherInfo[0].classify1==='会议纪要'||this.docDetialInfo.otherInfo[0].classify1==='公司发文')){
-            isShow=true;
-          }
-        } else {
           isShow = true;
-        }
       }
 
       return isShow
@@ -693,7 +689,14 @@ export default {
         this.fileForm.fileIds = fileList;
       }
     },
-
+    handleProgress(event, file, fileList){
+      this.disabledUpload=true;
+      if(event.percent==100){
+        setTimeout(()=>{
+          this.disabledUpload=false;
+        },2000)        
+      }
+    }
   }
 }
 

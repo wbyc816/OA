@@ -77,8 +77,8 @@
         </el-table-column>
       </el-table>
       <el-form-item label="正文" prop="docFileId">
-        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove" :file-list="files">
-          <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
+        <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove" :file-list="files" :on-progress="handleProgress">
+          <el-button size="small" type="primary" :disabled="manuscriptForm.docFileId!=''||disabledUpload" v-show="!isIE()||(manuscriptForm.docFileId==''&&!disabledUpload)">上传正文<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -190,6 +190,7 @@ export default {
       },
       fileRedData: [],
       files: [],
+      disabledUpload:false,
       isDrafFirst: false
     }
   },
@@ -277,11 +278,14 @@ export default {
       // }
 
       const isLt10M = file.size / 1024 / 1024 < 50;
-
+      var noUpload=true;
+      if(this.manuscriptForm.docFileId){
+        noUpload=false
+      }
       if (!isLt10M) {
         this.$message.error('上传文件大小不能超过 50MB!');
       }
-      return isJPG && isLt10M;
+      return isJPG && isLt10M&&noUpload;
     },
     handleRemove() {
       this.manuscriptForm.docFileId = '';
@@ -449,6 +453,14 @@ export default {
 
           }
         })
+    },
+    handleProgress(event, file, fileList){
+      this.disabledUpload=true;
+      if(event.percent==100){
+        setTimeout(()=>{
+          this.disabledUpload=false;
+        },2000)        
+      }
     }
   }
 }
