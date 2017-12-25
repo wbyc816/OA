@@ -12,12 +12,14 @@ Vue.prototype.setCookie = setCookie
 Vue.prototype.delCookie = delCookie
 Vue.prototype.showDowload = showDowload
 Vue.prototype.isInArray = isInArray
+Vue.prototype.isIE = isIE
 
 
-function showDowload(docName){
-  const docArr=['CPD','BXS','JKS','RSB','PXS','CLB','CLV','FKS','YFK','FWG','HTS','JHH','SXS','ZJJ','JBC','HCG']  //显示导出PDF的公文列表
-  return docArr.find(d=>d==docName)!=undefined
+function showDowload(docName) {
+  const docArr = ['CPD', 'BXS', 'JKS', 'RSB', 'PXS', 'CLB', 'CLV', 'FKS', 'YFK', 'FWG', 'HTS', 'JHH', 'SXS', 'ZJJ', 'JBC', 'HCG'] //显示导出PDF的公文列表
+  return docArr.find(d => d == docName) != undefined
 }
+
 function getCookie(c_name) {
   if (document.cookie.length > 0) {
     var c_start = document.cookie.indexOf(c_name + "=")
@@ -37,6 +39,7 @@ function setCookie(c_name, value, expiredays) {
   document.cookie = c_name + "=" + escape(value) + ";path=/" +
     ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString() + "")
 }
+
 function delCookie(c_name) {
   console.log(c_name);
   var exp = new Date();
@@ -112,12 +115,12 @@ function preventEmpty(data, param = '空') {
 }
 
 function loginOut() {
-  var baseUrl=''
+  var baseUrl = ''
   if (process.env.NODE_ENV == 'development') { //开发环境
-      baseUrl = urlConfig.devUrl
-    } else {
-      baseUrl = urlConfig.loginUrl
-    }
+    baseUrl = urlConfig.devUrl
+  } else {
+    baseUrl = urlConfig.loginUrl
+  }
   var a = document.createElement('a');
   a.setAttribute('href', baseUrl + "/login.html");
   // a.setAttribute('target', '_self');
@@ -128,7 +131,21 @@ function loginOut() {
   a.click();
 }
 
-function isInArray(arr,child){
-  return arr.find(c=>c==child)!=undefined
+function isInArray(arr, child) {
+  return arr.find(c => c == child) != undefined
 }
-export default { combineObj, formatTime, preventEmpty,loginOut,getCookie,delCookie,setCookie }
+
+function isIE() {
+  if ((navigator.userAgent.indexOf('MSIE') >= 0) &&
+    (navigator.userAgent.indexOf('Opera') < 0)) {
+    console.log(111)
+    return true;
+  }else if(navigator.userAgent.indexOf('Trident') > -1 && navigator.userAgent.indexOf("rv:11.0") > -1){
+    console.log(111)
+    return true;
+  }
+  else{
+    return false;
+  } //判断是否IE浏览器
+}
+export default { combineObj, formatTime, preventEmpty, loginOut, getCookie, delCookie, setCookie }

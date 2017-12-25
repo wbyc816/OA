@@ -177,13 +177,12 @@ export default {
       for (var i = 0; i < this.processData.length; i++) {
         var h = 0;
         if (i != this.processData.length - 1) {
-          h = this.$refs.task[i].clientHeight / 2 + this.$refs.task[i + 1].clientHeight / 2;
+          h = this.$refs.task[i].offsetHeight / 2 + this.$refs.task[i + 1].offsetHeight / 2;
         } else {
           h = 28;
         }
         this.stepHeight.push(h)
       }
-      console.log(this.stepHeight)
     },
     getPower() {
       if (this.staticsPower === '') {

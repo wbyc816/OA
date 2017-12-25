@@ -107,6 +107,7 @@ $main:#0460AE;
     }
     .personAdvice {
       display: table;
+      width:100%;
       span {
         display: table-cell;
         vertical-align: middle;

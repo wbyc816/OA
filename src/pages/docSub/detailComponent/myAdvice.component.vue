@@ -50,7 +50,9 @@
       </el-form-item>
       <el-form-item label="审批内容" prop="taskContent" class="textarea">
         <el-col :span='18'>
-          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="500"></el-input>
+          <!-- <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="500">
+          </el-input> -->
+          <task-content v-model="ruleForm.taskContent"></task-content>
         </el-col>
       </el-form-item>
       <el-form-item label="约定离职日期" class="textarea" prop="planDate" v-if="currentView=='LZS'&&docDetail.isDept==1">
@@ -76,6 +78,7 @@
 import { mapGetters } from 'vuex'
 import PersonDialog from '../../../components/personDialog.component'
 import DepDialog from '../../../components/depDialog.component'
+import TaskContent from '../../../components/taskContent.component'
 
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -117,7 +120,8 @@ const secretaryDoc = ['FWG', 'HTS', 'SWD', 'CPD']
 export default {
   components: {
     PersonDialog,
-    DepDialog
+    DepDialog,
+    TaskContent
   },
   props: {
     docDetail: {
@@ -211,7 +215,7 @@ export default {
       if (this.ruleForm.state != 6) { //非承办部门办理
         if (this.docDetail && this.otherInfo && this.$route.query.code == 'FWG') { //只针对发文稿纸
           var typeName = this.otherInfo[0].classify1;
-          if ((typeName === '公司发文' || typeName === '会议纪要') && (this.docDetail.taskDeptMajorId == initFWGDeps[0].id || this.docDetail.taskDeptId == initFWGDeps[0].id)) {
+          if (typeName === '公司发文' || typeName === '会议纪要') {
 
             dep = initFWGDeps;
 
@@ -243,12 +247,12 @@ export default {
       if (!this.secretaryInfo) {
         var roleUserState = 0; // 机要秘书
         var typeName;
-        if (this.$route.query.code=='FWG') {
+        if (this.$route.query.code == 'FWG') {
           typeName = this.otherInfo[0].classify1;
         }
         //发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 添加默认部门
         if ((typeName === '公司发文' || typeName === '会议纪要') && this.userInfo.deptId != initFWGDeps[0].id && this.userInfo.deptParentId != initFWGDeps[0].id) {
-          roleUserState = 1;  // 综合管理部
+          roleUserState = 1; // 综合管理部
         }
         this.$http.post('doc/getSecInfo', { roleUserState: roleUserState })
           .then(res => {
@@ -272,6 +276,7 @@ export default {
           this.ruleForm.sign = [];
           this.ruleForm.sign.push(person);
           this.chooseDisable = true;
+          console.log(this.chooseDisable)
         }
       } else {
         this.$http.post('/doc/getSecUserName', { docId: this.$route.params.id })
@@ -380,24 +385,15 @@ export default {
     signTypeChange(val) {
       this.ruleForm.sign = [];
       this.signDeps = [];
-      if (val == 1 && this.ruleForm.state != 6) {
-
-        //特定公文类型 发文稿纸、合同申请  呈报人所在部门不在特殊范围 自动添加默认部门
-        if (this.$route.query.code == 'FWG') {
-          var typeName = this.otherInfo[0].classify1;
-
-          //发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 添加默认部门
-          if ((typeName === '公司发文' || typeName === '会议纪要') && this.docDetail.taskDeptMajorId != initFWGDeps[0].id && this.docDetail.taskDeptId != initFWGDeps[0].id) {
-            this.updateSignDep(initFWGDeps);
-          }
-
-        } else if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {
+      this.chooseDisable = false;
+      if (val == 1 && this.ruleForm.state != 6) {  //部门会签
+        if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {
           this.updateSignDep(initHTSDeps);
         }
       } else if (val == 0) {
-        this.getAdminReci();
+        this.adviceChange(this.ruleForm.state);
       }
-      this.chooseDisable = false;
+      
       this.$refs.ruleForm.validateField('sign');
     },
     ableDepClose(val) {
@@ -598,6 +594,7 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
+$sub:#1465C0;
 .myAdvice {
   .exportButton {
     float: right;
@@ -661,6 +658,7 @@ $main:#0460AE;
     border-radius: 3px;
     float: right;
   }
+  
 }
 
 </style>

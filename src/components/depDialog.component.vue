@@ -12,7 +12,7 @@
               <el-button slot="append" @click="search" :maxlength="20">搜索</el-button>
             </el-input>
           </div>
-          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'"  v-if="searchRes">
+          <el-table :data="searchRes.records" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable' v-show="dialogType=='multi'" v-if="searchRes">
             <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="filterSel">
             </el-table-column>
             <el-table-column prop="name" label="部门"></el-table-column>
@@ -60,7 +60,7 @@ export default {
         pageNumber: 1,
         pageSize: 10
       },
-      searchRes:'',
+      searchRes: '',
       initData: true,
       depVisible: false,
       initDep: [],
@@ -85,7 +85,7 @@ export default {
     },
     disableDep: {
       type: [Array],
-      default: function () {
+      default: function() {
         return []
       }
     }
@@ -116,8 +116,15 @@ export default {
   },
   methods: {
     filterSel(row, index) {
+      if (this.$route.name === 'docDetail') {
+        if (row.id === '84F7E69969DEA92A925508F7C1F9579A') { //市场销售部
+          return this.multipleSelection.find(d => d.id == 'FC3CF452D3DA8402BEBB765225CE8C0E') == undefined
+        } else if (row.id === 'FC3CF452D3DA8402BEBB765225CE8C0E') { //运力网络部
+          return this.multipleSelection.find(d => d.id == '84F7E69969DEA92A925508F7C1F9579A') == undefined
+        }
+      }
       if (this.disableDep.length != 0) {
-        return this.disableDep.find(d => d.id == row.id)==undefined;
+        return this.disableDep.find(d => d.id == row.id) == undefined;
       } else {
         return this.initDep.find(d => d.id == row.id) == undefined;
       }
@@ -185,6 +192,13 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      if (this.$route.name === 'docDetail') {
+        var sindex = this.multipleSelection.find(d => d.id == 'FC3CF452D3DA8402BEBB765225CE8C0E');
+        var tindex = this.multipleSelection.find(d => d.id == '84F7E69969DEA92A925508F7C1F9579A');
+      }
+      if (sindex && tindex) {
+        this.$refs.multipleTable.toggleRowSelection(tindex)
+      }
     },
     reset1() {
       this.searchButton = false;
@@ -194,18 +208,20 @@ export default {
       this.$http.post('/dept/selectDeptOrgByName', this.params)
         .then(res => {
           if (res.status == 0) {
-            this.searchRes = res.data
-            if (this.$refs.multipleTable) {
-              if (this.dialogType == 'multi' && this.initData) {
-                this.initData = false;
-                this.$refs.multipleTable.store.states.selection = this.clone(this.data);
-                this.multipleSelection = this.clone(this.data);
-                if (this.isSaveInit && this.isFirst) {
-                  this.isFirst = false;
-                  this.initDep = this.clone(this.data);
+            this.searchRes = res.data;
+            this.$nextTick(() => {
+              if (this.$refs.multipleTable) {
+                if (this.dialogType == 'multi' && this.initData) {
+                  this.initData = false;
+                  this.$refs.multipleTable.store.states.selection = this.clone(this.data);
+                  this.multipleSelection = this.clone(this.data);
+                  if (this.isSaveInit && this.isFirst) {
+                    this.isFirst = false;
+                    this.initDep = this.clone(this.data);
+                  }
                 }
               }
-            }
+            })
           }
         }, res => {
 

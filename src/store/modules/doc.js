@@ -57,10 +57,10 @@ const actions = {
           commit(types.GET_DOC_TIPS, res)
         }
       }, res => {
-        Notification({
-          message: '获取密级程度信息失败！',
-          type: 'error'
-        });
+        // Notification({
+        //   message: '获取密级程度信息失败！',
+        //   type: 'error'
+        // });
       })
   },
   //重置
@@ -167,10 +167,10 @@ const actions = {
           commit(types.GET_DEPT_LIST, res, { root: true })
         }
       }, res => {
-        Notification({
-          message: '获取密级程度信息失败！',
-          type: 'error'
-        });
+        // Notification({
+        //   message: '获取密级程度信息失败！',
+        //   type: 'error'
+        // });
       })
   },
   //获取额外公文
@@ -186,10 +186,10 @@ const actions = {
           // });
         }
       }, res => {
-        Notification({
-          message: '获取附加公文失败！',
-          type: 'error'
-        });
+        // Notification({
+        //   message: '获取附加公文失败！',
+        //   type: 'error'
+        // });
       })
   },
   //提交公文

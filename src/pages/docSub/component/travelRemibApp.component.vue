@@ -240,7 +240,7 @@
           <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
         </el-form-item>
         <el-form-item label="收款账户" prop="bankAccount" class="arrArea" label-width="100px" style="width:49%">
-          <money-input v-model="paymentForm.bankAccount" :maxlength="50" :prepend="false" :append="false" type="int0"></money-input>
+          <money-input v-model="paymentForm.bankAccount" :maxlength="50" :prepend="false" :append="false" type="bankCode"></money-input>
         </el-form-item>
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">

@@ -35,7 +35,7 @@
         </el-radio-group>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="personAdmin" :hasSecretary="otherAdviceDoc.find(d=>d==$route.params.code)!=undefined&&isAdmin"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="personAdmin" :deptId="taskUser.deptParentId" :hasSecretary="otherAdviceDoc.find(d=>d==$route.params.code)!=undefined&&isAdmin"></person-dialog>
   </div>
 </template>
 <script>

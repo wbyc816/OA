@@ -174,19 +174,19 @@
             <h4 class='doc-form_title clearBoth'>证件信息</h4>
             <template v-if="appForm.classifyCompanyCode!='ADM1208'">
               <el-form-item label="营业执照" prop="supplierLicense">
-                <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'LicenseCard'}" :file-list="licenseList" :on-success="licenseSuccess" :on-remove="licenseRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
-                  <el-button size="small" type="primary" :disabled="appForm.supplierLicense!=''">上传执照<i class="el-icon-upload el-icon--right"></i></el-button>
+                <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'LicenseCard'}" :file-list="licenseList" :on-success="licenseSuccess" :on-remove="licenseRemove" :before-upload="beforeUpload" :on-preview="previewUpload" :on-progress="handleProgress">
+                  <el-button size="small" type="primary" :disabled="appForm.supplierLicense!=''||disabledUpload"  v-show="!isIE()||(appForm.supplierLicense==''&&!disabledUpload)">上传执照<i class="el-icon-upload el-icon--right"></i></el-button>
                 </el-upload>
               </el-form-item>
               <el-form-item label="开户许可证" prop="accountLicense">
-                <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'AccountPermit'}" :file-list="permitsList" :on-success="permitsSuccess" :on-remove="permitsRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
-                  <el-button size="small" type="primary" :disabled="appForm.accountLicense!=''">上传许可证<i class="el-icon-upload el-icon--right"></i></el-button>
+                <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'AccountPermit'}" :file-list="permitsList" :on-success="permitsSuccess" :on-remove="permitsRemove" :before-upload="beforeUpload" :on-preview="previewUpload" :on-progress="handleProgress">
+                  <el-button size="small" type="primary" :disabled="appForm.accountLicense!=''||disabledUpload" v-show="!isIE()||(appForm.accountLicense==''&&!disabledUpload)">上传许可证<i class="el-icon-upload el-icon--right"></i></el-button>
                 </el-upload>
               </el-form-item>
             </template>
             <el-form-item label="身份证" prop="contactIdcards" v-else>
-              <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'Idcard'}" :on-success="IdcardSuccess" :file-list="IdcardsList" :on-remove="IdcardRemove" :before-upload="beforeUpload" :on-preview="previewUpload">
-                <el-button size="small" type="primary" :disabled="appForm.contactIdcards!=''">上传身份证<i class="el-icon-upload el-icon--right"></i></el-button>
+              <el-upload class="myUpload" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'Idcard'}" :on-success="IdcardSuccess" :file-list="IdcardsList" :on-remove="IdcardRemove" :before-upload="beforeUpload" :on-preview="previewUpload" :on-progress="handleProgress">
+                <el-button size="small" type="primary" :disabled="appForm.contactIdcards!=''||disabledUpload" v-show="!isIE()||(appForm.contactIdcards==''&&!disabledUpload)">上传身份证<i class="el-icon-upload el-icon--right"></i></el-button>
               </el-upload>
             </el-form-item>
           </template>
@@ -325,7 +325,8 @@ export default {
       },
       supplierId: '',
       oldName: '',
-      isPersonal: false
+      isPersonal: false,
+      disabledUpload: false
     }
   },
   computed: {
@@ -642,6 +643,14 @@ export default {
           }
         })
       })
+    },
+    handleProgress(event, file, fileList) {
+      this.disabledUpload = true;
+      if (event.percent == 100) {
+        setTimeout(() => {
+          this.disabledUpload = false;
+        }, 2000)
+      }
     }
   }
 
@@ -687,6 +696,7 @@ export default {
     }
   }
   .Manager {
+    height:46px;
     .el-form-item__content {
       line-height: 0;
     }

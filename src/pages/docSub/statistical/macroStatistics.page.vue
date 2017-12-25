@@ -29,7 +29,7 @@
       </div>
       <el-table :data="searchData" class="myTable">
         <el-table-column prop="deptName" label="呈报部门" width="150"></el-table-column>
-        <el-table-column prop="supplierName" label="公文类型"></el-table-column>
+        <el-table-column prop="docTypeName" label="公文类型"></el-table-column>
         <el-table-column prop="taskDocNum" label="呈报公文" width="100" align="center"></el-table-column>
         <el-table-column prop="signDocNum" label="签批公文" width="100" align="center"></el-table-column>
         <el-table-column prop="countersignNum" label="会签公文" width="100" align="center"></el-table-column>
@@ -152,7 +152,7 @@ export default {
     },
     getDepList() {
       if (this.depList.length == 0) {
-        this.$http.post('doc/docTaskDept')
+        this.$http.post('doc/docTaskDept',{userId:this.userInfo.empId})
           .then(res => {
             if (res.status == 0) {
               this.depList = res.data
@@ -170,6 +170,9 @@ export default {
 $main: #0460AE;
 $sub:#1465C0;
 #macroStatistics {
+  .el-cascader__label{
+    line-height:46px;
+  }
   .searchOptions {
     .el-card__body {
       padding-top: 13px;

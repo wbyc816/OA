@@ -12,7 +12,7 @@
       </el-form-item>
       <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px" class="clearBoth">
         <el-form-item label="预算机构/科目" prop="budgetDept" class="">
-          <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%"></el-cascader>
+          <el-cascader :clearable="true" filterable :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%"></el-cascader>
         </el-form-item>
         <ul class="budgetInfo clearfix clearBoth" v-show="budgetInfo">
           <li>年度预算{{budgetInfo.budgetTotal | toThousands}}元</li>
@@ -95,7 +95,7 @@
           <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
         </el-form-item>
         <el-form-item label="收款账户" prop="bankAccount" class="arrArea" style="width:49%" label-width="100px">
-          <money-input v-model="paymentForm.bankAccount" :maxlength="50" :prepend="false" :append="false" type="int0"></money-input>
+          <money-input v-model="paymentForm.bankAccount" :maxlength="50" :prepend="false" :append="false" type="bankCode"></money-input>
         </el-form-item>
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">

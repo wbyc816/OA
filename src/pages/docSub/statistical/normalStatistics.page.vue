@@ -206,6 +206,9 @@ export default {
 $main: #0460AE;
 $sub:#1465C0;
 #normalStatistics {
+  .el-cascader__label{
+    line-height:46px;
+  }
   .searchOptions {
     .el-card__body {
       padding-top: 13px;

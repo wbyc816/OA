@@ -1,5 +1,5 @@
 <template>
-  <a :href="data.link" class='doc-block' :target="target" @click="goTo">
+  <a :href="data.link" class='doc-block' :target="target" @click="goTo($event)">
     <span class='doc-title'>
       <span class='logo' :style="{'background-color':data.color, 'padding': data.padding}">
         <i class='iconfont' :style="{'font-size': data.font ? data.font : fontSize }" :class='data.logo'></i>
@@ -71,6 +71,14 @@ export default {
     fontSize: {
       type: String,
       default: '22px'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    disableText: {
+      type: String,
+      default: '未开放，敬请期待'
     }
   },
   created() {
@@ -81,9 +89,14 @@ export default {
     }
   },
   methods: {
-    goTo() {
-      if (!/^http/.test(this.data.link)) {
-        this.$router.push(this.data.link);
+    goTo(event) {
+      if (this.disabled) {
+        event.preventDefault();
+        this.$message.info(this.disableText);
+      } else {
+        if (!/^http/.test(this.data.link)) {
+          this.$router.push(this.data.link);
+        }
       }
     }
   }

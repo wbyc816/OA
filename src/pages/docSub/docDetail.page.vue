@@ -84,7 +84,7 @@
       <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
       </quit-advice>
       <my-advice :docDetail="docDetialInfo.doc" :otherInfo="docDetialInfo.otherInfo" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice" ref="myAdvice">
-        <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true;getFileSend();" v-if="docDetialInfo.doc.isFied==1" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
+        <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true;getFileSend();" v-if="showdArchiveButton" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
     </el-card>
@@ -95,8 +95,8 @@
           <p class="fwNo">{{docDetialInfo.doc.fwNo}}</p>
         </el-form-item>
         <el-form-item label="发布正文" prop="taskFileId" v-if="isRedFile&&archiveState==1" :rules="[{ required: true, message: '请上传正文！' }]">
-          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" :file-list="taskFile" ref="myUpload" :before-upload="beforeUploadFWG" :on-remove="handleRemove">
-            <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''">上传发布正文<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:'FWG'}" :on-success="handleAvatarSuccess" :file-list="taskFile" ref="myUpload" :before-upload="beforeUploadFWG" :on-remove="handleRemove" :on-progress="handleProgress" :disabled="fileForm.taskFileId!=''||disabledUpload">
+            <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''||disabledUpload" v-show="!isIE()||(fileForm.taskFileId==''&&!disabledUpload)">上传发布正文<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
         </el-form-item>
         <el-form-item label="发布范围" class='reciverWrap' prop="fileSend" v-if="isRedFile&&archiveState==1">
@@ -114,8 +114,8 @@
           <el-button class="addButton" @click="showArchive"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="上传附件" prop="fileIds" v-if="isInArray(addFileDoc,$route.query.code)">
-          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.query.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove">
-            <el-button size="small" type="primary" :disabled="fileForm.fileIds.length>4">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.query.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove" :on-progress="handleProgress" :disabled="fileForm.fileIds.length>4||disabledUpload">
+            <el-button size="small" type="primary" :disabled="fileForm.fileIds.length>4||disabledUpload"  v-show="!isIE()||(fileForm.fileIds.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
           <p class="uploadInfo">最多上传5个附件</p>
         </el-form-item>
@@ -287,7 +287,9 @@ export default {
       fileSendVisible: false,
       sendTypes: [],
       addFileDoc,
-      taskFile:[]
+      taskFile: [],
+      disabledUpload:false,
+
     }
   },
   created() {
@@ -320,6 +322,14 @@ export default {
       } else {
         return false
       }
+    },
+    showdArchiveButton() {
+      var isShow = false;
+      if (this.docDetialInfo.doc != {} && this.docDetialInfo.doc.isFied == 1) {
+          isShow = true;
+      }
+
+      return isShow
     },
     ...mapGetters([
       'userInfo',
@@ -639,7 +649,7 @@ export default {
     handleAvatarSuccess(res, file, fileList) {
       if (this.isRedFile) {
         this.fileForm.taskFileId = res.data;
-        this.taskFile=fileList;
+        this.taskFile = fileList;
       } else {
         this.fileForm.fileIds = fileList;
       }
@@ -670,7 +680,7 @@ export default {
       if (!isLt10M) {
         this.$message.error('上传文件大小不能超过 500MB!');
       }
-      return isJPG && isLt10M;
+      return  isLt10M;
     },
     handleRemove(file, fileList) {
       if (this.isRedFile) {
@@ -679,7 +689,14 @@ export default {
         this.fileForm.fileIds = fileList;
       }
     },
-
+    handleProgress(event, file, fileList){
+      this.disabledUpload=true;
+      if(event.percent==100){
+        setTimeout(()=>{
+          this.disabledUpload=false;
+        },2000)        
+      }
+    }
   }
 }
 

@@ -20,7 +20,7 @@
         </el-col>
         <el-col :span="20">
           <el-select v-model="searchParams.taskUserIds" multiple filterable clearable remote placeholder="请输入关键词搜索人员" :remote-method="remoteMethod" :multiple-limit="10" :loading="loading" style="width:100%">
-            <el-option v-for="item in personList" :key="item.empId" :label="item.name" :value="item.empId">
+            <el-option v-for="item in personList" :key="item.empId+item.postId" :label="item.name" :value="item.empId">
             </el-option>
           </el-select>
         </el-col>
@@ -177,7 +177,7 @@ export default {
     },
     getDepList() {
       if (this.depList.length == 0) {
-        this.$http.post('doc/docTaskDept')
+        this.$http.post('doc/docTaskDept',{userId:this.userInfo.empId})
           .then(res => {
             if (res.status == 0) {
               this.depList = res.data
@@ -192,7 +192,7 @@ export default {
         this.loading = true;
         clearTimeout(this.meTimeout);
         this.meTimeout = setTimeout(() => {
-          this.$http.post('/emp/queryEmpDeptList', { name: query, deptId: this.userInfo.deptParentId, pageNumber: 1, pageSize: 50 })
+          this.$http.post('/emp/queryEmpDeptList', { name: query, deptId: this.userInfo.isConfidential==1?'':this.userInfo.deptParentId, pageNumber: 1, pageSize: 50 })
             .then(res => {
               this.loading = false;
               if (res.status == 0) {
@@ -214,6 +214,9 @@ export default {
 $main: #0460AE;
 $sub:#1465C0;
 #approveStatistics {
+  .el-cascader__label{
+    line-height:46px;
+  }
   .searchOptions {
     .el-card__body {
       padding-top: 13px;
