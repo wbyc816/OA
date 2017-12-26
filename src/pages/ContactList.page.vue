@@ -28,7 +28,7 @@
               </el-col>
               <el-col :span="9">
                 <el-form-item label="办公电话" prop="phoneNumber">
-                  <el-input v-model="searchForm.phoneNumber" :maxlength="11"  @keyup.enter.native="submitForm">
+                  <el-input v-model="searchForm.phoneNumber" :maxlength="20"  @keyup.enter.native="submitForm">
                   </el-input>
                 </el-form-item>
               </el-col>

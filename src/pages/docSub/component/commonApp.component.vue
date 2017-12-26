@@ -2,7 +2,7 @@
   <div>
     <el-form label-position="left" :model="paymentForm" :rules="paymentRule" ref="paymentForm" label-width="128px">
       <el-form-item label="呈批单类型" prop="docCommonTypeCode">
-        <el-select v-model="paymentForm.docCommonTypeCode" style="width:100%" ref="docCommonTypeCode" @change="childChange">
+        <el-select v-model="paymentForm.docCommonTypeCode" style="width:100%" ref="docCommonTypeCode" @change="childChange" filterable>
           <el-option v-for="item in childTypeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>

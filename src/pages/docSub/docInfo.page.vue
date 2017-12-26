@@ -151,7 +151,6 @@ export default {
   },
   created() {
     this.getDetail(this.$route);
-    console.log(this.$route);
   },
   beforeRouteUpdate(to, from, next) {
     this.getDetail(to);
