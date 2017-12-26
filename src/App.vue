@@ -27,6 +27,7 @@
                 <el-menu-item :route="{path:'/HR'}" index="5">个人中心</el-menu-item>
                 <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
                 <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
+                <el-menu-item :route="{path:''}" index="6"><a href="http://fwoa.donghaiair.cn" target="_blank">旧版系统入口</a></el-menu-item>
               </el-menu>
             </el-col>
           </el-row>
@@ -429,17 +430,15 @@ $brown: #985D55;
         &:hover {
           background: none !important;
           border-bottom: 2px solid transparent;
-        } // &.hasSubMenu a.active:after{
-        //   font-family:"iconfont" !important;
-        //   content:"\e67d";
-        //   position: absolute;
-        //   color:rgba(129,85,160,.85);
-        //   width:100%;
-        //   bottom:-7px;
-        //   left:0px;
-        //   line-height: initial;
-        //   text-align:center;
-        // }
+        }
+        &:last-child{
+          padding-left:0!important;
+          a{
+            display: inline-block;
+            padding-left:45px;
+            float:left;
+          }
+        } 
       }
     }
   }

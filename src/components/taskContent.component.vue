@@ -114,9 +114,9 @@ export default {
     handleItemClick(val) {
       if (val === 'edit') {
         this.dialogTableVisible = true;
-      }else{
-        if(this.value.length<500&&val.taskContent){
-          var temp=(this.value+(this.value.length==0?'':'\n')+val.taskContent).substr(0,500);
+      } else {
+        if (this.value.length < 500 && val.taskContent) {
+          var temp = (this.value + (this.value.length == 0 ? '' : '\n') + val.taskContent).substr(0, 500);
           this.fomat(temp);
         }
       }
@@ -140,8 +140,12 @@ export default {
               if (res.status == 0) {
                 this.dialogContentVisible = false;
                 this.pageNumber = 1;
-                this.getContentList()
-                this.$message.success('保存成功!');
+                this.getContentList();
+                if (this.selContent) {
+                  this.$message.success('保存成功!');
+                } else {
+                  this.$message.success('新增成功!');
+                }
               } else {
                 this.$message.error(res.message);
               }
@@ -233,8 +237,7 @@ $sub:#1465C0;
       width: 25px;
       height: 25px;
       transition: all .3s;
-      background: $sub;
-      // padding-left: 10px;
+      background: $sub; // padding-left: 10px;
       line-height: 28px;
       color: #fff;
       border-bottom-left-radius: 15px;

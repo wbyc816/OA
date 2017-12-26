@@ -68,9 +68,9 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :admin="normalPersonAdmin" :visible.sync="dialogTableVisible" dialogType="radio" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :admin="normalPersonAdmin" :visible.sync="dialogTableVisible" dialogType="radio" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isTaskUser!=1"></person-dialog>
     <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :deptId="docDetail.deptId" :data="signPersons"></person-dialog>
-    <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="normalPersonAdmin" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isConfidential!=1"></person-dialog>
+    <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="normalPersonAdmin" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isTaskUser!=1"></person-dialog>
     <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" :disableDep="disableDep" isSaveInit></dep-dialog>
   </div>
 </template>
@@ -203,8 +203,8 @@ export default {
       if (this.docDetail.isAdmin == 1) { //公文详情里控制是否有跨部门权限
         temp = '1'
       }
-      if (this.hasSecretary()) { //四类特殊公文且不是机要秘书  不能跨部门
-        if (this.docDetail.isConfidential != 1) {
+      if (this.hasSecretary()) { //四类特殊公文且不是承办人员角色  不能跨部门
+        if (this.docDetail.isTaskUser != 1) {
           temp = '0'
         }
       }

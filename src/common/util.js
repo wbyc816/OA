@@ -138,10 +138,8 @@ function isInArray(arr, child) {
 function isIE() {
   if ((navigator.userAgent.indexOf('MSIE') >= 0) &&
     (navigator.userAgent.indexOf('Opera') < 0)) {
-    console.log(111)
     return true;
   }else if(navigator.userAgent.indexOf('Trident') > -1 && navigator.userAgent.indexOf("rv:11.0") > -1){
-    console.log(111)
     return true;
   }
   else{
