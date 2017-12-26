@@ -13,8 +13,6 @@
           </div>
         </el-form-item>
 
-
-
       <el-form-item label="付款方式" prop="choosePayType" class="flw50" >
         <el-select v-model="loanAppForm.choosePayType" @change="isCashType"  ref="paymentMethod">
           <el-option v-for="payType in payTypes"  :label="payType.dictName" :value="payType.dictCode">
@@ -37,6 +35,14 @@
          <money-input v-model="loanAppForm.bankAccount" type="bankCode" :prepend="false" :append="false" ref="bankAccount" :maxlength="50"></money-input>
       </el-form-item>
       </div>
+
+       <el-form-item label="借款期限" prop="borrowTerm" class="flw50" >
+        <el-select v-model="loanAppForm.borrowTerm" @change="isCashType"  ref="borrowTerm">
+          <el-option v-for="borrowTerm in borrowTerms"  :label="borrowTerm.dictName" :value="borrowTerm.dictCode">
+          </el-option>
+        </el-select>
+      </el-form-item>
+
     </el-form>
   <!--   <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog> -->
   </div>
@@ -81,7 +87,7 @@ export default {
       },
       payees:[],
       collectionInformation:1,
-
+      borrowTerms:[],
       signDialogVisible: false,
       bookTypes:[],
       budgetTable:[],
@@ -108,7 +114,7 @@ export default {
         // budgetDept: [],
         budgetDate:{},
         selectMoney:"人民币",
-
+        borrowTerm:"FIN0802",
       
       },
       rules: {
@@ -124,6 +130,7 @@ export default {
         // year: [{  required: true, validator: checkDate, trigger: 'blur' }],
         // budgetDept: [{ type: 'array', required: true, validator: checkDept, trigger: 'blur' }],
         choosePayType:  [{ required: true, message: '请选择付款方式', trigger: 'blur' }],
+        borrowTerm  :[{ required: true, message: '请选择付款方式', trigger: 'blur' }],
       },
       pickerOptions0: {
         disabledDate(time) {
@@ -152,8 +159,19 @@ export default {
     this.chooseCurrency();
     this.changePayType();
     this.loadCollectionInformation();
+    this.docFinBorrow();
   },
   methods: {
+    docFinBorrow(){
+      this.$http.post('/api/getDict', { 
+        dictCode:"FIN08"
+       })
+      .then(res => {
+        if (res.status == 0) {
+         this.borrowTerms=res.data;
+        }
+      })
+    },
     fomatMoney(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
       if (val) {
@@ -299,6 +317,7 @@ export default {
               "paymentMethodCode": this.$refs.paymentMethod.value, //付款方式编号
               "gatherName": this.loanAppForm.payee, //收款人
               "gatherAccount": this.loanAppForm.bankAccount, // 收款人账户
+              borrowTerm:this.loanAppForm.borrowTerm//价款期限
             }
 
           }
