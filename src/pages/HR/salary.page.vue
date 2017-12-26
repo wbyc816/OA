@@ -67,7 +67,7 @@
         <el-row>
             <el-col :span="8">上月跟机小时数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.followFlightHours}}</el-col>
-            <el-col :span="8">长途补贴</el-col>
+            <el-col :span="8">上月长途补贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.longDistance}}</el-col>
         </el-row>
 
@@ -79,28 +79,28 @@
       </div>
       <div class="salaryList" v-if="salaryType==2">
         <el-row>
-            <el-col :span="8">差旅补贴</el-col>
+            <el-col :span="8">上月差旅补贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.businessTravel}}</el-col>
-            <el-col :span="8">飞模津贴</el-col>
+            <el-col :span="8">上月飞模津贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.flightModel}}</el-col>
         </el-row>
 
          <el-row>
-            <el-col :span="8">本场小时津贴</el-col>
+            <el-col :span="8">上月本场小时津贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.campaingHour}}</el-col>
-            <el-col :span="8">试飞小时津贴</el-col>
+            <el-col :span="8">上月试飞小时津贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.trialFlight}}</el-col>
         </el-row>
 
          <el-row>
-            <el-col :span="8">因公加机组补贴</el-col>
+            <el-col :span="8">上月因公加机组补贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.addFlight}}</el-col>
-            <el-col :span="8">起降补贴</el-col>
+            <el-col :span="8">上月起降补贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.risingLanding}}</el-col>
         </el-row>
 
          <el-row>
-            <el-col :span="8">飞行安全奖</el-col>
+            <el-col :span="8">上月月度安全奖</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.monthlySafetyAward}}</el-col>
             <el-col :span="8">年度安全奖</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.safeYear}}</el-col>
@@ -109,21 +109,21 @@
          <el-row>
             <el-col :span="8">飞行员还款</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.subPilotRepayment}}</el-col>
-            <el-col :span="8">本场训练时间</el-col>
+            <el-col :span="8">上月本场训练时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.trainTime}}</el-col>
         </el-row>
 
         <el-row>
-            <el-col :span="8">模拟机时间</el-col>
+            <el-col :span="8">上月模拟机时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.simulationTime}}</el-col>
             <el-col :span="8">试飞时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.trialTime}}</el-col>
         </el-row>
 
         <el-row>
-            <el-col :span="8">飞行员加机组时间</el-col>
+            <el-col :span="8">上月飞行员加机组时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.addFlightTime}}</el-col>
-            <el-col :span="8">飞行特殊机场起落总次数</el-col>
+            <el-col :span="8">上月特殊机场起落总次数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.specialFlightNumber}}</el-col>
         </el-row>
 
@@ -138,14 +138,14 @@
         <el-row>
             <el-col :span="8">开航贡献奖</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.founder}}</el-col>
-            <el-col :span="8">升舱提成</el-col>
+            <el-col :span="8">上月升舱提成</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.upgrade}}</el-col>
         </el-row>
 
         <el-row>
-            <el-col :span="8">机上广播津贴</el-col>
+            <el-col :span="8">机上广播小时津贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.broadcast}}</el-col>
-            <el-col :span="8">调组乘机津贴</el-col>
+            <el-col :span="8">执行航班调组乘机调组乘机津贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.othercompanyFlying}}</el-col>
         </el-row>
 
@@ -159,7 +159,7 @@
         <el-row>
             <el-col :span="8">备份补贴</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.backups}}</el-col>
-            <el-col :span="8">超时时间</el-col>
+            <el-col :span="8">上月超时时间</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.overtimeTime}}</el-col>
         </el-row>
 
