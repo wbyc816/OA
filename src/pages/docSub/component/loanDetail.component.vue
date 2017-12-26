@@ -16,6 +16,10 @@
       <h1 class="title">收款账户</h1>
       <p v-if="info" class="textContent">{{info[0].gatherAccount}}</p>
     </el-col>
+     <el-col :span="12">
+      <h1 class="title">借款期限</h1>
+      <p v-if="info" class="textContent">{{info[0].borrowTerm=="FIN0802"?"短期":"长期"}}</p>
+    </el-col>
   </div>
 </template>
 <script>
