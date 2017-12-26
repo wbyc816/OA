@@ -16,8 +16,8 @@
       </div>
       <el-row :gutter='15'>
         <el-col :span="6" v-for="item in financeData">
-          <!-- <doc-list :data='item' disabled disableText="根据财务预算年跨度，该类流程停用，将于2018年1月1日00：00启用。"></doc-list> -->
-          <doc-list :data='item'></doc-list>
+          <doc-list :data='item' disabled disableText="根据财务预算年跨度，该类流程停用，将于2018年1月1日00：00启用。"></doc-list>
+          <!-- <doc-list :data='item'></doc-list> -->
         </el-col>
       </el-row>
     </el-card>

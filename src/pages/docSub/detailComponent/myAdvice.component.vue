@@ -363,6 +363,8 @@ export default {
             this.getDefaultReciver();
             this.chooseDisable = false;
           }
+        } else if (this.signType == 1) {
+          this.signTypeChange('1')
         }
       } else if (val == 2) {
         this.disableApproval = false;
@@ -386,14 +388,14 @@ export default {
       this.ruleForm.sign = [];
       this.signDeps = [];
       this.chooseDisable = false;
-      if (val == 1 && this.ruleForm.state != 6) {  //部门会签
+      if (val == 1 && this.ruleForm.state != 6) { //部门会签
         if (this.$route.query.code == 'HTS' && this.docDetail.taskDeptMajorId != initHTSDeps[0].id && this.docDetail.taskDeptId != initHTSDeps[0].id) {
           this.updateSignDep(initHTSDeps);
         }
       } else if (val == 0) {
         this.adviceChange(this.ruleForm.state);
       }
-      
+
       this.$refs.ruleForm.validateField('sign');
     },
     ableDepClose(val) {
@@ -658,7 +660,6 @@ $sub:#1465C0;
     border-radius: 3px;
     float: right;
   }
-  
 }
 
 </style>
