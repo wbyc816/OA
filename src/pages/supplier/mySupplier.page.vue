@@ -65,7 +65,8 @@ export default {
         "supplierCity": "",
         "supplierStatus": "",
         "pageSize": 10,
-        "pageNumber": 1
+        "pageNumber": 1,
+        "type":1
       },
       totalSize: 1,
       status: '',

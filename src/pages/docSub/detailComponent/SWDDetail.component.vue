@@ -21,7 +21,7 @@
       </p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">综合管理部拟办意见</h1>
+      <h1 class="title">综合管理部<br/>拟办意见</h1>
       <p class="textContent">
         <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.startTime}}</span>
       </p>

@@ -249,10 +249,10 @@ export default {
         width -= 0.16
       }
       if (doc.docImprotType != '普通' && doc.docImprotType != '') {
-        width -= 0.13
+        width -= 0.14
       }
       if (doc.docDenseType != '平件' && doc.docDenseType != '') {
-        width -= 0.13
+        width -= 0.14
       }
       return parseInt(width * 100) + '%'
     },

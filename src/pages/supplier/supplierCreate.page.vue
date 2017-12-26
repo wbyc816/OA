@@ -47,11 +47,11 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="客户经理" prop="classifyManagerEmpId" class="arrArea Manager">
+            <!-- <el-form-item label="客户经理" prop="classifyManagerEmpId" class="arrArea Manager">
               <el-input class="search" v-model="classifyManagerName" :readonly="true">
                 <el-button slot="append" @click='dialogTableVisible=true'>选择</el-button>
               </el-input>
-            </el-form-item>
+            </el-form-item> -->
           </template>
           <el-form-item label="地址" prop="supplierAddress" class="clearBoth">
             <el-input v-model="appForm.supplierAddress"></el-input>
@@ -113,21 +113,21 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="客户经理" prop="classifyManagerEmpId" class="deptArea Manager">
+            <!-- <el-form-item label="客户经理" prop="classifyManagerEmpId" class="deptArea Manager">
               <el-input class="search" v-model="classifyManagerName" :readonly="true">
                 <el-button slot="append" @click='dialogTableVisible=true'>选择</el-button>
               </el-input>
-            </el-form-item>
-            <el-form-item label="上级单位" prop="classifySuperiorCode" class="arrArea">
+            </el-form-item> -->
+            <el-form-item label="上级单位" prop="classifySuperiorCode" class="deptArea">
               <el-select v-model="appForm.classifySuperiorCode" ref="super" style="width:100%" @change="checkMe" remote placeholder="请输入关键词" :loading="superLoading" :remote-method="getSuperList" filterable>
                 <el-option v-for="item in superList" :key="item.id" :label="item.supplierName" :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="营业执照号码" prop="supplierLicenseNumber" class="deptArea">
+            <el-form-item label="营业执照号码" prop="supplierLicenseNumber" class="arrArea">
               <el-input v-model="appForm.supplierLicenseNumber"></el-input>
             </el-form-item>
-            <el-form-item label="信用代码" prop="supplierCreditCode" class="arrArea">
+            <el-form-item label="信用代码" prop="supplierCreditCode" class="deptArea">
               <el-input v-model="appForm.supplierCreditCode"></el-input>
             </el-form-item>
           </template>
@@ -286,9 +286,9 @@ export default {
         classifyCompanyCode: [{ required: true, message: '请选择企业类型' }, ],
         classifyGainCode: [{ required: true, message: '请选择获得途径' }, ],
         classifyIndustryCode: [{ type: 'array', required: true, message: '请选择行业' }, ],
-        supplierLicense: [{ required: true, message: '请上传营业执照' }, ],
-        accountLicense: [{ required: true, message: '请上传开户许可证' }, ],
-        contactIdcards: [{ required: true, message: '请上传身份证' }, ],
+        // supplierLicense: [{ required: true, message: '请上传营业执照' }, ],
+        // accountLicense: [{ required: true, message: '请上传开户许可证' }, ],
+        // contactIdcards: [{ required: true, message: '请上传身份证' }, ],
         classifyManagerEmpId: [{ required: true, message: '请选择客户经理' }, ],
         contactTitleCode: [{ required: true, message: '请选择称谓' }, ],
         contactName: [{ required: true, message: '请输入姓名' }, ],
