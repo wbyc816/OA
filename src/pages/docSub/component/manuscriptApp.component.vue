@@ -87,7 +87,7 @@
     </el-form>
     <person-dialog @updatePerson="updateSign" :visible.sync="signDialogVisible" admin="1" selText="签发人"></person-dialog>
     <major-dialog :params="manuscriptForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
-    <major-dialog :params="manuscriptForm.mainPeople" @updatePerson="updateMainPeople" :visible.sync="mainPeopleVisible" :hasLevel="false"></major-dialog>
+    <major-dialog :params="manuscriptForm.mainPeople" @updatePerson="updateMainPeople" :visible.sync="mainPeopleVisible" :hasLevel="false" hasOutSend></major-dialog>
     <major-dialog :params="manuscriptForm.ccPeople" @updatePerson="updateCcPeople" :visible.sync="ccPeopleVisible" :hasLevel="false"></major-dialog>
   </div>
 </template>
@@ -328,10 +328,10 @@ export default {
             "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
             "ids": this.manuscriptForm.mainPeople.personList.map(person => person.empId)
           },
-          // "outSendBean": {
-          //   "sendType": this.manuscriptForm.mainPeople.outSendBean ? this.sendTypes.find(type => type.dictEname == 'outsend').dictCode : '',
-          //   "name": this.manuscriptForm.mainPeople.outSendBean
-          // }
+          "outSendBean": {
+            "sendType": this.manuscriptForm.mainPeople.outSendBean ? this.sendTypes.find(type => type.dictEname == 'outsend').dictCode : '',
+            "name": this.manuscriptForm.mainPeople.outSendBean
+          }
         },
         "ccSend": {
           "sendTypeAll": {

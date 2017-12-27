@@ -53,7 +53,7 @@
       <el-form-item label="预算年份" class="year">
         {{year}}
       </el-form-item>
-      <el-form-item label="预算机构/科目" prop="budgetDept">
+      <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
         <!-- <el-cascader :clearable="true" :options="budgetDeptList" ref="budgetDept" :props="budgetProp" v-model="airMaterialForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange"   ></el-cascader> -->
         <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="airMaterialForm.budgetDept" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" class="budgetDept" ref="budgetDept" style="width:100%"></el-cascader>
           
@@ -65,7 +65,7 @@
       </ul>
 
 
-    <el-form-item label="件号" prop="pieceNo" class="flw50"> 
+    <el-form-item label="件号" prop="pieceNo" class="deptArea"> 
         <el-input ref="pieceNo" v-model="airMaterialForm.pieceNo">
         </el-input>
     </el-form-item>
@@ -76,10 +76,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-      <div style="clear:both"></div>
-    
-
-      <el-form-item label="合同数量" class="deptArea" prop="pieceNum">
+      <el-form-item label="合同数量" class="deptArea" prop="pieceNum" style="height:46px;">
         <money-input ref="pieceNum" v-model="airMaterialForm.pieceNum" :prepend="false"  @change="changePieceNum">
         </money-input>
       </el-form-item>
@@ -200,16 +197,16 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}} 元</span></p>
+        <p class="totalMoney">金额总计 人民币 <span>{{totalRmb | toThousands}}元  {{totalRmb | moneyCh}}</span></p>
       </div>
       <el-form-item label="金额总计" class="deptArea">
         <el-input v-model="totalMoney" readonly>
         </el-input>
       </el-form-item>
-      <el-form-item label="人民币" class="arrArea">
+      <!-- <el-form-item label="人民币" class="arrArea">
         <el-input v-model="totalRmb" readonly>
         </el-input>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <!-- <el-dialog title="选择合同子类型" :visible.sync="dialogVisible" size="tiny" :before-close="handleClose">
       <el-form label-position="left" :model="dialogForm" :rules="dialogRule" ref="dialogForm" label-width="128px">
