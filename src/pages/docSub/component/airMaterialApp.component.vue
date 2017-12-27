@@ -94,7 +94,7 @@
         </el-input>
       </el-form-item>
 
-      <el-form-item label="单价" class="deptArea" prop="unitPrice">
+      <el-form-item label="单价" class="arrArea" prop="unitPrice">
         <money-input ref="unitPrice" v-model="airMaterialForm.unitPrice" :prepend="false"  @change="changeUnitPrice">
         </money-input>
       </el-form-item>
