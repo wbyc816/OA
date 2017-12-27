@@ -2,21 +2,22 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
+// var CopyWebpackPlugin=require('copy-webpack-plugin');
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
 module.exports = {
   entry: {
-    app: ["babel-polyfill","./src/main.js"]
+    app: ["babel-polyfill", "./src/main.js"]
   },
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
-    publicPath: process.env.NODE_ENV === 'production'
-      ? config.build.assetsPublicPath
-      : config.dev.assetsPublicPath
+    publicPath: process.env.NODE_ENV === 'production' ?
+      config.build.assetsPublicPath :
+      config.dev.assetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
@@ -33,8 +34,7 @@ module.exports = {
     }
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.vue$/,
         loader: 'vue-loader',
         options: vueLoaderConfig
@@ -63,8 +63,7 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
-      }
-      ,
+      },
       {
         test: /\.pdf?$/,
         loader: 'url-loader',
@@ -73,5 +72,11 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  // plugins: [
+  //   new CopyWebpackPlugin([{
+  //     from: 'node_modules/pdfjs-dist/cmaps/',
+  //     to: 'cmaps/'
+  //   }, ]),
+  // ]
 }

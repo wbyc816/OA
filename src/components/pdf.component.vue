@@ -6,7 +6,7 @@
 <script>
 // import pdfjsLib from 'pdfjs-dist'
 import PDFJS from 'pdfjs-dist/build/pdf.js'
-import pdfworker from 'pdfjs-dist/build/pdf.worker.js'
+// import pdfworker from 'pdfjs-dist/build/pdf.worker.js'
 // import PDFJS from 'pdfjs-dist'
 export default {
   props: {
@@ -37,9 +37,10 @@ export default {
   },
   methods: {
     initPdf() {
-      // console.log(PDFJS)
-      PDFJS.PDFJS.workerSrc = pdfworker;
-      // PDFJS.PDFJS.disableWorker = true;
+      PDFJS.PDFJS.cMapUrl = '../../static/cmaps/';
+      // PDFJS.PDFJS.cMapUrl = 'cmaps/';
+      PDFJS.PDFJS.cMapPacked = true;
+      PDFJS.PDFJS.disableWorker = true;
       var loadingTask = PDFJS.getDocument(this.src);
       var that = this;
       loadingTask.promise.then((pdfDoc_) => {

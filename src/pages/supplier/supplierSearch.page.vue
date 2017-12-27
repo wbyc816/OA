@@ -58,7 +58,8 @@ export default {
         "supplierCity": "",
         "empName": "",
         "pageSize": 10,
-        "pageNumber": 1
+        "pageNumber": 1,
+        "type":2
       },
       totalSize: 1,
       status: '',
@@ -78,7 +79,7 @@ export default {
   methods: {
     getData() {
       this.searchLoading = true;
-      this.$http.post("/Supplier/searchSupplier", this.searchParams, { body: true }).then(res => {
+      this.$http.post("/Supplier/searchSupplier",  Object.assign(this.searchParams, {empId: this.userInfo.empId}), { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;
         }.bind(this), 200)

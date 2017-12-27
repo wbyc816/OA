@@ -16,7 +16,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="合同期限" prop="timeRange" placeholder="" class="width60">
-        <el-date-picker v-model="contractForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+        <el-date-picker v-model="contractForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
       </el-form-item>
       <el-form-item label="押金" label-width="100px" class="width40">
         <money-input v-model="contractForm.contractCashPledge" :prepend="false">

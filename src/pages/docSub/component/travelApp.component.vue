@@ -2,7 +2,7 @@
   <div class="travelApp">
     <el-form label-position="left" :model="travelForm" :rules="rules" ref="travelForm" label-width="128px">
       <el-form-item label="出差时间" prop="timeRange">
-        <el-date-picker v-model="travelForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+        <el-date-picker v-model="travelForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
       </el-form-item>
       <el-form-item label="出发地" prop="deptArea" class="deptArea">
         <el-input v-model="travelForm.deptArea" :maxlength="20">
@@ -33,7 +33,7 @@
         <!-- <el-input class="search" :readonly="true" :value="travelForm.signName">
           <el-button slot="append" @click='signDialogVisible=true'>选择</el-button>
         </el-input> -->
-        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" ref="budgetDep" style="width:100%"></el-cascader>
+        <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="travelForm.budgetDept" :show-all-levels="true" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" ref="budgetDep" style="width:100%"></el-cascader>
       </el-form-item>
       <el-form-item label="出差总预算" prop="budgetMoney" class="budgetMoney">
         <money-input v-model="travelForm.budgetMoney" :prepend="false">
@@ -135,6 +135,7 @@ export default {
       this.$refs.travelForm.validate((valid) => {
         if (valid) {
           var dep = this.getBudgetDep();
+          var budgetItemName=this.$refs.budgetDep.currentLabels.join(' / ');
           this.params = {
             app: {
               "startTime": this.travelForm.timeRange[0].getTime(), //出差开始时间
@@ -145,7 +146,7 @@ export default {
               "bookType": this.travelForm.bookType, //预定类型
               "budgetMoney": this.travelForm.budgetMoney, //预算
               "budgetItemCode": dep.budgetItemCode, //报销科目code
-              "budgetItemName": dep.budgetItemName, //报销科目名称
+              "budgetItemName": budgetItemName, //报销科目名称
               "budgetDeptCode": dep.budgetDeptCode, //报销部门
               "budgetDeptName": dep.budgetDeptName, //报销部门名称
               "appPerson": this.travelForm.person.map(function(person) {

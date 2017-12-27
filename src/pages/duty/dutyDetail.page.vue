@@ -37,9 +37,9 @@
       <div slot="header" v-if="userInfo.isDocsec&&userInfo.isDocsec[1]==1">
         <el-row class="title">
           <el-col class="titleRight" :offset="20" :span="4">
-              <i class="el-icon-edit"></i>
-              <a style="color: #0460AE" href="#/duty/dutyEdit">值班信息维护</a>
-            </el-col>
+            <i class="el-icon-edit"></i>
+            <a style="color: #0460AE" href="#/duty/dutyEdit">值班信息维护</a>
+          </el-col>
         </el-row>
       </div>
       <el-table :data="tableData" stripe highlight-current-row style="width: 100%">
@@ -91,12 +91,12 @@ export default {
   computed: {
     startDate() {
 
-      return this.date.length!=0&&this.date[0] ? util.formatTime(this.date[0], 'yyyyMMdd') : ''
+      return this.date.length != 0 && this.date[0] ? util.formatTime(this.date[0], 'yyyyMMdd') : ''
     },
     endDate() {
-      return this.date.length!=0&&this.date[1] ? util.formatTime(this.date[1], 'yyyyMMdd') : ''
+      return this.date.length != 0 && this.date[1] ? util.formatTime(this.date[1], 'yyyyMMdd') : ''
     },
-     ...mapGetters([
+    ...mapGetters([
       'userInfo'
     ])
   },
@@ -129,7 +129,6 @@ export default {
       this.deptName = val
     },
     search() {
-      this.tableData = []
       api.getDutyMessage({
         startDate: this.startDate,
         endDate: this.endDate,
@@ -141,6 +140,8 @@ export default {
         if (data.status == '0' && data.data.totalSize) {
           this.tableData = dataTransform(data.data.ondutyVolist, fmts)
           this.paginate.total = data.data.totalSize
+        } else {
+          this.tableData = []
         }
       })
     }
@@ -149,11 +150,11 @@ export default {
     deptList
   }
 }
-</script>
 
+</script>
 <style scope lang="scss">
 #dutyDetail {
-  .el-table__body-wrapper{
+  .el-table__body-wrapper {
     overflow-x: hidden;
   }
   .el-card {
@@ -187,14 +188,15 @@ export default {
       text-align: center!important;
     }
   }
-  .searchOption{
-    .el-card__header,.el-card__body{
-      padding-left:20px;
+  .searchOption {
+    .el-card__header,
+    .el-card__body {
+      padding-left: 20px;
     }
   }
-  .tableData{
-    .el-card__body{
-      padding-top:0px;
+  .tableData {
+    .el-card__body {
+      padding-top: 0px;
     }
   }
   .title {
@@ -202,12 +204,14 @@ export default {
   }
   .paginateWrap {
     margin: 20px auto 50px;
-    .el-pagination{
-          text-align: right;
+    .el-pagination {
+      text-align: right;
     }
   }
-  .search{             // 临时search
+  .search {
+    // 临时search
     transform: translateX(-7px)
   }
 }
+
 </style>

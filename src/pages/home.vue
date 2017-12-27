@@ -187,7 +187,7 @@ import { mapGetters } from 'vuex'
 import SearchDate from '../components/searchDate'
 import MessageCenter from '../components/message'
 import SidePersonSearch from '../components/sidePersonSearch.component'
-import DocList from '../components/doc'
+// import DocList from '../components/doc'
 import Duty from '../components/duty.component'
 import Highcharts from 'highcharts/highstock';
 import HighchartsMore from 'highcharts/highcharts-more';
@@ -232,7 +232,7 @@ const options = [{
 }, ];
 const pieBg = ['#97BBCD', '#F7464A', '#DCDCDC', '#7ED0CF']
 export default {
-  components: { SearchDate, MessageCenter, DocList, SidePersonSearch, Duty },
+  components: { SearchDate, MessageCenter, SidePersonSearch, Duty },
 
   data() {
     return {
