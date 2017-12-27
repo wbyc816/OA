@@ -39,7 +39,7 @@ export const salaryLeft = [
 	{name: 'others1', label: '预留一',isDeduction:false},
 	{name: 'others2', label: '预留二',isDeduction:false},
 	{name: 'others3', label: '预留三',isDeduction:false},
-	{name: 'totalMonth', label: '本月总额',isDeduction:false},
+	
 ]
 export const salaryRight = [
 
@@ -72,7 +72,7 @@ export const salaryRight = [
 	{name: 'inlandTotalContract', label: '上月国内总承包时间',isDeduction:false},
 	{name: 'foreignFlightTime', label: '上月国际航线飞行时间',isDeduction:false},
 	{name: 'inlandFlightTime', label: '上月国内航线飞行时间',isDeduction:false},
-	
+	{name: 'totalMonth', label: '本月总额',isDeduction:false},
 
 	
 	
