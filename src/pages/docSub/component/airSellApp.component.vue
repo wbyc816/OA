@@ -27,7 +27,7 @@
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
         <li>开户银行 {{supplierInfo.accountBank}}</li>
-        <li>收款账户 {{supplierInfo.accountName}}</li>
+        <li>银行账号 {{supplierInfo.accountCode}}</li>
       </ul>
       <el-form-item label="币种" class="deptArea" prop="currencyId">
         <el-select v-model="contractForm.currencyId" @change="currencyChange">
@@ -88,8 +88,8 @@
         <money-input v-model="budgetForm.unitPrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
-      <el-form-item label="总价" prop="totalPrice" class="offerPrice clearfix clearBoth">
-        <money-input v-model="budgetForm.totalPrice" :prepend="false" :append="false" style="width:200px">
+      <el-form-item label="总价"  class="offerPrice clearfix clearBoth">
+        <money-input v-model="totalPrice" :prepend="false" :append="false" readonly style="width:200px">
         </money-input>
         <el-button type="primary" @click="addBudget"><i class="el-icon-plus"></i> 添加</el-button>
       </el-form-item>
@@ -140,7 +140,7 @@
           <el-table-column property="airmaterialNameZn" label="器材中文名称"></el-table-column>
           <el-table-column property="pieceNo" label="件号" width="120"></el-table-column>
           <el-table-column property="airmaterialCode" label="序号" width="120"></el-table-column>
-          <el-table-column property="totalPrice" label="共计金额" width="150"></el-table-column>
+          <el-table-column property="totalPrice" label="总价" width="150"></el-table-column>
           <el-table-column label="操作" width="55">
             <template scope="scope">
               <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
@@ -148,7 +148,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
+        <p class="totalMoney">合同总金额 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
       </div>
       <el-form-item label="合同总金额" class="deptArea">
         <el-input v-model="totalMoney" readonly>
@@ -190,13 +190,14 @@ export default {
         "pieceNum": "", //合同数量 即合同里的件数量
         "unit": "", //单位
         "unitPrice": "", //单价
-        "totalPrice": "", //总价（合同数量*单价）
+        // "totalPrice": "", //总价（合同数量*单价）
       },
       budgetRule: {
         pieceNo: [{ required: true, message: '请输入件号', trigger: 'blur' }],
         pieceStatus: [{ required: true, message: '请选择件状态', trigger: 'blur' }],
         pieceNum: [{ required: true, message: '请输入合同数量', trigger: 'blur' }],
-        totalPrice: [{ required: true, message: '请输入总价', trigger: 'blur' }],
+        // totalPrice: [{ required: true, message: '请输入总价', trigger: 'blur' }],
+        unitPrice: [{ required: true, message: '请输入单价', trigger: 'blur' }],
         budgetDept: [{ type: 'array', required: true, message: '请选择预算机构', trigger: 'blur' }],
       },
       budgetTable: [],
@@ -251,6 +252,13 @@ export default {
         })
       }
       return num || ''
+    },
+    totalPrice(){
+      var num=0;
+      if(this.budgetForm.pieceNum&&this.budgetForm.unitPrice){
+        num=parseFloat(this.budgetForm.pieceNum)*parseFloat(this.budgetForm.unitPrice)
+      }
+      return num
     },
     ...mapGetters([
       'submitLoading',
@@ -461,6 +469,7 @@ export default {
             budgetDeptName: dep.budgetDeptName, //   预算部门名
             budgetYear: this.year, //   预算年份
             excutionRatio: this.budgetInfo.execRateStr, //   执行比例
+            totalPrice:this.totalPrice
           }
           item = Object.assign(item, this.budgetForm);
           delete item.budgetDept;
@@ -473,7 +482,7 @@ export default {
           this.budgetForm.pieceNum = "";
           this.budgetForm.unit = "";
           this.budgetForm.unitPrice = "";
-          this.budgetForm.totalPrice = "";
+          // this.budgetForm.totalPrice = "";
 
           this.budgetInfo = '';
         } else {}

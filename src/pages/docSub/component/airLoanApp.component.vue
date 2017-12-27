@@ -27,7 +27,7 @@
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
         <li>开户银行 {{supplierInfo.accountBank}}</li>
-        <li>收款账户 {{supplierInfo.accountName}}</li>
+        <li>银行账号 {{supplierInfo.accountCode}}</li>
       </ul>
       <el-form-item label="币种" class="deptArea" prop="currencyId">
         <el-select v-model="contractForm.currencyId" @change="currencyChange">
@@ -92,8 +92,8 @@
         <money-input v-model="budgetForm.unitPrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
-      <el-form-item label="总价" prop="totalPrice" class="deptArea">
-        <money-input v-model="budgetForm.totalPrice" :prepend="false" :append="false">
+      <el-form-item label="总价"  class="deptArea">
+        <money-input v-model="totalPrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
       <el-form-item label="单日租金" prop="singleDayRentMoney" class="arrArea">
@@ -243,7 +243,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
+        <p class="totalMoney">租金合计总价 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
       </div>
       <el-form-item label="租金合计总价" class="deptArea">
         <el-input v-model="totalMoney" readonly>
@@ -286,7 +286,7 @@ export default {
         "pieceNum": "", //合同数量 即合同里的件数量
         "unit": "", //单位
         "unitPrice": "", //单价
-        "totalPrice": "", //总价（合同数量*单价）
+        // "totalPrice": "", //总价（合同数量*单价）
         "singleDayRentMoney": "", //单日租金
         "rentDayNum": "", // 租赁天数
         "rentCost": "", //租赁费
@@ -360,6 +360,13 @@ export default {
         })
       }
       return num || ''
+    },
+     totalPrice(){
+      var num=0;
+      if(this.budgetForm.pieceNum&&this.budgetForm.unitPrice){
+        num=parseFloat(this.budgetForm.pieceNum)*parseFloat(this.budgetForm.unitPrice)
+      }
+      return num
     },
     ...mapGetters([
       'submitLoading',
@@ -571,6 +578,7 @@ export default {
             budgetDeptName: dep.budgetDeptName, //   预算部门名
             budgetYear: this.year, //   预算年份
             excutionRatio: this.budgetInfo.execRateStr, //   执行比例
+            totalPrice:this.totalPrice
           }
           item = Object.assign(item, this.budgetForm);
           delete item.budgetDept;
@@ -584,7 +592,7 @@ export default {
           this.budgetForm.pieceNum = "";
           this.budgetForm.unit = "";
           this.budgetForm.unitPrice = "";
-          this.budgetForm.totalPrice = "";
+          // this.budgetForm.totalPrice = "";
           this.budgetForm.singleDayRentMoney = "";
           this.budgetForm.rentDayNum = "";
           this.budgetForm.rentCost = "";

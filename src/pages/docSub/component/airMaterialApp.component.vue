@@ -27,7 +27,7 @@
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
         <li>开户银行 {{supplierInfo.accountBank}}</li>
-        <li>收款账户 {{supplierInfo.accountName}}</li>
+        <li>银行账号 {{supplierInfo.accountCode}}</li>
       </ul>
 
       <el-form-item label="币种" class="arrArea" prop="currencyId">
@@ -262,6 +262,7 @@ export default {
       },
       contractRule: {
         contractCode: [{ required: true, message: '请选择合同子类型', trigger: 'blur' }],
+        contractNo: [{ required: true, message: '请输入合同号', trigger: 'blur' }],
         priority: [{ required: true, message: '请选择优先级', trigger: 'blur' }],
         advancePaymentPercent: [{ required: true, message: '请输入预付款百分比', trigger: 'blur' }],
         supplierIds: [{ type: 'array', required: true, message: '请选择供应商', trigger: 'blur' }],

@@ -39,7 +39,7 @@
           </template>
             {{+timeline[1] | time('ch')}}
         </span>
-        <span class="download"><i class="iconfont icon-icon202"></i>导出报表</span>
+        <!-- <span class="download"><i class="iconfont icon-icon202"></i>导出报表</span> -->
       </div>
       <el-table :data="searchData" class="myTable">
         <el-table-column prop="docTypeName" label="公文类型" width="100"></el-table-column>

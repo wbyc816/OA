@@ -33,6 +33,9 @@
           <el-tag key="all" :closable="true" v-show="manuscriptForm.mainPeople.all" type="primary" @close="closeMainAll">
             所有人
           </el-tag>
+          <el-tag key="outSend" :closable="true" v-show="manuscriptForm.mainPeople.outSendBean" type="primary" @close="closeMainOutSend">
+            {{manuscriptForm.mainPeople.outSendBean}}
+          </el-tag>
           <el-tag :key="dep.id" :closable="true" type="primary" @close="closeMainDep(index)" v-for="(dep,index) in manuscriptForm.mainPeople.depList">
             {{dep.name}}
           </el-tag>
@@ -104,7 +107,7 @@ export default {
       }
     };
     var checkFileSend1 = (rule, value, callback) => {
-      if (value.all || value.personList.length != 0 || value.depList != 0) {
+      if (value.all || value.personList.length != 0 || value.depList != 0 || value.outSendBean) {
         callback();
       } else {
         callback(new Error('请选择主送人'))
@@ -118,14 +121,14 @@ export default {
       }
     };
     var checkPrintNum = (rule, value, callback) => {
-      if (value&&parseInt(value)<=50) {
+      if (value && parseInt(value) <= 50) {
         callback();
       } else {
         callback(new Error('打印份数不能超过50'))
       }
     };
-     var checkStoreNum = (rule, value, callback) => {
-      if (value&&parseInt(value)<=50) {
+    var checkStoreNum = (rule, value, callback) => {
+      if (value && parseInt(value) <= 50) {
         callback();
       } else {
         callback(new Error('存档份数不能超过50'))
@@ -152,7 +155,8 @@ export default {
         mainPeople: {
           personList: [],
           all: '',
-          depList: []
+          depList: [],
+          outSendBean: ''
         },
         ccPeople: {
           personList: [],
@@ -168,12 +172,12 @@ export default {
         docFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
         fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
         mainPeople: [{ type: 'object', required: true, validator: checkFileSend1, trigger: 'blur' }],
-        ccPeople: [{ type: 'object', required: true, validator: checkFileSend2, trigger: 'blur' }],
+        // ccPeople: [{ type: 'object', required: true, validator: checkFileSend2, trigger: 'blur' }],
         catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
         signName: [{ required: true, message: '请选择签发人', trigger: 'blur' }],
         issueDate: [{ type: 'date', required: true, message: '请选择发文日期', trigger: 'blur' }],
-        printNum: [{ required: true, message: '请输入打印份数' },{validator: checkPrintNum}],
-        storeNum: [{ required: true, message: '请输入存档份数' },{validator: checkStoreNum}],
+        printNum: [{ required: true, message: '请输入打印份数' }, { validator: checkPrintNum }],
+        storeNum: [{ required: true, message: '请输入存档份数' }, { validator: checkStoreNum }],
       },
       pickerOptions0: {
         disabledDate(time) {
@@ -190,7 +194,7 @@ export default {
       },
       fileRedData: [],
       files: [],
-      disabledUpload:false,
+      disabledUpload: false,
       isDrafFirst: false
     }
   },
@@ -226,11 +230,11 @@ export default {
       }
     },
     typeChange(val) {
-      if (!this.isDrafFirst) {    
+      if (!this.isDrafFirst) {
         this.manuscriptForm.docFileId = '';
         this.files = [];
         this.$emit('updateSuggest', val);
-      } else {           //草稿箱第一次
+      } else { //草稿箱第一次
         this.isDrafFirst = false;
       }
     },
@@ -266,26 +270,26 @@ export default {
       //     this.$message.error('上传文件只能是 PDF 格式!');
       //   }
       // } else {
-        if (file.type) {
-          isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-        } else {
-          var regExp = new RegExp("\.docx$", "i");
-          isJPG = regExp.test(file.name);
-        }
-        if (!isJPG) {
-          this.$message.error('上传文件只能是 DOCX 格式!');
-        }
+      if (file.type) {
+        isJPG = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      } else {
+        var regExp = new RegExp("\.docx$", "i");
+        isJPG = regExp.test(file.name);
+      }
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 DOCX 格式!');
+      }
       // }
 
       const isLt10M = file.size / 1024 / 1024 < 50;
-      var noUpload=true;
-      if(this.manuscriptForm.docFileId){
-        noUpload=false
+      var noUpload = true;
+      if (this.manuscriptForm.docFileId) {
+        noUpload = false
       }
       if (!isLt10M) {
         this.$message.error('上传文件大小不能超过 50MB!');
       }
-      return isJPG && isLt10M&&noUpload;
+      return isJPG && isLt10M && noUpload;
     },
     handleRemove() {
       this.manuscriptForm.docFileId = '';
@@ -312,7 +316,7 @@ export default {
           "sendTypeEmp": {
             "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
             "ids": this.manuscriptForm.fileSend.personList.map(person => person.empId),
-            "empPostId":this.manuscriptForm.fileSend.personList.map(person => person.postId)
+            "empPostId": this.manuscriptForm.fileSend.personList.map(person => person.postId)
           }
         },
         "mainSend": {
@@ -323,7 +327,11 @@ export default {
           "sendTypeEmp": {
             "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
             "ids": this.manuscriptForm.mainPeople.personList.map(person => person.empId)
-          }
+          },
+          // "outSendBean": {
+          //   "sendType": this.manuscriptForm.mainPeople.outSendBean ? this.sendTypes.find(type => type.dictEname == 'outsend').dictCode : '',
+          //   "name": this.manuscriptForm.mainPeople.outSendBean
+          // }
         },
         "ccSend": {
           "sendTypeAll": {
@@ -391,6 +399,9 @@ export default {
     closeMainAll() {
       this.manuscriptForm.mainPeople.all = '';
     },
+    closeMainOutSend() {
+      this.manuscriptForm.mainPeople.outSendBean = '';
+    },
     closeCcAll() {
       this.manuscriptForm.ccPeople.all = '';
     },
@@ -454,12 +465,12 @@ export default {
           }
         })
     },
-    handleProgress(event, file, fileList){
-      this.disabledUpload=true;
-      if(event.percent==100){
-        setTimeout(()=>{
-          this.disabledUpload=false;
-        },2000)        
+    handleProgress(event, file, fileList) {
+      this.disabledUpload = true;
+      if (event.percent == 100) {
+        setTimeout(() => {
+          this.disabledUpload = false;
+        }, 2000)
       }
     }
   }

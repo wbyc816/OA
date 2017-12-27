@@ -43,7 +43,7 @@
       <el-table-column property="sequenceNo" label="序号" width="120"></el-table-column>
       <el-table-column property="timePrice" label="工时费" width="120"></el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].airmRor.rmb | toThousands}}元 {{info[0].airmRor.rmb | moneyCh}}</span></p>
+    <p class="totalMoney">金额总计 人民币 <span>{{info[0].airmRor.rmb | toThousands}}元 {{info[0].airmRor.rmb | moneyCh}}</span></p>
     <el-table :data="info[0].airmRorRepairs" :stripe="true" highlight-current-row style="width: 100%" class="appTable budgetTable ">
       <el-table-column type="index" label="序号" width="65"></el-table-column>
       <el-table-column property="supplierName" label="厂家名称"></el-table-column>
@@ -76,16 +76,20 @@
         <p v-if="info" class="textContent">{{info[0].airmRor.supplierBankAccountName}}</p>
       </el-col>
       <el-col :span="12" class="rightBorder">
-        <h1 class="title">付款方式</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.isAdvancePayment==1?'预付':'后付'}}</p>
+        <h1 class="title">金额总计</h1>
+        <p v-if="info" class="textContent">{{info[0].airmRor.totalMoney | toThousands}}</p>
       </el-col>
       <el-col :span="12">
         <h1 class="title">填表日期</h1>
         <p v-if="info" class="textContent">{{info[0].airmRor.createTime | time('date')}}</p>
       </el-col>
-      <el-col :span="24">
-        <h1 class="title">金额总计</h1>
-        <p v-if="info" class="textContent">{{info[0].airmRor.rmb | toThousands}}元</p>
+      <el-col :span="info&&info[0].airmRor.isAdvancePayment!=1?24:12" :class="{'rightBorder':info&&info[0].airmRor.isAdvancePayment==1}">        
+        <h1 class="title">付款方式</h1>
+        <p v-if="info" class="textContent">{{info[0].airmRor.isAdvancePayment==1?'预付':'后付'}}</p>
+      </el-col>
+      <el-col :span="12" v-if="info&&info[0].airmRor.isAdvancePayment==1">        
+        <h1 class="title">预付款百分比</h1>
+        <p v-if="info" class="textContent">{{info[0].airmRor.advancePaymentPercent}}%</p>
       </el-col>
       <el-col :span="24">
         <h1 class="title" style="width:380px">选择供应商是否为独家修理厂家</h1>

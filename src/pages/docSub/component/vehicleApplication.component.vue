@@ -15,7 +15,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="用车时间" prop="timeLine">
-        <el-date-picker v-model="vehicleForm.timeLine" type="datetimerange" :editable="false" :clearable="false" style="width:100%" format="yyyy-MM-dd HH:mm" :picker-options="pickerOptions0"></el-date-picker>
+        <el-date-picker v-model="vehicleForm.timeLine" type="datetimerange" :editable="false" :clearable="false" style="width:100%" format="yyyy-MM-dd HH:mm"></el-date-picker>
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updatePerson" :selfDisable="false" :visible.sync="personDialogVisible"></person-dialog>

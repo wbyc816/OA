@@ -25,7 +25,7 @@
     <el-card class="borderCard searchResult" v-loading="searchLoading">
       <div slot="header" class="clearfix">
         <span v-if="timeline&&timeline.length>0&&timeline[0]">{{+timeline[0] | time('ch')}} ~ {{+timeline[1] | time('ch')}}</span>
-        <span class="download"><i class="iconfont icon-icon202"></i>导出报表</span>
+        <!-- <span class="download"><i class="iconfont icon-icon202"></i>导出报表</span> -->
       </div>
       <el-table :data="searchData" class="myTable">
         <el-table-column prop="deptName" label="呈报部门" width="150"></el-table-column>

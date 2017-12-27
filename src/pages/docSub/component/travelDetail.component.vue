@@ -96,7 +96,7 @@ $main:#0460AE;
         position: absolute;
         font-size: 27px;
         right: -30px;
-        top: -5px;
+        top: 1px;
       }
     }
   }

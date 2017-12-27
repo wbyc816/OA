@@ -22,7 +22,7 @@
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
         <li>开户银行 {{supplierInfo.accountBank}}</li>
-        <li>收款账户 {{supplierInfo.accountName}}</li>
+        <li>银行账号 {{supplierInfo.accountCode}}</li>
       </ul>
       <el-form-item label="订货周期" class="deptArea" prop="orderCycle">
         <el-input v-model="contractForm.orderCycle">
@@ -146,10 +146,6 @@
                     <span>对方支付</span>
                     <p>{{props.row.otherPayment}}</p>
                   </div>
-                  <div>
-                    <span>我方支付</span>
-                    <p>{{props.row.ourPayment}}</p>
-                  </div>
                 </div>
               </div>
             </template>
@@ -158,7 +154,7 @@
           <el-table-column property="changeOutNum" label="换出数量" width="90"></el-table-column>
           <el-table-column property="changeOutPieceNo" label="换出件号" width="120"></el-table-column>
           <el-table-column property="changeOutSequenceNo" label="换出序号" width="120"></el-table-column>
-          <el-table-column property="ourPayment" label="金额总计" width="150"></el-table-column>
+          <el-table-column property="ourPayment" label="我方支付" width="150"></el-table-column>
           <el-table-column label="操作" width="55">
             <template scope="scope">
               <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
@@ -166,14 +162,10 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
+        <p class="totalMoney">金额总计 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
       </div>
       <el-form-item label="金额总计" class="deptArea">
         <el-input v-model="totalMoney" readonly>
-        </el-input>
-      </el-form-item>
-      <el-form-item label="人民币" class="arrArea">
-        <el-input v-model="totalRmb" readonly>
         </el-input>
       </el-form-item>
     </el-form>

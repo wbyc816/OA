@@ -39,10 +39,6 @@
                 <span>对方支付</span>
                 <p>{{props.row.otherPayment}}</p>
               </div>
-              <div>
-                <span>我方支付</span>
-                <p>{{props.row.ourPayment}}</p>
-              </div>
             </div>
           </div>
         </template>
@@ -51,9 +47,9 @@
       <el-table-column property="changeOutNum" label="换出数量" width="90"></el-table-column>
       <el-table-column property="changeOutPieceNo" label="换出件号" width="120"></el-table-column>
       <el-table-column property="changeOutSequenceNo" label="换出序号" width="120"></el-table-column>
-      <el-table-column property="ourPayment" label="金额总计" width="150"></el-table-column>
+      <el-table-column property="ourPayment" label="我方支付" width="150"></el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].rmb | toThousands}}元 {{info[0].rmb | moneyCh}}</span></p>
+    <p class="totalMoney">金额总计 人民币 <span>{{info[0].rmb | toThousands}}元 {{info[0].rmb | moneyCh}}</span></p>
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
       <el-col :span="12" class="rightBorder">
         <h1 class="title">优先级</h1>
@@ -91,17 +87,22 @@
         <h1 class="title">前期询价对比</h1>
         <p v-if="info" class="textContent">{{info[0].earlyInquiryCompare}}</p>
       </el-col>
+      
+      <el-col :span="12">
+        <h1 class="title">填表日期</h1>
+        <p v-if="info" class="textContent">{{info[0].createTime | time('date')}}</p>
+      </el-col>
+      <el-col :span="12" class="rightBorder">
+        <h1 class="title">金额总计</h1>
+        <p v-if="info" class="textContent">{{info[0].totalMoney | toThousands}}元</p>
+      </el-col>
       <el-col :span="12">
         <h1 class="title">付款方式</h1>
         <p v-if="info" class="textContent">{{info[0].isAdvancePayment==1?'预付':'后付'}}</p>
       </el-col>
-      <el-col :span="12" class="rightBorder">
-        <h1 class="title">填表日期</h1>
-        <p v-if="info" class="textContent">{{info[0].createTime | time('date')}}</p>
-      </el-col>
-      <el-col :span="12">
-        <h1 class="title">金额总计</h1>
-        <p v-if="info" class="textContent">{{info[0].rmb | toThousands}}元</p>
+      <el-col :span="24" v-if="info&&info[0].isAdvancePayment==1">        
+        <h1 class="title">预付款百分比</h1>
+        <p v-if="info" class="textContent">{{info[0].advancePaymentPercent}}%</p>
       </el-col>
     </el-row>
   </div>

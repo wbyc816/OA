@@ -22,6 +22,7 @@
                 </el-option>
               </el-select>
             </el-menu-item>
+            <el-menu-item index="4" @click.native="selOutSend" v-if="hasOutSend">{{outSendLabel}}</el-menu-item>
           </el-menu>
         </el-col>
         <el-col :span='18' class="rightBox">
@@ -68,6 +69,9 @@
                   所有人
                 </template>
               </el-tag>
+              <el-tag key="outSend" :closable="true" type="primary" v-show="outSendBean" @close="closeOutSend">
+                {{outSendLabel}}
+              </el-tag>
               <el-tag :key="dep.id" :closable="true" type="primary" @close="closeDep(index)" v-for="(dep,index) in depList">
                 <template v-if="hasLevel">
                 {{dep.name+'('+dep.min+'-'+dep.max+')'}}
@@ -110,11 +114,13 @@ export default {
       min: 0,
       max: 100,
       all: '',
+      outSendBean:'',
       defaultProps: {
         children: 'childNode',
         label: 'name'
       },
       isAll: false,
+      outSendLabel:'对外发文'
     }
   },
   props: {
@@ -132,6 +138,10 @@ export default {
     hasLevel: {
       type: Boolean,
       default: true
+    },
+    hasOutSend: {
+      type: Boolean,
+      default: false
     },
   },
   watch: {
@@ -207,8 +217,14 @@ export default {
 
       });
     },
+    selOutSend(){
+      this.outSendBean=this.outSendLabel
+    },
     closeAll() {
       this.all = '';
+    },
+    closeOutSend(){
+      this.outSendBean='';
     },
     selPerson() {
       this.type = 'person';
@@ -269,7 +285,7 @@ export default {
       return row.empId+row.postId
     },
     submitPerson() {
-      this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList })
+      this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList,outSendBean:this.outSendBean })
       this.$emit('update:visible', false)
     },
     handleSelectionChange(val) {

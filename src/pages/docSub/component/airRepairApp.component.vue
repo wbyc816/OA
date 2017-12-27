@@ -39,7 +39,7 @@
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
         <li>开户银行 {{supplierInfo.accountBank}}</li>
-        <li>收款账户 {{supplierInfo.accountName}}</li>
+        <li>银行账号 {{supplierInfo.accountCode}}</li>
       </ul>
       <!-- <el-form-item label="送修合同" prop="repairContract">
         <el-col :span='21' class="repairContract" style="left: -6px;position: relative;">
@@ -234,16 +234,16 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">合计金额 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
+        <p class="totalMoney">金额总计 人民币 <span>{{totalRmb | toThousands}}元 {{totalRmb | moneyCh}}</span></p>
       </div>
       <el-form-item label="金额总计" class="deptArea">
         <el-input v-model="totalMoney" readonly>
         </el-input>
       </el-form-item>
-      <el-form-item label="人民币" class="arrArea">
+      <!-- <el-form-item label="人民币" class="arrArea">
         <el-input v-model="totalRmb" readonly>
         </el-input>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <el-dialog title="选择合同子类型" :visible.sync="dialogVisible" size="small" custom-class="repairContractDialog" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <i class="el-icon-close backButton" @click="$router.go(-1)"></i>

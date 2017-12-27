@@ -43,7 +43,7 @@
       <el-table-column property="unitPrice" label="单价" width="120"></el-table-column>
       <el-table-column property="totalPrice" label="总价" width="150"></el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{info[0].rmbTotalMoney | toThousands}}元 {{info[0].rmbTotalMoney | moneyCh}}</span></p>
+    <p class="totalMoney">合同总金额 人民币 <span>{{info[0].rmbTotalMoney | toThousands}}元 {{info[0].rmbTotalMoney | moneyCh}}</span></p>
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
       <el-col :span="12" class="rightBorder">
         <h1 class="title">合同子类型</h1>
@@ -82,8 +82,12 @@
         <p v-if="info" class="textContent">{{info[0].isAdvancePayment==1?'预付':'后付'}}</p>
       </el-col>
       <el-col :span="12">
-        <h1 class="title">金额总计</h1>
-        <p v-if="info" class="textContent">{{info[0].rmbTotalMoney | toThousands}}元</p>
+        <h1 class="title">合同总金额</h1>
+        <p v-if="info" class="textContent">{{info[0].totalManey | toThousands}}</p>
+      </el-col>
+      <el-col :span="24" v-if="info&&info[0].isAdvancePayment==1">        
+        <h1 class="title">预付款百分比</h1>
+        <p v-if="info" class="textContent">{{info[0].advancePaymentPercent}}%</p>
       </el-col>
     </el-row>
   </div>
