@@ -74,7 +74,7 @@
         <el-row>
             <el-col :span="24">
               上述各项小时生产数据由人力资源部薪酬管理处根据各业务部门所提供的生产数据核算，如有疑问可与部门考勤专员联系，点此<a href='http://efile.donghaiair.cn/backstage/illustrate/%E5%B7%A5%E8%B5%84%E5%8D%95%E8%AE%A1%E7%AE%97%E8%AF%B4%E6%98%8E.pdf' target="target">查询计算公式</a>，
-              点此<a href='http://efile.donghaiair.cn/backstage/employee_salary/发放工资温馨提示.pdf' target="target">查询联系方式及说明</a>。
+              点此<a href='http://efile.donghaiair.cn/backstage/illustrate/发放工资温馨提示.pdf' target="target">查询联系方式及说明</a>。
               
             </el-col>
         </el-row>
@@ -133,7 +133,7 @@
         <el-row>
             <el-col :span="24">
               上述各项小时生产数据由人力资源部薪酬管理处根据各业务部门所提供的生产数据核算，如有疑问可与部门考勤专员联系，点此<a href='http://efile.donghaiair.cn/backstage/illustrate/%E5%B7%A5%E8%B5%84%E5%8D%95%E8%AE%A1%E7%AE%97%E8%AF%B4%E6%98%8E.pdf' target="target">查询计算公式</a>，
-              点此<a href='http://efile.donghaiair.cn/backstage/employee_salary/发放工资温馨提示.pdf' target="target">查询联系方式及说明</a>。
+              点此<a href='http://efile.donghaiair.cn/backstage/illustrate/发放工资温馨提示.pdf' target="target">查询联系方式及说明</a>。
               </el-col>
         </el-row>
       </div>
@@ -182,7 +182,7 @@
         <el-row>
             <el-col :span="24">
               上述各项小时生产数据由人力资源部薪酬管理处根据各业务部门所提供的生产数据核算，如有疑问可与部门考勤专员联系，点此<a href='http://efile.donghaiair.cn/backstage/illustrate/%E5%B7%A5%E8%B5%84%E5%8D%95%E8%AE%A1%E7%AE%97%E8%AF%B4%E6%98%8E.pdf' target="target">查询计算公式</a>，
-              点此<a href='http://efile.donghaiair.cn/backstage/employee_salary/发放工资温馨提示.pdf' target="target">查询联系方式及说明</a>。
+              点此<a href='http://efile.donghaiair.cn/backstage/illustrate/发放工资温馨提示.pdf' target="target">查询联系方式及说明</a>。
               </el-col>
         </el-row>
       </div>
