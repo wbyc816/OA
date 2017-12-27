@@ -5,9 +5,9 @@
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading" >
       <caption>
       </caption>
-      <thead align="left">
+      <thead>
         <tr>
-          <th v-for="title in tableTitle">{{title}}</th>
+          <th v-for="title in tableTitle" align="left">{{title}}</th>
         </tr>
       </thead>
       <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">

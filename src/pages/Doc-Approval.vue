@@ -30,9 +30,9 @@
     </el-row>
     <el-dialog title="流转详情" :visible.sync="processDialogView" size="large" class="myDialog processDialog" @close="close">
       <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0">
-        <thead align="left">
+        <thead>
           <tr>
-            <th v-for="title in tableTitle">{{title}}</th>
+            <th v-for="title in tableTitle" align="left">{{title}}</th>
           </tr>
         </thead>
       </table>

@@ -4,9 +4,9 @@
     <div class="boxWrap">
       <h4 class='doc-form_title' v-if="currentDepName">{{currentDepName}}</h4>
       <table bgcolor="#fff" class="adviceList" width="100%" cellspacing="0" v-if="infoTable.length>0">
-        <thead align="left">
+        <thead>
           <tr>
-            <th v-for="title in tableTitle">{{title}}</th>
+            <th v-for="title in tableTitle" align="left">{{title}}</th>
           </tr>
         </thead>
         <tbody>
@@ -44,9 +44,9 @@
     <el-tabs v-model="activeName" @tab-click="handleClick" v-if="info.singInfoVo">
       <el-tab-pane :label="index==0?'所在部门':item.deptName" :name="item.deptName" v-for="(item,index) in info.singInfoVo">
         <table bgcolor="#fff" class="adviceList" :class="{isOwnerDept:item.isOwnerDept==1}" width="100%" cellspacing="0">
-          <thead align="left">
+          <thead>
             <tr>
-              <th v-for="title in isOwnerDept(item)">{{title}}</th>
+              <th v-for="title in isOwnerDept(item)" align="left">{{title}}</th>
             </tr>
           </thead>
           <tbody>
@@ -60,10 +60,10 @@
           </tbody>
         </table>
         <table bgcolor="#fff" class="adviceList" width="100%" cellspacing="0" v-if="item.deptManagerSign">
-          <thead align="left">
+          <thead>
             <tr>
-              <th style="width:65%">部门总经理意见</th>
-              <th style="width:35%">其他</th>
+              <th style="width:65%" align="left">部门总经理意见</th>
+              <th style="width:35%" align="left">其他</th>
             </tr>
           </thead>
           <tbody>

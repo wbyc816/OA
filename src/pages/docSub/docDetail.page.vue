@@ -520,7 +520,7 @@ export default {
           if (this.isInArray(addFileDoc, this.$route.query.code)) {
             params.fileIds = this.fileForm.fileIds.map(f => f.response.data);
           }
-          console.log(params)
+          // console.log(params)
           this.$http.post('/doc/docArchive', params, { body: true })
             .then(res => {
               if (res.status == '0') {

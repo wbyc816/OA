@@ -47,9 +47,9 @@
           <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0" v-loading.body="searchLoading">
             <caption>
             </caption>
-            <thead align="left">
+            <thead>
               <tr>
-                <th v-for="title in tableTitle">{{title}}</th>
+                <th v-for="title in tableTitle" align="left">{{title}}</th>
               </tr>
             </thead>
             <tbody v-for="flight in flightList">

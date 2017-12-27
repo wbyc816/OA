@@ -20,7 +20,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="预订日期" prop="reserveDate" class="clearBoth">
-            <el-date-picker v-model="appForm.reserveDate" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+            <el-date-picker v-model="appForm.reserveDate" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0" @change="dateChange"></el-date-picker>
           </el-form-item>
           <el-form-item label="开始时间" prop="beginTime" class="deptArea">
             <el-time-picker v-model="appForm.beginTime" :picker-options="timeOption" placeholder="选择时间" @change="beginTimeChange" :editable="false">
@@ -140,10 +140,6 @@ export default {
     if (!this.userInfo.isDocsec || this.userInfo.isDocsec[0] != 1) {
       this.$router.push('/meeting/meetingSearch/1')
     }
-    var now = new Date();
-    if (now.getHours() > 7) {
-      this.timeOption.selectableRange = this.timeFilter(+now, 'second') + ' - 22:00:00';
-    }
   },
   methods: {
     updatePerson(list) {
@@ -155,7 +151,6 @@ export default {
       this.appForm.roomId = '';
     },
     checkFloor(val) {
-      console.log(val)
       if (val) {
         this.$refs.appForm.validateField('floor');
       }
@@ -170,6 +165,17 @@ export default {
     endTimeChange() {
       if (this.appForm.endTime) {
         this.appForm.endTime = new Date(this.appForm.endTime.setSeconds(0));
+      }
+    },
+    dateChange(val) {
+      console.log(val)
+      this.appForm.beginTime='';
+      this.appForm.endTime='';
+      var now = new Date();
+      if (now.getHours() > 7&&this.timeFilter(+now,'date')==val) {
+        this.timeOption.selectableRange = this.timeFilter(+now, 'second') + ' - 22:00:00';
+      }else{
+        this.timeOption.selectableRange = '08:00:00 - 22:00:00';
       }
     },
     closePerson(index) {

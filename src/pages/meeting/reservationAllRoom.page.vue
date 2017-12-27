@@ -43,7 +43,7 @@
         <li></li>
       </ul>
       <el-row class="roomDetail" v-for="row in timeList" v-show="timeList.length>0">
-        <el-col :span='4'>{{row.roomName}}</el-col>
+        <el-col :span='4' class="roomName"><span>{{row.roomName}}</span></el-col>
         <el-col :span='20'>
           <div class="lineBOX">
             <div class="borderDiv" v-for="o in 7"></div>
@@ -432,6 +432,13 @@ $brown: #BE3B7F;
     .el-col {
 
       font-size: 13px;
+      &.roomName span{
+        display: inline-block;
+        line-height: 1;
+        vertical-align: middle;
+        padding-right: 10px;
+        text-align: center;
+      }
       .lineBOX {
         height: 100px;
         position: relative;
