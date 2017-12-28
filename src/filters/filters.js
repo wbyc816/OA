@@ -145,6 +145,8 @@ function moneyCh(money) {
   var cnInteger = "整"; //整数金额时后面跟的字符  
   var cnIntLast = "圆"; //整型完以后的单位  
   var maxNum = 999999999999999.9999; //最大处理的数字  
+  var fu="负";
+  var isNegative=false;
   var zeroCount;
   var IntLen;
   var decLen;
@@ -159,6 +161,10 @@ function moneyCh(money) {
   if (money >= maxNum) {
 
     return "";
+  }
+  if(money<0){
+    isNegative=true;
+    money=-money;
   }
   if (money == 0) {
     ChineseStr = cnNums[0] + cnIntLast + cnInteger;
@@ -215,6 +221,6 @@ function moneyCh(money) {
     ChineseStr += cnInteger;
     //ChineseStr += cnInteger; 
   }
-  return ChineseStr;
+  return (isNegative?fu:'')+ChineseStr;
 }
 export { timeFilter, toThousands }

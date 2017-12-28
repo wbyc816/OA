@@ -96,13 +96,13 @@ body {
   color: #393939; // padding-right: 0!important;
   &::-webkit-scrollbar-track {
     border-radius: 10px;
-    background-color: transparent;
+    background-color: #EEEEEE;;
   }
 
   &::-webkit-scrollbar {
     position: absolute;
     width: 5px;
-    background-color: transparent;
+    background-color: #EEEEEE;
     height: 10px;
   }
 
@@ -440,6 +440,7 @@ ul {
 .myDialog {
 
   overflow-y: hidden;
+  overflow-x:hidden;
   .el-dialog--large {
     display: table;
     width: 1200px;
@@ -953,6 +954,7 @@ ul {
 }
 
 .personDialog {
+  overflow-x:hidden;
   .el-dialog--large {
     width: 1100px;
     top: 50%!important;
@@ -1124,7 +1126,9 @@ ul {
     background: #F7F7F7;
   }
 }
-
+.el-step__head.is-text{
+  border-width: 0;
+}
 .commonApp {
   .el-table__body-wrapper {
     overflow-x: hidden;
@@ -1133,6 +1137,7 @@ ul {
   .arrArea {
     float: left;
     width: 50%;
+    height:46px;
   }
   .arrArea {
     .el-form-item__label {
@@ -1267,7 +1272,9 @@ ul {
     }
   }
 }
-
+.el-dialog__wrapper{
+  overflow-x:hidden;
+}
 .tableExpandBox {
 
   .width50,.width100 {

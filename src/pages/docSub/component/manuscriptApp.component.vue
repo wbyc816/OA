@@ -32,15 +32,15 @@
         <div class="reciverList">
           <el-tag key="all" :closable="true" v-show="manuscriptForm.mainPeople.all" type="primary" @close="closeMainAll">
             所有人
-          </el-tag>
-          <el-tag key="outSend" :closable="true" v-show="manuscriptForm.mainPeople.outSendBean" type="primary" @close="closeMainOutSend">
-            {{manuscriptForm.mainPeople.outSendBean}}
-          </el-tag>
+          </el-tag>         
           <el-tag :key="dep.id" :closable="true" type="primary" @close="closeMainDep(index)" v-for="(dep,index) in manuscriptForm.mainPeople.depList">
             {{dep.name}}
           </el-tag>
           <el-tag :key="person.id" :closable="true" type="primary" @close="closeMainPerson(index)" v-for="(person,index) in manuscriptForm.mainPeople.personList">
             {{person.name}}
+          </el-tag>
+          <el-tag :key="item" :closable="true"  type="primary" @close="closeMainOutSend(index)" v-for="(item,index) in manuscriptForm.mainPeople.outList">
+            {{item}}(对外)
           </el-tag>
         </div>
         <el-button class="addButton" @click="mainPeopleVisible=true"><i class="el-icon-plus"></i></el-button>
@@ -107,7 +107,7 @@ export default {
       }
     };
     var checkFileSend1 = (rule, value, callback) => {
-      if (value.all || value.personList.length != 0 || value.depList != 0 || value.outSendBean) {
+      if (value.all || value.personList.length != 0 || value.depList != 0 || value.outList.length!=0) {
         callback();
       } else {
         callback(new Error('请选择主送人'))
@@ -156,7 +156,7 @@ export default {
           personList: [],
           all: '',
           depList: [],
-          outSendBean: ''
+          outList: []
         },
         ccPeople: {
           personList: [],
@@ -329,8 +329,8 @@ export default {
             "ids": this.manuscriptForm.mainPeople.personList.map(person => person.empId)
           },
           "outSendBean": {
-            "sendType": this.manuscriptForm.mainPeople.outSendBean ? this.sendTypes.find(type => type.dictEname == 'outsend').dictCode : '',
-            "name": this.manuscriptForm.mainPeople.outSendBean
+            "sendType": this.manuscriptForm.mainPeople.outList.length!=0 ? this.sendTypes.find(type => type.dictEname == 'outsend').dictCode : '',
+            "name": this.manuscriptForm.mainPeople.outList
           }
         },
         "ccSend": {
@@ -399,8 +399,8 @@ export default {
     closeMainAll() {
       this.manuscriptForm.mainPeople.all = '';
     },
-    closeMainOutSend() {
-      this.manuscriptForm.mainPeople.outSendBean = '';
+    closeMainOutSend(index) {
+      this.manuscriptForm.mainPeople.outList.splice(index, 1);     
     },
     closeCcAll() {
       this.manuscriptForm.ccPeople.all = '';

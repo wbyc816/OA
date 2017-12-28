@@ -545,11 +545,26 @@ export default {
           this.$http.post('/doc/getRmbByExchangeRate', { currencyId: item.currencyCode, amount: item.totalFee })
             .then(res => {
               if (res.status == 0) {
-                item.rmb = res.data.amount;
-                item.exchangeRateId = res.data.rateId;
-                item.exchangeRate = res.data.rateReverse;
-                this.feeTable.push(item);
-                this.clearFeeForm();
+                if (this.budgetTable.length == 0) {
+                  item.rmb = res.data.amount;
+                  item.exchangeRateId = res.data.rateId;
+                  item.exchangeRate = res.data.rateReverse;
+                  this.feeTable.push(item);
+                  this.clearFeeForm();
+                }else{
+                  var temp=parseFloat(this.budgetTable[0].rmb)+res.data.amount;
+                  if(temp>this.budgetInfo.budgetRemain){
+                    this.$message.warning('报销金额不能大于可用预算');
+                  }else{
+                    item.rmb = res.data.amount;
+                    item.exchangeRateId = res.data.rateId;
+                    item.exchangeRate = res.data.rateReverse;
+                    this.feeTable.push(item);
+                    this.clearFeeForm();
+                    this.budgetTable[0].rmb=temp;
+                    this.budgetTable[0].money=temp+'';
+                  }
+                }
               } else {
                 console.log('货币兑换失败')
               }

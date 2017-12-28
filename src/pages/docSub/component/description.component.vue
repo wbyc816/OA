@@ -41,7 +41,7 @@
       </div>
       <search-options @search="setOptions"></search-options>
       <el-table :data="extraDocs" class="myTable searchRes" @row-dblclick="selectDoc" :height="250" :row-class-name="tableRowClassName" v-loading="searchLoading">
-        <el-table-column prop="docNo" label="公文编号" width="200"></el-table-column>
+        <el-table-column prop="docNo" label="公文编号" width="210"></el-table-column>
         <el-table-column prop="docTypeName" label="公文类型" width="110"></el-table-column>
         <el-table-column prop="docTitle" label="标题"></el-table-column>
         <el-table-column prop="taskUser" label="呈报人" width="120"></el-table-column>

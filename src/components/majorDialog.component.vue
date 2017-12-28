@@ -22,7 +22,11 @@
                 </el-option>
               </el-select>
             </el-menu-item>
-            <el-menu-item index="4" @click.native="selOutSend" v-if="hasOutSend">{{outSendLabel}}</el-menu-item>
+            <el-menu-item index="4" v-if="hasOutSend" class="outSendInput">
+              <el-autocomplete v-model="outSendText" :fetch-suggestions="querySearchAsync" placeholder="对外发文"  >
+                <el-button slot="append" type="primary" @click="addOutSend" :disabled="outSendText.length===0">添加</el-button>
+              </el-autocomplete>
+            </el-menu-item>
           </el-menu>
         </el-col>
         <el-col :span='18' class="rightBox">
@@ -68,10 +72,7 @@
                 <template v-else>
                   所有人
                 </template>
-              </el-tag>
-              <el-tag key="outSend" :closable="true" type="primary" v-show="outSendBean" @close="closeOutSend">
-                {{outSendLabel}}
-              </el-tag>
+              </el-tag>              
               <el-tag :key="dep.id" :closable="true" type="primary" @close="closeDep(index)" v-for="(dep,index) in depList">
                 <template v-if="hasLevel">
                 {{dep.name+'('+dep.min+'-'+dep.max+')'}}
@@ -83,6 +84,9 @@
               <el-tag :key="person.id" :closable="true" type="primary" @close="closePerson(index)" v-for="(person,index) in personList">
                 {{person.name}}
               </el-tag>
+              <el-tag :key="item" :closable="true" type="primary" @close="closeOutSend(index)" v-for="(item,index) in outList">
+                {{item}}(对外)
+              </el-tag>
               <el-button type="primary" size="large" @click="submitPerson">选中</el-button>
             </div>
           </div>
@@ -91,6 +95,179 @@
     </el-dialog>
   </div>
 </template>
+<style lang='scss'>
+  $main:#0460AE;
+  $sub:#1465C0;
+
+
+  .majorDialog {
+    .el-tree {
+      border-bottom: none;
+      border-left: none;
+    }
+    .el-dialog__wrapper{
+      overflow-x:hidden;
+    }
+    .el-table__body-wrapper {
+      overflow: hidden;
+    }
+    .el-tag {
+      margin-right: 5px;
+    }
+    .outSendInput{
+      border-bottom:none!important;
+      input{
+        border-right: none;
+      }
+      .el-input-group__append{
+        background: $main;
+        border: none;
+        overflow: hidden;
+        border-radius: 0;
+        button{
+          background:$main;
+          color:#fff;
+          height:47px;
+          // border:none;
+          &.is-disabled, &.is-disabled:focus, &.is-disabled:hover{
+            color: #bfcbd9;
+            cursor: not-allowed;
+            background-image: none;
+            background-color: #eef1f6;
+            border-color: #eef1f6
+            ;
+          }
+        }
+      }
+    }
+    .topSearch {
+      padding: 10px;
+      line-height: 47px;
+      .tips {
+        float: left;
+        font-size: 16px;
+      }
+      .search {
+        float: right;
+        width:inherit;
+        width: initial;
+      }
+    }
+    .el-tree-node__content {
+
+      .depAdd {
+        font-size: 14px;
+        display: none;
+      }
+      &:hover {
+        .depAdd {
+          display: inline-block;
+        }
+      }
+    }
+    .menuBox {
+      >.el-menu-item {
+        border-bottom: 1px solid #F2F2F2;
+        .el-select {
+          width: 75px;
+          .el-input__inner {
+            border-width: 0 0 1px 0;
+            border-color: $main;
+            color: $main;
+            padding: 0;
+            text-align: center;
+          }
+          i {
+            display: none;
+          }
+        }
+      }
+      .el-submenu {
+        border-bottom: 1px solid #F2F2F2;
+        .el-submenu__title {
+          border-bottom: 1px solid #F2F2F2;
+        }
+        .el-menu {
+          padding: 10px 0;
+        }
+        .el-menu-item {
+          height: 35px;
+          line-height: 35px;
+          color: $sub;
+        }
+      }
+    }
+    .organlist {
+      border-top: 1px solid #D5DADF;
+      border-bottom: 1px solid #D5DADF;
+      .topMenu {
+        height: 490px;
+        padding-bottom: 50px;
+      }
+    }
+    .rightBox {
+      border-left: 1px solid #D5DADF;
+      .rightContent {
+        height: 493px;
+        overflow: auto;
+      }
+    }
+    .myTable {
+      &:before {
+        display: none;
+      }
+    }
+    .pageBox {
+      overflow: hidden;
+      padding-right: 10px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #D5DADF;
+      .el-pagination {
+        float: right;
+      }
+    }
+    .selInfoBox {
+      p {
+        font-size: 16px;
+        padding-left: 15px;
+        line-height: 40px;
+        height: 40px;
+      }
+      .selInfo {
+        background-color: #E5E7EF;
+        padding-left: 15px;
+        padding-top: 10px;
+        line-height: 30px;
+        font-size: 15px;
+        position: relative;
+        padding-right: 110px;
+        min-height: 50px;
+        padding-bottom: 10px; // >span {
+        //   color: $main;
+        //   margin-right: 10px;
+        //   display: inline-block;
+        //   padding-top: 14px;
+        // }
+        // .nameBox {}
+        button {
+          height: 100%;
+          width: 100px;
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
+      }
+    }
+    .el-table tr:hover {
+      background-color: #ccc;
+      cursor: pointer;
+      >td {
+        background-color: #ccc;
+      }
+    }
+  }
+</style>
 <script>
 import OrganList from './organlist.component'
 import { mapGetters, mapMutations } from 'vuex'
@@ -114,13 +291,14 @@ export default {
       min: 0,
       max: 100,
       all: '',
-      outSendBean:'',
+      outSendText:'',
       defaultProps: {
         children: 'childNode',
         label: 'name'
       },
       isAll: false,
-      outSendLabel:'对外发文'
+      outSendList:[],
+      outList:[]
     }
   },
   props: {
@@ -172,7 +350,9 @@ export default {
     ])
   },
   created() {
-
+    if(this.hasOutSend){
+      this.getOutSendList();      
+    }
   },
   methods: {
     checkParams() {
@@ -217,14 +397,19 @@ export default {
 
       });
     },
-    selOutSend(){
-      this.outSendBean=this.outSendLabel
+    addOutSend(){
+      if(this.outList.find(o=>o===this.outSendText)===undefined){
+        this.outList.push(this.outSendText);
+        this.outSendText='';
+      }else{
+        this.$message.warning('不能添加重复的对外发文！')
+      }
     },
     closeAll() {
       this.all = '';
     },
     closeOutSend(){
-      this.outSendBean='';
+      this.outList.splice(index,1);
     },
     selPerson() {
       this.type = 'person';
@@ -258,8 +443,27 @@ export default {
         }
       }      
     },
-    submitRefdoc: function() {
+    querySearchAsync(queryString, cb) {
+      var outSendList = this.outSendList;
+      var results = queryString ? outSendList.filter(this.createStateFilter(queryString)) : outSendList;
+      cb(results);
+    },
+    createStateFilter(queryString) {
+      return (state) => {
+        return (state.value.indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    getOutSendList(){
+      this.$http.post('/doc/getOutSend',{taskUserName:this.userInfo.name})
+      .then(res=>{
+        if(res.status==0){
+          res.data.forEach(r=>{
+            this.outSendList.push({value:r})
+          });
+        }else{
 
+        }
+      })
     },
     handleCurrentChange(page) {
       if (this.searchRes.empVoList) {
@@ -285,7 +489,7 @@ export default {
       return row.empId+row.postId
     },
     submitPerson() {
-      this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList,outSendBean:this.outSendBean })
+      this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList,outList:this.outList })
       this.$emit('update:visible', false)
     },
     handleSelectionChange(val) {
@@ -320,148 +524,4 @@ export default {
     }
   }
 </script>
-<style lang='scss'>
-$main:#0460AE;
-$sub:#1465C0;
 
-
-.majorDialog {
-  .el-tree {
-  border-bottom: none;
-  border-left: none;
-}
-
-.el-table__body-wrapper {
-  overflow: hidden;
-}
-  .el-tag {
-    margin-right: 5px;
-  }
-  .topSearch {
-    padding: 10px;
-    line-height: 47px;
-    .tips {
-      float: left;
-      font-size: 16px;
-    }
-    .search {
-      float: right;
-      width: initial;
-    }
-  }
-  .el-tree-node__content {
-
-    .depAdd {
-      font-size: 14px;
-      display: none;
-    }
-    &:hover {
-      .depAdd {
-        display: inline-block;
-      }
-    }
-  }
-  .menuBox {
-    >.el-menu-item {
-      border-bottom: 1px solid #F2F2F2;
-      .el-select {
-        width: 75px;
-        .el-input__inner {
-          border-width: 0 0 1px 0;
-          border-color: $main;
-          color: $main;
-          padding: 0;
-          text-align: center;
-        }
-        i {
-          display: none;
-        }
-      }
-    }
-    .el-submenu {
-      border-bottom: 1px solid #F2F2F2;
-      .el-submenu__title {
-        border-bottom: 1px solid #F2F2F2;
-      }
-      .el-menu {
-        padding: 10px 0;
-      }
-      .el-menu-item {
-        height: 35px;
-        line-height: 35px;
-        color: $sub;
-      }
-    }
-  }
-  .organlist {
-    border-top: 1px solid #D5DADF;
-    border-bottom: 1px solid #D5DADF;
-    .topMenu {
-      height: 490px;
-      padding-bottom: 50px;
-    }
-  }
-  .rightBox {
-    border-left: 1px solid #D5DADF;
-    .rightContent {
-      height: 493px;
-      overflow: auto;
-    }
-  }
-  .myTable {
-    &:before {
-      display: none;
-    }
-  }
-  .pageBox {
-    overflow: hidden;
-    padding-right: 10px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #D5DADF;
-    .el-pagination {
-      float: right;
-    }
-  }
-  .selInfoBox {
-    p {
-      font-size: 16px;
-      padding-left: 15px;
-      line-height: 40px;
-      height: 40px;
-    }
-    .selInfo {
-      background-color: #E5E7EF;
-      padding-left: 15px;
-      padding-top: 10px;
-      line-height: 30px;
-      font-size: 15px;
-      position: relative;
-      padding-right: 110px;
-      min-height: 50px;
-      padding-bottom: 10px; // >span {
-      //   color: $main;
-      //   margin-right: 10px;
-      //   display: inline-block;
-      //   padding-top: 14px;
-      // }
-      // .nameBox {}
-      button {
-        height: 100%;
-        width: 100px;
-        position: absolute;
-        right: 0;
-        top: 0;
-      }
-    }
-  }
-  .el-table tr:hover {
-    background-color: #ccc;
-    cursor: pointer;
-    >td {
-      background-color: #ccc;
-    }
-  }
-}
-
-</style>
