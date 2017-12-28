@@ -571,7 +571,7 @@ export default {
         .then(res => {
           if (res.status == '0') {
             this.$message.success('审批成功');
-            this.$router.push('/doc/docTracking');
+            this.$router.push('/doc/docPending');
           } else {
             this.$message.error('审批失败，请重试');
           }

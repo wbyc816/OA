@@ -323,6 +323,7 @@ $main: #0460AE;
           .el-radio-button__inner {
             width: 100%;
             padding: 15px;
+            box-sizing: border-box;
           }
           &:first-child {
             margin-right: 15px;

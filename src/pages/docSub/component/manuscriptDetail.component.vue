@@ -12,7 +12,7 @@
       <h1 class="title">发文目录</h1>
       <p v-if="info" class="textContent">{{info[0].catalogueId}}</p>
     </el-col>
-    <el-col :span="24">
+    <!-- <el-col :span="24">
       <h1 class="title">发布范围</h1>
       <p v-if="info" class="textContent">
         <el-tag :key="send" type="primary" v-for="send in info[0].sendIds">
@@ -35,7 +35,7 @@
           {{send}}
         </el-tag>
       </p>
-    </el-col>
+    </el-col> -->
    <!--  <el-col :span="12" class="rightBorder">
       <h1 class="title">签发人</h1>
       <p v-if="info" class="textContent">{{info[0].signId}}</p>

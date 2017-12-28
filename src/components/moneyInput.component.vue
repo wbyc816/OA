@@ -56,7 +56,7 @@ export default {
   methods: {
     fomat(val) {
       if (this.type == 'money') {
-        val = val.toString().match(/^[1-9]([0-9]{0,})+(?:\.\d{0,2})?/);
+        val = val.toString().match(/(^[1-9]([0-9]{0,})|^[0])+(?:\.\d{0,2})?/);
       } else if (this.type == 'int') {
         val = val.toString().match(/^[1-9][0-9]{0,}/)
       } else if (this.type == 'int0'||this.type =='bankCode') {

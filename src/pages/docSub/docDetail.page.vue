@@ -74,7 +74,7 @@
           </el-collapse-item>
         </el-collapse>
       </div>
-      <div class="operateBox" v-if="docDetialInfo.task[0].state==3">
+      <div class="operateBox" v-if="docDetialInfo.task[0].state==3||docDetialInfo.task[0].state==4">
         <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         <el-button class="myButton" v-if="docDetialInfo.doc.isPay" @click="changePay" :disabled="docDetialInfo.doc.isView!=1">{{docDetialInfo.doc.isView==1?'付款':'已付款'}}</el-button>
         <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" v-if="showDowload($route.query.code)">
@@ -526,7 +526,7 @@ export default {
               if (res.status == '0') {
                 if (isEnd) {
                   this.$message.success('归档成功');
-                  this.$router.push('/doc/docSearch');
+                  this.$router.push('/doc/docPending');
                 } else {
                   this.docDistribution();
                 }
@@ -618,12 +618,12 @@ export default {
           }
           this.DialogArchiveVisible = false;
           this.DialogSubmitVisible = false;
-          this.$router.push('/doc/docSearch');
+          this.$router.push('/doc/docPending');
         })
     },
     DialogSubmitClose() {
       if (this.isSuccessSubmit) {
-        this.$router.push('/doc/docSearch');
+        this.$router.push('/doc/docPending');
       }
     },
     handleChange(activeNames) {

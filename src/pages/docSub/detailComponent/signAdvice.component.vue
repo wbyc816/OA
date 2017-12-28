@@ -171,7 +171,7 @@ export default {
         .then(res => {
           if (res.status == '0') {
             this.$message.success('会签成功');
-            this.$router.push('/doc/docTracking');
+            this.$router.push('/doc/docPending');
           } else {
             this.$message.error('会签失败' + res.message);
           }
@@ -201,7 +201,7 @@ export default {
                 .then(res => {
                   if (res.status == '0') {
                     this.$message.success('结束会签成功');
-                    this.$router.push('/doc/docTracking');
+                    this.$router.push('/doc/docPending');
                   } else {
                     this.$message.error('结束会签失败。' + res.message);
                   }
