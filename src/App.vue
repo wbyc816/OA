@@ -408,7 +408,7 @@ $brown: #985D55;
     &.el-menu--horizontal .el-menu-item {
       height: 70px;
       line-height: 70px;
-      padding: 0 0 0 45px !important;
+      padding: 0 22px 0 22px !important;
       &.is-active {
         color: #1465C0;
       }
@@ -433,9 +433,10 @@ $brown: #985D55;
         }
         &:last-child{
           padding-left:0!important;
+          padding-right:0!important;
           a{
             display: inline-block;
-            padding-left:45px;
+            padding-left:22px;
             float:left;
           }
         } 
