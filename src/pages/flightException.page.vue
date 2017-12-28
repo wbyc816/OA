@@ -103,7 +103,14 @@
         <el-table-column prop="departureAirportName" label="出发地" width="130">
         </el-table-column>
 
+         <el-table-column prop="departure3Code" label="出发地三字码" width="120">
+        </el-table-column>
+
+
         <el-table-column prop="arrivalAirportName" label="目的地" width="130">
+        </el-table-column>
+
+         <el-table-column prop="arrival3Code" label="目的地三字码" width="120">
         </el-table-column>
 
         <el-table-column prop="leftPersonName" label="机组人员" width="200">
@@ -224,7 +231,13 @@
         <el-table-column prop="departureAirportName" label="出发地" width="130">
         </el-table-column>
 
+        <el-table-column prop="departure3Code" label="出发地三字码" width="120">
+        </el-table-column>
+
         <el-table-column prop="arrivalAirportName" label="目的地" width="130">
+        </el-table-column>
+
+        <el-table-column prop="arrival3Code" label="目的地三字码" width="120">
         </el-table-column>
 
         <el-table-column prop="leftPersonName" label="机组人员" width="200">

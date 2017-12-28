@@ -258,10 +258,14 @@ export default {
       this.budgetForm.person.splice(index, 1);
     },
     fomatMoney(val) {
-      if(val.toString().match(/^\-?[0]/)){
+      if(val.toString().match(/^\-?[0]{2}/)){
         this.budgetForm.budgetMoney = ''
         this.$refs.budgetMoney.setCurrentValue('')
-      }else{
+      }else if(val.toString().match(/^\-?[0][0-9]+$/)){
+        this.budgetForm.budgetMoney = ''
+        this.$refs.budgetMoney.setCurrentValue('')
+      }
+      else{
         val = val.toString().match(/\-?[0-9]*\.?[0-9]*$/);
         if (val) {
           this.budgetForm.budgetMoney = val[0];
