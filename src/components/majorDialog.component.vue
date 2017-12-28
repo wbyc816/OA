@@ -23,7 +23,7 @@
               </el-select>
             </el-menu-item>
             <el-menu-item index="4" v-if="hasOutSend" class="outSendInput">
-              <el-autocomplete v-model="outSendText" :fetch-suggestions="querySearchAsync" placeholder="对外发文"  >
+              <el-autocomplete v-model.trim="outSendText" :fetch-suggestions="querySearchAsync" placeholder="对外发文"  >
                 <el-button slot="append" type="primary" @click="addOutSend" :disabled="outSendText.length===0">添加</el-button>
               </el-autocomplete>
             </el-menu-item>
@@ -116,6 +116,7 @@
     }
     .outSendInput{
       border-bottom:none!important;
+      background:#fff;
       input{
         border-right: none;
       }
@@ -408,7 +409,7 @@ export default {
     closeAll() {
       this.all = '';
     },
-    closeOutSend(){
+    closeOutSend(index){
       this.outList.splice(index,1);
     },
     selPerson() {
