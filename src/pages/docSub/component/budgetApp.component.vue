@@ -65,6 +65,7 @@ export default {
       }
     };
     return {
+      val2:"",
       bookTypes: [],
       budgetDate: {},
       showData: 0,
@@ -258,21 +259,39 @@ export default {
       this.budgetForm.person.splice(index, 1);
     },
     fomatMoney(val) {
-      if(val.toString().match(/^\-?[0]{2}/)){
-        this.budgetForm.budgetMoney = ''
-        this.$refs.budgetMoney.setCurrentValue('')
-      }else if(val.toString().match(/^\-?[0][0-9]+$/)){
-        this.budgetForm.budgetMoney = ''
-        this.$refs.budgetMoney.setCurrentValue('')
+      if(val.toString().match(/^\./)){
+        this.budgetForm.budgetMoney = "";
+        this.$refs.budgetMoney.setCurrentValue("");
+      }
+      else if(val.toString().match(/^\-?[0]{2}/)){
+        this.budgetForm.budgetMoney = val[0];
+        this.$refs.budgetMoney.setCurrentValue(val[0]);
+      }else if(val.toString().match(/^\-?[0]\.[0]{2}/)){
+        this.budgetForm.budgetMoney = val[0];
+        this.$refs.budgetMoney.setCurrentValue(val[0]);
+      }
+      else if(val.toString().match(/^\-?[0][0-9]+$/)){
+       this.budgetForm.budgetMoney = val[0];
+        this.$refs.budgetMoney.setCurrentValue(val[0]);
       }
       else{
-        val = val.toString().match(/\-?[0-9]*\.?[0-9]*$/);
+        val = val.toString().match(/^\-?[0-9]*\.?[0-9]{0,2}$/);
+        // if(val.toString().match(/^\-/)){
+        //     val = val.toString().match(/(^\-[1-9]([0-9]{0,})|^[0])+(?:\.\d{0,2})?/);
+        // }else{
+        //     val = val.toString().match(/(^[1-9]([0-9]{0,})|^[0])+(?:\.\d{0,2})?/);
+        // }
+        if(val){
+          this.val2= val;
+        }
+        
+        
         if (val) {
           this.budgetForm.budgetMoney = val[0];
           this.$refs.budgetMoney.setCurrentValue(val[0]);
         } else {
-          this.budgetForm.budgetMoney = ''
-          this.$refs.budgetMoney.setCurrentValue('')
+          this.budgetForm.budgetMoney = this.val2
+          this.$refs.budgetMoney.setCurrentValue(this.val2)
         }
       }
       
