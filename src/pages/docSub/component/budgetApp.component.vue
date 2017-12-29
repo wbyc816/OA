@@ -236,7 +236,7 @@ export default {
                 "budgetItemName": tabel.budgetItemName, //-预算科目名字
                 "budgetItemId": tabel.budgetItemId, //预算科目id
                 "money": tabel.budgetMoney, //预算钱数
-                "budgetYear": this.year, //预算年数
+                "budgetYear": tabel.budgetYear //预算年数
               }
             })
           }
