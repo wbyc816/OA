@@ -162,7 +162,7 @@ export default {
         sign: [{ type: 'array', validator: checkSign, required: true }],
         state: [{ required: true, message: '请选择审批意见' }],
         planDate: [{ required: true, type: 'date', message: '请选择离职日期' }],
-        taskContent: [{ required: true, message: '请填写审批内容' }]
+        taskContent: [{ required: true, message: '请填写审批内容',trigger: 'blur,change' }]
       },
       dialogTableVisible: false,
       defaultVisible: false,

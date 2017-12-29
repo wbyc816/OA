@@ -5,22 +5,25 @@
     <div class="tempBox">
       <span class="bgBox"></span>
       <el-dropdown trigger="click" class="dropdownBox" :class="{'active':showBox}" @visible-change="dropdownvisibleChange" @command="handleItemClick" :hide-on-click="false" menu-align="start">
-        <span class="el-dropdown-link" @click="showBox=!showBox"><i class="iconfont icon-moban"></i>批示</span>
+        <span class="el-dropdown-link" @click="showBox=!showBox">
+          <!-- <i class="iconfont icon-moban"></i> -->
+        常用语
+      </span>
         <el-dropdown-menu class="contentItemBox" slot="dropdown">
           <div class="itemWrap">
             <el-dropdown-item v-for="item in contentListAll" :command="item">{{item.templateAlias}}</el-dropdown-item>
-            <el-dropdown-item class="emptyText" command="empty" v-if="contentListAll.length==0" disabled>未添加批示语</el-dropdown-item>
+            <el-dropdown-item class="emptyText" command="empty" v-if="contentListAll.length==0" disabled>未添加常用语</el-dropdown-item>
           </div>
           <el-dropdown-item class="editButton" divided command="edit"><i class="el-icon-setting"></i>设置</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <el-dialog :visible.sync="dialogTableVisible" title="批示语列表" size="large" class="contentTableDialog" @open="pageNum=1;getContentList()" @close="getContentAll">
+    <el-dialog :visible.sync="dialogTableVisible" title="常用语列表" size="large" class="contentTableDialog" @open="pageNum=1;getContentList()" @close="getContentAll">
       <p class="buttonBox">
         <el-button type="primary" size="small" icon="plus" @click="dialogContentVisible=true">新增</el-button>
         <el-button type="primary" size="small" @click="dulDelete">删除<i class="el-icon-delete el-icon--right"></i></el-button>
       </p>
-      <el-table :data="contentList" class="myTable searchRes" v-loading="searchLoading" @selection-change="handleSelectionChange" ref="dialogTable" empty-text="未添加批示语">
+      <el-table :data="contentList" class="myTable searchRes" v-loading="searchLoading" @selection-change="handleSelectionChange" ref="dialogTable" empty-text="未添加常用语">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="templateAlias" label="短语" width="170"></el-table-column>
         <el-table-column prop="taskContent" label="内容" class-name="contentColum"></el-table-column>
@@ -36,7 +39,7 @@
         </el-pagination>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="dialogContentVisible" title="编辑批示语" size="large" class="contentEditDialog" @close="clearSel">
+    <el-dialog :visible.sync="dialogContentVisible" title="编辑常用语" size="large" class="contentEditDialog" @close="clearSel">
       <el-form :model="contentForm" :rules="contentFormRule" ref="contentForm" label-width="80px">
         <el-form-item label="短语" prop="templateAlias">
           <el-input v-model="contentForm.templateAlias" :maxlength="10"></el-input>
@@ -212,6 +215,15 @@ $main:#0460AE;
 $sub:#1465C0;
 .taskContentInput {
   position: relative;
+  .el-textarea {
+    border: 1px solid rgb(191, 202, 217);
+    padding-top: 24px;
+    .el-textarea__inner {
+      border: none;
+      padding-top: 3px;
+    }
+  }
+
   .tempBox {
     position: absolute;
     right: 0;
@@ -234,14 +246,14 @@ $sub:#1465C0;
       position: absolute;
       right: 0;
       top: 0;
-      width: 25px;
-      height: 25px;
+      width: 65px;
+      height: 28px;
+      opacity: 1;
       transition: all .3s;
       background: $sub; // padding-left: 10px;
       line-height: 28px;
       color: #fff;
-      border-bottom-left-radius: 15px;
-      opacity: 0;
+      border-bottom-left-radius: 15px; // opacity: 0;
       &:hover,
       &.active {
         width: 65px;

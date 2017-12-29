@@ -84,7 +84,7 @@
       <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
       </quit-advice>
       <my-advice :docDetail="docDetialInfo.doc" :otherInfo="docDetialInfo.otherInfo" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice" ref="myAdvice">
-        <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true;getFileSend();" v-if="showdArchiveButton" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
+        <el-button size="large" class="docArchiveButton" @click="showArchiveDialog" v-if="showdArchiveButton" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
     </el-card>
@@ -121,7 +121,7 @@
         </el-form-item>
         <el-form-item label="归档状态" class="textarea" prop="state">
           <el-radio-group class="myRadio" v-model="archiveState">
-            <el-radio-button label="1">通过<i></i></el-radio-button>
+            <el-radio-button label="1" :disabled="docDetialInfo.doc.isFied == 2">通过<i></i></el-radio-button>
             <el-radio-button label="2">不通过<i></i></el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -150,6 +150,9 @@
     </el-dialog>
     <person-dialog @updatePerson="updateArchivePerson" :data="archiveForm.persons" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog>
     <major-dialog :params="fileForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
+    <div class="backButotn" :style="{top:backTop+'px'}" @click="$router.go(-1)" v-if="hisLenth!=1">
+      <i class="iconfont icon-fanhui"></i>
+    </div>
   </div>
 </template>
 <script>
@@ -290,7 +293,8 @@ export default {
       addFileDoc,
       taskFile: [],
       disabledUpload:false,
-
+      hisLenth:1,
+      backTop:60
     }
   },
   created() {
@@ -301,7 +305,8 @@ export default {
     next();
   },
   mounted() {
-
+    // window.addEventListener('scroll', this.handleScroll);
+    this.hisLenth=window.history.length;
   },
   computed: {
     computeView() {
@@ -326,7 +331,7 @@ export default {
     },
     showdArchiveButton() {
       var isShow = false;
-      if (this.docDetialInfo.doc != {} && this.docDetialInfo.doc.isFied == 1) {
+      if (this.docDetialInfo.doc != {} && (this.docDetialInfo.doc.isFied == 1||this.docDetialInfo.doc.isFied == 2)) {
           isShow = true;
       }
 
@@ -379,7 +384,13 @@ export default {
           })
       }
     },
-
+    showArchiveDialog(){
+      this.DialogArchiveVisible=true;
+      this.getFileSend();
+      if(this.docDetialInfo.doc.isFied == 2){
+        this.archiveState='2'
+      }
+    },
     getDetail(route) {
 
       var url = "/doc/getDocDetailInfo";
@@ -697,7 +708,16 @@ export default {
           this.disabledUpload=false;
         },2000)        
       }
-    }
+    },
+    handleScroll() {
+      var scrollTop = 0;
+      if (document.documentElement && document.documentElement.scrollTop) {
+        scrollTop = document.documentElement.scrollTop;
+      } else if (document.body) {
+        scrollTop = document.body.scrollTop;
+      }
+      this.backTop=scrollTop>60?scrollTop:60;
+    },
   }
 }
 
@@ -706,6 +726,7 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docDetail {
+  position:relative;
   .docheader {
     line-height: 24px;
     padding: 8px 0 4px;
@@ -1022,6 +1043,28 @@ $sub:#1465C0;
         font-size: 22px;
         vertical-align: middle;
       }
+    }
+  }
+  .backButotn {
+    background: $main;
+    position: absolute;
+    right: 13px;
+    top: 60px;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    cursor: pointer;
+    opacity: 0.15;
+    transition:opacity .3s;
+    &:hover{
+      opacity: 1;
+    }
+    i {
+      color: #fff;
+      display: block;
+      line-height: 40px;
+      text-align: center;
+      font-size: 30px;
     }
   }
 }

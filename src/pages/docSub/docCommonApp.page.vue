@@ -18,6 +18,9 @@
         </div>
       </div>
     </el-card>
+    <div class="backButotn" :style="{top:backTop+'px'}" @click="$router.go(-1)" v-if="hisLenth!=1">
+      <i class="iconfont icon-fanhui"></i>
+    </div>
   </div>
 </template>
 <script>
@@ -67,7 +70,9 @@ export default {
       saveMiddlePara: '',
       reciverName: '',
       submitParam: '',
-      docNo: ''
+      docNo: '',
+      backTop:50,
+      hisLenth:1
     }
   },
   computed: {
@@ -121,11 +126,12 @@ export default {
     JBC
   },
   created() {
+
   },
-  beforeRouteUpdate(to, from, next){
-    if(to.params.code == 'SWD' && this.userInfo.isConfidential != 1){
+  beforeRouteUpdate(to, from, next) {
+    if (to.params.code == 'SWD' && this.userInfo.isConfidential != 1) {
       this.$router.push(from.path);
-    }else{
+    } else {
       next();
     }
   },
@@ -135,6 +141,8 @@ export default {
     } else {
       this.initDoc();
     }
+    window.addEventListener('scroll', this.handleScroll);
+    this.hisLenth=window.history.length;
   },
   watch: {
     isReady: function(val) {
@@ -288,32 +296,6 @@ export default {
         this.$store.commit('setIsSubmit', false);
       }
     },
-    // getDefaultReciver() {
-    //   this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.doc.code, empId: this.userInfo.empId })
-    //     .then(res => {
-    //       if (res.status == 0) {
-    //         if (res.data.length != 0) {
-    //           var receiver = {
-    //             "reciDeptMajorName": res.data.reciDeptMajorName,
-    //             "reciDeptMajorId": res.data.reciDeptMajorId,
-    //             "reciDeptName": res.data.reciDeptName,
-    //             "reciDeptId": res.data.reciDeptId,
-    //             "reciUserName": res.data.reciUserName,
-    //             "reciUserId": res.data.reciUserId,
-    //             "reciUserJobTitle": res.data.reciJobtitle, //接收人职位
-    //             "reciPostrankId": res.data.reciPostrankId, //职位id
-    //             "reciEmpPostId": res.data.reciEmpPostId,
-    //             "reciPostrankName": res.data.reciPostrankName, //职级名称
-    //             "reciSupervisory": res.data.reciSupervisoryLevel //安全级别
-    //           }
-    //           this.$store.commit('setReciver', receiver);
-    //           this.reciverName = res.data.reciUserName;
-    //         }
-    //       } else {
-
-    //       }
-    //     })
-    // },
     getDraft() {
       this.$http.post('/doc/getDocDraftsDetail', { docId: this.$route.query.id })
         .then(res => {
@@ -359,13 +341,48 @@ export default {
     },
     updateSuggest(val) {
       this.$refs.description.getSuggestTemp(val);
-    }
+    },
+     handleScroll() {
+      var scrollTop = 0;
+      if (document.documentElement && document.documentElement.scrollTop) {
+        scrollTop = document.documentElement.scrollTop;
+      } else if (document.body) {
+        scrollTop = document.body.scrollTop;
+      }
+      this.backTop=scrollTop>50?scrollTop:50;
+    },
   }
 }
 
 </script>
 <style lang='scss'>
 $main:#0460AE;
+.commonApp {
+  position: relative;
+  .backButotn {
+    background: $main;
+    position: absolute;
+    right: 13px;
+    top: 51px;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    cursor: pointer;
+    opacity: 0.15;
+    transition:opacity .3s;
+    &:hover{
+      opacity: 1;
+    }
+    i {
+      color: #fff;
+      display: block;
+      line-height: 40px;
+      text-align: center;
+      font-size: 30px;
+    }
+  }
+}
+
 // .commonApp {
 //   .deptArea,
 //   .arrArea {

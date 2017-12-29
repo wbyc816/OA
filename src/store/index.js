@@ -19,7 +19,8 @@ const state = {
   editStatus:false,
   submitLoading:false,
   DHId:'CFCD208495D565EF66E7DFF9F98764DA',
-  year:'2018'
+  year:'2018',
+  routeHistroy:[]
 }
 const getters ={
 	searchLoading: state => state.searchLoading,
@@ -28,6 +29,7 @@ const getters ={
   submitLoading: state => state.submitLoading,
   DHId: state => state.DHId,
   year: state => state.year,
+  routeHistroy: state => state.routeHistroy,
 }
 const actions={
   setEditStatus({commit},palyload){
@@ -44,6 +46,12 @@ const mutations={
   [types.SET_EDIT_STATUS](state, palyload) {
     state.editStatus=palyload;
   },
+  pushHistory(state,palyload){
+    state.routeHistroy.push(palyload);
+  },
+  popHistory(state){
+    state.routeHistroy.pop();
+  }
 }
 export default new Vuex.Store({
   state,

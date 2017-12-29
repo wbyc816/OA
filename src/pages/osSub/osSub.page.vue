@@ -58,7 +58,7 @@ const production = [
 ];
 const saleService = [
   { 'logo': 'icon-Group3', 'font': '12px', 'color': '#5BB5FC', 'text': 'B2B系统', 'link': 'http://dzb2b.travelsky.com/dzb2b/' },
-  { 'logo': 'icon-Group5', 'font': '26px', 'color': '#FF754F', 'text': '服务信息网', 'link': 'http://192.168.8.23:8080/dzsis/mainMenu.html' },
+  { 'logo': 'icon-Group5', 'font': '26px', 'color': '#FF754F', 'text': '服务信息网', 'link': 'http://sis.donghaiair.cn' },
   { 'logo': 'icon-Path', 'font': '26px','color': '#A5A3FF', 'text': '常旅客系统', 'link': 'http://ffp.donghaiair.com/' },
   // { 'logo': 'icon-Group6', 'color': '#FF5F88', 'text': '运价系统', 'link': '#' },
   { 'logo': 'icon-Group2', 'font': '24px', 'color': '#FFE066', 'text': '呼叫中心系统', 'link': 'http://192.168.10.77:8080/DZCCOS/' },

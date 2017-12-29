@@ -41,7 +41,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{totalMoney}} 元</span></p>
+    <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
   </div>
 </template>
 <script>
