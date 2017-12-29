@@ -1,8 +1,8 @@
 <template>
   <div class="budgetApp">
     <el-form label-position="left" :model="budgetForm" :rules="rules" ref="budgetForm" label-width="128px">
-      <el-form-item label="预算年份" prop="year">
-        <el-input v-model="budgetForm.year" class="budgetYear" :readonly="true"></el-input>
+      <el-form-item label="预算年份" class="widthLeft40 year">
+        {{year}}
       </el-form-item>
       <el-form-item label="预算机构/科目" prop="budgetDept">
         <div>
@@ -78,7 +78,7 @@ export default {
         arrArea: '',
         bookType: '',
         timeRange: "",
-        year: new Date(),
+        // year: new Date(),
         budgetMoney: '',
         person: [],
         budgetDept: [],
@@ -124,7 +124,8 @@ export default {
     },
     ...mapGetters([
       'submitLoading',
-      'baseURL'
+      'baseURL',
+      'year'
     ])
   },
   created() {
@@ -151,7 +152,7 @@ export default {
             temp.budgetDeptName = this.$refs.budgetDept.currentLabels[0];
             temp.budgetItemId = this.budgetForm.budgetDept[this.budgetForm.budgetDept.length - 1];
             temp.budgetItemName = this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
-            temp.budgetYear = this.budgetForm.year;
+            temp.budgetYear = this.year;
           
             this.budgetTable.push(temp);
 
@@ -235,7 +236,7 @@ export default {
                 "budgetItemName": tabel.budgetItemName, //-预算科目名字
                 "budgetItemId": tabel.budgetItemId, //预算科目id
                 "money": tabel.budgetMoney, //预算钱数
-                "budgetYear": tabel.budgetYear, //预算年数
+                "budgetYear": this.year, //预算年数
               }
             })
           }
@@ -271,7 +272,7 @@ export default {
         this.$refs.budgetMoney.setCurrentValue(val[0]);
       }
       else if(val.toString().match(/^\-?[0][0-9]+$/)){
-       this.budgetForm.budgetMoney = val[0];
+        this.budgetForm.budgetMoney = val[0];
         this.$refs.budgetMoney.setCurrentValue(val[0]);
       }
       else{
@@ -282,7 +283,7 @@ export default {
         //     val = val.toString().match(/(^[1-9]([0-9]{0,})|^[0])+(?:\.\d{0,2})?/);
         // }
         if(val){
-          this.val2= val;
+          this.val2= val.toString();
         }
         
         
@@ -297,11 +298,10 @@ export default {
       
     },
     getBudgetDeptList() {
-      if (this.budgetForm.year) {
-        this.budgetForm.year = util.formatTime(this.budgetForm.year.getTime(), 'yyyy');
+      if (this.year) {
         this.showData = "0";
-        this.$http.post('/doc/getItemTreeListofYear', {
-            year: this.budgetForm.year,
+        this.$http.post('/doc/getBudItemTreeList', {
+            // year: this.year,
           })
           .then(res => {
             if (res.status == 0) {
@@ -352,7 +352,7 @@ export default {
     changeDept() {
       this.$http.post('/doc/getExecStatisofItemId', {
           budgetItemCode: this.budgetForm.budgetDept[this.budgetForm.budgetDept.length - 1],
-          budgetYear: this.budgetForm.year,
+          budgetYear: this.year,
         })
         .then(res => {
           if (res.status == 0) {
@@ -488,5 +488,15 @@ $main:#0460AE;
     }
   }
 }
+// .widthLeft40 {
+//     float: left;
+//     width: 40%;
+//   }
+//   .year {
+//     .el-form-item__content {
 
+//       font-size: 16px;
+//       line-height: 45px;
+//     }
+//   }
 </style>

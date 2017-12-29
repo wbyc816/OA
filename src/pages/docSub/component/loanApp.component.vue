@@ -108,7 +108,7 @@ export default {
         arrArea: '',
         bookType: '',
         timeRange: "",
-        year:"",
+        // year:"",
         appMoney: '',
         person: [],
         // budgetDept: [],
@@ -151,7 +151,8 @@ export default {
     ...mapGetters([
       'submitLoading',
       'baseURL',
-      "userInfo"
+      "userInfo",
+      "year"
     ])
   },
   created() {
@@ -333,11 +334,11 @@ export default {
       this.budgetForm.person.splice(index, 1);
     },
     getBudgetDeptList() {
-      if(this.budgetForm.year){
+      if(this.year){
          this.isDisable=false;
       this.showData="0";
-      this.$http.post('/doc/getItemTreeListofYear',{
-        year:util.formatTime(this.budgetForm.year.getTime(), 'yyyy'),
+      this.$http.post('/doc/getBudItemTreeList',{
+        // year:util.formatTime(this.budgetForm.year.getTime(), 'yyyy'),
       })
         .then(res => {
           if (res.status == 0) {
