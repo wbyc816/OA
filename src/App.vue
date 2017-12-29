@@ -91,7 +91,6 @@ import { mapGetters } from 'vuex'
 import '../static/urlConfig'
 import Vue from 'vue'
 import router from './router'
-import jquery from 'jquery'
 export default {
   name: 'app',
   data: function() {

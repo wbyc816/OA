@@ -18,9 +18,7 @@
         </div>
       </div>
     </el-card>
-    <div class="backButotn" :style="{top:backTop+'px'}" @click="$router.go(-1)" v-if="hisLenth!=1">
-      <i class="iconfont icon-fanhui"></i>
-    </div>
+    <back-button></back-button>
   </div>
 </template>
 <script>
@@ -28,6 +26,7 @@ import { mapGetters } from 'vuex'
 import { docConfig } from '../../common/docConfig'
 import Subject from './component/subject.component.vue'
 import Description from './component/description.component.vue'
+import BackButton from '../../components/backButton.component.vue'
 import CLV from './component/travelApp.component.vue'
 import QJS from './component/vacationApp.component.vue'
 import GSS from './component/injuryApp.component.vue'
@@ -71,8 +70,6 @@ export default {
       reciverName: '',
       submitParam: '',
       docNo: '',
-      backTop:50,
-      hisLenth:1
     }
   },
   computed: {
@@ -93,6 +90,7 @@ export default {
     next();
   },
   components: {
+    BackButton,
     Subject,
     Description,
     CLV,
@@ -141,8 +139,6 @@ export default {
     } else {
       this.initDoc();
     }
-    window.addEventListener('scroll', this.handleScroll);
-    this.hisLenth=window.history.length;
   },
   watch: {
     isReady: function(val) {
@@ -342,46 +338,13 @@ export default {
     updateSuggest(val) {
       this.$refs.description.getSuggestTemp(val);
     },
-     handleScroll() {
-      var scrollTop = 0;
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop;
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop;
-      }
-      this.backTop=scrollTop>50?scrollTop:50;
-    },
   }
 }
 
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.commonApp {
-  position: relative;
-  .backButotn {
-    background: $main;
-    position: absolute;
-    right: 13px;
-    top: 51px;
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
-    cursor: pointer;
-    opacity: 0.15;
-    transition:opacity .3s;
-    &:hover{
-      opacity: 1;
-    }
-    i {
-      color: #fff;
-      display: block;
-      line-height: 40px;
-      text-align: center;
-      font-size: 30px;
-    }
-  }
-}
+
 
 // .commonApp {
 //   .deptArea,

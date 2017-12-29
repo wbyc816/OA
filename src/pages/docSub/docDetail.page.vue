@@ -150,12 +150,11 @@
     </el-dialog>
     <person-dialog @updatePerson="updateArchivePerson" :data="archiveForm.persons" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog>
     <major-dialog :params="fileForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
-    <div class="backButotn" :style="{top:backTop+'px'}" @click="$router.go(-1)" v-if="hisLenth!=1">
-      <i class="iconfont icon-fanhui"></i>
-    </div>
+    <back-button :backTop="186"></back-button>
   </div>
 </template>
 <script>
+import BackButton from '../../components/backButton.component.vue'
 import PersonDialog from '../../components/personDialog.component'
 import QuitAdvice from './detailComponent/empQuitAdvice.component'
 import MajorDialog from '../../components/majorDialog.component'
@@ -207,6 +206,7 @@ export default {
   name: 'docDetail',
   components: {
     PersonDialog,
+    BackButton,
     QuitAdvice,
     MajorDialog,
     historyAdvice,
@@ -293,8 +293,6 @@ export default {
       addFileDoc,
       taskFile: [],
       disabledUpload:false,
-      hisLenth:1,
-      backTop:60
     }
   },
   created() {
@@ -305,8 +303,7 @@ export default {
     next();
   },
   mounted() {
-    // window.addEventListener('scroll', this.handleScroll);
-    this.hisLenth=window.history.length;
+
   },
   computed: {
     computeView() {
@@ -708,16 +705,7 @@ export default {
           this.disabledUpload=false;
         },2000)        
       }
-    },
-    handleScroll() {
-      var scrollTop = 0;
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop;
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop;
-      }
-      this.backTop=scrollTop>60?scrollTop:60;
-    },
+    }
   }
 }
 
@@ -1043,28 +1031,6 @@ $sub:#1465C0;
         font-size: 22px;
         vertical-align: middle;
       }
-    }
-  }
-  .backButotn {
-    background: $main;
-    position: absolute;
-    right: 13px;
-    top: 60px;
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
-    cursor: pointer;
-    opacity: 0.15;
-    transition:opacity .3s;
-    &:hover{
-      opacity: 1;
-    }
-    i {
-      color: #fff;
-      display: block;
-      line-height: 40px;
-      text-align: center;
-      font-size: 30px;
     }
   }
 }
