@@ -11,20 +11,28 @@
       <div class="showBox">
         <div class="boxTitle">
           <el-row>
-            <el-col :span="12">{{salaryMonth}}个人工资表</el-col>
-            <el-col :span="12">{{userInfo.name}}</el-col>
+            <el-col :span="12" >{{salaryMonth}}个人工资表</el-col>
+            <el-col :span="12" >{{userInfo.name}}</el-col>
           </el-row>
         </div>
         <div class="alignCenter" @click="checkPassword" v-if="salaryType==0"><br>暂无数据<br></div>
         <el-row class="salaryList" v-if="salaryType>0">
           <el-col :span="12">
             <el-row v-for="salary in salaryLeft" v-if="salaryData[salary.name]!=''&&typeof(salaryData[salary.name])=='string'||typeof(salaryData[salary.name])=='number'">
-              <el-col :span="12">
+              <el-col :span="12" v-if="salary.label!='应发金额'">
                 {{salary.label}}
               </el-col>
-              <el-col :span="12" class="ad">
+              <el-col :span="12" class="ad" v-if="salary.label!='应发金额'">
                 {{salaryData[salary.name]}}
               </el-col>
+
+              <el-col :span="12" class="fbold" v-if="salary.label=='应发金额'">
+                {{salary.label}}
+              </el-col>
+              <el-col :span="12" class="ad fbold"  v-if="salary.label=='应发金额'">
+                {{salaryData[salary.name]}}
+              </el-col>
+              
             </el-row>
           </el-col>
           <el-col :span="12">
@@ -63,13 +71,13 @@
          <el-row>
             <el-col :span="8">上月跟机小时数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.followFlightHours}}</el-col>
-            <el-col :span="8">上月长途补贴</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.longDistance}}</el-col>
+            <el-col :span="8">上月培训课时</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.trainNumber}}</el-col>
         </el-row>
 
         <el-row>
-            <el-col :span="8">上月培训课时</el-col>
-            <el-col :span="4" class="alignCenter">{{salaryData.trainNumber}}</el-col>
+            <el-col :span="8">上月驻外天数</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.stationedAbroadDays}}</el-col>
         </el-row>
 
         
@@ -141,6 +149,8 @@
             
             <el-col :span="8">上月空勤人员过夜天数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.overnightDays}}</el-col>
+             <el-col :span="8">上月节假日加班天数</el-col>
+            <el-col :span="4" class="alignCenter">{{salaryData.overtimeDays}}</el-col>
         </el-row>
 
 
@@ -197,7 +207,10 @@
             <el-col :span="8">上月空勤人员过夜天数</el-col>
             <el-col :span="4" class="alignCenter">{{salaryData.overnightDays}}</el-col>
         </el-row>
-
+        <el-row>
+        <el-col :span="8">上月节假日加班天数</el-col>
+        <el-col :span="4" class="alignCenter">{{salaryData.overtimeDays}}</el-col>
+        </el-row>
         
         <el-row>
             <el-col :span="24">
@@ -341,6 +354,9 @@ $sub:#1465C0;
     .ec{
       color:#BE3B7F;
     }
+  }
+  .fbold{
+    font-weight:bold
   }
   .salaryHearder{
     position: absolute;
