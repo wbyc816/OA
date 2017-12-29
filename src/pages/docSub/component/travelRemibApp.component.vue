@@ -351,7 +351,7 @@ export default {
       },
       roomType: '1',
       feeTable: [],
-      year: new Date().getFullYear(),
+      // year: new Date().getFullYear(),
       budgetDeptList: [],
       budgetInfo: '',
       feeTypes: [],
@@ -466,7 +466,8 @@ export default {
     ...mapGetters([
       'submitLoading',
       'baseURL',
-      'userInfo'
+      'userInfo',
+      'year'
     ])
   },
   created() {
@@ -485,7 +486,7 @@ export default {
 
   },
   mounted() {
-    this.$emit('updateSuggest', 'DOC0601');
+    // this.$emit('updateSuggest', 'DOC0601');
 
   },
   methods: {

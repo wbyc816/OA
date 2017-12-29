@@ -56,6 +56,7 @@ import ZJJ from './component/airLoanApp.component.vue'
 import JBC from './component/airSellApp.component.vue'
 
 export default {
+  name: 'docCommonApp',
   data() {
     return {
       docConfig,

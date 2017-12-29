@@ -44,7 +44,9 @@
         <el-breadcrumb-item :to="{ path: '/' }"> <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: breadcrumb.path }" v-for="breadcrumb in breadcrumbs">{{breadcrumb.meta.breadcrumb}}</el-breadcrumb-item>
       </el-breadcrumb>
-      <router-view></router-view>
+      <keep-alive include="filesHome">
+        <router-view></router-view>
+      </keep-alive>
     </div>
     <footer>
       <div class="container">
@@ -102,7 +104,7 @@ export default {
       baseUrl: '',
       login: false,
       pdR: '',
-      qrShow:false
+      qrShow: false
     }
   },
   computed: {
@@ -120,8 +122,8 @@ export default {
     } else {
       this.baseUrl = urlConfig.loginUrl
     }
-    if(this.getCookie('homeAd')){
-      this.$store.commit('setHomeHasShow',true);
+    if (this.getCookie('homeAd')) {
+      this.$store.commit('setHomeHasShow', true);
     }
     if (this.getCookie('userId')) {
       this.$store.commit('setEmpId', this.getCookie('userId'));
@@ -233,7 +235,7 @@ export default {
       // if(window.scroll){
       //   window.scroll({ "behavior": "smooth", "top": 0 })
       // }
-      jquery('body,html').animate({scrollTop:0},10);
+      jquery('body,html').animate({ scrollTop: 0 }, 10);
     },
   }
 }
@@ -431,15 +433,15 @@ $brown: #985D55;
           background: none !important;
           border-bottom: 2px solid transparent;
         }
-        &:last-child{
-          padding-left:0!important;
-          padding-right:0!important;
-          a{
+        &:last-child {
+          padding-left: 0!important;
+          padding-right: 0!important;
+          a {
             display: inline-block;
-            padding-left:22px;
-            float:left;
+            padding-left: 22px;
+            float: left;
           }
-        } 
+        }
       }
     }
   }
@@ -633,21 +635,20 @@ footer {
             }
             img {
               width: 100%;
-              height:auto;
+              height: auto;
             }
-            .phoneIcon{
-              text-align:right;
-              padding:5px 0;
-              i{
-                font-size:20px;
-                color:#555;
-                padding-left: 7px;
-                // vertical-align:top;
+            .phoneIcon {
+              text-align: right;
+              padding: 5px 0;
+              i {
+                font-size: 20px;
+                color: #555;
+                padding-left: 7px; // vertical-align:top;
               }
-              .icon-anzhuo{
-                font-size:22px;
+              .icon-anzhuo {
+                font-size: 22px;
                 position: relative;
-                top:2px;
+                top: 2px;
               }
             }
           }

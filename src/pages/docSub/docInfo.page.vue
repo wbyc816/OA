@@ -99,6 +99,7 @@ const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
 const otherAdviceDoc = ["FWG", "SWD", "CPD","HTS"]
 export default {
+  name:'docInfo',
   components: {
     historyAdvice,
     FWGD,

@@ -154,7 +154,7 @@ export default {
         invoiceNum: [{ required: true, message: '请输入发票号', validator: checkNum, trigger: 'blur' }],
         appMoney: [{ required: true, message: '请输入申请金额', trigger: 'blur' }],
       },
-      year: new Date().getFullYear(),
+      // year: new Date().getFullYear(),
       budgetDeptList: [],
       budgetInfo: '',
       currencyList: [],
@@ -207,7 +207,8 @@ export default {
     ...mapGetters([
       'submitLoading',
       'baseURL',
-      'userInfo'
+      'userInfo',
+      'year'
     ])
   },
   created() {

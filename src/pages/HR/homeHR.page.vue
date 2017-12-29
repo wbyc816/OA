@@ -2,7 +2,9 @@
   <div id="homeHR">
     <el-row :gutter="12">
       <el-col :span="17">
+      <keep-alive include="newsListHr">
         <router-view></router-view>
+      </keep-alive>
       </el-col>
       <el-col :span="7" class="sideBar">
         <el-card class="borderCard searchBox" v-show="$route.name=='newsListHr'||$route.name=='clildHR'">

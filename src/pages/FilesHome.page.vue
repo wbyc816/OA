@@ -92,6 +92,7 @@ const options = [{
 }];
 const statusValue = ['计划', '延误', '起飞', '取消', '备降', '到达'];
 export default {
+  name:'filesHome',
   components: { SidePersonSearch },
   data() {
     return {

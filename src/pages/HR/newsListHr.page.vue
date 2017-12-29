@@ -31,6 +31,7 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
+  name: 'newsListHr',
   components: {},
   data() {
     return {
@@ -49,7 +50,7 @@ export default {
         pageNumber: 1,
         pageSize: 10,
         title: '',
-        deptId:''
+        deptId: ''
       },
       totalSize: 0,
       defaultProp: {
@@ -69,6 +70,17 @@ export default {
   created() {
     this.initSearch(this.$route);
     this.getFileCatalogue();
+  },
+  beforeRouteEnter(to, from, next) {
+    // console.log(from);
+    if (from.name === 'newsDetailHr') {
+      next()
+    } else {
+      next(vm => {
+        vm.initSearch(to);
+      });
+    }
+
   },
   beforeRouteUpdate(to, from, next) {
     this.initSearch(to);
@@ -99,9 +111,9 @@ export default {
       this.params.pageNumber = page;
       this.getOtherNews()
     },
-    catalogueChange(val){
-      
-      this.params.deptId=val[val.length-1]||'';
+    catalogueChange(val) {
+
+      this.params.deptId = val[val.length - 1] || '';
       this.getOtherNews();
     },
     getFileCatalogue() {
@@ -118,7 +130,7 @@ export default {
           if (res.status == '0') {
             loopMap(res.data);
             res.data[0].catalogues = null;
-            console.log(res.data)
+            // console.log(res.data)
             this.catalogueList = res.data;
           } else {
             console.log('获取发文目录失败')

@@ -201,6 +201,7 @@ const signFlag = '<i class="signFlag">#</i>'
 const otherAdviceDoc = ["FWG", "SWD", "CPD", "HTS"]
 const addFileDoc = ["CPD", "HTS"]
 export default {
+  name: 'docDetail',
   components: {
     PersonDialog,
     QuitAdvice,

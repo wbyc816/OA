@@ -16,12 +16,10 @@ Vue.use(Vuex);
 const state = {
   searchLoading: false,
   baseURL:urlConfig.baseURL,
-  // baseURL:'http://192.168.14.32:8080/DongHaiAirAPI/',
-  // baseURL:'http://localhost:8080/DongHaiAirAPI/',
-  // baseURL:'http://58.250.197.143:8899/DongHaiAirAPI/',  //外网
   editStatus:false,
   submitLoading:false,
-  DHId:'CFCD208495D565EF66E7DFF9F98764DA'
+  DHId:'CFCD208495D565EF66E7DFF9F98764DA',
+  year:'2018'
 }
 const getters ={
 	searchLoading: state => state.searchLoading,
@@ -29,6 +27,7 @@ const getters ={
   baseURL: state => state.baseURL,
   submitLoading: state => state.submitLoading,
   DHId: state => state.DHId,
+  year: state => state.year,
 }
 const actions={
   setEditStatus({commit},palyload){

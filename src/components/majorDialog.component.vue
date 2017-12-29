@@ -23,7 +23,7 @@
               </el-select>
             </el-menu-item>
             <el-menu-item index="4" v-if="hasOutSend" class="outSendInput">
-              <el-autocomplete v-model.trim="outSendText" :fetch-suggestions="querySearchAsync" placeholder="对外发文"  >
+              <el-autocomplete v-model.trim="outSendText" :fetch-suggestions="querySearchAsync" placeholder="对外发文">
                 <el-button slot="append" type="primary" @click="addOutSend" :disabled="outSendText.length===0">添加</el-button>
               </el-autocomplete>
             </el-menu-item>
@@ -445,6 +445,7 @@ export default {
       }      
     },
     querySearchAsync(queryString, cb) {
+      this.outSendText=queryString=queryString.substr(0,10);
       var outSendList = this.outSendList;
       var results = queryString ? outSendList.filter(this.createStateFilter(queryString)) : outSendList;
       cb(results);
