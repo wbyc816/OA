@@ -31,7 +31,7 @@
           
             </el-col>
             <el-col :span="7">
-               <el-radio-group   v-model="staffBenefitAppFormFirst.genger"  class="myRadio gender w153" >
+               <el-radio-group   v-model="staffBenefitAppFormFirst.genger"  class="myRadio gender w154" >
               <el-radio-button label="M">男<i></i></el-radio-button>
                 <el-radio-button label="F" >女<i></i></el-radio-button>
               </el-radio-group>
@@ -898,8 +898,8 @@ $main:#0460AE;
   .w100{
     width:100px
   }
-  .w153{
-    width:153px
+  .w154{
+    width:154px
   }
   .w130{
     width:130px
