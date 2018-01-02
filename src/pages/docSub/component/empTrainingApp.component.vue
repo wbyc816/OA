@@ -21,23 +21,27 @@
         </el-input>
       </el-form-item>
       <el-form-item label="培训总预算" prop="trainTotalCost" class="deptArea">
-        <money-input v-model="trainingForm.trainTotalCost" type="int0" :prepend="false" :default0="true">
+        <money-input v-model="trainingForm.trainTotalCost"  :prepend="false" :default0="true" @change="$refs.trainingForm.validateField('trainPerCost')">
           <template slot="append">元</template>
         </money-input>
       </el-form-item>
-      <el-form-item label="培训差旅费用" prop="trainPerTravelCost" class="arrArea">
-        <money-input v-model="trainingForm.trainPerTravelCost" type="int0" :prepend="false"  @change="changeTravelCost">
+      <el-form-item label="单人培训差旅费" prop="trainPerTravelCost" class="arrArea" label-width="138px">
+        <money-input v-model="trainingForm.trainPerTravelCost"  :prepend="false"  @change="changeTravelCost">
           <template slot="append">元</template>
         </money-input>
       </el-form-item>
-      <el-form-item label="培训费用" prop="trainPerTrainlCost" class="deptArea" >
-        <money-input v-model="trainingForm.trainPerTrainlCost" type="int0" :prepend="false"  @change="changeTrainlCost">
+      <el-form-item label="单人培训费用" prop="trainPerTrainlCost" class="deptArea" >
+        <money-input v-model="trainingForm.trainPerTrainlCost"  :prepend="false"  @change="changeTrainlCost">
           <template slot="append">元</template>
         </money-input>
       </el-form-item>
-      <el-form-item label="单人预算" prop="trainPerCost" class="arrArea" label-width="100px" >
-        <money-input v-model="trainingForm.trainPerCost" :prepend="false" :disabled="true">
+      <el-form-item label="单人预算总费用" prop="trainPerCost" class="arrArea" label-width="138px" >
+        <money-input v-model="trainingForm.trainPerCost" :prepend="false" :readonly="true">
           <template slot="append">元</template>
+        </money-input>
+      </el-form-item>
+      <el-form-item label="参训人数" prop="trainPerCount" class="deptArea" >
+        <money-input v-model="trainingForm.trainPerCount" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
     </el-form>
@@ -61,7 +65,10 @@ export default {
     var checkMoney = (rule, value,callback) => {
       if (parseFloat(value) <= parseFloat(this.trainingForm.trainTotalCost)) {
         callback();
-      } else {
+      }else if(value==0){
+        callback();
+      } 
+      else {
         callback(new Error('单人预算不能大于总预算'))
       }
     }
@@ -76,12 +83,14 @@ export default {
         trainPerCost: '',
         trainPerTrainlCost:"",
         trainPerTravelCost:"",
+        trainPerCount:''
       },
       rules: {
         trainTotalCost: [{ required: true, message: '请输入培训总预算', trigger: 'blur' }],
-        trainPerCost: [{ required: true, message: '请输入完整信息', },
+        trainPerCost: [
         {validator: checkMoney, trigger: 'blur,change'}],
         trainPerTrainlCost: [{ required: true, message: '请输入培训费用', trigger: 'blur' }],
+        trainPerCount: [{ required: true, message: '请输入参训人数', trigger: 'blur' }],
         trainPerTravelCost: [{ required: true, message: '请输入培训差旅费用', trigger: 'blur' }],
         person: [{ type: 'array', required: true, message: '请选择培训人', trigger: 'blur' }],
         timeRange: [{ type: 'array', required: true, message: '请选择培训日期', trigger: 'blur' }],
@@ -141,7 +150,8 @@ export default {
               "trainTotalCost": this.trainingForm.trainTotalCost, //培训总预算
               "trainPerCost": this.trainingForm.trainPerCost, //培训单人预算
               "trainEndDate": this.trainingForm.timeRange[1].getTime(), //培训结束时间
-              "trainSubjects": this.trainingForm.trainSubjects //培训科目
+              "trainSubjects": this.trainingForm.trainSubjects, //培训科目
+              "trainPerCount": this.trainingForm.trainPerCount //参训人数
             },
             "trainPersons": this.trainingForm.person.map(function(person) {
               return {
@@ -159,10 +169,10 @@ export default {
       });
     },
     changeTravelCost(){
-      this.trainingForm.trainPerCost=Number(this.trainingForm.trainPerTrainlCost)+Number(this.trainingForm.trainPerTravelCost);
+      this.trainingForm.trainPerCost=(Number(this.trainingForm.trainPerTrainlCost)+Number(this.trainingForm.trainPerTravelCost)).toFixed(2);
     },
     changeTrainlCost(){
-      this.trainingForm.trainPerCost=Number(this.trainingForm.trainPerTrainlCost)+Number(this.trainingForm.trainPerTravelCost);
+      this.trainingForm.trainPerCost=(Number(this.trainingForm.trainPerTrainlCost)+Number(this.trainingForm.trainPerTravelCost)).toFixed(2);
     },
     getDepList() {
       function loopMap(arr) {

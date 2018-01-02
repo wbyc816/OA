@@ -32,14 +32,14 @@
         <div class="reciverList">
           <el-tag key="all" :closable="true" v-show="manuscriptForm.mainPeople.all" type="primary" @close="closeMainAll">
             所有人
-          </el-tag>         
+          </el-tag>
           <el-tag :key="dep.id" :closable="true" type="primary" @close="closeMainDep(index)" v-for="(dep,index) in manuscriptForm.mainPeople.depList">
             {{dep.name}}
           </el-tag>
           <el-tag :key="person.id" :closable="true" type="primary" @close="closeMainPerson(index)" v-for="(person,index) in manuscriptForm.mainPeople.personList">
             {{person.name}}
           </el-tag>
-          <el-tag :key="item" :closable="true"  type="primary" @close="closeMainOutSend(index)" v-for="(item,index) in manuscriptForm.mainPeople.outList">
+          <el-tag :key="item" :closable="true" type="primary" @close="closeMainOutSend(index)" v-for="(item,index) in manuscriptForm.mainPeople.outList">
             {{item}}(对外)
           </el-tag>
         </div>
@@ -107,7 +107,7 @@ export default {
       }
     };
     var checkFileSend1 = (rule, value, callback) => {
-      if (value.all || value.personList.length != 0 || value.depList != 0 || value.outList.length!=0) {
+      if (value.all || value.personList.length != 0 || value.depList != 0 || value.outList.length != 0) {
         callback();
       } else {
         callback(new Error('请选择主送人'))
@@ -234,6 +234,16 @@ export default {
         this.manuscriptForm.docFileId = '';
         this.files = [];
         this.$emit('updateSuggest', val);
+        this.manuscriptForm.catalogueName = [];
+        this.catalogueList.forEach(c => {
+          if (val === 'ADM0401' && c.name === '部门级') {
+            c.disabled = true;
+          } else if (val === 'ADM0404' && c.name === '公司级') {
+            c.disabled = true;
+          } else {
+            c.disabled = false;
+          }
+        })
       } else { //草稿箱第一次
         this.isDrafFirst = false;
       }
@@ -329,7 +339,7 @@ export default {
             "ids": this.manuscriptForm.mainPeople.personList.map(person => person.empId)
           },
           "outSendBean": {
-            "sendType": this.manuscriptForm.mainPeople.outList.length!=0 ? this.sendTypes.find(type => type.dictEname == 'outsend').dictCode : '',
+            "sendType": this.manuscriptForm.mainPeople.outList.length != 0 ? this.sendTypes.find(type => type.dictEname == 'outsend').dictCode : '',
             "name": this.manuscriptForm.mainPeople.outList
           }
         },
@@ -400,7 +410,7 @@ export default {
       this.manuscriptForm.mainPeople.all = '';
     },
     closeMainOutSend(index) {
-      this.manuscriptForm.mainPeople.outList.splice(index, 1);     
+      this.manuscriptForm.mainPeople.outList.splice(index, 1);
     },
     closeCcAll() {
       this.manuscriptForm.ccPeople.all = '';
@@ -449,6 +459,9 @@ export default {
         .then(res => {
           if (res.status == '0') {
             loopMap(res.data);
+            res.data.forEach(r => {
+              r.disabled = false;
+            })
             this.catalogueList = res.data;
           } else {
             console.log('获取发文目录失败')

@@ -49,7 +49,7 @@
           <img v-else src="../../../assets/images/blankHead1.png" alt="">
         </el-upload>
       </el-form-item>
-      <template v-for="(info,index) in introduceForm.introduceContract">
+      <!-- <template v-for="(info,index) in introduceForm.introduceContract">
         <div class="header clearBoth">
           <span class="title">合同信息</span>
           <el-button type="primary" icon="plus" size="small" @click="addItem" v-if="index==0">添加</el-button>
@@ -69,7 +69,7 @@
         <el-form-item label="合同结束日期" :prop="'introduceContract'+'.'+index+'.'+'contractEnd'" class="arrArea">
           <el-date-picker type="date" v-model="introduceForm.introduceContract[index].contractEnd" style="width: 100%;" :editable="false" :picker-options="dateOptions[index].end"></el-date-picker>
         </el-form-item>
-      </template>
+      </template> -->
       <div class="header clearBoth">
         <span class="title">上次离职信息</span>
       </div>

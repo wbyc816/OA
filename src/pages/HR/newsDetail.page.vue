@@ -10,7 +10,7 @@
                 <p class="others"><i class="iconfont icon-eye"></i> <span>{{detail.browse}}</span><span class="time">{{detail.createTime | time('date')}}</span><span class="person">签发人 {{detail.createUser}}</span><span class="person">校对人 {{detail.verifyName}}</span></p>
               </el-col>
               <el-col :span='8' class="downBox">
-                <p>下载</p>
+                <p>下载 <span @click="$router.go(-1)">返回</span></p>
                 <a :href="item.fileUrlNew" target="_blank" class="link" v-for="item in detail.basicFileList">{{item.fileNameNew}}</a>
               </el-col>
             </el-row>
@@ -149,6 +149,13 @@ $sub:#1465C0;
       }
       .downBox {
         font-size: 13px;
+        p{
+          span{
+            float:right;
+            color:$main;
+            cursor:pointer;
+          }
+        }
         .link {
           display:block;
           color: $main;

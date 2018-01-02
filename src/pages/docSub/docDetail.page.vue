@@ -1,5 +1,5 @@
 <template>
-  <div id="docDetail">
+  <div id="docDetail" v-loading.fullscreen="submitLoading">
     <el-card class="borderCard">
       <div slot="header" class="clearfix docheader">
         <span class="docTypeName">{{docDetialInfo.doc.docTypeName}}</span>
@@ -54,26 +54,7 @@
         </el-row>
       </div>
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
-      <div v-if="distData.length!=0" style="margin-bottom:20px;">
-        <h4 class='doc-form_title'>分发意见</h4>
-        <el-table :data="topDistData" style="width: 100%" class="distTable" :stripe="true">
-          <el-table-column prop="distUserName" label="分发人" width="100"></el-table-column>
-          <el-table-column prop="reciveUserName" label="被分发人" width="100"></el-table-column>
-          <el-table-column prop="content" label="分发人意见">
-            <template scope="scope">
-              <el-tooltip popper-class="contentTip" :enterable="false" effect="dark" :content="scope.row.content" placement="top" :disabled="scope.row.content.length<=20">
-                <span style="display: inline-block;">{{scope.row.content | dotdotdot}}</span>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-          <el-table-column prop="distTime" label="分发时间" width="120"></el-table-column>
-          <el-table-column prop="readTime" label="阅读时间" width="120"></el-table-column>
-        </el-table>
-        <el-collapse v-model="activeNames" @change="handleChange" class="moreButton" v-if="distData.length>3">
-          <el-collapse-item title="查看更多记录" name="1">
-          </el-collapse-item>
-        </el-collapse>
-      </div>
+      <dist-advice ref="distAdvice"></dist-advice>
       <div class="operateBox" v-if="docDetialInfo.task[0].state==3||docDetialInfo.task[0].state==4">
         <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         <el-button class="myButton" v-if="docDetialInfo.doc.isPay" @click="changePay" :disabled="docDetialInfo.doc.isView!=1">{{docDetialInfo.doc.isView==1?'付款':'已付款'}}</el-button>
@@ -81,8 +62,7 @@
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
         </a>
       </div>
-      <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
-      </quit-advice>
+      <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'"></quit-advice>
       <my-advice :docDetail="docDetialInfo.doc" :otherInfo="docDetialInfo.otherInfo" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice" ref="myAdvice">
         <el-button size="large" class="docArchiveButton" @click="showArchiveDialog" v-if="showdArchiveButton" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
@@ -115,7 +95,7 @@
         </el-form-item>
         <el-form-item label="上传附件" prop="fileIds" v-if="isInArray(addFileDoc,$route.query.code)">
           <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.query.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove" :on-progress="handleProgress" :disabled="fileForm.fileIds.length>4||disabledUpload">
-            <el-button size="small" type="primary" :disabled="fileForm.fileIds.length>4||disabledUpload"  v-show="!isIE()||(fileForm.fileIds.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+            <el-button size="small" type="primary" :disabled="fileForm.fileIds.length>4||disabledUpload" v-show="!isIE()||(fileForm.fileIds.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
           <p class="uploadInfo">最多上传5个附件</p>
         </el-form-item>
@@ -131,12 +111,20 @@
         <el-button size="large" @click="DialogSubmitVisible = true;"><i class="iconfont icon-archive"></i>归档并分发</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="DialogSubmitVisible" size="small" class="myDialog" custom-class="archiveSubmitDialog" @close="DialogSubmitClose">
+    <el-dialog :visible.sync="DialogSubmitVisible" size="small" class="myDialog" custom-class="archiveSubmitDialog" @close="DialogSubmitClose" v-loading="submitLoading">
       <span slot="title">公文分发</span>
       <el-form label-position="left" :model="archiveForm" :rules="archiveFormRule" ref="archiveForm" label-width="75px">
         <el-form-item class='reciverWrap' label="收件人">
           <div class="reciverList">
-            <el-tag type="primary" :closable="true" v-for="(person,index) in archiveForm.persons" @close="removePerson(index)">{{person.name}}</el-tag>
+            <el-tag key="all" :closable="true" v-show="archiveForm.all" type="primary" @close="removeAll">
+              所有人
+            </el-tag>
+            <el-tag :key="dep.id" :closable="true" type="primary" @close="removeDep(index)" v-for="(dep,index) in archiveForm.depList">
+              {{dep.name}}
+            </el-tag>
+            <el-tag :key="person.id" :closable="true" type="primary" @close="removePerson(index)" v-for="(person,index) in archiveForm.personList">
+              {{person.name}}
+            </el-tag>
           </div>
           <el-button class="addButton" @click="selectArchivePerson"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
@@ -148,7 +136,8 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <person-dialog @updatePerson="updateArchivePerson" :data="archiveForm.persons" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog>
+    <major-dialog :params="archiveForm" @updatePerson="updateArchivePerson" :visible.sync="dialogArchivePersonVisible" :hasLevel="false"></major-dialog>
+    <!-- <person-dialog @updatePerson="updateArchivePerson" :data="archiveForm.personList" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog> -->
     <major-dialog :params="fileForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
     <back-button :backTop="186"></back-button>
   </div>
@@ -157,6 +146,7 @@
 import BackButton from '../../components/backButton.component.vue'
 import PersonDialog from '../../components/personDialog.component'
 import QuitAdvice from './detailComponent/empQuitAdvice.component'
+import DistAdvice from './detailComponent/distAdvice.component'
 import MajorDialog from '../../components/majorDialog.component'
 import historyAdvice from './detailComponent/historyAdvice.component'
 import signAdvice from './detailComponent/signAdvice.component'
@@ -210,6 +200,7 @@ export default {
     QuitAdvice,
     MajorDialog,
     historyAdvice,
+    DistAdvice,
     signAdvice,
     myAdvice,
     FWGD,
@@ -262,7 +253,9 @@ export default {
       currentView: '',
       archiveForm: {
         res: '',
-        persons: []
+        all:'',
+        personList: [],
+        depList: []
       },
       docDetialInfo: { doc: {}, task: [{ state: '' }], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [], suggests: '' },
       archiveFormRule: {},
@@ -292,7 +285,8 @@ export default {
       sendTypes: [],
       addFileDoc,
       taskFile: [],
-      disabledUpload:false,
+      disabledUpload: false,
+      submitLoading: false
     }
   },
   created() {
@@ -328,8 +322,8 @@ export default {
     },
     showdArchiveButton() {
       var isShow = false;
-      if (this.docDetialInfo.doc != {} && (this.docDetialInfo.doc.isFied == 1||this.docDetialInfo.doc.isFied == 2)) {
-          isShow = true;
+      if (this.docDetialInfo.doc != {} && (this.docDetialInfo.doc.isFied == 1 || this.docDetialInfo.doc.isFied == 2)) {
+        isShow = true;
       }
 
       return isShow
@@ -349,8 +343,6 @@ export default {
     },
     getFileSend() {
       if (this.isRedFile) {
-
-
         this.$http.post("/doc/getFileSend", { id: this.$route.params.id })
           .then(res => {
             if (res.status == 0) {
@@ -381,15 +373,14 @@ export default {
           })
       }
     },
-    showArchiveDialog(){
-      this.DialogArchiveVisible=true;
+    showArchiveDialog() {
+      this.DialogArchiveVisible = true;
       this.getFileSend();
-      if(this.docDetialInfo.doc.isFied == 2){
-        this.archiveState='2'
+      if (this.docDetialInfo.doc.isFied == 2) {
+        this.archiveState = '2'
       }
     },
     getDetail(route) {
-
       var url = "/doc/getDocDetailInfo";
       if (route.query.code == 'LZS') {
         url = '/doc/getDocDimissionInfo'
@@ -473,7 +464,7 @@ export default {
     },
     updateArchivePerson(payLoad) {
       this.dialogArchivePersonVisible = false;
-      this.archiveForm.persons = payLoad;
+      this.archiveForm = payLoad;
     },
     closeAll() {
       this.fileForm.fileSend.all = '';
@@ -489,7 +480,7 @@ export default {
         if (valid) {
           var that = this;
           var params = {
-            docId: this.docDetialInfo.doc.id,
+            "docId": this.docDetialInfo.doc.id,
             "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
             "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
             "taskDeptName": this.userInfo.deptVo.dept,
@@ -530,20 +521,23 @@ export default {
             params.fileIds = this.fileForm.fileIds.map(f => f.response.data);
           }
           // console.log(params)
+          this.submitLoading = true;
           this.$http.post('/doc/docArchive', params, { body: true })
             .then(res => {
               if (res.status == '0') {
                 if (isEnd) {
+                  this.submitLoading = false;
                   this.$message.success('归档成功');
                   this.$router.push('/doc/docPending');
                 } else {
                   this.docDistribution();
                 }
               } else {
+                this.submitLoading = false;
                 this.$message.error('归档失败，请重试');
               }
             }, res => {
-
+              this.submitLoading = false;
             })
         } else {
           this.$message.waring('请填写归档信息');
@@ -554,7 +548,13 @@ export default {
 
     },
     removePerson(index) {
-      this.archiveForm.persons.splice(index, 1);
+      this.archiveForm.personList.splice(index, 1);
+    },
+    removeDep(index) {
+      this.archiveForm.depList.splice(index, 1);
+    },
+    removeAll(){
+      this.archiveForm.all='';
     },
     changePay() {
       this.$confirm('确定已付款?', '提示', {
@@ -576,7 +576,7 @@ export default {
       });
     },
     dialogSubmit() {
-      if (this.archiveForm.persons.length > 0) {
+      if (this.archiveForm.personList.length > 0 || this.archiveForm.depList.length>0||this.archiveForm.all) {
         if (this.docDetialInfo.task[0].state == 3) {
           this.docDistribution();
         } else {
@@ -587,8 +587,8 @@ export default {
       }
     },
     docDistribution() {
-      var params = [];
-      var dist = {
+      this.submitLoading = true;
+      var params = {
         "distDeptMajorId": this.userInfo.deptVo.fatherDeptId,
         "distDeptMajorName": this.userInfo.deptVo.fatherDept,
         "distDeptId": this.userInfo.deptVo.deptId,
@@ -597,9 +597,12 @@ export default {
         "distUserName": this.userInfo.name,
         "content": this.archiveForm.res,
         "docId": this.$route.params.id,
-        "operateType": '1'
+        "operateType": '1',
+        "empIds": [],
+        "deptIds": this.archiveForm.depList.map(d => d.id),
+        "disType":this.archiveForm.all?'all':''
       }
-      this.archiveForm.persons.forEach(person => {
+      this.archiveForm.personList.forEach(person => {
         var temp = {
           "reciveDeptMajorId": person.deptParentId,
           "reciveDeptId": person.deptId,
@@ -607,11 +610,12 @@ export default {
           "reciveUserId": person.empId,
           "reciveUserName": person.name,
         }
-        Object.assign(temp, dist);
-        params.push(temp);
+        params.empIds.push(temp);
       })
+      // console.log(params);
       this.$http.post('/doc/docDistribution', params, { body: true })
         .then(res => {
+          this.submitLoading = false;
           if (this.docDetialInfo.task[0].state == 3) {
             if (res.status == 0) {
               this.$message.success('分发成功！');
@@ -643,17 +647,8 @@ export default {
       }
     },
     getDistInfo() {
-      this.$http.post('/doc/getDistInfo', { docId: this.$route.params.id })
-        .then(res => {
-          if (res.status == '0') {
-            this.distData = res.data;
-            this.topDistData = this.distData.slice(0, 3);
-          } else {
-
-          }
-        }, res => {
-
-        })
+      this.$refs.distAdvice.pageNumber=1;
+      this.$refs.distAdvice.getDistInfo();
     },
     handleAvatarSuccess(res, file, fileList) {
       if (this.isRedFile) {
@@ -689,7 +684,7 @@ export default {
       if (!isLt10M) {
         this.$message.error('上传文件大小不能超过 500MB!');
       }
-      return  isLt10M;
+      return isLt10M;
     },
     handleRemove(file, fileList) {
       if (this.isRedFile) {
@@ -698,12 +693,12 @@ export default {
         this.fileForm.fileIds = fileList;
       }
     },
-    handleProgress(event, file, fileList){
-      this.disabledUpload=true;
-      if(event.percent==100){
-        setTimeout(()=>{
-          this.disabledUpload=false;
-        },2000)        
+    handleProgress(event, file, fileList) {
+      this.disabledUpload = true;
+      if (event.percent == 100) {
+        setTimeout(() => {
+          this.disabledUpload = false;
+        }, 2000)
       }
     }
   }
@@ -714,7 +709,7 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docDetail {
-  position:relative;
+  position: relative;
   .docheader {
     line-height: 24px;
     padding: 8px 0 4px;

@@ -23,16 +23,20 @@
       <p v-if="info" class="textContent">{{info[0].trainTotalCost}}元</p>
     </el-col>
     <el-col :span="12" >
-      <h1 class="title">培训差旅费用</h1>
+      <h1 class="title">单人培训差旅费</h1>
       <p v-if="info" class="textContent">{{info[0].trainPerTravelCost}}元</p>
     </el-col>
     <el-col :span="12" class="rightBorder">
-      <h1 class="title">培训费用</h1>
+      <h1 class="title">单人培训费用</h1>
       <p v-if="info" class="textContent">{{info[0].trainPerTrainlCost}}元</p>
     </el-col>
     <el-col :span="12">
-      <h1 class="title">单人预算</h1>
+      <h1 class="title">单人预算总费用</h1>
       <p v-if="info" class="textContent">{{info[0].trainPerCost}}元</p>
+    </el-col>
+    <el-col :span="24">
+      <h1 class="title">参训人数</h1>
+      <p v-if="info" class="textContent">{{info[0].trainPerCount}}元</p>
     </el-col>
   </div>
 </template>

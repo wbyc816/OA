@@ -13,6 +13,8 @@ Vue.prototype.delCookie = delCookie
 Vue.prototype.showDowload = showDowload
 Vue.prototype.isInArray = isInArray
 Vue.prototype.isIE = isIE
+Vue.prototype.openOtherLink = openOtherLink
+Vue.prototype.numFixed2 = numFixed2
 
 
 function showDowload(docName) {
@@ -139,11 +141,31 @@ function isIE() {
   if ((navigator.userAgent.indexOf('MSIE') >= 0) &&
     (navigator.userAgent.indexOf('Opera') < 0)) {
     return true;
-  }else if(navigator.userAgent.indexOf('Trident') > -1 && navigator.userAgent.indexOf("rv:11.0") > -1){
+  } else if (navigator.userAgent.indexOf('Trident') > -1 && navigator.userAgent.indexOf("rv:11.0") > -1) {
     return true;
-  }
-  else{
+  } else {
     return false;
   } //判断是否IE浏览器
+}
+
+function openOtherLink(link) {
+  var params = {};
+  link.params.forEach(p => {
+    params[p] = this.userInfo[p];
+  })
+  var newWin = window.open('');
+  this.$http.post(link.link, params)
+    .then(res => {
+      if (res.status === '0') {
+        newWin.location.href = res.data;
+      } else {
+
+      }
+    })
+}
+
+function numFixed2(num){
+  var _num=num+'';
+  return _num.substr(0,_num.indexOf(".")+3)
 }
 export default { combineObj, formatTime, preventEmpty, loginOut, getCookie, delCookie, setCookie }

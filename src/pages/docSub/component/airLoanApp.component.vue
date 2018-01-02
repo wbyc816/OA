@@ -89,11 +89,11 @@
         </money-input>
       </el-form-item>
       <el-form-item label="单价" prop="unitPrice" class="arrArea">
-        <money-input v-model="budgetForm.unitPrice" :prepend="false" :append="false">
+        <money-input v-model="budgetForm.unitPrice" :prepend="false" :append="false" >
         </money-input>
       </el-form-item>
       <el-form-item label="总价"  class="deptArea">
-        <money-input v-model="totalPrice" :prepend="false" :append="false">
+        <money-input v-model="totalPrice" :prepend="false" :append="false" readonly>
         </money-input>
       </el-form-item>
       <el-form-item label="单日租金" prop="singleDayRentMoney" class="arrArea">
@@ -366,7 +366,7 @@ export default {
       if(this.budgetForm.pieceNum&&this.budgetForm.unitPrice){
         num=parseFloat(this.budgetForm.pieceNum)*parseFloat(this.budgetForm.unitPrice)
       }
-      return num
+      return this.numFixed2(num);
     },
     ...mapGetters([
       'submitLoading',
