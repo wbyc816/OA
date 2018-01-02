@@ -56,9 +56,11 @@
         <el-button type="primary" @click="goBack">返回</el-button>
       </div>
     </el-card>
+    <back-button :backTop="186"></back-button>
   </div>
 </template>
 <script>
+import BackButton from '../../components/backButton.component.vue'
 import historyAdvice from './detailComponent/historyAdvice.component'
 import FWGD from './detailComponent/FWGDetail.component'
 import SWDD from './detailComponent/SWDDetail.component'
@@ -102,6 +104,7 @@ export default {
   name:'docInfo',
   components: {
     historyAdvice,
+    BackButton,
     FWGD,
     SWDD,
     CPDD,

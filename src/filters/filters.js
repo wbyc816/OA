@@ -100,6 +100,12 @@ function nodeNameFormatter(cellValue) {
 }
 
 function toThousands(val) {
+  var isFu=false;
+  val=parseFloat(val);
+  if(val<0){
+    isFu=true;
+    val=-val;
+  }
   var arr = (val || 0).toString().split('.'),
     result = '';
   var num = arr[0];
@@ -111,7 +117,7 @@ function toThousands(val) {
   if (arr[1]) {
     result = result + '.' + arr[1].substr(0, 2);
   }
-  return result;
+  return (isFu?'-':'')+result;
 }
 
 function sexFilter(val) {

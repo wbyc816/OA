@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import home from 'pages/home'
 import util from '../common/util'
+import jquery from 'jquery'
+import store from '../store/'
 //公文
 const doc = () =>
   import ('pages/Doc-Approval')
@@ -150,14 +152,14 @@ const router = new Router({
       meta: {
         breadcrumb: "生日提醒",
       }
-    },{
+    }, {
       path: '/flightReport',
       name: 'flightReport',
       component: flightReport,
       meta: {
         breadcrumb: "飞行报表",
       }
-    },{
+    }, {
       path: '/flightException',
       name: 'flightException',
       component: flightException,
@@ -451,7 +453,18 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+
   if (util.getCookie('userId')) {
+    var history = store.getters.routeHistroy;
+    // console.log(history)
+    if (history.length != 0 && history[history.length - 1].path === to.path) {
+      jquery('body,html').scrollTop(history[history.length - 1].top);
+      store.commit('popHistory');
+    } else {
+      store.commit('pushHistory', { path: from.path, top: jquery('body,html').scrollTop() });
+      jquery('body,html').animate({ scrollTop: 0 }, 10);
+    }
+    history=null;
     next();
   } else {
     util.loginOut();

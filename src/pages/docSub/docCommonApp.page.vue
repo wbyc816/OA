@@ -18,6 +18,7 @@
         </div>
       </div>
     </el-card>
+    <back-button></back-button>
   </div>
 </template>
 <script>
@@ -25,6 +26,7 @@ import { mapGetters } from 'vuex'
 import { docConfig } from '../../common/docConfig'
 import Subject from './component/subject.component.vue'
 import Description from './component/description.component.vue'
+import BackButton from '../../components/backButton.component.vue'
 import CLV from './component/travelApp.component.vue'
 import QJS from './component/vacationApp.component.vue'
 import GSS from './component/injuryApp.component.vue'
@@ -67,7 +69,7 @@ export default {
       saveMiddlePara: '',
       reciverName: '',
       submitParam: '',
-      docNo: ''
+      docNo: '',
     }
   },
   computed: {
@@ -88,6 +90,7 @@ export default {
     next();
   },
   components: {
+    BackButton,
     Subject,
     Description,
     CLV,
@@ -121,11 +124,12 @@ export default {
     JBC
   },
   created() {
+
   },
-  beforeRouteUpdate(to, from, next){
-    if(to.params.code == 'SWD' && this.userInfo.isConfidential != 1){
+  beforeRouteUpdate(to, from, next) {
+    if (to.params.code == 'SWD' && this.userInfo.isConfidential != 1) {
       this.$router.push(from.path);
-    }else{
+    } else {
       next();
     }
   },
@@ -288,32 +292,6 @@ export default {
         this.$store.commit('setIsSubmit', false);
       }
     },
-    // getDefaultReciver() {
-    //   this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.doc.code, empId: this.userInfo.empId })
-    //     .then(res => {
-    //       if (res.status == 0) {
-    //         if (res.data.length != 0) {
-    //           var receiver = {
-    //             "reciDeptMajorName": res.data.reciDeptMajorName,
-    //             "reciDeptMajorId": res.data.reciDeptMajorId,
-    //             "reciDeptName": res.data.reciDeptName,
-    //             "reciDeptId": res.data.reciDeptId,
-    //             "reciUserName": res.data.reciUserName,
-    //             "reciUserId": res.data.reciUserId,
-    //             "reciUserJobTitle": res.data.reciJobtitle, //接收人职位
-    //             "reciPostrankId": res.data.reciPostrankId, //职位id
-    //             "reciEmpPostId": res.data.reciEmpPostId,
-    //             "reciPostrankName": res.data.reciPostrankName, //职级名称
-    //             "reciSupervisory": res.data.reciSupervisoryLevel //安全级别
-    //           }
-    //           this.$store.commit('setReciver', receiver);
-    //           this.reciverName = res.data.reciUserName;
-    //         }
-    //       } else {
-
-    //       }
-    //     })
-    // },
     getDraft() {
       this.$http.post('/doc/getDocDraftsDetail', { docId: this.$route.query.id })
         .then(res => {
@@ -359,13 +337,15 @@ export default {
     },
     updateSuggest(val) {
       this.$refs.description.getSuggestTemp(val);
-    }
+    },
   }
 }
 
 </script>
 <style lang='scss'>
 $main:#0460AE;
+
+
 // .commonApp {
 //   .deptArea,
 //   .arrArea {

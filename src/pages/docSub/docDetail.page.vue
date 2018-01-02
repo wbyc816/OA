@@ -84,7 +84,7 @@
       <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'">
       </quit-advice>
       <my-advice :docDetail="docDetialInfo.doc" :otherInfo="docDetialInfo.otherInfo" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice" ref="myAdvice">
-        <el-button size="large" class="docArchiveButton" @click="DialogArchiveVisible=true;getFileSend();" v-if="showdArchiveButton" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
+        <el-button size="large" class="docArchiveButton" @click="showArchiveDialog" v-if="showdArchiveButton" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
     </el-card>
@@ -121,7 +121,7 @@
         </el-form-item>
         <el-form-item label="归档状态" class="textarea" prop="state">
           <el-radio-group class="myRadio" v-model="archiveState">
-            <el-radio-button label="1">通过<i></i></el-radio-button>
+            <el-radio-button label="1" :disabled="docDetialInfo.doc.isFied == 2">通过<i></i></el-radio-button>
             <el-radio-button label="2">不通过<i></i></el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -150,9 +150,11 @@
     </el-dialog>
     <person-dialog @updatePerson="updateArchivePerson" :data="archiveForm.persons" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog>
     <major-dialog :params="fileForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
+    <back-button :backTop="186"></back-button>
   </div>
 </template>
 <script>
+import BackButton from '../../components/backButton.component.vue'
 import PersonDialog from '../../components/personDialog.component'
 import QuitAdvice from './detailComponent/empQuitAdvice.component'
 import MajorDialog from '../../components/majorDialog.component'
@@ -204,6 +206,7 @@ export default {
   name: 'docDetail',
   components: {
     PersonDialog,
+    BackButton,
     QuitAdvice,
     MajorDialog,
     historyAdvice,
@@ -290,7 +293,6 @@ export default {
       addFileDoc,
       taskFile: [],
       disabledUpload:false,
-
     }
   },
   created() {
@@ -326,7 +328,7 @@ export default {
     },
     showdArchiveButton() {
       var isShow = false;
-      if (this.docDetialInfo.doc != {} && this.docDetialInfo.doc.isFied == 1) {
+      if (this.docDetialInfo.doc != {} && (this.docDetialInfo.doc.isFied == 1||this.docDetialInfo.doc.isFied == 2)) {
           isShow = true;
       }
 
@@ -379,7 +381,13 @@ export default {
           })
       }
     },
-
+    showArchiveDialog(){
+      this.DialogArchiveVisible=true;
+      this.getFileSend();
+      if(this.docDetialInfo.doc.isFied == 2){
+        this.archiveState='2'
+      }
+    },
     getDetail(route) {
 
       var url = "/doc/getDocDetailInfo";
@@ -706,6 +714,7 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docDetail {
+  position:relative;
   .docheader {
     line-height: 24px;
     padding: 8px 0 4px;

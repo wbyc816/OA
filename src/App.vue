@@ -44,9 +44,9 @@
         <el-breadcrumb-item :to="{ path: '/' }"> <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: breadcrumb.path }" v-for="breadcrumb in breadcrumbs">{{breadcrumb.meta.breadcrumb}}</el-breadcrumb-item>
       </el-breadcrumb>
-      <keep-alive include="filesHome">
+      <!-- <keep-alive :include="/filesHome/"> -->
         <router-view></router-view>
-      </keep-alive>
+      <!-- </keep-alive> -->
     </div>
     <footer>
       <div class="container">
@@ -91,7 +91,6 @@ import { mapGetters } from 'vuex'
 import '../static/urlConfig'
 import Vue from 'vue'
 import router from './router'
-import jquery from 'jquery'
 export default {
   name: 'app',
   data: function() {
@@ -235,7 +234,7 @@ export default {
       // if(window.scroll){
       //   window.scroll({ "behavior": "smooth", "top": 0 })
       // }
-      jquery('body,html').animate({ scrollTop: 0 }, 10);
+      // jquery('body,html').animate({ scrollTop: 0 }, 10);
     },
   }
 }
