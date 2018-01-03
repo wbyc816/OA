@@ -19,30 +19,38 @@
         <el-row class="salaryList" v-if="salaryType>0">
           <el-col :span="12">
             <el-row v-for="salary in salaryLeft" v-if="salaryData[salary.name]!=''&&typeof(salaryData[salary.name])=='string'||typeof(salaryData[salary.name])=='number'">
+              <el-tooltip :content="salaryData[salary.name].toString()" placement="top" effect="light" :disabled="salaryData[salary.name].toString().length>14?tooltipDis:true">
               <el-col :span="12" v-if="salary.label!='应发金额'">
                 {{salary.label}}
               </el-col>
+              </el-tooltip>
+             <el-tooltip :content="salaryData[salary.name].toString()" placement="top" effect="light" :disabled="salaryData[salary.name].toString().length>14?tooltipDis:true">
               <el-col :span="12" class="ad" v-if="salary.label!='应发金额'">
                 {{salaryData[salary.name]}}
               </el-col>
-
+              </el-tooltip>
+              <el-tooltip :content="salaryData[salary.name].toString()" placement="top" effect="light"  :disabled="salaryData[salary.name].toString().length>14?tooltipDis:true">
               <el-col :span="12" class="fbold" v-if="salary.label=='应发金额'">
                 {{salary.label}}
               </el-col>
+              </el-tooltip>
+               <el-tooltip :content="salaryData[salary.name].toString()" placement="top" effect="light" :disabled="salaryData[salary.name].toString().length>14?tooltipDis:true">
               <el-col :span="12" class="ad fbold"  v-if="salary.label=='应发金额'">
                 {{salaryData[salary.name]}}
               </el-col>
-              
+              </el-tooltip>
             </el-row>
           </el-col>
           <el-col :span="12">
-            <el-row v-for="salary in salaryRight" v-if="salaryData[salary.name]!=''&&typeof(salaryData[salary.name])=='string'||typeof(salaryData[salary.name])=='number'">
+            <el-row v-for="salary in salaryRight" v-if="salaryData[salary.name]!=''&&typeof(salaryData[salary.name])=='string'||typeof(salaryData[salary.name])=='number'" >
               <el-col :span="12">
                 {{salary.label}}
               </el-col>
+              <el-tooltip :content="salaryData[salary.name].toString()" placement="top" effect="light" :disabled="salaryData[salary.name].toString().length.length>14?tooltipDis:true">
               <el-col :span="12" class="ad" :class="{'ec':salary.isDeduction}">
-                {{salaryData[salary.name]}}
+                 {{salaryData[salary.name]}}
               </el-col>
+              </el-tooltip>
             </el-row>
           </el-col>
         </el-row>
@@ -240,7 +248,8 @@ export default {
       paramsMonth:"",
       salaryDialogVisible:false,
       pageTitle:"最新工资单",
-      salaryDesUrl:''
+      salaryDesUrl:'',
+      tooltipDis:false,
     }
   },
   computed: {
@@ -350,6 +359,11 @@ $sub:#1465C0;
     }
     .ad{
       color:#0460AE;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      // width: 245px;
+      // border:1px solid red
     }
     .ec{
       color:#BE3B7F;
