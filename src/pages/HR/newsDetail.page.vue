@@ -26,8 +26,8 @@
       <el-col :span='7'>
         <el-card class="borderCard searchBox">
           <div slot="header">新闻查询</div>
-          <el-input class="search">
-            <el-button slot="append">搜索</el-button>
+          <el-input class="search" v-model="condition">
+            <el-button slot="append" @click.native="goToOthers(encodeURI(encodeURI('../FilesHome?'+condition)))">搜索</el-button> 
           </el-input>
         </el-card>
         <duty></duty>
@@ -45,6 +45,7 @@ export default {
   components: { SidePersonSearch, Duty, pdf },
   data() {
     return {
+      condition:"",
       pageNum: 1,
       totalNum: 0,
       loading: true,
@@ -66,6 +67,25 @@ export default {
   },
   mounted() {},
   methods: {
+    goToOthers(link) {
+      if (typeof link === 'string') {
+        if (/^http/.test(link)) {
+          window.open(link);
+        } else {
+          this.$router.push(link);
+        }
+      } else {
+        if (link.params) {
+          this.openOtherLink(link);
+        } else {
+          if (/^http/.test(link.link)) {
+            window.open(link.link);
+          } else {
+            this.$router.push(link.link);
+          }
+        }
+      }
+    },
     changePage(newPage) {
       this.$refs.pdfScroll.scrollTop = this.pdfHeight * (newPage - 1);
     },
@@ -92,9 +112,9 @@ export default {
     pdfError(obj) {
       this.loading = false;
       this.$message.error('PDF文件加载失败！')
-    }
-  }
-
+    },
+  },
+   
 }
 
 </script>

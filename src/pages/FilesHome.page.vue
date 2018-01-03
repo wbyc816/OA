@@ -6,7 +6,8 @@
           <el-col :span='24'>
             <el-card class="filebox">
               <div slot="header" class="clearfix">
-                <span class="title">{{title}}</span>
+                <span class="title">{{title}}</span> 
+                <span v-show="paramTitle" class="headLeft">按搜索条件 "<i>{{paramTitle}}</i>" 查询结果</span>
                 <span class="three_btn">
                     <el-button type="primary"  @click="changeSort">
                       发布时间
@@ -18,7 +19,7 @@
                         {{choose_dept}}<i class="iconfont icon-xiasanjiao-copy"></i>
                       </el-button>
                       <el-dropdown-menu slot="dropdown" class="choose_menu">
-                        <el-dropdown-item  :command="['','选择部门']">全部部门</el-dropdown-item>
+                        <el-dropdown-item  :command="['','选择部门']">选择部门</el-dropdown-item>
                         <el-dropdown-item v-for="Dept in Depts" :command="[Dept.id,Dept.name]">{{Dept.name}}</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
@@ -27,7 +28,7 @@
                       {{choose_type}}<i class="iconfont icon-xiasanjiao-copy"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown" class="choose_menu">
-                      <el-dropdown-item  :command="['','选择类型']">全部类型</el-dropdown-item>
+                      <el-dropdown-item  :command="['','选择类型']">选择类型</el-dropdown-item>
                       <el-dropdown-item  v-for="leftFileType in leftFileTypes" :command="[leftFileType.dictCode,leftFileType.dictName]">{{leftFileType.dictName}}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -123,7 +124,7 @@ export default {
       file_title: "",
       choose_dept: "选择部门",
       Depts: [],
-      title: "公司新闻",
+      title: "全部类型",
       leftFileTypes: [],
       endDate: 1,
       pickerOptions2: {
@@ -153,8 +154,10 @@ export default {
           }
         }]
       },
+      count:0,
       startTime: '',
       endTime: '',
+      paramTitle:"",
       params: {
         empId: '',
         classify1: '',
@@ -165,6 +168,7 @@ export default {
         deptId: '',
         docTitle: '',
         sort: 0,
+        
       }
     }
   },
@@ -183,6 +187,7 @@ export default {
     this.getData();
   },
   methods: {
+    
     click_highSearch() {
       this.ishighSearch = 1;
     },
@@ -190,6 +195,13 @@ export default {
       this.ishighSearch = 0;
     },
     getData() {
+      this.count=++this.count;
+      console.log(this.count)
+      if(this.count==1&&location.href.split("?")[1]){
+        var newsearch=decodeURI(decodeURI(location.href.split("?")[1]))
+        this.params.docTitle=newsearch;
+        this.paramTitle=newsearch;
+      }
       this.$http.post("/doc/selectFileList", this.params).then(res => {
         setTimeout(function() {
           this.searchLoading = false;
@@ -197,12 +209,13 @@ export default {
         if (res.status == 0 && res.data.selectDocInfoVolist) {
           this.fileDatas = res.data.selectDocInfoVolist;
           this.totalSize = res.data.totalSize;
+          this.params.docTitle="";
         } else {
           this.fileDatas = [];
           this.totalSize = 0;
+          this.params.docTitle="";
         }
       }, res => {
-
       })
     },
     search_type(fileType) {
@@ -227,6 +240,7 @@ export default {
 
     },
     click_Search() {
+      this.paramTitle=this.params.docTitle;
       if (this.startTime[0] && this.startTime[1]) {
         this.params.startTime = util.formatTime(this.startTime[0], 'yyyy-MM-dd');
         this.params.endTime = util.formatTime(this.startTime[1], 'yyyy-MM-dd');
@@ -234,6 +248,7 @@ export default {
       this.params.deptId = ''
       this.params.deptId = ''
       this.getData();
+     
     },
 
     getFileType() {
@@ -292,7 +307,12 @@ export default {
       this.params.classify1 = command[0];
       this.choose_type = command[1];
       this.getData();
-      this.title = command[1]
+      
+      if( command[1]=="选择类型"){
+        this.title = "全部类型";
+      }else{
+        this.title = command[1]
+      }
     },
     handleCommand_dept(command) {
       console.log(command);
@@ -349,7 +369,14 @@ $main: #0460AE;
 }
 
 #filesHome {
-
+  .headLeft {
+    font-size: 14px;
+    color: #676767;
+    i {
+      color: $main;
+      font-style: normal;
+    }
+  }
   .iconfontColor {
     color: #1465C0;
   }
