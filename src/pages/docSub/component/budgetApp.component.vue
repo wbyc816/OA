@@ -1,13 +1,13 @@
 <template>
   <div class="budgetApp">
     <el-form label-position="left" :model="budgetForm" :rules="rules" ref="budgetForm" label-width="128px">
-      <!-- <el-form-item label="申请类型" prop="type" class="deptArea">
+      <el-form-item label="申请类型" prop="type" class="deptArea">
         <el-select v-model="budgetForm.type" value-key="dictCode">
           <el-option v-for="item in types" :label="item.dictName" :value="item">
           </el-option>
         </el-select>
-      </el-form-item> -->
-      <template v-if="budgetForm.type&&budgetForm.type.dictCode!=='DOC2602'">
+      </el-form-item>
+      <template v-if="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'">
         <el-form-item label="预算年份" class="deptArea year">
           {{year}}
         </el-form-item>
@@ -35,15 +35,13 @@
         </el-form-item>
       </template>
     </el-form>
-    <div style="width:750px;margin-bottom:20px;" v-show="budgetForm.type&&budgetForm.type.dictCode!=='DOC2602'">
+    <div style="width:750px;margin-bottom:20px;" v-show="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'">
       <el-table :data="budgetTable" :stripe="true" highlight-current-row class="appTable">
-        <!-- <el-table-column label=" " width="50" class-name="upDown">
+        <el-table-column label=" " width="50" class-name="upDown">
           <template scope="scope">
             <span v-if="parseFloat(scope.row.budgetMoney)>0" style="background:rgb(72, 153, 223)">调增</span>
             <span v-else style="background:#FF8460">调减</span>
           </template>
-        </el-table-column> -->
-        <el-table-column type="index" label=" " width="50">
         </el-table-column>
         <el-table-column property="budgetDept" label="预算机构"></el-table-column>
         <el-table-column property="useBudget" label="可用额度(元)" width="150"></el-table-column>
@@ -99,7 +97,7 @@ export default {
         person: [],
         budgetDept: [],
         budgetDate: {},
-        type: {}
+        type: ''
       },
       rules: {
         // isBookFlight: [{ required: true, trigger: 'blur' }],
@@ -177,9 +175,9 @@ export default {
             this.isDisable = true;
             // this.budgetForm.year="";
             this.$refs.budgetMoney.currentValue = "";
-            // this.budgetForm.budgetDept=[];
-            // this.budgetForm.budgetMoney = "";
-            this.$refs.budgetForm.resetFields();
+            this.budgetForm.budgetDept = [];
+            this.budgetForm.budgetMoney = "";
+            // this.$refs.budgetForm.resetFields();
             this.showData = 0;
           }
         } else {
@@ -239,14 +237,6 @@ export default {
       if (this.budgetTable.length != 0) {
         var dep = this.getBudgetDep();
         this.params = {
-          // "year":this.budgetForm.year,//预算年份
-          // "deptArea": this.budgetForm.budgetDept, //预算科目
-          // "budgetMoney": this.budgetForm.budgetMoney, //申报金额
-
-          // "budgetItemCode": dep.budgetItemCode, //报销科目code
-          // "budgetItemName": dep.budgetItemName, //报销科目名称
-          // "budgetDeptCode": dep.budgetDeptCode, //报销部门
-          // "budgetDeptName": dep.budgetDeptName, //报销部门名称
           "finBudget": {
             "totalMoney": this.totalMoney,
             "finBudgetItems": this.budgetTable.map(function(tabel) {
@@ -260,13 +250,6 @@ export default {
               }
             })
           }
-
-
-
-
-
-
-
         }
         this.$emit('submitMiddle', this.params);
       } else {
