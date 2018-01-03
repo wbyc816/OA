@@ -207,7 +207,7 @@ export default {
       activeName: 'post',
       salaryLeft,
       salaryRight,
-<<<<<<< HEAD
+
       salaryMonth:"",
       salaryData:{},
       salaryType:0,
@@ -216,14 +216,7 @@ export default {
       pageTitle:"最新工资单",
       salaryDesUrl:'',
       tooltipDis:false,
-=======
-      salaryMonth: "",
-      salaryData: {},
-      salaryType: 0,
-      paramsMonth: "",
-      salaryDialogVisible: false,
-      pageTitle: "最新工资单",
->>>>>>> origin/wb
+
     }
   },
   computed: {
@@ -323,7 +316,6 @@ $sub:#1465C0;
         background: rgba(118, 135, 206, .15)
       }
     }
-<<<<<<< HEAD
     .ad{
       color:#0460AE;
       overflow: hidden;
@@ -331,10 +323,7 @@ $sub:#1465C0;
       text-overflow: ellipsis;
       // width: 245px;
       // border:1px solid red
-=======
-    .ad {
-      color: #0460AE;
->>>>>>> origin/wb
+
     }
     .ec {
       color: #BE3B7F;
