@@ -258,7 +258,7 @@ export default {
       if(this.budgetForm.pieceNum&&this.budgetForm.unitPrice){
         num=parseFloat(this.budgetForm.pieceNum)*parseFloat(this.budgetForm.unitPrice)
       }
-      return num
+      return this.numFixed2(num)
     },
     ...mapGetters([
       'submitLoading',

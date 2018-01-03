@@ -158,7 +158,7 @@
         </el-card>
         <el-card class="mailbox">
           <el-menu>
-            <el-menu-item :index="link.text" v-for="link in otherLinks" @click.native="goToOthers(link.link)"><i class="iconfont" :class="'icon-'+link.icon"></i>{{link.text}}<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item :index="link.text" v-for="link in otherLinks" @click.native="goToOthers(link)"><i class="iconfont" :class="'icon-'+link.icon"></i>{{link.text}}<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
       </el-col>
@@ -212,7 +212,7 @@ const otherLinks = [
   { "icon": "changyong", "text": "常用办公软件", "link": "/softDownload" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
-  { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080/login.jsp" },
+  { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
   { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },
@@ -426,10 +426,22 @@ export default {
       this.chart = new Highcharts.Chart(this.$refs.mypie, this.optionOne);
     },
     goToOthers(link) {
-      if (/^http/.test(link)) {
-        window.open(link);
+      if (typeof link === 'string') {
+        if (/^http/.test(link)) {
+          window.open(link);
+        } else {
+          this.$router.push(link);
+        }
       } else {
-        this.$router.push(link);
+        if (link.params) {
+          this.openOtherLink(link);
+        } else {
+          if (/^http/.test(link.link)) {
+            window.open(link.link);
+          } else {
+            this.$router.push(link.link);
+          }
+        }
       }
     },
     dragShow(index) {

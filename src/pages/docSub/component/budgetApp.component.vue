@@ -1,47 +1,61 @@
 <template>
   <div class="budgetApp">
     <el-form label-position="left" :model="budgetForm" :rules="rules" ref="budgetForm" label-width="128px">
-      <el-form-item label="预算年份" class="widthLeft40 year">
-        {{year}}
+      <el-form-item label="申请类型" prop="type" class="deptArea">
+        <el-select v-model="budgetForm.type" value-key="dictCode">
+          <el-option v-for="item in types" :label="item.dictName" :value="item">
+          </el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="预算机构/科目" prop="budgetDept">
-        <div>
-          <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept" @active-item-change="handleItemChange" filterable @change="changeDept" popper-class="myCascader" class="budgetDept" ref="budgetDept"></el-cascader>
+      <template v-if="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'">
+        <el-form-item label="预算年份" class="deptArea year">
+          {{year}}
+        </el-form-item>
+        <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
+          <div>
+            <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept" @active-item-change="handleItemChange" filterable @change="changeDept" popper-class="myCascader" class="budgetDept" ref="budgetDept"></el-cascader>
+          </div>
+        </el-form-item>
+        <div class="change_data" v-show="showData==1">
+          <ul>
+            <li>年度预算{{yearBudget}}元</li>
+            <li>可用预算{{useBudget}}元</li>
+            <li>预算执行比例{{execRateStr}}</li>
+          </ul>
         </div>
-      </el-form-item>
-      <div class="change_data" v-show="showData==1">
-        <ul>
-          <li>年度预算{{yearBudget}}元</li>
-          <li>可用预算{{useBudget}}元</li>
-          <li>预算执行比例{{execRateStr}}</li>
-        </ul>
-      </div>
-      </el-form-item>
-      <el-form-item label="申报金额" prop="budgetMoney" class="budgetMoney">
-        <el-col :span="12" class="clearPadding input">
-          <el-input ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
-            <template slot="append">元</template>
-          </el-input>
-        </el-col>
-        <el-col :span="5" class="clearPadding btn">
-          <el-button @click='addBudget' type="primary" class="addbutton1"><i class="el-icon-plus"></i> 添加</el-button>
-        </el-col>
-      </el-form-item>
+        <el-form-item label="申报金额" prop="budgetMoney" class="budgetMoney">
+          <el-col :span="12" class="clearPadding input">
+            <el-input ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
+              <template slot="append">元</template>
+            </el-input>
+          </el-col>
+          <el-col :span="5" class="clearPadding btn">
+            <el-button @click='addBudget' type="primary" class="addbutton1"><i class="el-icon-plus"></i> 添加</el-button>
+          </el-col>
+        </el-form-item>
+      </template>
     </el-form>
-    <el-table :data="budgetTable" :stripe="true" highlight-current-row class="appTable">
-      <el-table-column type="index" label=" " width="40"></el-table-column>
-      <el-table-column property="budgetDept" label="预算机构"></el-table-column>
-      <el-table-column property="useBudget" label="可用额度（元）"></el-table-column>
-      <el-table-column property="execRateStr" label="执行比例" width="100"></el-table-column>
-      <el-table-column property="budgetMoney" label="申报额度（元）"></el-table-column>
-      <el-table-column label="操作" width="55">
-        <template scope="scope">
-          <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
+    <div style="width:750px;margin-bottom:20px;" v-show="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'">
+      <el-table :data="budgetTable" :stripe="true" highlight-current-row class="appTable">
+        <el-table-column label=" " width="50" class-name="upDown">
+          <template scope="scope">
+            <span v-if="parseFloat(scope.row.budgetMoney)>0" style="background:rgb(72, 153, 223)">调增</span>
+            <span v-else style="background:#FF8460">调减</span>
+          </template>
+        </el-table-column>
+        <el-table-column property="budgetDept" label="预算机构"></el-table-column>
+        <el-table-column property="useBudget" label="可用额度(元)" width="150"></el-table-column>
+        <el-table-column property="execRateStr" label="执行比例" width="100"></el-table-column>
+        <el-table-column property="budgetMoney" label="申报额度(元)" width="150"></el-table-column>
+        <el-table-column label="操作" width="55">
+          <template scope="scope">
+            <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
+    </div>
   </div>
 </template>
 <script>
@@ -65,7 +79,7 @@ export default {
       }
     };
     return {
-      val2:"",
+      val2: "",
       bookTypes: [],
       budgetDate: {},
       showData: 0,
@@ -83,7 +97,7 @@ export default {
         person: [],
         budgetDept: [],
         budgetDate: {},
-
+        type: ''
       },
       rules: {
         // isBookFlight: [{ required: true, trigger: 'blur' }],
@@ -91,6 +105,7 @@ export default {
         // deptArea: [{ required: true, message: '请输入出发地', trigger: 'blur' }],
         // arrArea: [{ required: true, message: '请输入目的地', trigger: 'blur' }],
         budgetMoney: [{ required: true, message: '请输入申报金额', trigger: 'blur' }],
+        type: [{ type: 'object', required: true, message: '请选择申请类型', trigger: 'blur' }],
         // year: [{  required: true, validator: checkDate, trigger: 'blur' }],
         budgetDept: [{ type: 'array', required: true, message: '请输入预算机构/科目', trigger: 'blur' }],
       },
@@ -107,7 +122,7 @@ export default {
         value: 'budgetItemCode',
         children: 'items'
       },
-
+      types: [],
     }
   },
   computed: {
@@ -129,6 +144,7 @@ export default {
     ])
   },
   created() {
+    this.getTypes();
     this.getBookType();
     this.getBudgetDeptList();
   },
@@ -142,7 +158,7 @@ export default {
     addBudget() {
       this.$refs.budgetForm.validate((valid) => {
         if (valid) {
-          if(this.checkBudget()){
+          if (this.checkBudget()) {
             var temp = {};
             temp.budgetDept = this.$refs.budgetDept.currentLabels[0] + "/" + this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
             temp.budgetMoney = this.budgetForm.budgetMoney;
@@ -153,13 +169,15 @@ export default {
             temp.budgetItemId = this.budgetForm.budgetDept[this.budgetForm.budgetDept.length - 1];
             temp.budgetItemName = this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
             temp.budgetYear = this.year;
-          
+
             this.budgetTable.push(temp);
 
             this.isDisable = true;
             // this.budgetForm.year="";
             this.$refs.budgetMoney.currentValue = "";
-            this.$refs.budgetForm.resetFields();
+            this.budgetForm.budgetDept = [];
+            this.budgetForm.budgetMoney = "";
+            // this.$refs.budgetForm.resetFields();
             this.showData = 0;
           }
         } else {
@@ -195,8 +213,8 @@ export default {
     },
     checkBudget() {
       var dep = this.getBudgetDep();
-      var temp = this.budgetTable.find(b =>  b.budgetItemId == dep.budgetItemCode)
-     
+      var temp = this.budgetTable.find(b => b.budgetItemId == dep.budgetItemCode)
+
       if (temp == undefined) {
         return true;
       } else {
@@ -219,14 +237,6 @@ export default {
       if (this.budgetTable.length != 0) {
         var dep = this.getBudgetDep();
         this.params = {
-          // "year":this.budgetForm.year,//预算年份
-          // "deptArea": this.budgetForm.budgetDept, //预算科目
-          // "budgetMoney": this.budgetForm.budgetMoney, //申报金额
-
-          // "budgetItemCode": dep.budgetItemCode, //报销科目code
-          // "budgetItemName": dep.budgetItemName, //报销科目名称
-          // "budgetDeptCode": dep.budgetDeptCode, //报销部门
-          // "budgetDeptName": dep.budgetDeptName, //报销部门名称
           "finBudget": {
             "totalMoney": this.totalMoney,
             "finBudgetItems": this.budgetTable.map(function(tabel) {
@@ -240,13 +250,6 @@ export default {
               }
             })
           }
-
-
-
-
-
-
-
         }
         this.$emit('submitMiddle', this.params);
       } else {
@@ -260,33 +263,30 @@ export default {
       this.budgetForm.person.splice(index, 1);
     },
     fomatMoney(val) {
-      if(val.toString().match(/^\./)){
+      if (val.toString().match(/^\./)) {
         this.budgetForm.budgetMoney = "";
         this.$refs.budgetMoney.setCurrentValue("");
-      }
-      else if(val.toString().match(/^\-?[0]{2}/)){
+      } else if (val.toString().match(/^\-?[0]{2}/)) {
         this.budgetForm.budgetMoney = val[0];
         this.$refs.budgetMoney.setCurrentValue(val[0]);
-      }else if(val.toString().match(/^\-?[0]\.[0]{2}/)){
+      } else if (val.toString().match(/^\-?[0]\.[0]{2}/)) {
         this.budgetForm.budgetMoney = val[0];
         this.$refs.budgetMoney.setCurrentValue(val[0]);
-      }
-      else if(val.toString().match(/^\-?[0][0-9]+$/)){
+      } else if (val.toString().match(/^\-?[0][0-9]+$/)) {
         this.budgetForm.budgetMoney = val[0];
         this.$refs.budgetMoney.setCurrentValue(val[0]);
-      }
-      else{
+      } else {
         val = val.toString().match(/^\-?[0-9]*\.?[0-9]{0,2}$/);
         // if(val.toString().match(/^\-/)){
         //     val = val.toString().match(/(^\-[1-9]([0-9]{0,})|^[0])+(?:\.\d{0,2})?/);
         // }else{
         //     val = val.toString().match(/(^[1-9]([0-9]{0,})|^[0])+(?:\.\d{0,2})?/);
         // }
-        if(val){
-          this.val2= val.toString();
+        if (val) {
+          this.val2 = val.toString();
         }
-        
-        
+
+
         if (val) {
           this.budgetForm.budgetMoney = val[0];
           this.$refs.budgetMoney.setCurrentValue(val[0]);
@@ -295,7 +295,7 @@ export default {
           this.$refs.budgetMoney.setCurrentValue(this.val2)
         }
       }
-      
+
     },
     getBudgetDeptList() {
       if (this.year) {
@@ -363,6 +363,16 @@ export default {
           }
         })
     },
+    getTypes() {
+      this.$http.post('/api/getDict', { dictCode: 'DOC26' })
+        .then(res => {
+          if (res.status == 0) {
+            this.types = res.data;
+          } else {
+            console.log(res)
+          }
+        }, res => {})
+    }
   }
 }
 
@@ -401,19 +411,18 @@ $main:#0460AE;
 .budgetApp {
   .el-input {
     width: 100%;
-  }
-  .totalMoney {
-    text-align: right;
-    font-size: 15px;
-    line-height: 38px;
-    padding-right: 30px;
-    margin: -20px 0 30px 18px;
-    border: 1px solid #D5DADF;
-    border-top: none;
-    span {
-      color: $main;
-    }
-  }
+  } // .totalMoney {
+  //   text-align: right;
+  //   font-size: 15px;
+  //   line-height: 38px;
+  //   padding-right: 30px;
+  //   margin: -20px 0 30px 18px;
+  //   border: 1px solid #D5DADF;
+  //   border-top: none;
+  //   span {
+  //     color: $main;
+  //   }
+  // }
   .budgetMoney {
     .input {
       width: 252px
@@ -429,8 +438,25 @@ $main:#0460AE;
 
 
   .appTable {
-    width: calc(100% - 18px);
-    margin: 0 0 20px 18px;
+    // width: calc(100% - 18px);
+    // margin: 0 0 20px 18px;
+    .upDown {
+      .cell {
+        padding-left: 0;
+        span {
+          color: #fff;
+          width: 42px;
+          height: 42px;
+          line-height: 37px;
+          display: inline-block;
+          text-align: center;
+          font-size: 14px;
+          border-top-right-radius: 5px;
+          border-bottom-right-radius: 5px;
+          padding: 3px;
+        }
+      }
+    }
   }
   .year {
     width: 252px;
@@ -454,11 +480,7 @@ $main:#0460AE;
       right: 0;
     }
   }
-  .deptArea,
-  .arrArea {
-    float: left;
-    width: 100%;
-  }
+
   .arrArea {
     .el-form-item__label {
       padding-left: 36px;
@@ -488,15 +510,16 @@ $main:#0460AE;
     }
   }
 }
+
 // .widthLeft40 {
 //     float: left;
 //     width: 40%;
 //   }
 //   .year {
 //     .el-form-item__content {
-
 //       font-size: 16px;
 //       line-height: 45px;
 //     }
 //   }
+
 </style>

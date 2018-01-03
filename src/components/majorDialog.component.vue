@@ -4,7 +4,7 @@
       <el-row>
         <el-col :span='6' class="leftOption">
           <el-menu class="menuBox" :default-openeds="['2']">
-            <el-menu-item index="1" @click.native="selAll">所有人</el-menu-item>
+            <el-menu-item index="1" @click.native="selAll" v-if="hasAll">所有人</el-menu-item>
             <el-submenu index="2">
               <template slot="title">共享类型</template>
               <el-menu-item index="2-1" @click.native="selPerson">人员</el-menu-item>
@@ -273,7 +273,7 @@
 import OrganList from './organlist.component'
 import { mapGetters, mapMutations } from 'vuex'
 const levels = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-const defaultExpand = ['DAFFED346E29C5654F54133D1FC65CCB', 'E52F7AFCDE68813EDCFCA3CAECC5C54A', 'FD22DF607B10CC14A0CABA6CFDF9212F']    //默认展开部门ID
+const defaultExpand = ['CFCD208495D565EF66E7DFF9F98764DA']    //默认展开部门ID
 export default {
   components: {
     OrganList
@@ -321,6 +321,10 @@ export default {
     hasOutSend: {
       type: Boolean,
       default: false
+    },
+    hasAll: {
+      type: Boolean,
+      default: true
     },
   },
   watch: {

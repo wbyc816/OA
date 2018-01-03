@@ -19,7 +19,7 @@ const state = {
   editStatus:false,
   submitLoading:false,
   DHId:'CFCD208495D565EF66E7DFF9F98764DA',
-  year:'2018',
+  year:new Date().getFullYear(),
   routeHistroy:[]
 }
 const getters ={
