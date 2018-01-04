@@ -46,9 +46,9 @@ export const docConfig = [{
     url: '/doc/docEmpInjury'
   },
   {
-    docName: '人事变动申请',
+    docName: '员工岗位变动申请',
     color: '#7687CE',
-    shortName: '人事变动',
+    shortName: '岗位变动',
     code: 'RSB',
     url: '/doc/empChange'
   },

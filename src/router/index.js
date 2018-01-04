@@ -57,6 +57,16 @@ const supplierSearch = () =>
 const supplierCreate = () =>
   import ('pages/supplier/supplierCreate.page')
 
+//短信
+const SMSHome = () =>
+  import ('pages/SMS/SMSHome.page')
+// const mySMS = () =>
+//   import ('pages/SMS/mySMS.page')
+// const SMSSearch = () =>
+//   import ('pages/SMS/SMSSearch.page')
+const SMSApp = () =>
+  import ('pages/SMS/SMSApp.page')
+
 //航班动态
 const flightStatus = () =>
   import ('pages/flightStatus.page')
@@ -320,6 +330,44 @@ const router = new Router({
         {
           path: '/supplier',
           redirect: '/supplier/mySupplier'
+        },
+      ]
+    },
+    {
+      path: '/SMS',
+      name: 'SMSHome',
+      component: SMSHome,
+      meta: {
+        breadcrumb: "短信",
+      },
+      children: [{
+          path: '/SMS/SMSApp',
+          name: 'SMSApp',
+          component: SMSApp,
+          meta: {
+            breadcrumb: "新建短信",
+          },
+
+        },
+        // {
+        //   path: '/SMS/mySMS',
+        //   name: 'mySMS',
+        //   component: mySMS,
+        //   meta: {
+        //     breadcrumb: "我的短信",
+        //   }
+        // },
+        // {
+        //   path: '/SMS/SMSSearch',
+        //   name: 'SMSSearch',
+        //   component: SMSSearch,
+        //   meta: {
+        //     breadcrumb: "短信管理",
+        //   }
+        // },
+        {
+          path: '/SMS',
+          redirect: '/SMS/SMSApp'
         },
       ]
     },
