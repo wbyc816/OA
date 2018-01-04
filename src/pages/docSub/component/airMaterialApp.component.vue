@@ -197,9 +197,9 @@
             </template>
           </el-table-column>
         </el-table>
-        <p class="totalMoney">金额总计 人民币 <span>{{totalRmb | toThousands}}元  {{totalRmb | moneyCh}}</span></p>
+        <p class="totalMoney">合同总金额 人民币 <span>{{totalRmb | toThousands}}元  {{totalRmb | moneyCh}}</span></p>
       </div>
-      <el-form-item label="金额总计" class="deptArea">
+      <el-form-item label="合同总金额" class="deptArea">
         <el-input v-model="totalMoney" readonly>
         </el-input>
       </el-form-item>
@@ -409,7 +409,7 @@ export default {
       if (val) {
         this.airMaterialForm.unitPrice = val[0];
         // this.$refs.unitPrice.setCurrentValue(val[0]);
-        this.airMaterialForm.totalPrice=this.airMaterialForm.pieceNum*this.airMaterialForm.unitPrice;
+        this.airMaterialForm.totalPrice=this.numFixed2(this.airMaterialForm.pieceNum*this.airMaterialForm.unitPrice);
       } else {
         this.airMaterialForm.unitPrice = '';
         // this.$refs.unitPrice.setCurrentValue('')
@@ -421,7 +421,7 @@ export default {
       if (val) {
         this.airMaterialForm.pieceNum = val[0];
         // this.$refs.pieceNum.setCurrentValue(val[0]);
-         this.airMaterialForm.totalPrice=this.airMaterialForm.pieceNum*this.airMaterialForm.unitPrice;
+         this.airMaterialForm.totalPrice=this.numFixed2(this.airMaterialForm.pieceNum*this.airMaterialForm.unitPrice);
       } else {
          this.airMaterialForm.pieceNum = '';
         // this.$refs.pieceNum.setCurrentValue('')

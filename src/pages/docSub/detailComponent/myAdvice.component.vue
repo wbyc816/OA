@@ -9,8 +9,8 @@
       <el-form-item label="审批意见" class="textarea" prop="state">
         <el-col :span='18'>
           <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
-            <el-radio-button label="1">同意<i></i></el-radio-button>
-            <el-radio-button label="2">不同意<i></i></el-radio-button>
+            <el-radio-button label="1">{{$route.query.code!=='SWD'?'同意':'正常办理'}}<i></i></el-radio-button>
+            <el-radio-button label="2" v-if="$route.query.code!=='SWD'">不同意<i></i></el-radio-button>
             <el-radio-button label="6" class="isChen" v-if="docDetail.isTaskUser==1&&hasSecretary()">承办部门办理<i></i></el-radio-button>
           </el-radio-group>
         </el-col>

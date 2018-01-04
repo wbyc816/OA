@@ -37,7 +37,7 @@
       <el-table-column property="cExecRate" label="执行比例" width="100"></el-table-column>
     </el-table>
     <!-- <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p> -->
-    <el-table :data="info[0].pay" :stripe="true" highlight-current-row style="width: 100%" class="appTable docTable expandTable">
+    <el-table :data="info[0].pay" :stripe="true" highlight-current-row style="width: 100%" class="appTable docTable expandTable" v-if="info[0].pay.length>0">
       <el-table-column type="expand">
         <template scope="props">
           <el-form label-position="left" label-width="90px" inline>

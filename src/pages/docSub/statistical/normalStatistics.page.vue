@@ -41,14 +41,14 @@
         </span>
         <!-- <span class="download"><i class="iconfont icon-icon202"></i>导出报表</span> -->
       </div>
-      <el-table :data="searchData" class="myTable">
+      <el-table :data="searchData" class="myTable" @row-click="goDetail">
         <el-table-column prop="docTypeName" label="公文类型" width="100"></el-table-column>
         <el-table-column prop="taskUser" label="呈报人" width="100"></el-table-column>
         <el-table-column prop="docTitle" label="公文标题"></el-table-column>
         <el-table-column prop="taskTime" label="呈报时间" width="100"></el-table-column>
         <el-table-column prop="nodeName" label="公文状态" width="80">
           <template scope="scope">
-            {{scope.row.nodeName=='end'?'已归档':'审批中'}}
+            {{(scope.row.state=='3'||scope.row.state=='4')?'已归档':'审批中'}}
           </template>
         </el-table-column>
         <el-table-column prop="currentUser" label="当前签批人" width="100"></el-table-column>
@@ -158,6 +158,10 @@ export default {
     handleCurrentChange(page) {
       this.searchParams.pageNumber = page;
       this.getData()
+    },
+    goDetail(row){
+      // console.log(row);
+      this.$router.push({path:'/doc/docInfo/'+row.id,query:{code:row.docTypeCode}})
     },
     search() {
       this.searchParams.pageNumber = 1;

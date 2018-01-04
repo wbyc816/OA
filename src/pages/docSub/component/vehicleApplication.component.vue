@@ -2,7 +2,7 @@
   <div class="vehicleApp">
     <el-form label-position="left" :model="vehicleForm" :rules="rules" ref="vehicleForm" label-width="128px">
       <el-form-item label="申请类型" prop="type" class="deptArea">
-        <el-select v-model="vehicleForm.type" value-key="dictCode">
+        <el-select v-model="vehicleForm.type" value-key="dictCode" @change="typeChange">
           <el-option v-for="item in types"  :label="item.dictName" :value="item">
           </el-option>
         </el-select>
@@ -109,6 +109,10 @@ export default {
       this.selDep = { name: reciver.deptParentName || reciver.depts, id: reciver.deptParentId || reciver.deptId };
       this.vehicleForm.contactDeptName = reciver.deptParentName || reciver.depts;
       this.personDialogVisible = false;
+    },
+    typeChange(val){
+      this.$emit('updateSuggest', val.dictCode);
+      // console.log(val)
     },
     updateDep(dep) {
       this.selDep = dep;

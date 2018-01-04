@@ -18,7 +18,7 @@
         <el-col :span="13"><span class="itemTitle">参加工作时间</span><span class="text">{{info[0].beginWorkDate | time('ch')}}</span></el-col>
       </el-row>
     </div>
-    <el-table :data="info[0].introduceContract" :stripe="true" highlight-current-row style="width: 100%" class="appTable">
+    <!-- <el-table :data="info[0].introduceContract" :stripe="true" highlight-current-row style="width: 100%" class="appTable">
       <el-table-column type="index" label="序号" width="60"></el-table-column>
       <el-table-column property="contractType" label="合同类型" width="200"></el-table-column>
       <el-table-column property="contractMajor" label="合同主体"></el-table-column>
@@ -32,7 +32,7 @@
           {{scope.row.contractEnd | time('ch')}}
         </template>
       </el-table-column>
-    </el-table>
+    </el-table> -->
     <el-row>
       <el-col :span="24">
         <h1 class="title">上次离职原因</h1>

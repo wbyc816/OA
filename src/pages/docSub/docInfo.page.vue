@@ -26,7 +26,7 @@
           </el-col>
           <el-collapse v-model="activeNames" class="clearfix clearBoth">
             <el-collapse-item title="附加内容" name="1">
-              <component v-bind:is="currentView" :info="docDetialInfo.otherInfo">
+              <component v-bind:is="currentView" :info="docDetialInfo.otherInfo" :docDetialInfo="docDetialInfo">
                 <!-- 组件在 vm.currentview 变化时改变！ -->
               </component>
               <el-col :span="24">
