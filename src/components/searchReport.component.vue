@@ -205,9 +205,13 @@ export default {
       this.params.beginTime= util.formatTime((new Date()).getTime() - 3600 * 1000 * 24 * 30, 'yyyy-MM-dd');
     },
     changeDate(){
-      console.log(this.time);
-      this.params.beginTime=util.formatTime(this.time[0], 'yyyy-MM-dd');
-      this.params.endTime=util.formatTime(this.time[1], 'yyyy-MM-dd');
+       if(this.time[0]){
+        this.params.beginTime=util.formatTime(this.time[0], 'yyyy-MM-dd');
+        this.params.endTime=util.formatTime(this.time[1], 'yyyy-MM-dd');
+      }else{
+        this.params.endTime=util.formatTime((new Date()).getTime(), 'yyyy-MM-dd');
+        this.params.beginTime= util.formatTime((new Date()).getTime() - 3600 * 1000 * 24 * 30, 'yyyy-MM-dd');
+      }
     },
     // begintime(val){
     //     this.params.beginTime=val;
