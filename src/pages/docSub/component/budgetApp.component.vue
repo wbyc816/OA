@@ -233,30 +233,41 @@ export default {
 
     },
     submitForm() {
-      console.log(this.budgetTable);
-      if (this.budgetTable.length != 0) {
-        var dep = this.getBudgetDep();
-        this.params = {
-          "finBudget": {
-            "totalMoney": this.totalMoney,
-            "finBudgetItems": this.budgetTable.map(function(tabel) {
-              return {
-                "budgetDeptId": tabel.budgetDeptId, //预算部门id
-                "budgetDeptName": tabel.budgetDeptName, //预算部门名字
-                "budgetItemName": tabel.budgetItemName, //-预算科目名字
-                "budgetItemId": tabel.budgetItemId, //预算科目id
-                "money": tabel.budgetMoney, //预算钱数
-                "budgetYear": tabel.budgetYear //预算年数
-              }
-            })
+      this.$refs.budgetForm.validateField('type', error => {
+        if (!error) {
+          this.params = {
+            typeCode: this.budgetForm.type.dictCode,
           }
+          if (this.budgetForm.type.dictCode === 'DOC2601') {
+            if (this.budgetTable.length != 0) {
+              this.params.finBudget = {
+                "totalMoney": this.totalMoney,
+                "finBudgetItems": this.budgetTable.map(function(tabel) {
+                  return {
+                    "budgetDeptId": tabel.budgetDeptId, //预算部门id
+                    "budgetDeptName": tabel.budgetDeptName, //预算部门名字
+                    "budgetItemName": tabel.budgetItemName, //-预算科目名字
+                    "budgetItemId": tabel.budgetItemId, //预算科目id
+                    "money": tabel.budgetMoney, //预算钱数
+                    "budgetYear": tabel.budgetYear //预算年数
+                  }
+                })
+              }
+              this.$emit('submitMiddle', this.params);
+            } else {
+              this.$message.warning('请检查填写字段')
+              this.$emit('submitMiddle', false);
+              return false;
+            }
+          }else{
+            this.$emit('submitMiddle', this.params);
+          }
+        } else {
+          this.$message.warning('请检查填写字段')
+          this.$emit('submitMiddle', false);
+          return false;
         }
-        this.$emit('submitMiddle', this.params);
-      } else {
-        this.$message.warning('请检查填写字段')
-        this.$emit('submitMiddle', false);
-        return false;
-      }
+      })
 
     },
     closePerson(index) {

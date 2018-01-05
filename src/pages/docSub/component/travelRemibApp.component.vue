@@ -13,8 +13,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="日期" label-width="100px" class="arrArea" prop="timeLine" key="timeLine" v-if="feeTypeCode!='FIN0604'">
-          <el-date-picker v-model="feeForm.timeLine" type="daterange" @change="topDateChange" :picker-options="dateOptions"></el-date-picker>
+        <el-form-item label="日期" label-width="90px" class="arrArea" prop="timeLine" key="timeLine" v-if="feeTypeCode!='FIN0604'">
+          <el-date-picker v-model="feeForm.timeLine" type="daterange" @change="topDateChange" :picker-options="dateOptions" :editable="false"></el-date-picker>
         </el-form-item>
         <!-- 住宿 -->
         <el-form-item label="逗留城市" prop="city" class="clearBoth" key="city" v-if="feeTypeCode=='FIN0601'||feeTypeCode=='FIN0603'">
@@ -83,15 +83,35 @@
             <el-date-picker v-model="feeForm.timeLine" type="datetimerange" @change="calcTotalFee2"></el-date-picker>
           </el-form-item>
         </template>
+        <!-- 培训及会议差旅补助 -->
+        <template v-if="feeTypeCode=='FIN0605'">
+          <el-form-item label="是否提供餐食" prop="isSupplyFood" class="deptArea" key="isSupplyFood">
+            <el-radio-group v-model="feeForm.isSupplyFood" class="myRadio" @change="calcTotalFee3">
+              <el-radio-button label="1">是<i></i></el-radio-button>
+              <el-radio-button label="0">否<i></i></el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="是否提供交通" prop="isSupplyTraffic" class="deptArea" key="isSupplyTraffic">
+            <el-radio-group v-model="feeForm.isSupplyTraffic" class="myRadio" @change="calcTotalFee3">
+              <el-radio-button label="1">是<i></i></el-radio-button>
+              <el-radio-button label="0">否<i></i></el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="补助天数" class="deptArea" key="assPrice" prop="dayNum">
+            <el-input class="hasUnit" v-model="feeForm.dayNum" :readonly="true">
+              <template slot="append">天</template>
+            </el-input>
+          </el-form-item>
+        </template>
         <!--   -->
         <el-form-item label="说明" prop="des" class="clearBoth" key="des">
           <el-input v-model="feeForm.des" :maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="报销金额" prop="totalFee" key="totalFee" class="clearBoth totalFee">
-          <money-input v-model="feeForm.totalFee" :readonly="feeTypeCode=='FIN0602'||feeTypeCode=='FIN0604'" :prepend="false" class="hasUnit">
+          <money-input v-model="feeForm.totalFee" :readonly="feeTypeCode=='FIN0602'||feeTypeCode=='FIN0604'||feeTypeCode=='FIN0605'" :prepend="false" class="hasUnit">
             <template slot="append">元</template>
           </money-input>
-          <p class="warnInfo" v-show="suggestPrice&&feeForm.dayNum&&feeTypeCode=='FIN0601'">最高报销{{suggestPrice*feeForm.dayNum}}元</p>
+          <p class="warnInfo" v-show="suggestPrice&&feeForm.dayNum&&feeTypeCode=='FIN0601'">最高报销{{numFixed2(suggestPrice*feeForm.dayNum)}}元</p>
           <el-button type="primary" @click="addFee"><i class="el-icon-plus"></i> 添加</el-button>
         </el-form-item>
       </el-form>
@@ -100,7 +120,7 @@
         <el-table :data="feeTable" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加报销项" class="expandTable">
           <el-table-column type="expand">
             <template scope="props">
-              <el-form label-position="left" label-width="90px" inline>
+              <el-form label-position="left" label-width="100px" inline>
                 <el-form-item label="逗留城市" v-if="props.row.cityName||props.row.stayCity">
                   <span>{{ props.row.cityName||props.row.stayCity }}</span>
                 </el-form-item>
@@ -136,6 +156,18 @@
                 <el-form-item label="是否派车" v-if="props.row.isSendCar==='1'||props.row.isSendCar==='0'">
                   <span>{{ props.row.isSendCar==1?'是':'否' }}</span>
                 </el-form-item>
+                allowanceDays
+                <el-form-item label="补助天数" v-if="props.row.allowanceDays">
+                  <span>{{ props.row.allowanceDays }}天</span>
+                </el-form-item>
+                <template v-if="props.row.feeTypeCode == 'FIN0605'">
+                  <el-form-item label="是否提供餐食">
+                    <span>{{ props.row.isSupplyFood==1?'是':'否' }}</span>
+                  </el-form-item>
+                  <el-form-item label="是否提供交通">
+                    <span>{{ props.row.isSupplyTraffic==1?'是':'否' }}</span>
+                  </el-form-item>
+                </template>
                 <el-form-item label="说明">
                   <span>{{ props.row.des }}</span>
                 </el-form-item>
@@ -301,7 +333,7 @@ export default {
       }
     };
     var checkTimeline = (rule, value, callback) => {
-      if (value.length > 0 && value[0] && value[0].getTime() == value[1].getTime()) {
+      if (value.length > 0 && value[0] && value[0].getTime() == value[1].getTime() && this.feeTypeCode === 'FIN0604') {
         callback(new Error('开始时间不能等于结束时间'))
       } else {
         callback();
@@ -334,7 +366,9 @@ export default {
         train: '',
         taxi: '',
         other: '',
-        isSend: '1'
+        isSend: '1',
+        isSupplyFood: '0',
+        isSupplyTraffic: '0'
       },
       feeTypeCode: '',
       feeRule: {
@@ -429,14 +463,14 @@ export default {
     maxMoney() {
       var num = 0;
       if (this.feeForm.dayNum && this.suggestPrice) {
-        num = this.feeForm.dayNum * this.suggestPrice
+        num = parseFloat(this.numFixed2(this.feeForm.dayNum * this.suggestPrice))
       }
       return num
     },
     dateOptions: function() {
       var minDate = '';
       var options = {};
-      if (this.feeTypeCode == 'FIN0601' || this.feeTypeCode == 'FIN0603') {
+      if (this.feeTypeCode == 'FIN0601') {
         options = {
           onPick(obj) {
             if (obj.maxDate) {
@@ -540,8 +574,12 @@ export default {
             item.currencyName = currency.currencyName;
             item.currencyCode = currency.currencyCode;
             item.stayCity = this.feeForm.city;
-          } else { //补助
+          } else if (this.feeTypeCode == 'FIN0604') { //补助
             item.isSendCar = this.feeForm.isSend;
+          } else if (this.feeTypeCode == 'FIN0605') { //培训及会议差旅补助
+            item.isSupplyFood = this.feeForm.isSupplyFood;
+            item.isSupplyTraffic = this.feeForm.isSupplyTraffic;
+            item.allowanceDays = this.feeForm.dayNum;
           }
           this.$http.post('/doc/getRmbByExchangeRate', { currencyId: item.currencyCode, amount: item.totalFee })
             .then(res => {
@@ -552,18 +590,18 @@ export default {
                   item.exchangeRate = res.data.rateReverse;
                   this.feeTable.push(item);
                   this.clearFeeForm();
-                }else{
-                  var temp=parseFloat(this.budgetTable[0].rmb)+res.data.amount;
-                  if(temp>this.budgetInfo.budgetRemain){
+                } else {
+                  var temp = parseFloat(this.budgetTable[0].rmb) + res.data.amount;
+                  if (temp > this.budgetInfo.budgetRemain) {
                     this.$message.warning('报销金额不能大于可用预算');
-                  }else{
+                  } else {
                     item.rmb = res.data.amount;
                     item.exchangeRateId = res.data.rateId;
                     item.exchangeRate = res.data.rateReverse;
                     this.feeTable.push(item);
                     this.clearFeeForm();
-                    this.budgetTable[0].rmb=temp;
-                    this.budgetTable[0].money=temp+'';
+                    this.budgetTable[0].rmb = temp;
+                    this.budgetTable[0].money = temp + '';
                   }
                 }
               } else {
@@ -579,6 +617,10 @@ export default {
       this.$refs.feeForm.resetFields();
       this.feeForm.price = '';
       this.feeForm.timeLine = [];
+      this.feeForm.highTrain = '';
+      this.feeForm.train = '';
+      this.feeForm.taxi = '';
+      this.feeForm.other = '';
       this.getRoomPrice();
     },
     changeFeeType(val) {
@@ -587,10 +629,19 @@ export default {
     topDateChange(val) {
       if (this.feeForm.timeLine.length > 0 && this.feeForm.timeLine[0]) {
         var num = parseInt((this.feeForm.timeLine[1].getTime() - this.feeForm.timeLine[0].getTime()) / 86400000);
+        if (this.feeTypeCode === 'FIN0603' || this.feeTypeCode === 'FIN0605') {
+          num += 1
+        }
         this.feeForm.dayNum = num;
+        if (this.feeTypeCode === 'FIN0605') {
+          this.calcTotalFee3();
+        }
         this.calcTotalFee();
       } else {
         this.feeForm.dayNum = '';
+        if (this.feeTypeCode === 'FIN0605') {
+          this.calcTotalFee3();
+        }
         this.calcTotalFee();
       }
       this.getRoomPrice();
@@ -623,19 +674,17 @@ export default {
       this.calcTotalFee();
     },
     calcTotalFee() {
-      if (this.feeForm.dayNum && this.feeForm.price) {
-        this.feeForm.totalFee = (this.feeForm.dayNum * this.feeForm.price).toString()
-      } else {
-        this.feeForm.totalFee = '';
+      if (this.feeTypeCode == 'FIN0601') {
+        if (this.feeForm.dayNum && this.feeForm.price) {
+          this.feeForm.totalFee = this.numFixed2(this.feeForm.dayNum * this.feeForm.price)
+        } else {
+          this.feeForm.totalFee = '';
+        }
       }
     },
     calcTotalFee1() {
       if (this.feeTypeCode == 'FIN0602') {
-        this.feeForm.totalFee = (
-          parseFloat(this.feeForm.highTrain || 0) +
-          parseFloat(this.feeForm.train || 0) +
-          parseFloat(this.feeForm.taxi || 0) +
-          parseFloat(this.feeForm.other || 0)).toString();
+        this.feeForm.totalFee =this.numFixed2(parseFloat(this.feeForm.highTrain || 0) + parseFloat(this.feeForm.train || 0) + parseFloat(this.feeForm.taxi || 0) + parseFloat(this.feeForm.other || 0));
       }
     },
     calcTotalFee2() {
@@ -649,6 +698,30 @@ export default {
             startTime: this.timeFilter(this.feeForm.timeLine[0].getTime(), 'hours'),
             endTime: this.timeFilter(this.feeForm.timeLine[1].getTime(), 'hours'),
             isSendCar: this.feeForm.isSend
+          }
+          this.$http.post('/doc/docFinTravelpayRule', params)
+            .then(res => {
+              if (res.status == 0) {
+                this.feeForm.totalFee = res.data.toString();
+              } else {
+
+              }
+            })
+        } else {
+          this.feeForm.totalFee = '';
+        }
+      }
+    },
+    calcTotalFee3() {
+      if (this.feeTypeCode == 'FIN0605') {
+        if (this.feeForm.timeLine.length > 0 && this.feeForm.timeLine[0]) {
+          var params = {
+            empId: this.appPerson.empId,
+            travelType: this.feeTypeCode,
+            startDate: this.timeFilter(this.feeForm.timeLine[0].getTime(), 'date'),
+            endDate: this.timeFilter(this.feeForm.timeLine[1].getTime(), 'date'),
+            isSupplyFood: this.feeForm.isSupplyFood,
+            isSupplyTraffic: this.feeForm.isSupplyTraffic,
           }
           this.$http.post('/doc/docFinTravelpayRule', params)
             .then(res => {
@@ -725,7 +798,8 @@ export default {
       var paramsList = {
         travlepayStayList: [],
         travelpayTrafficList: [],
-        travelpayAllowanceList: []
+        travelpayAllowanceList: [],
+        trainAllowanceList: []
       }
       this.clone(this.feeTable).forEach(f => {
         f.remark = f.des;
@@ -761,7 +835,7 @@ export default {
           delete(f.totalFee);
           delete(f.rmb);
           paramsList.travelpayAllowanceList.push(f);
-        } else { //补助
+        } else if (f.feeTypeCode == 'FIN0604') { //补助
           f.allowanceMoney = f.rmb;
           f.dictTravelId = f.feeTypeCode;
           f.startTime = this.timeFilter(f.startDate, 'hours');
@@ -773,6 +847,16 @@ export default {
           delete(f.rmb);
           paramsList.travelpayAllowanceList.push(f);
 
+        } else if (f.feeTypeCode == 'FIN0605') {
+          f.startDate = this.timeFilter(f.startDate, 'date');
+          f.endDate = this.timeFilter(f.endDate, 'date');
+          f.dictTravelId = f.feeTypeCode;
+          f.allowanceMoney = f.rmb;
+          f.allowanceRmb = f.rmb;
+          delete(f.feeTypeCode);
+          delete(f.totalFee);
+          delete(f.rmb);
+          paramsList.trainAllowanceList.push(f);
         }
       })
       var finFileIds = this.paymentForm.invoiceAttach.map(c => c.response.data);

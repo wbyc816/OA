@@ -137,7 +137,6 @@ import MoneyInput from '../../../components/moneyInput.component'
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 
-const prePayTemp = [20184, 20186]
 export default {
   components: { MoneyInput },
   data() {
@@ -218,7 +217,8 @@ export default {
         value: 'dictCode',
         children: 'child'
       },
-      isfirst:false
+      isfirst:false,
+      prePayTemp:[]
     }
   },
   computed: {
@@ -241,6 +241,7 @@ export default {
     ])
   },
   created() {
+    this.getPrePayTemp();//预付款单独项
     this.getPayType(); //付款类型
     this.getBudgetDeptList(); //预算机构/科目
     if (!this.$route.params.id) {
@@ -259,19 +260,17 @@ export default {
         budgetTable: this.budgetTable,
         paymentForm: this.paymentForm,
       });
-
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
       if(obj.paymentForm.payTypeCode){
         this.isfirst=true;
       }
-      this.paymentForm = obj.paymentForm;
+      this.combineObj(this.paymentForm,obj.paymentForm,['isAdvancePayment'])
       this.budgetTable = obj.budgetTable;
       if (this.paymentForm.supplierIds.length != 0) {
         this.draftFirst = true;
       }
-
       this.getFileCatalogue();
     },
     changePayType(val) {      
@@ -353,9 +352,9 @@ export default {
     },
     isAdvancePaymentChange(val) {
       if (val == 1) {
-        this.handleItemChange(prePayTemp.slice(0, 1));
-        this.budgetForm.budgetDept = prePayTemp;
-        this.depChange(prePayTemp);
+        this.handleItemChange(this.prePayTemp.slice(0, 1));
+        this.budgetForm.budgetDept = this.prePayTemp;
+        this.depChange(this.prePayTemp);
         this.budgetTable = [];
       } else {
         this.budgetForm.budgetDept = [];
@@ -697,6 +696,16 @@ export default {
         .then(res => {
           if (res.status == 0) {
             this.addTax = res.data[0];
+          } else {
+
+          }
+        })
+    },
+    getPrePayTemp(){
+      this.$http.post('/doc/getOneBudgetItemCode', { budgetYear: this.year })
+        .then(res => {
+          if (res.status == 0) {
+            this.prePayTemp = res.data.budgetItemIds;
           } else {
 
           }

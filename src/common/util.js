@@ -165,7 +165,7 @@ function openOtherLink(link) {
 }
 
 function numFixed2(num){
-  var _num=num+'';
-  return _num.substr(0,_num.indexOf(".")+3)
+  var _num=parseFloat(num);
+  return Math.round(_num*100)/100+'';
 }
 export default { combineObj, formatTime, preventEmpty, loginOut, getCookie, delCookie, setCookie }

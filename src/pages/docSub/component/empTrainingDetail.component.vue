@@ -36,7 +36,7 @@
     </el-col>
     <el-col :span="24">
       <h1 class="title">参训人数</h1>
-      <p v-if="info" class="textContent">{{info[0].trainPerCount}}元</p>
+      <p v-if="info" class="textContent">{{info[0].trainPerCount}}人</p>
     </el-col>
   </div>
 </template>

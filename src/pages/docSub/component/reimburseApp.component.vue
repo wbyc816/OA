@@ -9,6 +9,7 @@
           <el-option v-for="item in payTypes" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
+        <p class="tipInfo">更改报销类型会清</br>空已添加付款项</p>
       </el-form-item>
       <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px" class="clearBoth">
         <el-form-item label="预算机构/科目" prop="budgetDept" class="">
@@ -30,7 +31,7 @@
         <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
           <money-input v-model="budgetForm.invoiceNum" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号" :append="false" type="invoice" :maxlength="250">
             <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange">
-              <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
+              <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode" :disabled="item.dictCode==='FIN0201'&&(paymentForm.payTypeCode==='DOC0504'||paymentForm.payTypeCode==='DOC0505')"></el-option>
             </el-select>
           </money-input>
         </el-form-item>
@@ -219,6 +220,11 @@ export default {
         this.$emit('updateSuggest', val)
       }
       this.isfirst = false;
+      if (val === 'DOC0504' || val === 'DOC0505') {
+        this.budgetForm.invoiceNum = '';
+        this.activeInvoice = 'FIN0202';
+      }
+      this.budgetTable = [];
     },
     saveForm() {
       var params = JSON.stringify({
@@ -228,8 +234,8 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
-      if(obj.paymentForm.payTypeCode){
-        this.isfirst=true;
+      if (obj.paymentForm.payTypeCode) {
+        this.isfirst = true;
       }
       if (obj.paymentForm.payMthodCode == 'FIN0101') {
         this.isDraft = true;
@@ -366,64 +372,68 @@ export default {
       this.paymentForm.invoiceAttach = fileList;
     },
     addBudget() {
-      this.$refs.budgetForm.validate((valid) => {
-        if (valid) {
-          var dep = this.getBudgetDep();
-          var invoice = this.invoiceList.find(i => i.dictCode == this.activeInvoice);
-          var currency = this.currencyList.find(c => c.currencyCode == this.activeCurrency);
-          var item = {
-            "budgetDeptId": dep.budgetDeptCode, //预算部门id
-            "budgetDeptName": dep.budgetDeptName, //预算部门名
-            "budgetItemId": dep.budgetItemCode, //预算科目id
-            "budgetItemName": dep.budgetItemName, //预算科目名
-            "money": this.budgetForm.appMoney, //申报金额
-            "receiptTypeCode": invoice.dictCode, //发票类型code, FIN02中
-            "receiptTypeName": invoice.dictName, //发票类型名
-            "accurencyName": currency.currencyName, //币种
-            "currencyCode": currency.currencyCode,
-            "invoiceCode": [], //发票票号, 可以为多个, 用英文逗号分隔
-            "rmb": "", //对应的人民币
-            "budgetYear": this.year,
-            "exchangeRateId": "", //汇率id
-            "exchangeRate": "", //汇率
-            "budegetRemain": this.budgetInfo.budgetRemain
-          }
-          this.$http.post('/doc/getRmbByExchangeRate', { currencyId: currency.currencyCode, amount: this.budgetForm.appMoney })
-            .then(res => {
-              if (res.status == 0) {
-                item.rmb = res.data.amount;
-                item.exchangeRateId = res.data.rateId;
-                item.exchangeRate = res.data.rateReverse;
-                if (this.checkBuudget(item.rmb)) {
-                  this.budgetTable.push(item);
-                  if (this.activeInvoice == 'FIN0201') {
-                    var taxItem = {
-                      "budgetDeptId": this.addTax.deptId, //预算部门id
-                      "budgetDeptName": this.addTax.budgetDeptName, //预算部门名
-                      "budgetItemId": this.addTax.budgetItemId, //预算科目id
-                      "budgetItemName": this.addTax.budgetName, //预算科目名
-                      "money": "0", //申报金额
-                      "receiptTypeCode": invoice.dictCode, //发票类型code, FIN02中
-                      "receiptTypeName": invoice.dictName, //发票类型名
-                      "accurencyName": currency.currencyName, //币种
-                      "currencyCode": currency.currencyCode,
-                      "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
-                      "rmb": 0, //对应的人民币
-                      "budgetYear": this.year,
-                      "exchangeRateId": res.data.rateId, //汇率id
-                      "exchangeRate": res.data.rateReverse, //汇率
-                      "budegetRemain": this.addTax.remainMoney
-                    }
-                    this.budgetTable.push(taxItem);
-                  }
-                  this.budgetItemReset();
-                }
-              } else {
-                console.log('货币兑换失败')
+      this.$refs.paymentForm.validateField('payTypeCode', error => {
+        if (!error) {
+          this.$refs.budgetForm.validate((valid) => {
+            if (valid) {
+              var dep = this.getBudgetDep();
+              var invoice = this.invoiceList.find(i => i.dictCode == this.activeInvoice);
+              var currency = this.currencyList.find(c => c.currencyCode == this.activeCurrency);
+              var item = {
+                "budgetDeptId": dep.budgetDeptCode, //预算部门id
+                "budgetDeptName": dep.budgetDeptName, //预算部门名
+                "budgetItemId": dep.budgetItemCode, //预算科目id
+                "budgetItemName": dep.budgetItemName, //预算科目名
+                "money": this.budgetForm.appMoney, //申报金额
+                "receiptTypeCode": invoice.dictCode, //发票类型code, FIN02中
+                "receiptTypeName": invoice.dictName, //发票类型名
+                "accurencyName": currency.currencyName, //币种
+                "currencyCode": currency.currencyCode,
+                "invoiceCode": [], //发票票号, 可以为多个, 用英文逗号分隔
+                "rmb": "", //对应的人民币
+                "budgetYear": this.year,
+                "exchangeRateId": "", //汇率id
+                "exchangeRate": "", //汇率
+                "budegetRemain": this.budgetInfo.budgetRemain
               }
-            })
-        } else {
+              this.$http.post('/doc/getRmbByExchangeRate', { currencyId: currency.currencyCode, amount: this.budgetForm.appMoney })
+                .then(res => {
+                  if (res.status == 0) {
+                    item.rmb = res.data.amount;
+                    item.exchangeRateId = res.data.rateId;
+                    item.exchangeRate = res.data.rateReverse;
+                    if (this.checkBuudget(item.rmb)) {
+                      this.budgetTable.push(item);
+                      if (this.activeInvoice == 'FIN0201') {
+                        var taxItem = {
+                          "budgetDeptId": this.addTax.deptId, //预算部门id
+                          "budgetDeptName": this.addTax.budgetDeptName, //预算部门名
+                          "budgetItemId": this.addTax.budgetItemId, //预算科目id
+                          "budgetItemName": this.addTax.budgetName, //预算科目名
+                          "money": "0", //申报金额
+                          "receiptTypeCode": invoice.dictCode, //发票类型code, FIN02中
+                          "receiptTypeName": invoice.dictName, //发票类型名
+                          "accurencyName": currency.currencyName, //币种
+                          "currencyCode": currency.currencyCode,
+                          "invoiceCode": this.budgetForm.invoiceNum.split(','), //发票票号, 可以为多个, 用英文逗号分隔
+                          "rmb": 0, //对应的人民币
+                          "budgetYear": this.year,
+                          "exchangeRateId": res.data.rateId, //汇率id
+                          "exchangeRate": res.data.rateReverse, //汇率
+                          "budegetRemain": this.addTax.remainMoney
+                        }
+                        this.budgetTable.push(taxItem);
+                      }
+                      this.budgetItemReset();
+                    }
+                  } else {
+                    console.log('货币兑换失败')
+                  }
+                })
+            } else {
 
+            }
+          })
         }
       })
     },
@@ -654,6 +664,15 @@ $main:#0460AE;
     width: 60%;
     .el-form-item__label {
       // padding-left: 30px;
+    }
+    .tipInfo {
+      position: absolute;
+      left: 101%;
+      font-size: 13px;
+      color: #9a9a9a;
+      line-height: 15px;
+      top: 7px;
+      white-space: nowrap;
     }
   }
   .budgetInfo {

@@ -104,7 +104,7 @@ export default {
         docCommonTypeCode: ''
       },
       paymentRule: {
-        supplierIds: [{ type: 'array', required: true, message: '请选择收款供应商', trigger: 'blur' }],
+        // supplierIds: [{ type: 'array', required: true, message: '请选择收款供应商', trigger: 'blur' }],
          docCommonTypeCode: [{ required: true, message: '请选择呈批单类型', trigger: 'blur' }],
       },
       childTypeList: [],

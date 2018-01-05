@@ -3,7 +3,7 @@
     <el-table :data="tableData" :stripe="true" highlight-current-row style="width: 100%" class="expandTable">
       <el-table-column type="expand">
         <template scope="props">
-          <el-form label-position="left" label-width="90px" inline>
+          <el-form label-position="left" label-width="100px" inline>
             <el-form-item label="逗留城市" v-if="props.row.city">
               <span>{{ props.row.city}}</span>
             </el-form-item>
@@ -37,6 +37,15 @@
             <el-form-item label="是否派车" v-if="props.row.isSend==='1'||props.row.isSend==='0'">
               <span>{{ props.row.isSend==1?'是':'否' }}</span>
             </el-form-item>
+            <el-form-item label="补助天数" v-if="props.row.allowanceDays">
+              <span>{{ props.row.allowanceDays }}天</span>
+            </el-form-item>
+            <el-form-item label="是否提供餐食" v-if="props.row.isSupplyFood===1||props.row.isSupplyFood===0">
+              <span>{{ props.row.isSupplyFood==1?'是':'否' }}</span>
+            </el-form-item>
+            <el-form-item label="是否提供交通" v-if="props.row.isSupplyTraffic===1||props.row.isSupplyTraffic===0">
+              <span>{{ props.row.isSupplyTraffic==1?'是':'否' }}</span>
+            </el-form-item>
             <el-form-item label="说明">
               <span>{{ props.row.des }}</span>
             </el-form-item>
@@ -50,7 +59,7 @@
         </template>
       </el-table-column>
       <!-- <el-table-column property="des" label="说明"></el-table-column> -->
-      <el-table-column property="money" label="报销金额(元)" width="130"></el-table-column>
+      <el-table-column property="money" label="报销金额" width="130"></el-table-column>
       <el-table-column property="acurrencyName" label="币种" width="85"></el-table-column>
       <el-table-column property="rmb" label="人民币(元)" width="125">
       </el-table-column>
@@ -149,8 +158,6 @@ export default {
       return this.toThousands(cellValue)
     },
     handleBudget() {
-      console.log(this.info[0]);
-      console.log(6666);
       this.info[0].travelpayItemList.forEach((item, i) => {
         this.budgetTable.push(Object.assign(item, this.info[0].budgetExeststisVoList[i]))
       })
@@ -217,7 +224,24 @@ export default {
           this.tableData.push(item);
         })
       }
-      console.log(this.tableData)
+      if (list.trainAllowanceList.length != 0) {
+        list.trainAllowanceList.forEach(i => {
+          var item = {
+            startDate: i.startDate,
+            endDate: i.endDate,
+            typeName: i.dictTravelName,
+            acurrencyName: i.acurrencyName,
+            money: i.allowanceMoney,
+            rmb: i.allowanceRmb,
+            des: i.remark,
+            allowanceDays: i.allowanceDays,
+            isSupplyFood: i.isSupplyFood,
+            isSupplyTraffic: i.isSupplyTraffic
+          }
+          this.tableData.push(item);
+        })
+      }
+      // console.log(this.tableData)
     }
   }
 }
