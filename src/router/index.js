@@ -510,7 +510,7 @@ router.beforeEach((to, from, next) => {
       store.commit('popHistory');
     } else {
       store.commit('pushHistory', { path: from.path, top: jquery('body,html').scrollTop() });
-      jquery('body,html').animate({ scrollTop: 0 }, 10);
+      jquery('body,html').animate({ scrollTop: 0 }, 50);
     }
     history=null;
     next();

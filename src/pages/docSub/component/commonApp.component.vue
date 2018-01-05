@@ -71,7 +71,10 @@ export default {
       this.$http.post('/api/getDict', { dictCode: 'DOC23' })
         .then(res => {
           if (res.status == '0') {
-            this.childTypeList = res.data;
+            this.childTypeList = res.data.sort(function(a, b) {
+              // console.log(a.dictName.charCodeAt(0))
+              return a.dictName.charCodeAt(0) - b.dictName.charCodeAt(0)
+            });;
           } else {
             console.log('获取公文子类型失败')
           }
@@ -79,10 +82,10 @@ export default {
 
         })
     },
-    childChange(val){
-      if (!this.isDrafFirst) {    
+    childChange(val) {
+      if (!this.isDrafFirst) {
         this.$emit('updateSuggest', val);
-      } else {           //草稿箱第一次
+      } else { //草稿箱第一次
         this.isDrafFirst = false;
       }
     }

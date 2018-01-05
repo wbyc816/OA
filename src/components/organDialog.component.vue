@@ -1,26 +1,33 @@
 <template>
   <div class="organDialogBox">
-    <el-dialog :visible.sync="dialogVisible" title="选择人员" size="large" class="organDialog">
+    <el-dialog :visible.sync="dialogVisible" title="选择人员" size="large" class="organDialog" @close="close">
       <div class="transferBox clearfix">
         <div class="transferPanel leftPanel">
           <p class="panelHeader">待选列表</p>
           <div class="panelBody">
-            <el-tree :data="data2" show-checkbox node-key="id" :default-expanded-keys="[2, 3]" :default-checked-keys="[5]" :props="defaultProps">
+            <el-tree :data="organList" show-checkbox lazy :load="loadNode" :default-expanded-keys="expandKeys" node-key="id" :props="defaultProps" @check-change="checkChange" ref="tree">
             </el-tree>
           </div>
           <p class="panelFooter">
           </p>
         </div>
         <div class="transferButton">
-          <el-button type="primary" size="small" icon="arrow-right"></el-button>
-          <el-button type="primary" size="small" icon="arrow-left"></el-button>
+          <el-button type="primary" size="small" icon="arrow-right" @click="addPerson" :disabled="leftTempList.length===0"></el-button>
+          <el-button type="primary" size="small" icon="arrow-left" @click="removePerson" :disabled="rightList.length===0"></el-button>
         </div>
         <div class="transferPanel rightPanel">
           <p class="panelHeader">已选列表</p>
           <div class="panelBody">
+            <el-checkbox-group v-model="rightList" @change="rightChange">
+              <el-checkbox v-for="person in selList" :label="person.id" :key="person.id">{{person.name}}</el-checkbox>
+            </el-checkbox-group>
+            <!-- <el-tree :data="selList" show-checkbox :props="defaultProps">
+            </el-tree> -->
           </div>
           <p class="panelFooter">
-            <el-checkbox :indeterminate="isIndeterminate" v-model="checkRightAll">全选</el-checkbox>
+            <el-checkbox :indeterminate="isIndeterminate" v-model="checkRightAll" @change="HandleCheckRightAll" :disabled="selList.length===0">
+              {{(rightList.length===0?'共 ':'已选 '+rightList.length+'/')+selList.length+'人'}}
+            </el-checkbox>
           </p>
         </div>
       </div>
@@ -32,6 +39,7 @@
 </template>
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import _ from 'lodash'
 export default {
   components: {},
   data() {
@@ -40,45 +48,16 @@ export default {
       checkLeftAll: false,
       checkRightAll: false,
       isIndeterminate: false,
-      data2: [{
-        id: 1,
-        label: '一级 1',
-        children: [{
-          id: 4,
-          label: '二级 1-1',
-          children: [{
-            id: 9,
-            label: '三级 1-1-1'
-          }, {
-            id: 10,
-            label: '三级 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: '一级 2',
-        children: [{
-          id: 5,
-          label: '二级 2-1'
-        }, {
-          id: 6,
-          label: '二级 2-2'
-        }]
-      }, {
-        id: 3,
-        label: '一级 3',
-        children: [{
-          id: 7,
-          label: '二级 3-1'
-        }, {
-          id: 8,
-          label: '二级 3-2'
-        }]
-      }],
       defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
+        children: 'childNode',
+        label: 'name'
+      },
+      organList: [],
+      expandKeys: [],
+      leftList: [],
+      leftTempList: [],
+      selList: [],
+      rightList: []
     }
   },
   props: {
@@ -101,9 +80,125 @@ export default {
       'DHId'
     ])
   },
-  created() {},
+  created() {
+    this.expandKeys.push(this.DHId);
+    this.getOrgan();
+  },
   methods: {
+    getOrgan() {
+      var leveNum = 0;
 
+      function loopMap(arr, targetArr) {
+        leveNum++;
+        arr.forEach((dep) => {
+          var temp = {
+            id: dep.id,
+            name: dep.name,
+            type: 'dep',
+            childNode: [],
+            disabled: false,
+            leveNum: leveNum
+          }
+          targetArr.push(temp)
+          if (dep.childNode.length !== 0) {
+            loopMap(dep.childNode, targetArr[targetArr.indexOf(temp)].childNode)
+          }
+        })
+      }
+      this.$http.post('/dept/selectDeptOrg')
+        .then(res => {
+          if (res.status == 0) {
+            loopMap(res.data.deptList, this.organList);
+          } else {
+
+          }
+        })
+    },
+    loadNode(node, resolve) {
+      if (node.level === 0) {
+        resolve(node.data);
+      } else if (node.level === 1) {
+        resolve(node.data.childNode);
+      } else if (node.data.type === 'dep') {
+        this.$http.post('/dept/selectDeptEmp', { deptId: node.data.id })
+          .then(res => {
+            if (res.status == 0) {
+              if (res.data) {
+                var tempArr = res.data.map(function(person) {
+                  person.type='person';
+                  person.disabled=false;
+                  return person
+                })
+                var keys = tempArr.map(function(person) {
+                  return person.id
+                })
+                console.log(tempArr)
+                this.expandKeys = keys;
+                setTimeout(() => {
+                  resolve(tempArr.concat(node.data.childNode));
+                }, 200)
+              } else {
+                resolve([])
+              }
+            } else {
+
+            }
+          })
+      } else if (node.data.type === 'person') {
+        resolve([])
+      }
+    },
+    checkChange: _.debounce(function(data) {
+      this.leftList = this.$refs.tree.getCheckedNodes(true).filter(person => person.type === 'person');
+      this.leftTempList = this.leftList.filter(person => !person.disabled);
+    }, 300),
+    // checkChange(data) {
+    //   console.log(data);
+    // },
+    addPerson() {
+      this.selList = this.selList.concat(this.leftTempList);
+      this.selList.forEach(person => person.disabled = true);
+      this.leftTempList = [];
+    },
+    removePerson() {
+      var leftIndexList = [];
+      this.rightList.forEach(id => {
+        for (var i = 0; i < this.selList.length; i++) {
+          if (id === this.selList[i].id) {
+            leftIndexList.push(i);
+            break;
+          }
+        }
+        for (var i = 0; i < this.leftList.length; i++) {
+          if (this.leftList[i].id === id) {
+            this.leftList[i].disabled = false;
+            this.$refs.tree.setChecked(id, false);
+            break;
+          }
+        }
+      })
+      leftIndexList.sort((a, b) => b - a);
+      leftIndexList.forEach(index => {
+        this.selList.splice(index, 1);
+      })
+      this.checkChange();
+      this.rightList = [];
+      this.checkRightAll = false;
+      this.isIndeterminate = false;
+    },
+    close() {
+      this.$emit('update:visible', false)
+    },
+    HandleCheckRightAll(event) {
+      this.rightList = event.target.checked ? this.selList.map(s => s.id) : [];
+      console.log(this.rightList);
+      this.isIndeterminate = false;
+    },
+    rightChange(value) {
+      let checkedCount = value.length;
+      this.checkRightAll = checkedCount === this.selList.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.selList.length;
+    }
   }
 }
 
@@ -126,12 +221,25 @@ $main:#0460AE;
           position: relative;
           &.leftPanel {
             width: 400px;
-            .el-tree{
-              border:none;
+            .el-tree {
+              border: none;
             }
           }
           &.rightPanel {
             float: right;
+            .el-checkbox-group {
+              .el-checkbox {
+                display: block;
+                line-height: 36px;
+                height: 36px;
+                cursor: pointer;
+                margin: 0;
+                padding-left: 25px;
+                &:hover {
+                  background: rgb(228, 231, 241);
+                }
+              }
+            }
           }
           .panelHeader {
             height: 36px;

@@ -217,8 +217,9 @@ export default {
         value: 'dictCode',
         children: 'child'
       },
-      isfirst:false,
-      prePayTemp:[]
+      isfirst: false,
+      prePayTemp: [],
+      draftFirst1: false
     }
   },
   computed: {
@@ -241,11 +242,12 @@ export default {
     ])
   },
   created() {
-    this.getPrePayTemp();//预付款单独项
+
     this.getPayType(); //付款类型
     this.getBudgetDeptList(); //预算机构/科目
     if (!this.$route.params.id) {
       this.getFileCatalogue(); //收款供应商
+      this.getPrePayTemp(); //预付款单独项
     }
     this.getInvoiceList(); //发票类型
     this.getCurrencyList(); //币种
@@ -263,21 +265,25 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
-      if(obj.paymentForm.payTypeCode){
-        this.isfirst=true;
+      if (obj.paymentForm.payTypeCode) {
+        this.isfirst = true;
       }
-      this.combineObj(this.paymentForm,obj.paymentForm,['isAdvancePayment'])
+      if (obj.paymentForm.isAdvancePayment == 1) {
+        this.draftFirst1 = true;
+      }
+      this.combineObj(this.paymentForm, obj.paymentForm)
       this.budgetTable = obj.budgetTable;
       if (this.paymentForm.supplierIds.length != 0) {
         this.draftFirst = true;
       }
       this.getFileCatalogue();
+      this.getPrePayTemp();
     },
-    changePayType(val) {      
+    changePayType(val) {
       if (!this.isfirst) { //草稿箱第一次不调用建议路径模板        
         this.$emit('updateSuggest', val)
       }
-      this.isfirst=false;
+      this.isfirst = false;
     },
     submitForm() {
       if (this.checkBudgetTable()) {
@@ -351,15 +357,17 @@ export default {
       }
     },
     isAdvancePaymentChange(val) {
-      if (val == 1) {
-        this.handleItemChange(this.prePayTemp.slice(0, 1));
-        this.budgetForm.budgetDept = this.prePayTemp;
-        this.depChange(this.prePayTemp);
-        this.budgetTable = [];
-      } else {
-        this.budgetForm.budgetDept = [];
-        this.budgetInfo = '';
-        this.budgetTable = [];
+      if (!this.draftFirst1) {
+        if (val == 1) {
+          this.handleItemChange(this.prePayTemp.slice(0, 1));
+          this.budgetForm.budgetDept = this.prePayTemp;
+          this.depChange(this.prePayTemp);
+          this.budgetTable = [];
+        } else {
+          this.budgetForm.budgetDept = [];
+          this.budgetInfo = '';
+          this.budgetTable = [];
+        }
       }
     },
     invoiceTypeChange(code) {
@@ -607,7 +615,7 @@ export default {
         })
     },
     getFileCatalogue() {
-      this.$http.post('/doc/getSupplier',{empId:this.userInfo.empId})
+      this.$http.post('/doc/getSupplier', { empId: this.userInfo.empId })
         .then(res => {
           if (res.status == '0') {
             res.data.forEach((s, index) => {
@@ -701,11 +709,17 @@ export default {
           }
         })
     },
-    getPrePayTemp(){
+    getPrePayTemp() {
       this.$http.post('/doc/getOneBudgetItemCode', { budgetYear: this.year })
         .then(res => {
           if (res.status == 0) {
             this.prePayTemp = res.data.budgetItemIds;
+            if (this.draftFirst1) {
+              this.draftFirst1 = false;
+              this.handleItemChange(this.prePayTemp.slice(0, 1));
+              this.budgetForm.budgetDept = this.prePayTemp;
+              this.depChange(this.prePayTemp);
+            }
           } else {
 
           }
