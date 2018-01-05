@@ -494,7 +494,6 @@ export default {
                 }, 200)
                 if (res.status == 0) {
                 var infora= res.focVos;
-                console.log(infora)
                 this.tip=" 左座:"+document.getElementById("getTipTwo").innerHTML.split(",")[0]+" 右座:"+document.getElementById("getTipTwo").innerHTML.split(",")[1]+" 航班号:"+infora[0].flightNo+" 日期："+infora[0].flyDate;
                 //+" 油耗"+document.getElementById("getTipTwo").innerHTML.split(",")[2]+" 平均油耗"+avroil
                   this.$notify({
@@ -692,6 +691,7 @@ export default {
           } 
  
           if(this.params.departureAirport){
+            console.log(flightData)
             this.optionOne.title.text=flightData[flightData.length-1].flyDate+"到"+flightData[0].flyDate+" "+this.params.departureAirport+"-"+this.params.arrivalAirport+" "+"空中时间折线图";
           }else{
             this.optionOne.title.text=flightData[flightData.length-1].flyDate+"到"+flightData[0].flyDate+" "+"空中时间折线图";
@@ -753,7 +753,6 @@ export default {
         sortoil.leftPersonName=this.params.leftPersonName;
         sortoil.rightPersonName=this.params.rightPersonName;
         sortoil.controlPersonName=this.params.controlPersonName;
-        console.log
         this.$http.post("/foc/getFocOil",sortoil , { body: true }).then(res => {//
         setTimeout(function() {
           this.searchLoading = false;
@@ -862,7 +861,6 @@ export default {
               this.optionFour.series[0].data.push(parseFloat(oilData[i].oil));
               this.optionFour.xAxis.categories.push(oilData[i].flyDate)
           }
-          console.log(this.params)
           if(this.params.departureAirport){
             this.optionFour.title.text=oilData[oilData.length-1].flyDate+"到"+oilData[0].flyDate+" "+this.params.departureAirport+"-"+this.params.arrivalAirport+" "+"耗油量折线图";
           }else{
