@@ -64,7 +64,7 @@ const menuList = [{
     child: [{ name: '个人信息', path: '#/HR/personalInfo' }, { name: '个人简历', path: '#/HR/resume' }, { name: '简历完善', path: '#/HR/editResume' }]
   }, {
     title: '我要申请',
-    child: [{ name: '请假申请', path: '#/doc/docCommonApp/QJS' }, { name: '转正申请', path: '#/doc/docCommonApp/ZZS' }, { name: '离职申请', path: '#/doc/docCommonApp/LZS' }, { name: '工伤事故申请', path: '#/doc/docCommonApp/GSS' }, { name: '培训申请', path: '#/doc/docCommonApp/PXS' }, { name: '人事变动', path: '#/doc/docCommonApp/RSB' }]
+    child: [{ name: '请假申请', path: '#/doc/docCommonApp/QJS' }, { name: '转正申请', path: '#/doc/docCommonApp/ZZS' }, { name: '离职申请', path: '#/doc/docCommonApp/LZS' }, { name: '工伤事故申请', path: '#/doc/docCommonApp/GSS' }, { name: '培训申请', path: '#/doc/docCommonApp/PXS' }, { name: '员工岗位变动申请', path: '#/doc/docCommonApp/RSB' }]
   },
   {
     title: '薪资绩效',

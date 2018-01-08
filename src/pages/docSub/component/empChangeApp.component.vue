@@ -10,7 +10,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="工作经历" prop="workExperience">
-        <el-input type="textarea" :rows="8" resize='none' v-model="changeForm.workExperience" :maxlength="100"></el-input>
+        <el-input type="textarea" :rows="8" resize='none' v-model="changeForm.workExperience" :maxlength="500"></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -29,7 +29,7 @@ export default {
     };
     return {
       changeForm: {
-        workExperience: '',
+        workExperience: 'XXXX年XX月XX日    于XXXX公司任职   XXX岗位    从事XXX工作\nXXXX年XX月XX日    于XXXX公司任职   XXX岗位    从事XXX工作',
         jobtitle: '',
         deps:[],
       },

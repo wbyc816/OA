@@ -22,7 +22,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="收款供应商" prop="supplierIds" class="clearBoth">
-        <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="supplierProp" v-model="contractForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier">
+        <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="supplierProp" v-model="contractForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier" clearable>
         </el-cascader>
       </el-form-item>
       <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
@@ -89,10 +89,10 @@
         </money-input>
       </el-form-item>
       <el-form-item label="单价" prop="unitPrice" class="arrArea">
-        <money-input v-model="budgetForm.unitPrice" :prepend="false" :append="false" >
+        <money-input v-model="budgetForm.unitPrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
-      <el-form-item label="总价"  class="deptArea">
+      <el-form-item label="总价" class="deptArea">
         <money-input v-model="totalPrice" :prepend="false" :append="false" readonly>
         </money-input>
       </el-form-item>
@@ -279,7 +279,7 @@ export default {
       budgetForm: {
         "budgetDept": [],
         "airmaterialNameZn": "", //航材中文名称，件号中文名称
-        "airmaterialNameEg":"",
+        "airmaterialNameEg": "",
         "airmaterialCode": "", //器材编码
         "pieceNo": "", //件号
         "pieceStatus": "", //件状态
@@ -312,7 +312,7 @@ export default {
       supplierInfo: '',
       budgetInfo: '',
       contractCodeList: [],
-      pieceStatusList:[],
+      pieceStatusList: [],
       priorityList: [],
       budgetDeptList: [],
       pickerOptions0: {
@@ -361,10 +361,10 @@ export default {
       }
       return num || ''
     },
-     totalPrice(){
-      var num=0;
-      if(this.budgetForm.pieceNum&&this.budgetForm.unitPrice){
-        num=parseFloat(this.budgetForm.pieceNum)*parseFloat(this.budgetForm.unitPrice)
+    totalPrice() {
+      var num = 0;
+      if (this.budgetForm.pieceNum && this.budgetForm.unitPrice) {
+        num = parseFloat(this.budgetForm.pieceNum) * parseFloat(this.budgetForm.unitPrice)
       }
       return this.numFixed2(num);
     },
@@ -440,7 +440,7 @@ export default {
         contractSubtypeName: this.$refs.contractCode.selectedLabel,
         priority: this.contractForm.priority, //  优先级   
         accurencyName: currency.currencyName, // 币种名
-        accurencyCode:currency.currencyCode,
+        accurencyCode: currency.currencyCode,
         supplierId: this.supplierInfo.id, //  供应商id
         supplierName: this.supplierInfo.supplierName, //  供应商名
         supplierBank: this.supplierInfo.accountBank, //  供应商开户银行
@@ -506,15 +506,19 @@ export default {
       }
     },
     supplierChange(val) {
-      var len = this.contractForm.supplierIds.length;
-      var temp = this.supplierList;
-      for (var i = 0; i < len; i++) {
-        temp = temp.find(s => s.id == this.contractForm.supplierIds[i]);
-        if (temp.supplier && temp.supplier.length != 0) {
-          temp = temp.supplier;
+      if (val.length !== 0) {
+        var len = this.contractForm.supplierIds.length;
+        var temp = this.supplierList;
+        for (var i = 0; i < len; i++) {
+          temp = temp.find(s => s.id == this.contractForm.supplierIds[i]);
+          if (temp.supplier && temp.supplier.length != 0) {
+            temp = temp.supplier;
+          }
         }
+        this.supplierInfo = temp;
+      } else {
+        this.supplierInfo = '';
       }
-      this.supplierInfo = temp;
     },
     currencyChange(val) {
       if (this.totalMoney) {
@@ -578,7 +582,7 @@ export default {
             budgetDeptName: dep.budgetDeptName, //   预算部门名
             budgetYear: this.year, //   预算年份
             excutionRatio: this.budgetInfo.execRateStr, //   执行比例
-            totalPrice:this.totalPrice
+            totalPrice: this.totalPrice
           }
           item = Object.assign(item, this.budgetForm);
           delete item.budgetDept;

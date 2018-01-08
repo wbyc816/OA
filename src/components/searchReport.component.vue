@@ -193,9 +193,6 @@ export default {
     this.$store.dispatch('getConfident');
     this.$store.dispatch('getUrgency');
     this.$store.dispatch('getDocForm');
-    if (!this.notype) {
-      this.$store.dispatch('getDocTree');
-    }
     this.getData();
     this.getDate()
   },

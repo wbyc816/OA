@@ -243,6 +243,13 @@ export default {
           } else {
             c.disabled = false;
           }
+          c.catalogues.forEach(d => {
+            if (val === 'ADM0401'&&c.name==='公司级' && (d.name === '公司收文'||d.name === '各类模板'||d.name === '会议纪要'||d.name === '业务通告')) {
+              d.disabled = true;
+            } else {
+              d.disabled=false;
+            }
+          })
         })
       } else { //草稿箱第一次
         this.isDrafFirst = false;
@@ -461,6 +468,9 @@ export default {
             loopMap(res.data);
             res.data.forEach(r => {
               r.disabled = false;
+              r.catalogues.forEach(d=>{
+                d.disabled=false;
+              })
             })
             this.catalogueList = res.data;
           } else {

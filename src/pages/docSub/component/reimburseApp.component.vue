@@ -218,13 +218,13 @@ export default {
     changePayType(val) {
       if (!this.isfirst) { //草稿箱第一次不调用建议路径模板  
         this.$emit('updateSuggest', val)
+        this.budgetTable = [];
       }
       this.isfirst = false;
       if (val === 'DOC0504' || val === 'DOC0505') {
         this.budgetForm.invoiceNum = '';
         this.activeInvoice = 'FIN0202';
       }
-      this.budgetTable = [];
     },
     saveForm() {
       var params = JSON.stringify({
