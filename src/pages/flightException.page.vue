@@ -21,6 +21,12 @@
             </template>
         </el-table-column>
 
+          <el-table-column prop="taxiTime" label="Q滑出时间" width="100">
+             <template scope="scope">
+                <span>{{ scope.row.taxiTime | time('hours')}}</span>
+            </template>
+        </el-table-column>
+
        
 
          <el-table-column prop="engonTime" label="Q开车时间" width="100">
@@ -149,7 +155,11 @@
             </template>
         </el-table-column>
 
-       
+        <el-table-column prop="taxiTimeStr" label="Q滑出时间" width="100">
+             <template scope="scope">
+                <span>{{ scope.row.taxiTimeStr}}</span>
+            </template>
+        </el-table-column>
 
          <el-table-column prop="engonTime" label="Q开车时间" width="100">
              <template scope="scope">
