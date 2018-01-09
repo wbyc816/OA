@@ -1,9 +1,14 @@
 <template>
   <div class="staffBenefitApp">
     <div class="vacationInfo clearfix">
-      <div class="infoBox">年度免票<span>{{freeTicket.ticketNumsTotal}}</span></div>
+      <div class="infoBox">上年度免票<span>{{lastFreeTicket.ticketNumsTotal}}</span></div>
+      <div class="infoBox remain">剩余<span>{{lastFreeTicket.ticketNumsLave}}</span></div>
+      <div class="infoBox">上年度二五折<span>{{lastDiscountTicket.ticketNumsTotal}}</span></div>
+      <div class="infoBox remain">剩余<span>{{lastDiscountTicket.ticketNumsLave}}</span></div>
+
+      <div class="infoBox">本年度免票<span>{{freeTicket.ticketNumsTotal}}</span></div>
       <div class="infoBox remain">剩余<span>{{freeTicket.ticketNumsLave}}</span></div>
-      <div class="infoBox">年度二五折<span>{{discountTicket.ticketNumsTotal}}</span></div>
+      <div class="infoBox">本年度二五折<span>{{discountTicket.ticketNumsTotal}}</span></div>
       <div class="infoBox remain">剩余<span>{{discountTicket.ticketNumsLave}}</span></div>
       <!-- <div class="infoBox">协议票<span>{{agreementTicket.ticketNumsTotal}}</span></div>
       <div class="infoBox remain">剩余<span>{{agreementTicket.ticketNumsLave}}</span></div> -->
@@ -286,6 +291,14 @@ export default {
         "ticketNumsTotal": 0,
         "ticketNumsLave": 0,
       },
+      lastDiscountTicket:{
+        "ticketNumsTotal": 0,
+        "ticketNumsLave": 0,
+      },
+      lastFreeTicket:{
+        "ticketNumsTotal": 0,
+        "ticketNumsLave": 0,
+      },
       agreementTicket:{
         "ticketNumsTotal": 0,
         "ticketNumsLave": 0,
@@ -375,6 +388,29 @@ export default {
          this.freeTicket=res.data;
         }
       })
+
+      this.$http.post('/emp/selectEmpTicket', { //去年二五折
+          typeId:"EMP0301",
+          empId: this.userInfo.empId ,                               
+          annual :util.formatTime(new Date().getTime(), 'yyyy')-1,
+       })
+      .then(res => {
+        if (res.status == 0) {
+         this.lastDiscountTicket=res.data;
+        }
+      })
+       this.$http.post('/emp/selectEmpTicket', { //去年免票
+          typeId:"EMP0302",
+          empId: this.userInfo.empId ,   
+                                      
+          annual :util.formatTime(new Date().getTime(), 'yyyy')-1,
+       })
+      .then(res => {
+        if (res.status == 0) {
+         this.lastFreeTicket=res.data;
+        }
+      })
+
        this.$http.post('/emp/selectEmpTicket', { //协议票
           typeId:"EMP0303",
           empId: this.userInfo.empId ,                               
