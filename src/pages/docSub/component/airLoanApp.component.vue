@@ -60,19 +60,19 @@
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
       <el-form-item label="器材中文名称" prop="airmaterialNameZn">
-        <el-input v-model="budgetForm.airmaterialNameZn">
+        <el-input v-model="budgetForm.airmaterialNameZn" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="器材英文名称" prop="airmaterialNameEg">
-        <el-input v-model="budgetForm.airmaterialNameEg">
+        <el-input v-model="budgetForm.airmaterialNameEg" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="件号" prop="pieceNo" class="deptArea">
-        <el-input v-model="budgetForm.pieceNo">
+        <el-input v-model="budgetForm.pieceNo" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="序号" prop="airmaterialCode" class="arrArea">
-        <el-input v-model="budgetForm.airmaterialCode">
+        <el-input v-model="budgetForm.airmaterialCode" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="件状态" prop="pieceStatus" class="deptArea">
@@ -81,11 +81,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="单位" prop="unit" class="arrArea">
-        <el-input v-model="budgetForm.unit">
+        <el-input v-model="budgetForm.unit" :maxlength="8">
         </el-input>
       </el-form-item>
       <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
-        <money-input v-model="budgetForm.pieceNum" type="int" :prepend="false" :append="false">
+        <money-input v-model="budgetForm.pieceNum" type="int" :prepend="false" :append="false" :maxlength="6">
         </money-input>
       </el-form-item>
       <el-form-item label="单价" prop="unitPrice" class="arrArea">

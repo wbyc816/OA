@@ -23,7 +23,7 @@
       </el-form-item>
       <el-form-item label="会签内容" prop="taskContent" class="textarea">
         <el-col :span='18'>
-          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="100"></el-input>
+          <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="$route.query.code==='HTS'?500:100"></el-input>
           <!-- <task-content v-model="ruleForm.taskContent"  :maxlength="100"></task-content> -->
 
         </el-col>

@@ -134,7 +134,7 @@ export default {
           }
         })
       }
-      return num
+      return parseFloat(this.numFixed2(num))
     },
     ...mapGetters([
       'submitLoading',

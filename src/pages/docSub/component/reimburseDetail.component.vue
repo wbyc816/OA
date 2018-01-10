@@ -36,7 +36,6 @@
       <el-table-column property="availableMoney" label="可用额度(元)" :formatter="formatMoney" width="130"></el-table-column>
       <el-table-column property="cExecRate" label="执行比例" width="80"></el-table-column>
     </el-table>
-    <!-- <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice}}元</span></p> -->
     <el-row style="border-top: 1px solid #D5DADF;margin-top:20px;">
       <el-col :span="24">
         <h1 class="title">报销类型</h1>
@@ -82,17 +81,6 @@ export default {
     }
   },
   computed: {
-    totalPrice: function() {
-      if (this.info.length != 0) {
-        var num = 0;
-        this.info.forEach(m => {
-          num += m.plannedUnitPrice * m.quantity
-        })
-        return num
-      } else {
-        return 0
-      }
-    },
     ...mapGetters([
       'submitLoading'
     ])

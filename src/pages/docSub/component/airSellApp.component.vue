@@ -60,15 +60,15 @@
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
       <el-form-item label="器材中文名称" prop="airmaterialNameZn">
-        <el-input v-model="budgetForm.airmaterialNameZn">
+        <el-input v-model="budgetForm.airmaterialNameZn" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="件号" prop="pieceNo" class="deptArea">
-        <el-input v-model="budgetForm.pieceNo">
+        <el-input v-model="budgetForm.pieceNo" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="序号" prop="airmaterialCode" class="arrArea">
-        <el-input v-model="budgetForm.airmaterialCode">
+        <el-input v-model="budgetForm.airmaterialCode" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="件状态" prop="pieceStatus" class="deptArea">
@@ -77,11 +77,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="单位" prop="unit" class="arrArea">
-        <el-input v-model="budgetForm.unit">
+        <el-input v-model="budgetForm.unit" :maxlength="8">
         </el-input>
       </el-form-item>
       <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
-        <money-input v-model="budgetForm.pieceNum" type="int" :prepend="false" :append="false">
+        <money-input v-model="budgetForm.pieceNum" type="int" :prepend="false" :append="false" :maxlength="6">
         </money-input>
       </el-form-item>
       <el-form-item label="单价" prop="unitPrice" class="arrArea">
@@ -179,6 +179,7 @@ export default {
         priority: [{ required: true, message: '请选择优先级', trigger: 'blur' }],
         contractCode: [{ required: true, message: '请选择合同子类型', trigger: 'blur' }],
         advancePaymentPercent: [{ required: true, message: '请输入预付款百分比', trigger: 'blur' }],
+        contractNo: [{ required: true, message: '请输入合同号', trigger: 'blur' }],
         supplierIds: [{ type: 'array', required: true, message: '请选择供应商', trigger: 'blur' }],
       },
       budgetForm: {
@@ -194,6 +195,7 @@ export default {
       },
       budgetRule: {
         pieceNo: [{ required: true, message: '请输入件号', trigger: 'blur' }],
+        airmaterialNameZn: [{ required: true, message: '请输器材中文名称', trigger: 'blur' }],
         pieceStatus: [{ required: true, message: '请选择件状态', trigger: 'blur' }],
         pieceNum: [{ required: true, message: '请输入合同数量', trigger: 'blur' }],
         // totalPrice: [{ required: true, message: '请输入总价', trigger: 'blur' }],

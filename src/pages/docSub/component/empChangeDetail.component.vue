@@ -2,7 +2,7 @@
   <div class="empChangeDetail clearBoth">
     <div class="empBox">
       <div class="imgBox">
-        <img :src="info[0].empInfo.picUrl" alt="" v-show="info[0].empInfo.picUrl">
+        <img :src="blankImg||info[0].empInfo.picUrl" alt="" @error="blankImg=blankHead" v-show="info[0].empInfo.picUrl">
         <img src="../../../assets/images/blankHead.png" alt="" v-show="!info[0].empInfo.picUrl">
       </div>
       <ul class="clearfix">
@@ -12,7 +12,7 @@
         <li><span class="itemTitle">学历</span><span class="text">{{info[0].empInfo.eduBackground}}</span></li>
         <li><span class="itemTitle">年龄</span><span class="text">{{info[0].empInfo.age}}</span></li>
         <li><span class="itemTitle">专业</span><span class="text">{{info[0].empInfo.major}}</span></li>
-        <li><span class="itemTitle">入公司时间</span><span class="text">{{info[0].empInfo.joinDate |time('ch')}}</span></li>
+        <li><span class="itemTitle">入公司时间</span><span class="text">{{info[0].empInfo.joinDate | time('ch')}}</span></li>
         <li><span class="itemTitle">外语水平</span><span class="text">{{info[0].empInfo.certificateType}}</span></li>
       </ul>
     </div>
@@ -38,6 +38,7 @@
   </div>
 </template>
 <script>
+import blankHead from '../../../assets/images/blankHead.png'
 import { mapGetters } from 'vuex'
 export default {
   props: {
@@ -47,7 +48,8 @@ export default {
   },
   data() {
     return {
-
+      blankHead,
+      blankImg:''
     }
   },
   computed: {

@@ -1,8 +1,23 @@
 <template>
   <div class="empChangeApp">
+    <div class="empBox">
+      <div class="imgBox">
+        <img :src="empInfo.picUrl" @error="empInfo.picUrl=blankHead" alt="" v-if="empInfo.picUrl">
+      </div>
+      <ul class="clearfix">
+        <li><span class="itemTitle">姓名</span><span class="text">{{empInfo.empName}}</span></li>
+        <li><span class="itemTitle">毕业学校</span><span class="text">{{empInfo.graduationSchool}}</span></li>
+        <li><span class="itemTitle">性别</span><span class="text">{{empInfo.empGender | sex}}</span></li>
+        <li><span class="itemTitle">学历</span><span class="text">{{empInfo.eduBackground}}</span></li>
+        <li><span class="itemTitle">年龄</span><span class="text">{{empInfo.empAge}}</span></li>
+        <li><span class="itemTitle">专业</span><span class="text">{{empInfo.major}}</span></li>
+        <li><span class="itemTitle">入公司时间</span><span class="text">{{empInfo.joinDate | time('ch')}}</span></li>
+        <li><span class="itemTitle">外语水平</span><span class="text">{{empInfo.language}}</span></li>
+      </ul>
+    </div>
     <el-form label-position="left" :model="changeForm" :rules="rules" ref="changeForm" label-width="128px">
       <el-form-item label="拟调入部门/处室" prop="deps">
-        <el-cascader expand-trigger="hover" :options="depList" :props="defaultProp" v-model="changeForm.deps"  style="width:100%" popper-class="myCascader">
+        <el-cascader expand-trigger="hover" :options="depList" :props="defaultProp" v-model="changeForm.deps" style="width:100%" popper-class="myCascader">
         </el-cascader>
       </el-form-item>
       <el-form-item label="拟调入岗位" prop="jobtitle">
@@ -17,6 +32,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import blankHead from '../../../assets/images/blankHead.png'
 export default {
   components: {},
   data() {
@@ -31,20 +47,22 @@ export default {
       changeForm: {
         workExperience: 'XXXX年XX月XX日    于XXXX公司任职   XXX岗位    从事XXX工作\nXXXX年XX月XX日    于XXXX公司任职   XXX岗位    从事XXX工作',
         jobtitle: '',
-        deps:[],
+        deps: [],
       },
       rules: {
         workExperience: [{ required: true, message: '请填写工作经历', trigger: 'blur' }],
-        jobtitle: [{  required: true, message: '请输入拟调入岗位', trigger: 'blur' }],
+        jobtitle: [{ required: true, message: '请输入拟调入岗位', trigger: 'blur' }],
         deps: [{ type: 'array', required: true, validator: checkDept, trigger: 'blur' }],
       },
       params: '',
-      depList:[],
-      defaultProp:{
-        value:'id',
-        label:'name',
-        children:'childNode'
-      }
+      depList: [],
+      defaultProp: {
+        value: 'id',
+        label: 'name',
+        children: 'childNode'
+      },
+      blankHead,
+      empInfo:''
     }
   },
   computed: {
@@ -57,22 +75,23 @@ export default {
   },
   created() {
     this.getDepList();
+    this.getEmp();
   },
-  methods: { 
+  methods: {
     saveForm() {
-      this.$emit('saveMiddle',JSON.stringify(this.changeForm));
+      this.$emit('saveMiddle', JSON.stringify(this.changeForm));
     },
     getDraft(obj) {
-      this.changeForm=obj;
+      this.changeForm = obj;
     },
     submitForm() {
       this.$refs.changeForm.validate((valid) => {
         if (valid) {
           this.params = {
             "palnDeptMajorId": this.changeForm.deps[0], //第一级部门id
-            "planDeptId": this.changeForm.deps[this.changeForm.deps.length-1], //最后一级部门id
-            "palnJobtitle":this.changeForm.jobtitle, //拟调入岗位
-            "workExperience":this.changeForm.workExperience //工作经历
+            "planDeptId": this.changeForm.deps[this.changeForm.deps.length - 1], //最后一级部门id
+            "palnJobtitle": this.changeForm.jobtitle, //拟调入岗位
+            "workExperience": this.changeForm.workExperience //工作经历
           }
           this.$emit('submitMiddle', this.params);
         } else {
@@ -82,21 +101,31 @@ export default {
         }
       });
     },
-    getDepList(){
-      function loopMap(arr){
-        arr.forEach(function(dep){
-          if(dep.childNode.length==0){
-              dep.childNode=null
-            }else{
-              loopMap(dep.childNode)
-            }
+    getDepList() {
+      function loopMap(arr) {
+        arr.forEach(function(dep) {
+          if (dep.childNode.length == 0) {
+            dep.childNode = null
+          } else {
+            loopMap(dep.childNode)
+          }
         })
       }
-      this.$http.post('/dept/selectDeptOrgByDeptId',{deptId:this.DHId})  //东航ID
+      this.$http.post('/dept/selectDeptOrgByDeptId', { deptId: this.DHId }) //东航ID
+        .then(res => {
+          if (res.status == 0) {
+            loopMap(res.data.deptList[0].childNode)
+            this.depList = res.data.deptList[0].childNode
+          }
+        })
+    },
+    getEmp(){
+      this.$http.post('/doc/empChangeInfo',{empId:this.userInfo.empId})
       .then(res=>{
         if(res.status==0){
-          loopMap(res.data.deptList[0].childNode)
-          this.depList=res.data.deptList[0].childNode
+          this.empInfo=res.data;
+        }else{
+
         }
       })
     }
@@ -109,6 +138,39 @@ $main:#0460AE;
 .empChangeApp {
   .el-input {
     width: 100%;
+  }
+  .empBox {
+    width: 760px;
+    position: relative;
+    padding: 0 0 20px 176px;
+    .imgBox {
+      position: absolute;
+      left: 16px;
+      top: 15px;
+      width: 120px;
+      img{
+        width:100%;
+      }
+    }
+    ul {
+      li {
+        width: 50%;
+        float: left;
+        line-height: 50px;
+        font-size: 15px;
+        .itemTitle {
+          display: inline-block;
+          color: $main;
+          width: 150px;
+        }
+        &:nth-child(odd) {
+          width: 40%;
+          .itemTitle {
+            width: 110px;
+          }
+        }
+      }
+    }
   }
 }
 

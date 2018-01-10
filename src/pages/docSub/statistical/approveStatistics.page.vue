@@ -144,7 +144,6 @@ export default {
       }, res => {})
     },
     handleCurrentChange(page) {
-      console.log(page)
       this.searchParams.pageNumber = page;
       this.getData()
     },

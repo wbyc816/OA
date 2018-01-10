@@ -3,6 +3,7 @@
     <el-row :gutter="20">
       <el-col :span='24'>
         <el-card class="pdfBox">
+          <p class="tipInfo" v-if="showTip">食堂管理员暂未上传食谱</p>
           <pdf :src="detail" @numPages="getNums" :page="pageNum" @error="pdfError"></pdf>
           <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
           </el-pagination>
@@ -20,7 +21,8 @@ export default {
     return {
         pageNum: 1,
       detail: '',
-      totalNum: 0
+      totalNum: 0,
+      showTip:false
     }
 
   },
@@ -47,7 +49,8 @@ export default {
     },
     pdfError(obj){
       this.loading=false;
-      this.$message.error('PDF文件加载失败！')
+      // this.$message.error('PDF文件加载失败！')
+      this.showTip=true;
     }
   }
 
@@ -120,6 +123,13 @@ $sub:#1465C0;
       position: relative;
       text-align: center;
       padding-top: 10px;
+      .tipInfo{
+        position:absolute;
+        font-size:30px;
+        top:200px;
+        width: 100%;
+        text-align:center;
+      }
       #newsCanvas {}
       .el-pagination {
         margin: 0 auto;

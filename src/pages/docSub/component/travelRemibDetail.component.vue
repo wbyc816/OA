@@ -134,17 +134,6 @@ export default {
     }
   },
   computed: {
-    totalPrice: function() {
-      if (this.info.length != 0) {
-        var num = 0;
-        this.info.forEach(m => {
-          num += m.plannedUnitPrice * m.quantity
-        })
-        return num
-      } else {
-        return 0
-      }
-    },
     ...mapGetters([
       'submitLoading'
     ])
@@ -252,17 +241,6 @@ $main:#0460AE;
 .travelReimbDetail {
   padding: 20px 0 0;
   clear: both; // border-bottom: 1px solid #D5DADF;
-  .totalPrice {
-    line-height: 40px;
-    padding-left: 15px;
-    border: 1px solid #D5DADF;
-    border-top: none;
-    font-size: 15px;
-    span {
-      margin-left: 5px;
-      color: $main;
-    }
-  }
   .invoiceNum {
     line-height: 15px;
   }

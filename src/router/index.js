@@ -60,8 +60,10 @@ const supplierCreate = () =>
 //短信
 const SMSHome = () =>
   import ('pages/SMS/SMSHome.page')
-// const mySMS = () =>
-//   import ('pages/SMS/mySMS.page')
+const mySMS = () =>
+  import ('pages/SMS/mySMS.page')
+const SMSDetail = () =>
+  import ('pages/SMS/SMSDetail.page')
 // const SMSSearch = () =>
 //   import ('pages/SMS/SMSSearch.page')
 const SMSApp = () =>
@@ -349,14 +351,22 @@ const router = new Router({
           },
 
         },
-        // {
-        //   path: '/SMS/mySMS',
-        //   name: 'mySMS',
-        //   component: mySMS,
-        //   meta: {
-        //     breadcrumb: "我的短信",
-        //   }
-        // },
+        {
+          path: '/SMS/mySMS',
+          name: 'mySMS',
+          component: mySMS,
+          meta: {
+            breadcrumb: "我的短信",
+          }
+        },
+        {
+          path: '/SMS/SMSDetail/:id',
+          name: 'SMSDetail',
+          component: SMSDetail,
+          meta: {
+            breadcrumb: "短信详情",
+          }
+        },
         // {
         //   path: '/SMS/SMSSearch',
         //   name: 'SMSSearch',
@@ -367,7 +377,7 @@ const router = new Router({
         // },
         {
           path: '/SMS',
-          redirect: '/SMS/SMSApp'
+          redirect: '/SMS/mySMS'
         },
       ]
     },

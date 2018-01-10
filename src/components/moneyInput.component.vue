@@ -1,6 +1,6 @@
 <template>
   <div class="moenyInput">
-    <el-input :value="value" :class="{'hasUnit':append}" ref="input" @change="fomat" :maxlength="maxlength" @blur="blurInput" :readonly="readonly" :disabled="disabled" :placeholder="placeholder">
+    <el-input :value="value" :class="{'hasUnit':append}" ref="input" @change="fomat" :maxlength="type==='money'?maxlength+3:maxlength" @blur="blurInput" :readonly="readonly" :disabled="disabled" :placeholder="placeholder">
       <template slot="prepend" v-if="prepend">
         <slot name="prepend"></slot>
       </template>
@@ -56,10 +56,16 @@ export default {
   methods: {
     fomat(val) {
       if (this.type == 'money') {
-        val = val.toString().match(/(^[1-9]([0-9]{0,})|^[0])+(?:\.\d{0,2})?/);
+        val = val.toString().match(/(^[1-9]([0-9]{0,})|^[0])+(\.\d{0,2})?/);
+        if (val) {
+          var max = Math.pow(10, this.maxlength) - 0.01;
+          if (parseFloat(val[0]) > max) {
+            val[0] = max.toString();
+          }
+        }
       } else if (this.type == 'int') {
         val = val.toString().match(/^[1-9][0-9]{0,}/)
-      } else if (this.type == 'int0'||this.type =='bankCode') {
+      } else if (this.type == 'int0' || this.type == 'bankCode') {
         val = val.toString().match(/^[0-9]{0,}/)
       } else if (this.type == 'invoice') {
         val = val.toString().match(/^[0-9]([0-9]\,|[0-9]){0,}/)

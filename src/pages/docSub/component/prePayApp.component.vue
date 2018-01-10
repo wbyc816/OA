@@ -197,12 +197,11 @@ export default {
       if (this.budgetTable.length != 0) {
         this.budgetTable.forEach(b => {
           if (b.rmb) {
-            console.log(b.rmb)
             num += b.rmb;
           }
         })
       }
-      return num
+      return parseFloat(this.numFixed2(num))
     },
     ...mapGetters([
       'submitLoading',
@@ -358,13 +357,13 @@ export default {
     },
     beforeInvoiceUpload(file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
-      const isLt10M = file.size / 1024 / 1024 < 10;
+      const isLt10M = file.size / 1024 / 1024 < 30;
 
       if (!isJPG) {
         this.$message.error('上传文件只能是 JPG或PDF 格式!');
       }
       if (!isLt10M) {
-        this.$message.error('上传文件大小不能超过 10MB!');
+        this.$message.error('上传文件大小不能超过 30MB!');
       }
       return isJPG && isLt10M;
     },

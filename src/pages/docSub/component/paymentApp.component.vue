@@ -191,7 +191,7 @@ export default {
         isAdvancePayment: [{ required: true, trigger: 'blur' }],
         contractAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择合同' }],
         payTypeCode: [{ required: true, message: '请选择付款类型', trigger: 'blur' }],
-        invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票' }],
+        invoiceAttach: [{ type: 'array', required: false, trigger: 'blur', message: '请选择发票' }],
       },
       payMthods: [],
       types: [],
@@ -232,7 +232,7 @@ export default {
           }
         })
       }
-      return num
+      return parseFloat(this.numFixed2(num))
     },
     ...mapGetters([
       'submitLoading',
@@ -255,6 +255,15 @@ export default {
     this.getFeeTypes(4); //费用类型
     this.getFeeTypes(5); //费用类型
     this.getAddTax() //增值税进项税额
+  },
+  watch:{
+    budgetTable:function(newval){
+      if(newval.some(b=>b.invoiceTypeCode==='FIN0201')){
+        this.paymentRule.invoiceAttach[0].required=true;
+      }else{
+        this.paymentRule.invoiceAttach[0].required=false;
+      }
+    }
   },
   methods: {
     saveForm() {
@@ -383,13 +392,13 @@ export default {
         var regExp = new RegExp("\.(docx|jpg|pdf)$", "i");
         isJPG = regExp.test(file.name);
       }
-      const isLt10M = file.size / 1024 / 1024 < 10;
+      const isLt10M = file.size / 1024 / 1024 < 30;
 
       if (!isJPG) {
         this.$message.error('上传文件只能是 JPG、DOCX、PDF 格式!');
       }
       if (!isLt10M) {
-        this.$message.error('上传文件大小不能超过 10MB!');
+        this.$message.error('上传文件大小不能超过 30MB!');
       }
       return isJPG && isLt10M;
     },
@@ -405,13 +414,13 @@ export default {
     },
     beforeInvoiceUpload(file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'application/pdf';
-      const isLt10M = file.size / 1024 / 1024 < 10;
+      const isLt10M = file.size / 1024 / 1024 < 30;
 
       if (!isJPG) {
         this.$message.error('上传文件只能是 JPG或PDF 格式!');
       }
       if (!isLt10M) {
-        this.$message.error('上传文件大小不能超过 10MB!');
+        this.$message.error('上传文件大小不能超过 30MB!');
       }
       return isJPG && isLt10M;
     },

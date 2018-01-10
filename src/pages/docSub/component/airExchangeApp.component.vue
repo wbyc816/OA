@@ -66,15 +66,15 @@
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
       <el-form-item label="换入器件名称" prop="changeIntoMaterialName">
-        <el-input v-model="budgetForm.changeIntoMaterialName">
+        <el-input v-model="budgetForm.changeIntoMaterialName" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="换入件号" prop="changeIntoPieceNo" class="deptArea">
-        <el-input v-model="budgetForm.changeIntoPieceNo">
+        <el-input v-model="budgetForm.changeIntoPieceNo" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="换入序号" prop="changeIntoSequenceNo" class="arrArea">
-        <el-input v-model="budgetForm.changeIntoSequenceNo">
+        <el-input v-model="budgetForm.changeIntoSequenceNo" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="换入数量" prop="changeIntoNum" class="clearBoth">
@@ -90,15 +90,15 @@
         </money-input>
       </el-form-item>
       <el-form-item label="换出器件名称" prop="changeOutMaterialName" class="clearBoth">
-        <el-input v-model="budgetForm.changeOutMaterialName">
+        <el-input v-model="budgetForm.changeOutMaterialName" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="换出件号" prop="changeOutPieceNo" class="deptArea">
-        <el-input v-model="budgetForm.changeOutPieceNo">
+        <el-input v-model="budgetForm.changeOutPieceNo" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="换出序号" prop="changeOutSequenceNo" class="arrArea">
-        <el-input v-model="budgetForm.changeOutSequenceNo">
+        <el-input v-model="budgetForm.changeOutSequenceNo" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="换出数量" prop="changeOutNum" class="offerPrice clearfix clearBoth">

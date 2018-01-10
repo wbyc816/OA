@@ -447,7 +447,7 @@ export default {
           }
         })
       }
-      return num
+      return parseFloat(this.numFixed2(num))
     },
     totalFee() {
       var num = 0;
@@ -458,7 +458,7 @@ export default {
           }
         })
       }
-      return num
+      return parseFloat(this.numFixed2(num))
     },
     maxMoney() {
       var num = 0;

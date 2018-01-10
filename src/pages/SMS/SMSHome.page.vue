@@ -2,7 +2,9 @@
   <div id='SMSHome'>
     <el-row :gutter='12'>
       <el-col :span='18'>
-        <router-view></router-view>
+        <keep-alive exclude="SMSDetail,SMSApp">
+          <router-view></router-view>
+        </keep-alive>
       </el-col>
       <el-col :span='6'>
         <el-menu mode="vertical" v-bind:router="true" class="mySideLink">
@@ -29,17 +31,13 @@ export default {
   data() {
     return {};
   },
-  created() {
-    this.$store.dispatch('getRoomPosition');
-    this.$store.dispatch('getConferenceType');
-    this.$store.dispatch('getConferenceNum');
-  },
+  created() {},
   methods: {
 
   },
   watch: {
     '$route' (to, from) {
-      this.$store.dispatch('getConferenceNum');
+      // this.$store.dispatch('getConferenceNum');
     }
   },
   computed: {

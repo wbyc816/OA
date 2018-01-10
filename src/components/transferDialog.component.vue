@@ -1,11 +1,15 @@
 <template>
-  <div class="organDialogBox">
-    <el-dialog :visible.sync="dialogVisible" title="选择人员" size="large" class="organDialog" @close="close">
+  <div class="transferWrap">
+    <el-dialog :visible.sync="dialogVisible" title="选择人员" size="large" class="transferDialog" @close="close">
       <div class="transferBox clearfix">
         <div class="transferPanel leftPanel">
           <p class="panelHeader">待选列表</p>
-          <div class="panelBody">
-            <el-tree :data="organList" show-checkbox lazy :load="loadNode" :default-expanded-keys="expandKeys" node-key="id" :props="defaultProps" @check-change="checkChange" ref="tree">
+          <div class="panelBody" v-loading="loading||first">
+            <div class="panelFilter">
+              <el-input placeholder="请输入关键词" icon="search" v-model.trim="leftFilterText" @change="triggerLeftFiter">
+              </el-input>
+            </div>
+            <el-tree :data="organList" show-checkbox :default-expanded-keys="expandKeys" accordion node-key="id" :props="defaultProps" :auto-expand-parent="false" @check-change="checkChange" :filter-node-method="filterLeft" ref="tree" v-if="!first">
             </el-tree>
           </div>
           <p class="panelFooter">
@@ -18,21 +22,25 @@
         <div class="transferPanel rightPanel">
           <p class="panelHeader">已选列表</p>
           <div class="panelBody">
+            <div class="panelFilter" v-show="selList.length!==0">
+              <el-input placeholder="请输入关键词" icon="search" v-model.trim="rightFilterText" @change="triggerRightFiter">
+              </el-input>
+            </div>
             <el-checkbox-group v-model="rightList" @change="rightChange">
-              <el-checkbox v-for="person in selList" :label="person.id" :key="person.id">{{person.name}}</el-checkbox>
+              <el-checkbox v-for="person in selList" :label="person.id" :key="person.id" v-show="person.name.indexOf(rightFilterText)!==-1">{{person.name}}</el-checkbox>
             </el-checkbox-group>
             <!-- <el-tree :data="selList" show-checkbox :props="defaultProps">
             </el-tree> -->
           </div>
           <p class="panelFooter">
-            <el-checkbox :indeterminate="isIndeterminate" v-model="checkRightAll" @change="HandleCheckRightAll" :disabled="selList.length===0">
+            <el-checkbox :indeterminate="isIndeterminate" v-model="checkRightAll" @change="HandleCheckRightAll" :disabled="selList.length===0||rightFilterText.length!==0">
               {{(rightList.length===0?'共 ':'已选 '+rightList.length+'/')+selList.length+'人'}}
             </el-checkbox>
           </p>
         </div>
       </div>
       <div class="sumitBox">
-        <el-button type="primary">提交</el-button>
+        <el-button type="primary" @click="submit" :disabled="selList.length===0">提交</el-button>
       </div>
     </el-dialog>
   </div>
@@ -49,15 +57,20 @@ export default {
       checkRightAll: false,
       isIndeterminate: false,
       defaultProps: {
-        children: 'childNode',
+        children: 'childrens',
         label: 'name'
       },
       organList: [],
       expandKeys: [],
       leftList: [],
       leftTempList: [],
+      leftFilterText: '',
       selList: [],
-      rightList: []
+      rightList: [],
+      rightFilterText: '',
+      loading: false,
+      first: true,
+      initData: false
     }
   },
   props: {
@@ -65,10 +78,22 @@ export default {
       type: Boolean,
       default: false
     },
+    data: ''
   },
   watch: {
     'visible': function(newVal) {
       this.dialogVisible = this.visible;
+      if (!this.first && newVal) {
+        var temp1 = this.data.map(item => item.id).sort();
+        var temp2=this.$refs.tree.getCheckedNodes(true);
+        if (this.$refs.tree.getCheckedKeys(true).sort().toString() !== temp1.toString()) {
+          temp2.forEach(node=>node.disabled=false);
+          this.selList=[];
+          this.initData = true;
+          this.$refs.tree.setCheckedKeys(temp1);
+        }
+      }
+      setTimeout(() => { this.first = false; }, 100)
     }
   },
   computed: {
@@ -86,79 +111,98 @@ export default {
   },
   methods: {
     getOrgan() {
-      var leveNum = 0;
+      var that = this;
+      this.loading = true;
 
-      function loopMap(arr, targetArr) {
-        leveNum++;
+      function sortPerson(a, b) {
+        if (a.empId && !b.empId) {
+          // console.log(a,b)
+          return -1
+        } else if (!a.empId && b.empId) {
+          return 1
+        } else {
+          return 0
+        }
+      }
+
+      function loopMap(arr, father) {
+        if (!father || father.id !== that.DHId) {
+          arr.sort(sortPerson)
+        }
         arr.forEach((dep) => {
-          var temp = {
-            id: dep.id,
-            name: dep.name,
-            type: 'dep',
-            childNode: [],
-            disabled: false,
-            leveNum: leveNum
-          }
-          targetArr.push(temp)
-          if (dep.childNode.length !== 0) {
-            loopMap(dep.childNode, targetArr[targetArr.indexOf(temp)].childNode)
+          dep.disabled = false
+          if (dep.childrens && dep.childrens.length != 0) {
+            loopMap(dep.childrens, dep)
           }
         })
       }
-      this.$http.post('/dept/selectDeptOrg')
+      this.$http.post('/dept/selectDept')
         .then(res => {
+          this.loading = false;
           if (res.status == 0) {
-            loopMap(res.data.deptList, this.organList);
+            loopMap(res.data);
+            this.organList = res.data;
           } else {
 
           }
         })
     },
-    loadNode(node, resolve) {
-      if (node.level === 0) {
-        resolve(node.data);
-      } else if (node.level === 1) {
-        resolve(node.data.childNode);
-      } else if (node.data.type === 'dep') {
-        this.$http.post('/dept/selectDeptEmp', { deptId: node.data.id })
-          .then(res => {
-            if (res.status == 0) {
-              if (res.data) {
-                var tempArr = res.data.map(function(person) {
-                  person.type='person';
-                  person.disabled=false;
-                  return person
-                })
-                var keys = tempArr.map(function(person) {
-                  return person.id
-                })
-                console.log(tempArr)
-                this.expandKeys = keys;
-                setTimeout(() => {
-                  resolve(tempArr.concat(node.data.childNode));
-                }, 200)
-              } else {
-                resolve([])
-              }
-            } else {
+    // loadNode(node, resolve) {
+    //   if (node.level === 0) {
+    //     resolve(node.data);
+    //   } else if (node.level === 1) {
+    //     resolve(node.data.childNode);
+    //   } else if (node.data.type === 'dep') {
+    //     this.$http.post('/dept/selectDeptEmp', { deptId: node.data.id })
+    //       .then(res => {
+    //         if (res.status == 0) {
+    //           if (res.data) {
+    //             var tempArr = res.data.map(function(person) {
+    //               person.type = 'person';
+    //               person.disabled = false;
+    //               return person
+    //             })
+    //             var keys = tempArr.map(function(person) {
+    //               return person.id
+    //             })
+    //             console.log(tempArr)
+    //             this.expandKeys = keys;
+    //             setTimeout(() => {
+    //               resolve(tempArr.concat(node.data.childNode));
+    //             }, 200)
+    //           } else {
+    //             resolve([])
+    //           }
+    //         } else {
 
-            }
-          })
-      } else if (node.data.type === 'person') {
-        resolve([])
-      }
-    },
-    checkChange: _.debounce(function(data) {
-      this.leftList = this.$refs.tree.getCheckedNodes(true).filter(person => person.type === 'person');
-      this.leftTempList = this.leftList.filter(person => !person.disabled);
-    }, 300),
-    // checkChange(data) {
-    //   console.log(data);
+    //         }
+    //       })
+    //   } else if (node.data.type === 'person') {
+    //     resolve([])
+    //   }
     // },
+    checkChange: _.debounce(function(data) {
+      this.leftList = this.$refs.tree.getCheckedNodes(true).filter(person => person.empId);
+      this.leftTempList = this.leftList.filter(person => !person.disabled);
+      if (this.initData) {
+        this.initData = false;
+        this.addPerson();
+      }
+    }, 300),
     addPerson() {
       this.selList = this.selList.concat(this.leftTempList);
       this.selList.forEach(person => person.disabled = true);
       this.leftTempList = [];
+    },
+    triggerLeftFiter(val) {
+      this.$refs.tree.filter(val);
+    },
+    filterLeft(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    triggerRightFiter(val) {
+
     },
     removePerson() {
       var leftIndexList = [];
@@ -198,6 +242,10 @@ export default {
       let checkedCount = value.length;
       this.checkRightAll = checkedCount === this.selList.length;
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.selList.length;
+    },
+    submit() {
+      this.$emit('update', this.selList);
+      this.dialogVisible = false;
     }
   }
 }
@@ -205,8 +253,8 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.organDialogBox {
-  .organDialog {
+.transferWrap {
+  .transferDialog {
     .el-dialog {
       width: 800px;
       .transferBox {
@@ -255,6 +303,17 @@ $main:#0460AE;
             padding-bottom: 36px;
             height: 336px;
             overflow-y: auto;
+            .panelFilter {
+              margin-top: 10px;
+              text-align: center;
+              padding: 0 10px;
+              width: 100%;
+              box-sizing: border-box;
+              .el-input__inner {
+                border-radius: 4px;
+                height: 30px;
+              }
+            }
           }
           .panelFooter {
             height: 36px;

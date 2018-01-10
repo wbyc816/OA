@@ -2,63 +2,51 @@
   <div id="mySMS">
     <el-card class="borderCard searchOptions">
       <div slot="header">
-        <span>我的预定</span>
-        <i class="iconfont icon-shuaxin" @click="reset"></i>
+        <span>我的短信</span>
+        <span class="detailButton" @click="showDetail=!showDetail">{{!showDetail?'高级搜索':'收起'}}</span>
       </div>
-      <el-row :gutter="12">
-        <el-col :span="8">
-          <el-input v-model.trim="searchParams.conferenceTitle" placeholder="会议名称" :maxlength="50"></el-input>
-        </el-col>
-        <el-col :span="5">
-          <el-date-picker v-model="searchParams.reserveDate" type="date" :editable="false" style="width:100%" placeholder="日期"></el-date-picker>
-        </el-col>
-        <el-col :span="4">
-          <el-select v-model="searchParams.roomPlace" style="width:100%" @change="changeRoomPlace" placeholder="位置">
-            <el-option v-for="item in roomList" :key="item.roomPosition" :label="item.roomPosition" :value="item.roomPosition">
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="4">
-          <el-select v-model="searchParams.roomId" placeholder="房间" no-data-text="请先选择位置">
-            <el-option v-for="item in rooms" :key="item.id" :label="item.roomName" :value="item.id">
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="3">
-          <el-button type="primary" @click="search" :disabled="searchLoading">搜索</el-button>
-        </el-col>
-      </el-row>
+      <el-collapse-transition>
+        <div v-show="showDetail">
+          <el-row :gutter="12">
+            <el-col :span="18">
+              <el-input v-model.trim="searchParams.content" placeholder="短信内容" :maxlength="50"></el-input>
+            </el-col>
+            <el-col :span="6">
+              <el-select v-model="searchParams.sendStatus" style="width:100%" placeholder="短信状态" clearable>
+                <el-option label="发送成功" value="1"></el-option>
+                <el-option label="发送失败" value="0"></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="18">
+              <el-date-picker v-model="timeline" placeholder="起始至截至日期" type="daterange" :editable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+            </el-col>
+            <el-col :span="3" :offset="3">
+              <el-button type="primary" @click="search" :disabled="searchLoading">搜索</el-button>
+            </el-col>
+          </el-row>
+        </div>
+      </el-collapse-transition>
     </el-card>
     <el-card class="borderCard searchResult" v-loading="searchLoading">
       <el-table :data="searchData" class="myTable" @row-click="goDetail">
-        <el-table-column prop="conferenceNumber" label="预定编号" width="130"></el-table-column>
-        <el-table-column prop="conferenceTitle" label="会议名称"></el-table-column>
-        <el-table-column prop="reserveDate" label="会议日期" width="100">
+        <el-table-column prop="sendUserName" label="发送人" width="130"></el-table-column>
+        <el-table-column prop="reciUserName" label="接收人" width="130"></el-table-column>
+        <el-table-column prop="content" label="短信内容" class-name="contentColumn"></el-table-column>
+        <el-table-column prop="sendStatus" label="短信状态" width="100">
           <template scope="scope">
-            {{scope.row.reserveDate | time('date')}}
+            <span :class="{errorText:scope.row.sendStatus=='0'}">{{scope.row.sendStatus=='1'?'发送成功':'发送失败'}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="beginTime" label="开始时间" width="80">
-          <template scope="scope">
-            {{scope.row.beginTime | time('hours')}}
-          </template>
-        </el-table-column>
-        <el-table-column prop="endTime" label="结束时间" width="80">
-          <template scope="scope">
-            {{scope.row.endTime | time('hours')}}
-          </template>
-        </el-table-column>
-        <el-table-column prop="roomName" label="房间" width="70"></el-table-column>
-        <el-table-column prop="roomPlace" label="位置" width="100"></el-table-column>
+        <el-table-column prop="sendTime" label="发送日期" width="100"></el-table-column>
         <el-table-column label="操作" class-name="clickItem" width="90">
           <template scope="scope">
-            <span v-if="scope.row.isCancel==1">已取消</span>
-            <span class="cancelButton" v-else @click.stop="cancel(scope.row)">取消</span>
+            <span class="cancelButton" @click.stop="goDetail(scope.row)">查看</span>
+            <span class="cancelButton" @click.stop="cancel(scope.row)">删除</span>
           </template>
         </el-table-column>
       </el-table>
       <div class="pageBox" v-show="searchData.length>0">
-        <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
+        <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="searchParams.pageSize" layout="total, prev, pager, next, jumper" :total="totalSize">
         </el-pagination>
       </div>
     </el-card>
@@ -74,52 +62,54 @@ export default {
       value1: '',
       reserveDate: '',
       searchParams: {
-        "conferenceTitle": "",
-        "reserveDate": "",
-        "isMyLaunched": 1,
-        "pageSize": 10,
+        "pageSize": 15,
         "pageNumber": 1,
-        "roomPlace": '',
-        "roomId": '',
-        // 'shortType':1
+        "userId": "",
+        "content": "",
+        "sendStatus": "",
+        "startTime": "",
+        "endTime": "",
       },
+      timeline: [],
       totalSize: 0,
-      searchLoading: false
+      searchLoading: false,
+      pickerOptions0: {
+        disabledDate(time) {
+          return time.getTime() >= +new Date();
+        }
+      },
+      showDetail: false
     }
   },
   computed: {
-    rooms() {
-      var temp = [];
-      if (this.searchParams.roomPlace) {
-        temp = this.roomList.find(r => r.roomPosition == this.searchParams.roomPlace).rooms;
-      }
-      return temp;
-    },
     ...mapGetters([
       'userInfo',
       'roomList',
     ])
   },
   created() {
+    this.searchParams.userId = this.userInfo.empId;
+    this.getData();
+  },
+  activated() {
     this.getData();
   },
   components: {
 
   },
   methods: {
-    changeRoomPlace() {
-      this.searchParams.roomId = '';
-    },
     getData() {
-      var that = this;
       this.searchLoading = true;
-      var params = Object.assign({ empId: this.userInfo.empId }, this.clone(this.searchParams))
-      if (this.searchParams.reserveDate) {
-        params.reserveDate = this.searchParams.reserveDate.getTime();
+      if (this.timeline && this.timeline.length != 0) {
+        this.searchParams.startTime = this.timeFilter(+this.timeline[0], 'date') + ' 00:00:00';
+        this.searchParams.endTime = this.timeFilter(+this.timeline[1], 'date') + ' 23:59:59';
+      } else {
+        this.searchParams.startTime = '';
+        this.searchParams.endTime = '';
       }
-      this.$http.post("/conference/conferReserveList", params, { body: true }).then(res => {
-        setTimeout(function() {
-          that.searchLoading = false;
+      this.$http.post("/tSmsSend/selectMySms", this.searchParams, { body: true }).then(res => {
+        setTimeout(() => {
+          this.searchLoading = false;
         }, 200)
         if (res.status == 0) {
           this.searchData = res.data.records;
@@ -147,28 +137,27 @@ export default {
       this.searchParams.roomId = '';
     },
     cancel(row) {
-      this.$confirm('确定取消此次会议预定?', '提示', {
+      this.$confirm('确定删除此条短信记录?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.post('/conference/cancalConference', { id: row.id,cancelEmpId:this.userInfo.empId,cancelName:this.userInfo.name },{body:true})
+        this.$http.post('/tSmsSend/deleteById', { id: row.id })
           .then(res => {
             if (res.status == 0) {
-              this.$message.success('取消成功');
-              this.searchParams.pageNumber=1;
+              this.$message.success('删除成功');
+              this.searchParams.pageNumber = 1;
               this.getData();
-              this.$store.dispatch('getConferenceNum');
             } else {
-              this.$message.warning('取消失败')
+              this.$message.warning('删除失败')
             }
           })
       }).catch(() => {
 
       });
     },
-    goDetail(row){
-      this.$router.push('/meeting/bookingDetail/'+row.id)
+    goDetail(row) {
+      this.$router.push('/SMS/SMSDetail/' + row.id)
     }
   }
 }
@@ -179,22 +168,21 @@ $main: #0460AE;
 $sub:#1465C0;
 #mySMS {
   .searchOptions {
+    .detailButton {
+      float: right;
+      color: $main;
+      cursor: pointer;
+    }
     .el-card__body {
+      padding-bottom: 13px;
       .el-col {
-        margin-top: 13px;
-        margin-bottom: 13px;
+        margin-top: 13px; // margin-bottom: 13px;
       }
       .el-col-6 {
         .el-select {
           width: 100%;
         }
       }
-      .el-col-8 {
-        .el-select {
-          width: 60%;
-        }
-      }
-
       button {
         height: 46px; // width: 40%;
         // float: right;
@@ -214,9 +202,8 @@ $sub:#1465C0;
         tr td:first-child .cell {
           padding-left: 15px;
         }
-
         td {
-          height: 70px;
+          height: 60px;
         }
         td.clickItem {
           .cancelButton {
@@ -228,6 +215,16 @@ $sub:#1465C0;
           padding-right: 25px;
         }
       }
+      .contentColumn {
+        .cell {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+      }
+      .errorText {
+        color: red;
+      }
     }
     .total {
       height: 33px;
@@ -237,8 +234,8 @@ $sub:#1465C0;
       color: #95989A;
     }
   }
-  .pageBox{
-    padding:20px;
+  .pageBox {
+    padding: 20px;
     text-align: right;
   }
 }

@@ -142,23 +142,23 @@
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
       <el-form-item label="器材中文名称" prop="materialNameZn">
-        <el-input v-model="budgetForm.materialNameZn" :disabled="isRead">
+        <el-input v-model="budgetForm.materialNameZn" :disabled="isRead" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="件号" prop="pieceNo" class="deptArea">
-        <el-input v-model="budgetForm.pieceNo" :disabled="isRead">
+        <el-input v-model="budgetForm.pieceNo" :disabled="isRead" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="序号" prop="sequenceNo" class="arrArea">
-        <el-input v-model="budgetForm.sequenceNo" :disabled="isRead">
+        <el-input v-model="budgetForm.sequenceNo" :disabled="isRead" :maxlength="20">
         </el-input>
       </el-form-item>
       <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
-        <el-input v-model="budgetForm.pieceNum" :disabled="isRead">
-        </el-input>
+        <money-input v-model="budgetForm.pieceNum" type="int" :disabled="isRead" :prepend="false" :append="false" :maxlength="6">
+        </money-input>
       </el-form-item>
       <el-form-item label="单位" prop="unit" class="arrArea">
-        <el-input v-model="budgetForm.unit" :disabled="isRead">
+        <el-input v-model="budgetForm.unit" :disabled="isRead" :maxlength="8">
         </el-input>
       </el-form-item>
       <el-form-item label="工时费" prop="timePrice" class="deptArea">
