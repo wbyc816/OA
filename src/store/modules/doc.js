@@ -33,6 +33,9 @@ const state = {
     "docImportTypeCode": "",
     "docImportType": "",
   },
+  suggestPath:{
+    suggests:''
+  },
   extraDocs: [],
   processView: false,
   processData: [],
@@ -289,7 +292,8 @@ const getters = {
   staticsPower: state => state.staticsPower,
   isSubmit: state => state.isSubmit,
   taskUser: state => state.taskUser,
-  secretaryInfo: state => state.secretaryInfo
+  secretaryInfo: state => state.secretaryInfo,
+  suggestPath: state => state.suggestPath,
 }
 
 const mutations = {
@@ -347,6 +351,9 @@ const mutations = {
   },
   setSecretaryInfo(state, payLoad) {
     state.secretaryInfo = payLoad;
+  },
+  setSuggestPath(state, payLoad) {
+    state.suggestPath = payLoad;
   }
 }
 

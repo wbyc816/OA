@@ -82,7 +82,8 @@ export default {
       'reciver',
       'isSubmit',
       'taskUser',
-      'isReady'
+      'isReady',
+      'suggestPath'
     ])
   },
   beforeRouteLeave(to, from, next) {
@@ -204,7 +205,7 @@ export default {
         if (this.$route.query.id) {
           params.id = this.$route.query.id
         }
-        Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency, this.middleParams)
+        Object.assign(temp, params, this.reciver,this.suggestPath, this.selConfident, this.selUrgency, this.middleParams)
         this.$store.commit('setIsSubmit', true);
         this.submitParam = temp;
         this.saveDoc();
@@ -267,7 +268,7 @@ export default {
           if (this.$route.query.id) {
             temp.id = this.$route.query.id
           }
-          Object.assign(temp, params, this.reciver, this.selConfident, this.selUrgency);
+          Object.assign(temp, params, this.reciver,this.suggestPath, this.selConfident, this.selUrgency);
           finalParam = temp;
         }
         this.$http.post(this.doc.url, finalParam, { body: true })
@@ -320,9 +321,9 @@ export default {
             }
             // 建议路径
             if (res.data.path) {
-              this.$refs.description.updatePath(res.data.path);
+              this.$refs.subject.updatePath(res.data.path);
             }
-            this.$refs.description.disableEditSuggest = res.data.isEdit == 0 ? false : true;
+            this.$refs.subject.disableEditSuggest = res.data.isEdit == 0 ? false : true;
             // 附加公文
             if (res.data.docs.length != 0) {
               this.$refs.description.docs = res.data.docs;
@@ -336,7 +337,7 @@ export default {
         })
     },
     updateSuggest(val) {
-      this.$refs.description.getSuggestTemp(val);
+      this.$refs.subject.getSuggestTemp(val);
     },
   }
 }
@@ -344,54 +345,5 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-
-
-// .commonApp {
-//   .deptArea,
-//   .arrArea {
-//     float: left;
-//     width: 50%;
-//   }
-//   .arrArea {
-//     .el-form-item__label {
-//       padding-left: 18px;
-//     }
-//   }
-//   .reciverWrap {
-//     clear: both;
-//     .el-form-item__content {
-//       display: flex;
-//     }
-//     .reciverList {
-//       flex: 1;
-//       .el-tag {
-//         margin-right: 5px;
-//       }
-//     }
-//     .addButton {
-//       right: 0;
-//     }
-//   }
-//   .saveButton {
-//     float: right;
-//     margin-right: 150px;
-//     height: 46px;
-//     font-size: 16px;
-//     border-radius: 3px;
-//     i {
-//       font-size: 23px;
-//       vertical-align: sub;
-//       margin-right: 3px;
-//     }
-//   }
-//   .submitButton {
-//     height: 46px;
-//     width: 200px;
-//     margin-left: 134px;
-//     font-size: 16px;
-//     border-radius: 3px;
-//     background-color: $main;
-//   }
-// }
 
 </style>

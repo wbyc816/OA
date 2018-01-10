@@ -19,6 +19,11 @@
           </template>
         </el-input>
       </el-form-item>
+      <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
+        <div class="pathBox clearfix" v-html="pathHtml">
+        </div>
+        <el-button size="small" type="text" @click="pathDialogVisible=true" :disabled="disableEditSuggest"><i class="iconfont icon-edit"></i>编辑</el-button>
+      </el-form-item>
       <el-form-item class='form-box' label="标题" prop="sub">
         <el-input :value="docTitle" @input="updateTitle" :maxlength="50">
         </el-input>
@@ -36,15 +41,19 @@
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updatePerson" :selText="isDefault?'默认收件人':'收件人'" :visible.sync="dialogTableVisible" :admin="personAdmin" :deptId="taskUser.deptParentId" :hasSecretary="otherAdviceDoc.find(d=>d==$route.params.code)!=undefined&&isAdmin&&userInfo.isTaskUser != 1"></person-dialog>
+    <path-dialog @updatePath="updatePath" :visible.sync="pathDialogVisible" :paths="ruleForm.path"></path-dialog>
   </div>
 </template>
 <script>
 import PersonDialog from '../../../components/personDialog.component'
+import PathDialog from '../../../components/pathDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
+const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const otherAdviceDoc = ["FWG", "SWD", "CPD", "HTS"]
 export default {
   components: {
-    PersonDialog
+    PersonDialog,
+    PathDialog
   },
   props: {
     reciverTtitle: {
@@ -59,13 +68,16 @@ export default {
   data() {
     return {
       dialogTableVisible: false,
+      pathDialogVisible: false,
+      disableEditSuggest: false,
       ruleForm: {
         rec: '',
         sub: '',
         confident: '',
         urgency: '',
         confidentiality: '',
-        taskUserID: ''
+        taskUserID: '',
+        path: []
       },
       searchForm: {
         name: ''
@@ -83,12 +95,14 @@ export default {
           { required: true, message: '请输入标题', trigger: 'blur,change' },
           // { min: 2, max: 5, message: '长度在 1 到 100 个字符之间', trigger: 'change' }
         ],
+        path: [{ type: 'array', required: true, message: '请选择建议路径', trigger: 'blur,change' }],
       },
       isDefault: false,
       taskUserList: [],
       draftFirst: false,
       otherAdviceDoc,
-      isAdmin: false
+      isAdmin: false,
+      isfirst: true,
     }
   },
   computed: {
@@ -109,6 +123,41 @@ export default {
       }
       return temp
     },
+    pathHtml: function() {
+      var html = '起草' + arrowHtml + ' ';
+      if (this.ruleForm.path.length != 0) {
+        this.ruleForm.path.forEach((node, index) => {
+          if (node.nodeName == 'sign' || node.nodeName == 'trans') {
+            if (!node.children || node.children.length == 0) {
+              html += node.typeIdName + ' ' + arrowHtml
+            } else {
+              node.children.forEach((child, childIndex) => {
+                if (childIndex == 0) {
+                  html += '#' + child.typeIdName + child.remark;
+                  if (childIndex == node.children.length - 1) {
+                    html += '# ' + arrowHtml
+                  } else {
+                    html += ' '
+                  }
+                } else if (childIndex == node.children.length - 1) {
+                  html += child.typeIdName + child.remark + '# ' + arrowHtml;
+                } else {
+                  html += child.typeIdName + child.remark + ' '
+                }
+              })
+            }
+          } else {
+            if (index != this.ruleForm.path.length - 1) {
+              html += node.typeIdName + node.remark + arrowHtml
+            } else {
+              html += node.typeIdName + node.remark
+            }
+          }
+        })
+      }
+      html += '归档'
+      return html;
+    },
     ...mapGetters([
       'userInfo',
       'confidentiality',
@@ -128,6 +177,13 @@ export default {
     reciverName: function(newVal) {
       if (newVal) {
         this.ruleForm.rec = newVal;
+      }
+    },
+    taskUser: function(newval) {
+      if (newval) {
+        if (!this.$route.query.id || !this.isfirst) { //草稿箱第一次不调用建议路径模板
+          this.getSuggestTemp();
+        }
       }
     }
   },
@@ -207,7 +263,12 @@ export default {
     submitForm() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          this.$emit('submitStart', true);
+          if (this.checkSuggest()) {
+            this.$store.commit('setSuggestPath', {suggests:this.handlePath(this.ruleForm.path)});
+            this.$emit('submitStart', true);
+          } else {
+            this.$emit('submitStart', false);
+          }
         } else {
           this.$message.warning('请检查填写字段')
           this.$emit('submitStart', false);
@@ -218,7 +279,12 @@ export default {
     saveForm() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          this.$emit('saveStart');
+          if (this.checkSuggest()) {
+            this.$store.commit('setSuggestPath', {suggests:this.handlePath(this.ruleForm.path)});
+            this.$emit('saveStart');
+          } else {
+            this.$store.commit('SET_SUBMIT_LOADING', false)
+          }
         } else {
           this.$message.warning('请检查填写字段')
           this.$store.commit('SET_SUBMIT_LOADING', false)
@@ -293,6 +359,115 @@ export default {
           }
         })
     },
+    checkSuggest() {
+      var success = true;
+      if (!this.disableEditSuggest) {
+        this.ruleForm.path.forEach((p, i, arr) => {
+          if (p.type == 4 || p.type == 5) { //判断会签不能为空
+            if (!p.children || p.children.length == 0) {
+              this.$message.warning('建议路径内会签列表不能为空！');
+              success = false
+            } else if (i == 0) {
+              this.$message.warning('建议路径不能以会签开始！');
+              success = false
+            } else if (i == arr.length - 1) {
+              this.$message.warning('建议路径不能以会签结束！');
+              success = false
+            }
+          } else {
+            if (p.state && p.state == 1 && p.type != 7) {
+              this.$message.warning('建议路径内'+p.typeIdName + '需替换！');
+              success = false
+            }
+          }
+        })
+      }
+      return success
+    },
+    updatePath(list) {
+      this.ruleForm.path = this.clone(list);
+      this.pathDialogVisible = false;
+    },
+    handlePath(list) {
+      var _list = [];
+      list.forEach((item, index, arr) => {
+        var nodeName = '';
+        if (index == 0) {
+          nodeName = 'start';
+        } else if (index == arr.length - 1) {
+          nodeName = 'end';
+        } else {
+          nodeName = 'task';
+        }
+        if (item.nodeName == 'sign' || item.type == 4) {
+          nodeName = 'sign';
+          if (item.type == 4) {
+            nodeName = 'trans';
+          }
+          item.children.forEach((child, i) => {
+            _list.push({
+              nodeId: index + 1 + '-' + i,
+              nodeName: nodeName,
+              typeId: child.typeId,
+              typeIdName: child.typeIdName,
+              type: child.type,
+              docType: this.$route.params.code,
+              remark: child.ramark
+            })
+          })
+        } else {
+          _list.push({
+            nodeId: index + 1,
+            nodeName: nodeName,
+            typeId: item.typeId,
+            typeIdName: item.typeIdName,
+            type: item.type,
+            docType: this.$route.params.code,
+            remark: item.remark
+          })
+        }
+      })
+      return _list
+    },
+    getSuggestTemp(param) {
+      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.taskUser.empId, deptId: this.taskUser.deptParentId, docTypeSubCode: param })
+        .then(res => {
+          this.isfirst = false;
+          if (res.status == 0) {
+            this.disableEditSuggest = res.data.isEdit == 0 ? false : true;
+            this.handleSuggestTemp(res.data.paths);
+          } else {
+
+          }
+        })
+    },
+    handleSuggestTemp(arr) {
+      var temp = [];
+      var start;
+      arr.forEach((s, index) => {
+        if (s.type == 4 || s.type == 5) { //人员或部门会签
+          s.nodeName = 'sign';
+          s.children = [];
+          temp.push(s);
+        } else if (s.type == 7) {
+          if (start) {
+            start = 0;
+          } else {
+            start = index;
+            s.nodeName = 'sign';
+            s.children = [];
+            temp.push(s);
+          }
+        } else {
+          if (start) {
+            temp[start].children.push(s);
+          } else {
+            temp.push(s);
+          }
+        }
+      })
+      this.ruleForm.path = temp;
+    },
     ...mapMutations(['setConfident', 'setUrgency'])
   },
 
@@ -344,6 +519,44 @@ $main:#0460AE;
     font-size: 13px;
     color: #8492a6;
     right: 31px;
+  }
+  .suggestPath {
+    .pathBox {
+      width: 88%;
+      float: left;
+      line-height: 20px;
+      padding-top: 12px;
+      .nodeBox {
+        float: left;
+        padding-right: 10px;
+        .signList {
+          color: #main;
+          span {
+            padding-right: 5px;
+            &:last-of-type {
+              padding-right: 0;
+            }
+          }
+        }
+      }
+      i {
+        padding-right: 10px;
+        color: $main;
+      }
+    }
+    .el-button {
+      width: 12%;
+      float: right;
+      border-left: 1px solid #95989A;
+      line-height: 30px;
+      padding: 0;
+      font-size: 15px;
+      margin-top: 7px;
+      text-align: right;
+      i {
+        margin-right: 5px;
+      }
+    }
   }
 }
 

@@ -4,17 +4,11 @@
     <slot></slot>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
       <el-form-item :label="options.desTitle||'请示内容'" prop="des" :rules="[{ required: true,validator:checkDes,trigger: 'blur,change' }]" v-if="$route.params.code!='FWG'">
-        <!-- <el-input type="textarea" :rows="16" resize='none' v-model="ruleForm.des" :maxlength="5000"></el-input> -->
         <editor @input="desChange" @updateLen="updateLen" :data="ruleForm.des" ref="editor"></editor>
       </el-form-item>
-      <el-form-item class='form-box suggestPath' label="建议路径" prop="path">
-        <div class="pathBox clearfix" v-html="pathHtml">
-        </div>
-        <el-button size="small" type="text" @click="pathDialogVisible=true" :disabled="disableEditSuggest"><i class="iconfont icon-edit"></i>编辑</el-button>
-      </el-form-item>
-      <el-form-item label="附件" prop="attchment">
+      <el-form-item label="附件" prop="attchment" class="attchment">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
-          <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>19"  v-show="!isIE()||(ruleForm.attchment.length<=19&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+          <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>19" v-show="!isIE()||(ruleForm.attchment.length<=19&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
         </el-upload>
         <p class="uploadInfo">单个附件不能超过500MB</br>最多上传20个附件</p>
       </el-form-item>
@@ -52,20 +46,16 @@
         </el-pagination>
       </div>
     </el-dialog>
-    <path-dialog @updatePath="updatePath" :visible.sync="pathDialogVisible" :paths="ruleForm.path"></path-dialog>
   </div>
 </template>
 <script>
 import SearchOptions from '../../../components/searchOptions.component'
-import PathDialog from '../../../components/pathDialog.component'
 import Editor from '../../../components/editor.component'
 import { mapGetters, mapMutations } from 'vuex'
-const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const noTitleDocs = ['HCG', 'JBC', 'ZJJ', 'SXS', 'JHH']
 export default {
   components: {
     SearchOptions,
-    PathDialog,
     Editor
   },
   props: {
@@ -78,14 +68,11 @@ export default {
       ruleForm: {
         des: '',
         attchment: [],
-        path: []
       },
       rules: {
-        path: [{ type: 'array', required: true, message: '请选择建议路径', trigger: 'blur,change' }],
         attchment: []
       },
       dialogTableVisible: false,
-      pathDialogVisible: false,
       docs: [{ quoteDocTitle: '', quoteDocId: '' }],
       activeDoc: '',
       uploadOver: false,
@@ -103,46 +90,10 @@ export default {
       difLength: 0,
       upCount: 0,
       isSaveForm: false,
-      disableEditSuggest: false,
       isfirst: true,
     }
   },
   computed: {
-    pathHtml: function() {
-      var html = '起草' + arrowHtml + ' ';
-      if (this.ruleForm.path.length != 0) {
-        this.ruleForm.path.forEach((node, index) => {
-          if (node.nodeName == 'sign' || node.nodeName == 'trans') {
-            if (!node.children || node.children.length == 0) {
-              html += node.typeIdName + ' ' + arrowHtml
-            } else {
-              node.children.forEach((child, childIndex) => {
-                if (childIndex == 0) {
-                  html += '#' + child.typeIdName + child.remark;
-                  if (childIndex == node.children.length - 1) {
-                    html += '# ' + arrowHtml
-                  } else {
-                    html += ' '
-                  }
-                } else if (childIndex == node.children.length - 1) {
-                  html += child.typeIdName + child.remark + '# ' + arrowHtml;
-                } else {
-                  html += child.typeIdName + child.remark + ' '
-                }
-              })
-            }
-          } else {
-            if (index != this.ruleForm.path.length - 1) {
-              html += node.typeIdName + node.remark + arrowHtml
-            } else {
-              html += node.typeIdName + node.remark
-            }
-          }
-        })
-      }
-      html += '归档'
-      return html;
-    },
     showTitle: function() {
       return noTitleDocs.find(d => d === this.$route.params.code) === undefined;
     },
@@ -155,19 +106,12 @@ export default {
     ])
   },
   created() {
-    // this.getSuggestTemp();
     if (this.$route.params.code == 'LZS') {
       this.rules.attchment.push({ type: 'array', required: true, message: '请提交本人签字的辞职报告', trigger: 'blur,change' })
     }
   },
   watch: {
-    taskUser: function(newval) {
-      if (newval) {
-        if (!this.$route.query.id || !this.isfirst) { //草稿箱第一次不调用建议路径模板
-          this.getSuggestTemp();
-        }
-      }
-    }
+
   },
   methods: {
     initAttchment(list) {
@@ -194,20 +138,15 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         this.isSaveForm = false;
         if (valid) {
-          if (this.checkSuggest()) {
-            this.checkAttchment(); //检查是否需要上传
-            if (this.difLength != 0) {
-              this.$refs.myUpload.submit();
-            } else {
-              this.$emit('submitEnd', {
-                taskContent: this.ruleForm.des,
-                qutoes: this.docs.filter(d => d.quoteDocId),
-                fileId: this.ruleForm.attchment.map(f => f.response.data),
-                suggests: this.handlePath(this.ruleForm.path)
-              });
-            }
+          this.checkAttchment(); //检查是否需要上传
+          if (this.difLength != 0) {
+            this.$refs.myUpload.submit();
           } else {
-            this.$emit('submitEnd', false);
+            this.$emit('submitEnd', {
+              taskContent: this.ruleForm.des,
+              qutoes: this.docs.filter(d => d.quoteDocId),
+              fileId: this.ruleForm.attchment.map(f => f.response.data),
+            });
           }
         } else {
           this.$message.warning('请检查填写字段')
@@ -224,48 +163,18 @@ export default {
         }
       })
     },
-    checkSuggest() {
-      var success = true;
-      if (!this.disableEditSuggest) {
-        this.ruleForm.path.forEach((p, i, arr) => {
-          if (p.type == 4 || p.type == 5) { //判断会签不能为空
-            if (!p.children || p.children.length == 0) {
-              this.$message.warning('建议路径内会签列表不能为空！');
-              success = false
-            } else if (i == 0) {
-              this.$message.warning('建议路径不能以会签开始！');
-              success = false
-            } else if (i == arr.length - 1) {
-              this.$message.warning('建议路径不能以会签结束！');
-              success = false
-            }
-          } else {
-            if (p.state && p.state == 1 && p.type != 7) {
-              this.$message.warning(p.typeIdName + '需替换！');
-              success = false
-            }
-          }
-        })
-      }
-      return success
-    },
     saveForm() {
       this.isSaveForm = true;
       this.checkAttchment(); //检查是否需要上传
       if (this.difLength != 0 && !this.isSubmit) {
         this.$refs.myUpload.submit();
       } else {
-        if (this.checkSuggest()) {
-          var params = {
-            taskContent: this.ruleForm.des, //请示内容
-            qutoes: this.docs.filter(d => d.quoteDocId),
-            suggests: this.handlePath(this.ruleForm.path),
-            files: JSON.stringify(this.ruleForm.attchment)
-          }
-          this.$emit('saveEnd', params);
-        } else {
-          this.$emit('saveEnd', false);
+        var params = {
+          taskContent: this.ruleForm.des, //请示内容
+          qutoes: this.docs.filter(d => d.quoteDocId),
+          files: JSON.stringify(this.ruleForm.attchment)
         }
+        this.$emit('saveEnd', params);
       }
 
     },
@@ -299,8 +208,7 @@ export default {
       if (this.upCount == this.difLength) {
         var params = {
           taskContent: this.ruleForm.des,
-          qutoes: this.docs.filter(d => d.quoteDocId),
-          suggests: this.handlePath(this.ruleForm.path)
+          qutoes: this.docs.filter(d => d.quoteDocId)
         }
         if (this.isSaveForm) {
           params.files = JSON.stringify(this.fileIds);
@@ -372,90 +280,6 @@ export default {
 
       })
     },
-    updatePath(list) {
-      this.ruleForm.path = this.clone(list);
-      this.pathDialogVisible = false;
-    },
-    handlePath(list) {
-      var _list = [];
-      list.forEach((item, index, arr) => {
-        var nodeName = '';
-        if (index == 0) {
-          nodeName = 'start';
-        } else if (index == arr.length - 1) {
-          nodeName = 'end';
-        } else {
-          nodeName = 'task';
-        }
-        if (item.nodeName == 'sign' || item.type == 4) {
-          nodeName = 'sign';
-          if (item.type == 4) {
-            nodeName = 'trans';
-          }
-          item.children.forEach((child, i) => {
-            _list.push({
-              nodeId: index + 1 + '-' + i,
-              nodeName: nodeName,
-              typeId: child.typeId,
-              typeIdName: child.typeIdName,
-              type: child.type,
-              docType: this.$route.params.code,
-              remark: child.ramark
-            })
-          })
-        } else {
-          _list.push({
-            nodeId: index + 1,
-            nodeName: nodeName,
-            typeId: item.typeId,
-            typeIdName: item.typeIdName,
-            type: item.type,
-            docType: this.$route.params.code,
-            remark: item.remark
-          })
-        }
-      })
-      return _list
-    },
-    getSuggestTemp(param) {
-      this.$http.post('/doc/suggestTemplate', { docTypeCode: this.$route.params.code, userId: this.taskUser.empId, deptId: this.taskUser.deptParentId, docTypeSubCode: param })
-        .then(res => {
-          this.isfirst = false;
-          if (res.status == 0) {
-            this.disableEditSuggest = res.data.isEdit == 0 ? false : true;
-            this.handleSuggestTemp(res.data.paths);
-          } else {
-
-          }
-        })
-    },
-    handleSuggestTemp(arr) {
-      var temp = [];
-      var start;
-      arr.forEach((s, index) => {
-        if (s.type == 4 || s.type == 5) { //人员或部门会签
-          s.nodeName = 'sign';
-          s.children = [];
-          temp.push(s);
-        } else if (s.type == 7) {
-          if (start) {
-            start = 0;
-          } else {
-            start = index;
-            s.nodeName = 'sign';
-            s.children = [];
-            temp.push(s);
-          }
-        } else {
-          if (start) {
-            temp[start].children.push(s);
-          } else {
-            temp.push(s);
-          }
-        }
-      })
-      this.ruleForm.path = temp;
-    },
   }
 }
 
@@ -465,6 +289,9 @@ $main:#0460AE;
 $sub:#1465C0;
 .descriptionBox {
   padding-right: 150px;
+  .attchment{
+    padding-top:10px;
+  }
   .addButton {
     float: right;
     position: relative;
@@ -480,44 +307,6 @@ $sub:#1465C0;
   .pageBox {
     text-align: right;
     margin-top: 20px;
-  }
-  .suggestPath {
-    .pathBox {
-      width: 88%;
-      float: left;
-      line-height: 20px;
-      padding-top: 12px;
-      .nodeBox {
-        float: left;
-        padding-right: 10px;
-        .signList {
-          color: #main;
-          span {
-            padding-right: 5px;
-            &:last-of-type {
-              padding-right: 0;
-            }
-          }
-        }
-      }
-      i {
-        padding-right: 10px;
-        color: $main;
-      }
-    }
-    .el-button {
-      width: 12%;
-      float: right;
-      border-left: 1px solid #95989A;
-      line-height: 30px;
-      padding: 0;
-      font-size: 15px;
-      margin-top: 7px;
-      text-align: right;
-      i {
-        margin-right: 5px;
-      }
-    }
   }
   .remainNum {
     position: absolute;
