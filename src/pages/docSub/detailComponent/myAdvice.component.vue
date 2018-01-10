@@ -611,7 +611,7 @@ export default {
       }
       this.fileId= this.ruleForm.attchment.map(f => f.response.data);
       var params = {
-        fileId:this.fileId,
+        fileIds:this.fileId,
         docId: this.docDetail.id,
         "taskUserName": this.userInfo.name,
         "taskUserId": this.userInfo.empId,

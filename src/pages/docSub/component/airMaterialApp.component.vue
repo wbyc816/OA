@@ -92,7 +92,7 @@
       </el-form-item>
 
       <el-form-item label="单价" class="arrArea" prop="unitPrice">
-        <money-input ref="unitPrice" v-model="airMaterialForm.unitPrice"  :maxlength="11" :prepend="false"  @change="changeUnitPrice">
+        <money-input ref="unitPrice" v-model="airMaterialForm.unitPrice"  :maxlength="8" :prepend="false"  @change="changeUnitPrice">
         </money-input>
       </el-form-item>
 
@@ -106,7 +106,7 @@
         </el-input>
       </el-form-item>
 
-      <el-form-item label="航材中文名称" prop="airmaterialNameZn" placeholder="" class="deptArea">
+      <el-form-item label="航材中文名称" prop="airmaterialNameZn" :maxlength="20" placeholder="" class="deptArea">
           <el-input ref="airmaterialNameZn" v-model="airMaterialForm.airmaterialNameZn">
           </el-input>
       </el-form-item>
