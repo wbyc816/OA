@@ -1,6 +1,6 @@
 <template>
   <div id="docPending">
-    <search-options title="公文签批" @search="setOptions" hasOverTime isCollapse></search-options>
+    <search-options title="公文签批" @search="setOptions" hasOverTime isCollapse hasSub></search-options>
     <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId==leaderEmpid" v-loading.body="searchLoading">
       <el-table-column type="selection" width="35" class-name="selectionColumn" label-class-name="selectionColumnLabel">
       </el-table-column>
@@ -31,11 +31,14 @@
       <el-table-column label="操作" width="100" class-name="operateColumn">
         <template scope="scope">
           <el-tooltip content="签批" placement="top" :enterable="false" effect="light">
-              <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+scope.row.id,query:{code:scope.row.docTypeCode}}"></router-link>
-            </el-tooltip>
-            <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
-              <i class="link iconfont icon-liucheng" @click="getProcess(scope.row.id)"></i>
-            </el-tooltip>
+            <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+scope.row.id,query:{code:scope.row.docTypeCode}}"></router-link>
+          </el-tooltip>
+          <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
+            <i class="link iconfont icon-liucheng" @click="getProcess(scope.row.id)"></i>
+          </el-tooltip>
+          <el-tooltip content="分发" placement="top" :enterable="false" effect="light">
+            <i class="link iconfont icon-share1" @click="distribute(scope.row.id)"></i>
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
@@ -66,6 +69,9 @@
             <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
               <i class="link iconfont icon-liucheng" @click="getProcess(doc.id)"></i>
             </el-tooltip>
+            <el-tooltip content="分发" placement="top" :enterable="false" effect="light">
+              <i class="link iconfont icon-share1" @click="distribute(doc.id)"></i>
+            </el-tooltip>
           </td>
         </tr>
       </tbody>
@@ -95,15 +101,17 @@
         </el-form-item>
       </el-form>
     </el-card>
+    <distribute-dialog :visible.sync="showDistribute" :docId="docId"></distribute-dialog>
   </div>
 </template>
 <script>
 import SearchOptions from '../../components/searchOptions.component'
+import DistributeDialog from '../../components/distributeDialog.component'
 import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
 
 const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '操作']
-const leaderEmpid='C35215E25CE0CA7858829540EFF44FA8'
+const leaderEmpid = 'C35215E25CE0CA7858829540EFF44FA8'
 // const leaderEmpid='3BCF6EECB2611212E088D0D91F2ADE9C'  //杨总
 export default {
   data() {
@@ -127,7 +135,9 @@ export default {
         state: [{ required: true, message: '请选择审批意见' }],
         taskContent: [{ required: true, message: '请填写审批内容' }]
       },
-      selDocs: []
+      selDocs: [],
+      docId: '',
+      showDistribute: false
     }
   },
   computed: {
@@ -139,7 +149,8 @@ export default {
     ])
   },
   components: {
-    SearchOptions
+    SearchOptions,
+    DistributeDialog
   },
   created() {
     if (this.$route.params.isOverTime) {
@@ -147,7 +158,7 @@ export default {
     }
     this.getData();
   },
-  activated(){
+  activated() {
     this.getData();
   },
   methods: {
@@ -173,6 +184,10 @@ export default {
     },
     getProcess(id) {
       this.$store.dispatch('getTaskDetail', id);
+    },
+    distribute(id) {
+      this.docId = id;
+      this.showDistribute = true;
     },
     handleSelectionChange(val) {
       this.selDocs = val;
@@ -203,7 +218,7 @@ export default {
             if (res.status == 0) {
               this.$message.success('审批成功!');
               this.ruleForm.taskContent = '同意。';
-              this.ruleForm.state='1'
+              this.ruleForm.state = '1'
               this.getData();
               this.$store.dispatch('getDocTips');
             } else {
@@ -283,6 +298,15 @@ $main: #0460AE;
   .pageBox {
     text-align: right;
     margin-top: 20px;
+  }
+  thead {
+    $widths: (1: 5%, 2: 38%, 3: 10%, 4: 11%, 5:10%, 6: 12%);
+    @each $num,
+    $width in $widths {
+      th:nth-child(#{$num}) {
+        width: $width;
+      }
+    }
   }
   .taskAllTable {
     .el-table__body-wrapper {

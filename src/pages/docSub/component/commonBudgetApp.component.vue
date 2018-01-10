@@ -79,7 +79,6 @@
 </template>
 <script>
 import MoneyInput from '../../../components/moneyInput.component'
-import _ from 'lodash'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -95,7 +94,6 @@ export default {
         budgetDept: [{ type: 'array', required: true, message: '请选择预算机构/科目', trigger: 'blur' }],
         appMoney: [{ required: true, message: '请输入申请金额', trigger: 'blur' }],
       },
-      year: new Date().getFullYear(),
       budgetDeptList: [],
       budgetInfo: '',
       budgetTable: [],
@@ -141,7 +139,8 @@ export default {
       'baseURL',
       'userInfo',
       'supplierList',
-      'currencyList'
+      'currencyList',
+      'year'
     ])
   },
   watch: {
@@ -202,7 +201,6 @@ export default {
       }
     },
     submitAll() {
-      console.log(this.$refs.docCommonTypeCode)
       var docCommonFin = {
         "docCommonTypeCode": this.paymentForm.docCommonTypeCode, //公文子类型
         "docCommonTypeName": this.$refs.docCommonTypeCode.selectedLabel, //公文子类型名称
@@ -249,7 +247,7 @@ export default {
             "money": this.budgetForm.appMoney, //金额
             "rmb": 0, //人民币
             "accurencyName": currency.currencyName, //币种名称
-            "exchangeRateId": currency.exchangeRate, //汇率id
+            "exchangeRateId": currency.exchangeId, //汇率id
             "remark": this.budgetForm.remark
           }
           this.$http.post('/doc/getRmbByExchangeRate', { currencyId: currency.currencyCode, amount: item.money })

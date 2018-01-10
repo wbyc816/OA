@@ -1,6 +1,6 @@
 <template>
   <div id="docSearch">
-    <search-options title="公文查询" @search="setOptions" payStatus hasArchive isCollapse></search-options>
+    <search-options title="公文查询" @search="setOptions" payStatus hasArchive isCollapse hasSub></search-options>
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>

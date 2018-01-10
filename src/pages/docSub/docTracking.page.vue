@@ -1,6 +1,6 @@
 <template>
   <div id="docTracking">
-    <search-options title="公文追踪" @search="setOptions" isCollapse></search-options>
+    <search-options title="公文追踪" @search="setOptions" isCollapse hasSub></search-options>
     
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading" >
       <caption>
@@ -29,11 +29,15 @@
             <el-tooltip content="撤回" placement="top" :enterable="false" effect="light" v-if="doc.isBack!=0">
               <i class="link iconfont icon-chehui" @click="doBack(doc.id)"></i>
             </el-tooltip>
+            <el-tooltip content="分发" placement="top" :enterable="false" effect="light">
+              <i class="link iconfont icon-share1" @click="distribute(doc.id)"></i>
+            </el-tooltip>
             <el-tooltip content="导出" placement="top" :enterable="false" effect="light">
               <a :href="baseURL+'/pdf/exportPdf?docId='+doc.id" target="_blank" v-if="doc.taskUserId==userInfo.empId&&showDowload(doc.docTypeCode)">
               <i class="link iconfont icon-icon202"></i>
               </a>
             </el-tooltip>
+            
           </td>
         </tr>
       </tbody>
@@ -41,12 +45,13 @@
     <div class="pageBox" v-show="docData.length>0">
       <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="15" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
-    </div>
-    
+    </div>    
+    <distribute-dialog :visible.sync="showDistribute" :docId="docId"></distribute-dialog>
   </div>
 </template>
 <script>
 import SearchOptions from '../../components/searchOptions.component'
+import DistributeDialog from '../../components/distributeDialog.component'
 import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
 
@@ -67,6 +72,8 @@ export default {
       totalSize: 0,
       searchLoading: false,
       searchOptions: '',
+      docId: '',
+      showDistribute: false
     }
   },
   computed: {
@@ -79,7 +86,8 @@ export default {
     ])
   },
   components: {
-    SearchOptions
+    SearchOptions,
+    DistributeDialog
   },
   created() {
     this.getData();
@@ -109,6 +117,10 @@ export default {
     },
     getProcess(id) {
       this.$store.dispatch('getTaskDetail', id);
+    },
+    distribute(id) {
+      this.docId = id;
+      this.showDistribute = true;
     },
     doBack(id) {
       this.$confirm('是否撤回此公文?', '提示', {
@@ -164,13 +176,13 @@ export default {
     calWidth(doc) {
       var width = 1;
       if (doc.isOvertime) {
-        width -= 0.16
+        width -= 0.18
       }
       if (doc.docImprotType != '普通' && doc.docImprotType != '') {
-        width -= 0.14
+        width -= 0.16
       }
       if (doc.docDenseType != '平件' && doc.docDenseType != '') {
-        width -= 0.14
+        width -= 0.16
       }
       return parseInt(width * 100) + '%'
     }
@@ -187,7 +199,7 @@ $main: #0460AE;
   }
   margin-bottom:30px;
   thead {
-    $widths: (1: 5%, 2: 38%, 3: 10%, 4: 11%, 5:10%, 6: 12%);
+    $widths: (1: 5%, 2: 36%, 3: 10%, 4: 11%, 5:10%, 6: 15%);
     @each $num,
     $width in $widths {
       th:nth-child(#{$num}) {

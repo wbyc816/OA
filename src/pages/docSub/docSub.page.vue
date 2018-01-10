@@ -71,7 +71,7 @@ const adminData = [
   { 'logo': 'icon-file11', 'color': '#FF5F88', 'text': '发文稿纸', 'link': '/doc/docCommonApp/FWG' },
   { 'logo': 'icon-car', 'font': '20px', 'color': '#A5A3FF', 'text': '用车申请', 'link': '/doc/docCommonApp/YCS' },
   { 'logo': 'icon-plane2', 'font': '20px', 'color': '#9FD867', 'text': '差旅申请', 'link': '/doc/docCommonApp/CLV' },
-  { 'logo': 'icon-documents', 'font': '26px', 'color': '#FF5F88', 'text': '材料申请', 'link': '/doc/docCommonApp/CLS' },
+  { 'logo': 'icon-documents', 'font': '26px', 'color': '#FF5F88', 'text': '采购申请', 'link': '/doc/docCommonApp/CLS' },
   { 'logo': 'icon-biaodan', 'font': '28px', 'color': '#5BB5FC', 'text': '收文登记处理', 'link': '/doc/docCommonApp/SWD', "require": true },
   { 'logo': 'icon-hetong1', 'font': '28px', 'color': '#FFE066', 'text': '合同申请', 'link': '/doc/docCommonApp/HTS' },
 ];

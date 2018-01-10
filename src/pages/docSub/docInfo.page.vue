@@ -52,16 +52,18 @@
         </el-row>
       </div>
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
-      <div class="backButton" v-if="hasBack">
-        <el-button type="primary" @click="goBack">返回</el-button>
+      <div class="backButton" >
+        <el-button type="primary" @click="showDistribute=true" v-if="!hasBack">公文分发</el-button>
       </div>
     </el-card>
     <back-button :backTop="186"></back-button>
+    <distribute-dialog :visible.sync="showDistribute" :docId="$route.params.id"></distribute-dialog>
   </div>
 </template>
 <script>
 import BackButton from '../../components/backButton.component.vue'
 import historyAdvice from './detailComponent/historyAdvice.component'
+import DistributeDialog from '../../components/distributeDialog.component'
 import FWGD from './detailComponent/FWGDetail.component'
 import SWDD from './detailComponent/SWDDetail.component'
 import CPDD from './detailComponent/CPDDetail.component'
@@ -105,6 +107,7 @@ export default {
   components: {
     historyAdvice,
     BackButton,
+    DistributeDialog,
     FWGD,
     SWDD,
     CPDD,
@@ -150,7 +153,8 @@ export default {
       advice:[],
       otherAdviceDoc,
       showOtherAdvice:false,
-      otherAdvice:''
+      otherAdvice:'',
+      showDistribute:false
     }
   },
   created() {
@@ -276,7 +280,7 @@ $main:#0460AE;
 $sub:#1465C0;
 #docInfo {
   .backButton {
-    padding-left: 100px;
+    padding-left: 20px;
     padding-bottom: 20px;
     .el-button {
       width: 150px;

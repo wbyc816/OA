@@ -11,9 +11,9 @@ export const docConfig = [{
     code: 'FWG',
     url: '/doc/docFile'
   }, {
-    docName: '材料申请',
+    docName: '采购申请',
     color: '#FF72A0',
-    shortName: '材料申请',
+    shortName: '采购申请',
     code: 'CLS',
     url: '/doc/materialDoc'
   },

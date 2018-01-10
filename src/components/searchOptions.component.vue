@@ -15,7 +15,7 @@
               </el-select>
             </el-col>
             <el-col :span="6" v-if="!notype">
-              <el-cascader :clearable="true" :options="typeTree" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型"></el-cascader>
+              <el-cascader :clearable="true" :options="typeTree" :props="defaultProp" v-model="docTypes" :show-all-levels="false" placeholder="公文类型" @change="docTypeChange"></el-cascader>
             </el-col>
             <el-col :span="6" v-if="!noPerson">
               <el-select v-model="params.taskUserId" filterable clearable remote placeholder="呈报人" :remote-method="remoteMethod" :loading="loading" style="width:100%">
@@ -54,6 +54,13 @@
             <el-col :span="6">
               <el-button class="searchButton" @click="submitParam">搜索</el-button>
             </el-col>
+            <el-collapse-transition>
+              <el-col :span="8" v-if="hasSub" v-show="docCode&&Array.isArray(subCodeList[docCode])">
+                <el-select v-model="subCode" placeholder="公文子类型" clearable v-if="Array.isArray(subCodeList[docCode])">
+                  <el-option v-for="item in subCodeList[docCode]" :label="item.dictName" :value="item.dictCode"></el-option>
+                </el-select>
+              </el-col>
+            </el-collapse-transition>
           </el-row>
         </div>
       </el-collapse-transition>
@@ -88,10 +95,14 @@ export default {
       type: Boolean,
       default: false
     },
-    isCollapse:{
+    isCollapse: {
       type: Boolean,
       default: false
-    }
+    },
+    hasSub: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -115,7 +126,9 @@ export default {
       loading: false,
       meTimeout: null,
       personList: [],
-      showDetail: false
+      showDetail: false,
+      subCodeList: {},
+      subCode: ''
     }
   },
   computed: {
@@ -127,6 +140,13 @@ export default {
       } else {
         return false
       }
+    },
+    docCode: function() {
+      var code = '';
+      if (this.docTypes.length != 0) {
+        code = this.docTypes[this.docTypes.length - 1];
+      }
+      return code
     },
     titleWidth: function() {
       var width = 6;
@@ -147,8 +167,8 @@ export default {
     ])
   },
   created() {
-    if(!this.isCollapse){
-      this.showDetail=true;
+    if (!this.isCollapse) {
+      this.showDetail = true;
     }
     if (this.$route.params.isOverTime) {
       this.isOverTime = '1';
@@ -166,7 +186,10 @@ export default {
     },
     submitParam() {
       if (this.docTypes.length != 0) {
-        this.params.docType = this.docTypes[this.docTypes.length - 1]
+        this.params.docType = this.docTypes[this.docTypes.length - 1];
+        if(this.subCode){
+          this.params.docType=this.subCode;
+        }
       } else {
         this.params.docType = '';
       }
@@ -198,6 +221,27 @@ export default {
         }, 300);
       } else {
         this.personList = [];
+      }
+    },
+    getSubCode() {
+      if (this.docTypes.length != 0) {
+        var docCode = this.docTypes[this.docTypes.length - 1];
+        if (!this.subCodeList[docCode]) {
+          this.$http.post('/doc/getDocSubCode', { docTypeCode: docCode })
+            .then(res => {
+              if (res.status == 0) {
+                this.$set(this.subCodeList, docCode, res.data);
+              } else {
+                this.$set(this.subCodeList, docCode, 'none');
+              }
+            })
+        }
+      }
+    },
+    docTypeChange() {
+      if (this.hasSub) {
+        this.subCode = '';
+        this.getSubCode();
       }
     }
   }

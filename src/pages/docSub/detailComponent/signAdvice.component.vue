@@ -76,6 +76,9 @@ export default {
     ])
   },
   created() {
+    if(this.docDetail.pageCode==='SWD'){
+      this.ruleForm.taskContent='已阅。'
+    }
     if (this.docDetail.defaultSuggestVo.reciUserId) {
       this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
     }

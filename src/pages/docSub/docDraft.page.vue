@@ -1,6 +1,6 @@
 <template>
   <div id="docDraft">
-    <search-options title="公文草稿箱" @search="setOptions" isCollapse></search-options>
+    <search-options title="公文草稿箱" @search="setOptions" isCollapse hasSub></search-options>
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading">
       <caption>
       </caption>
