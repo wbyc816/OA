@@ -585,7 +585,7 @@ export default {
     getCurrencyList() {
       if (this.currencyList.length !== 0) {
         if (!this.isDraft) {
-          this.contractForm.currencyId = this.currencyList[0].currencyCode;
+          
         }
       } else {
         this.$store.dispatch('getCurrency')
