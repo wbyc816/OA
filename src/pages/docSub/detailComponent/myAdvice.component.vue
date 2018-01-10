@@ -61,6 +61,16 @@
           </el-date-picker>
         </el-col>
       </el-form-item>
+
+       <el-form-item label="附件" prop="attchment">
+          <el-col :span='18'>
+          <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
+            <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>19"  v-show="!isIE()||(ruleForm.attchment.length<=19&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+          </el-upload>
+         </el-col>
+        <p class="uploadInfo">单个附件不能超过500MB</br>最多上传20个附件</p>
+      </el-form-item>
+
       <el-form-item>
         <el-col :span='18'>
           <el-button type="primary" size="large" class="submitButton" @click="submit">提交</el-button>
@@ -156,6 +166,7 @@ export default {
         taskContent: '同意。',
         state: '1',
         sign: [],
+        attchment:[],
         planDate: ''
       },
       rules: {
@@ -164,6 +175,7 @@ export default {
         planDate: [{ required: true, type: 'date', message: '请选择离职日期' }],
         taskContent: [{ required: true, message: '请填写审批内容',trigger: 'blur,change' }]
       },
+      successUps: [],
       dialogTableVisible: false,
       defaultVisible: false,
       reciver: '',
@@ -179,9 +191,15 @@ export default {
           return time.getTime() < Date.now() - 8.64e7;
         }
       },
+      successUps: [],
       signDeps: [],
       adminReci: '',
       initFWGDeps,
+      difLength: 0,
+      upCount: 0,
+      fileIds: [],
+      fileIdArr:[],
+      isSaveForm:false,
       initHTSDeps,
       disableApproval: false
     }
@@ -243,6 +261,58 @@ export default {
     }
   },
   methods: {
+    initAttchment(list) {
+      this.successUps = list;
+      this.ruleForm.attchment = this.successUps;
+    },
+    handleAvatarSuccess(res, file, fileList) {
+      this.fileIds = fileList;
+      this.upCount++;
+      if (this.upCount == this.difLength) {
+        var params = {
+          taskContent: this.ruleForm.des,
+        }
+        if (this.isSaveForm) {
+          params.files = JSON.stringify(this.fileIds);
+        } else {
+          params.fileId = this.fileIds.map(f => f.response.data);
+          this.fileIdArr= params.fileId;
+        }
+      }
+    },
+    checkAttchment() { //检查是否需要上传
+      this.difLength = this.ruleForm.attchment.length;
+      this.ruleForm.attchment.forEach(f => {
+        if (this.successUps.find(s => s.uid == f.uid)) {
+          this.difLength--;
+        }
+      })
+    },
+    handleAvatarError(res, file) {
+      this.$emit('submitEnd', false);
+      this.$message.error('附件上传失败，请重试');
+    },
+    handleChange(file, fileList) {
+      // const isPDF = file.raw.type === 'application/pdf';
+      const isLt10M = file.size / 1024 / 1024 < 500;
+      // if (!isPDF) {
+      //   this.$message.error('上传附件只能是 PDF 格式!');
+      // }
+      if (!isLt10M) {
+        this.$message.error('上传附件大小不能超过 500MB!');
+      }
+      if (isLt10M) {
+        this.ruleForm.attchment = fileList;
+        this.$refs.myUpload.submit();
+      } else {
+        this.$refs.myUpload.uploadFiles.splice(this.$refs.myUpload.uploadFiles.length - 1, 1)
+      }
+    },
+    handleRemove(file, fileList) {
+      this.ruleForm.attchment = fileList;
+    },
+
+
     getSecretaryInfo() {
       if (!this.secretaryInfo) {
         var roleUserState = 0; // 机要秘书
@@ -276,7 +346,6 @@ export default {
           this.ruleForm.sign = [];
           this.ruleForm.sign.push(person);
           this.chooseDisable = true;
-          console.log(this.chooseDisable)
         }
       } else {
         this.$http.post('/doc/getSecUserName', { docId: this.$route.params.id })
@@ -540,7 +609,9 @@ export default {
           subType = 2
         }
       }
+      this.fileId= this.ruleForm.attchment.map(f => f.response.data);
       var params = {
+        fileId:this.fileId,
         docId: this.docDetail.id,
         "taskUserName": this.userInfo.name,
         "taskUserId": this.userInfo.empId,
@@ -607,6 +678,22 @@ $sub:#1465C0;
       vertical-align: middle;
     }
   }
+  .uploadInfo{
+    position: absolute;
+    left: 75%;
+    font-size: 13px;
+    color: #9a9a9a;
+    line-height: 15px;
+    top: 7px;
+    white-space: nowrap;
+  }
+  .myUpload {
+    width: 100% !important;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row-reverse;
+    flex-direction: row-reverse;
+}
   .myRadio {
     line-height: 45px;
     .el-radio-button .el-radio-button__inner {
