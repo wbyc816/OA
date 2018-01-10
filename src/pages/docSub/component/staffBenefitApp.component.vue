@@ -494,27 +494,12 @@ export default {
     },
 
   ticketTypeChange(){
-    
-    if(this.staffBenefitAppFormThird.ticketTypes){
-        this.$http.post('/emp/selectEmpTicket', { //二五折
-        typeId:this.staffBenefitAppFormThird.ticketTypes,
-        empId: this.userInfo.empId ,                               
-        annual :util.formatTime(new Date().getTime(), 'yyyy'),
-     })
-    .then(res => {
-      if (res.status == 0) {
-       if(this.flightPersonTable.length*this.TripTable.length>res.data.ticketNumsLave){
+        if(this.$refs.ticketType.value=="EMP0302"&&this.flightPersonTable.length*this.TripTable.length>this.lastFreeTicket.ticketNumsLave+this.freeTicket.ticketNumsLave){
            this.$message.warning("申请票种剩余数量不足，请重新选择票种");
            this.isEnough=0;
        }else{
           this.isEnough=1;
        }
-      }
-    })
-    }
-  
-
-
 
   },
 
@@ -578,34 +563,42 @@ export default {
      
 
     addFlightPerson() {
-      this.$refs.staffBenefitAppFormFirst.validate((valid) => {
-        if (valid) {
-          var temp={};
-          if(this.staffBenefitAppFormFirst.genger=="M"){
-            temp.genger="男";
-          }else{
-            temp.genger="女";
+        if(this.$refs.ticketType.value=="EMP0301"||this.$refs.ticketType.value=="EMP0302"&&this.flightPersonTable.length*this.TripTable.length<this.lastFreeTicket.ticketNumsLave+this.freeTicket.ticketNumsLave){
+        this.$refs.staffBenefitAppFormFirst.validate((valid) => {
+          if (valid) {
+            var temp={};
+            if(this.staffBenefitAppFormFirst.genger=="M"){
+              temp.genger="男";
+            }else{
+              temp.genger="女";
+            }
+            temp.contactPhone=this.staffBenefitAppFormFirst.contactPhone;
+            temp.flightPerson=this.staffBenefitAppFormFirst.flightPersonSelect;
+            temp.flightPersonTypeSelect=this.$refs.flightPersonTypeSelect.selectedLabel;
+
+            temp.documentTypeSelect=this.$refs.documentTypeSelect.selectedLabel;
+            temp.documentType=this.staffBenefitAppFormFirst.documentType;
+
+            temp.flightPersonTypeCode=this.staffBenefitAppFormFirst.flightPersonTypeSelect;
+            temp.documentTypeCode=this.staffBenefitAppFormFirst.documentTypeSelect;
+            console.log(temp);
+
+        
+            this.flightPersonTable.push(temp);
+            this.$refs.staffBenefitAppFormFirst.resetFields();
+            this.showData=0;
+            this.ticketTypeChange();
+          } else {
+            return false;
           }
-          temp.contactPhone=this.staffBenefitAppFormFirst.contactPhone;
-          temp.flightPerson=this.staffBenefitAppFormFirst.flightPersonSelect;
-          temp.flightPersonTypeSelect=this.$refs.flightPersonTypeSelect.selectedLabel;
 
-          temp.documentTypeSelect=this.$refs.documentTypeSelect.selectedLabel;
-          temp.documentType=this.staffBenefitAppFormFirst.documentType;
-
-          temp.flightPersonTypeCode=this.staffBenefitAppFormFirst.flightPersonTypeSelect;
-          temp.documentTypeCode=this.staffBenefitAppFormFirst.documentTypeSelect;
-          console.log(temp);
-
-      
-          this.flightPersonTable.push(temp);
-          this.$refs.staffBenefitAppFormFirst.resetFields();
-          this.showData=0;
-          this.ticketTypeChange();
-        } else {
-          return false;
-        }
       });
+        
+      }else{
+           this.$message.warning("申请票种剩余数量不足，请重新选择票种");
+           this.isEnough=0;
+        }
+      
     },
     deleteRowfligh(index) {
       this.flightPersonTable.splice(index,1)
@@ -629,7 +622,8 @@ export default {
 
     addTrip() {
       this.$refs.staffBenefitAppFormSecond.validate((valid) => {
-        if (valid) {
+        if(this.$refs.ticketType.value=="EMP0301"||this.$refs.ticketType.value=="EMP0302"&&this.flightPersonTable.length*this.TripTable.length<this.lastFreeTicket.ticketNumsLave+this.freeTicket.ticketNumsLave){
+          if (valid) {
           var temp={};
           temp.start=this.staffBenefitAppFormSecond.start;
           temp.end=this.staffBenefitAppFormSecond.end;
@@ -654,6 +648,11 @@ export default {
         } else {
           return false;
         }
+        }else{
+           this.$message.warning("申请票种剩余数量不足，请重新选择票种");
+           this.isEnough=0;
+        }
+    
       });
     },
       deleteRow(index) {
