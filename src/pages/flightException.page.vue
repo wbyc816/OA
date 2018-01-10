@@ -155,9 +155,9 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="taxiTimeStr" label="Q滑出时间" width="100">
+        <el-table-column prop="taxiTime" label="Q滑出时间" width="100">
              <template scope="scope">
-                <span>{{ scope.row.taxiTimeStr}}</span>
+                <span>{{ scope.row.taxiTime | time('hours')}}</span>
             </template>
         </el-table-column>
 
