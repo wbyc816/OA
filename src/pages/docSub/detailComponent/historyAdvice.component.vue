@@ -29,9 +29,13 @@
               <li class="personAdvice" :class="{disAgree:sign.state==2}" v-for="sign in signBox.deptSigns">
                 <span class="isAgree"><i :class="sign.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
                 <span class="userName">{{sign.signUserName}}</span>
-                <span class="taskContent">{{sign.signContent}}</span>
+                <span class="taskContent">{{sign.signContent}}
+                  <p class="taskFile"  v-for="file in sign.files"><a :href="file.filePath" target="_blank">{{file.fileNameNew}}</a></p>
+                </span>
                 <span class="taskTime">{{sign.signTime}}</span>
+                
               </li>
+              
             </el-collapse-item>
           </el-collapse>
         </template>
@@ -40,7 +44,9 @@
           <li class="personAdvice" :class="{disAgree:sign.state==2}" v-for="sign in info.deptSigns">
             <span class="isAgree"><i :class="sign.state==2?'el-icon-circle-cross':'el-icon-circle-check'"></i></span>
             <span class="userName">{{sign.signUserName}}</span>
-            <span class="taskContent">{{sign.signContent}}</span>
+            <span class="taskContent">{{sign.signContent}}
+               <p class="taskFile"  v-for="file in sign.files"><a :href="file.filePath" target="_blank">{{file.fileNameNew}}</a></p>
+            </span>
             <span class="taskTime">{{sign.signTime}}</span>
           </li>
         </template>

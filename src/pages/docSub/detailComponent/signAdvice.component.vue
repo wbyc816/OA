@@ -32,10 +32,10 @@
         <el-form-item label="附件" prop="attchment">
           <el-col :span='18'>
           <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
-            <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>19"  v-show="!isIE()||(ruleForm.attchment.length<=19&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+            <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4"  v-show="!isIE()||(ruleForm.attchment.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
          </el-col>
-        <p class="uploadInfo">单个附件不能超过500MB</br>最多上传20个附件</p>
+        <p class="uploadInfo">单个附件不能超过500MB</br>最多上传5个附件</p>
       </el-form-item>
 
       <el-form-item>
@@ -194,8 +194,9 @@ export default {
           if (this.docDetail.signDoc == 1) { //部门会签
             this.docTask();
           } else { //人员会签
+            this.fileId= this.ruleForm.attchment.map(f => f.response.data);
             var params = {
-
+              fileIds:this.fileId,
               "state": this.ruleForm.state,
               "signContent": this.ruleForm.taskContent,
               "signUserId": this.userInfo.empId,
