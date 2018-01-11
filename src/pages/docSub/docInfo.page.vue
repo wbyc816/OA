@@ -52,7 +52,8 @@
         </el-row>
       </div>
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
-      <div class="backButton" >
+      <dist-advice ref="distAdvice"></dist-advice>
+      <div class="backButton">
         <el-button type="primary" @click="showDistribute=true" v-if="!hasBack">公文分发</el-button>
       </div>
     </el-card>
@@ -64,6 +65,7 @@
 import BackButton from '../../components/backButton.component.vue'
 import historyAdvice from './detailComponent/historyAdvice.component'
 import DistributeDialog from '../../components/distributeDialog.component'
+import DistAdvice from './detailComponent/distAdvice.component'
 import FWGD from './detailComponent/FWGDetail.component'
 import SWDD from './detailComponent/SWDDetail.component'
 import CPDD from './detailComponent/CPDDetail.component'
@@ -93,7 +95,7 @@ import LZS from './component/empQuitDetail.component.vue' //离职详情
 import SXS from './component/airRepairDetail.component.vue' //送修详情
 import YSL from './component/commonBudgetDetail.component.vue' //通用预算详情
 import TYS from './component/commonDetail.component.vue' //通用申请详情
-import HCG from './component/airMaterialDetail.component.vue'//航材合同/工具详情
+import HCG from './component/airMaterialDetail.component.vue' //航材合同/工具详情
 import JHH from './component/airExchangeDetail.component.vue' //交换详情
 import ZJJ from './component/airLoanDetail.component.vue' //租借详情
 import JBC from './component/airSellDetail.component.vue' //售出详情
@@ -101,13 +103,14 @@ import JBC from './component/airSellDetail.component.vue' //售出详情
 import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
-const otherAdviceDoc = ["FWG", "SWD", "CPD","HTS"]
+const otherAdviceDoc = ["FWG", "SWD", "CPD", "HTS"]
 export default {
-  name:'docInfo',
+  name: 'docInfo',
   components: {
     historyAdvice,
     BackButton,
     DistributeDialog,
+    DistAdvice,
     FWGD,
     SWDD,
     CPDD,
@@ -150,11 +153,11 @@ export default {
       suggestHtml: '',
       activeNames: ['1'],
       hasBack: false,
-      advice:[],
+      advice: [],
       otherAdviceDoc,
-      showOtherAdvice:false,
-      otherAdvice:'',
-      showDistribute:false
+      showOtherAdvice: false,
+      otherAdvice: '',
+      showDistribute: false
     }
   },
   created() {
@@ -168,16 +171,16 @@ export default {
 
     next(vm => {
       if (from.name == 'docDetail') {
-        vm.hasBack=true;
+        vm.hasBack = true;
       }
     })
   },
   computed: {
-    computeView(){
-      var view='';
-      var temp=otherAdviceDoc.find(d=>d==this.$route.query.code);
-      if(temp){
-        view=temp+'D'
+    computeView() {
+      var view = '';
+      var temp = otherAdviceDoc.find(d => d == this.$route.query.code);
+      if (temp) {
+        view = temp + 'D'
       }
       return view
     },
@@ -194,7 +197,7 @@ export default {
       var url = "/doc/getDocDetailInfo";
       var params = {
         id: route.params.id,
-        empId:this.userInfo.empId
+        empId: this.userInfo.empId
       }
       if (route.query.code == 'LZS') {
         url = '/doc/getDocDimissionInfo';
@@ -212,8 +215,9 @@ export default {
               this.currentView = this.docDetialInfo.doc.pageCode;
             }
             this.handleSuggest();
-            if (route.query.code != 'CPD'&&route.query.code != 'HTS') {
-              this.activeContent = [];              
+            this.getDistInfo();
+            if (route.query.code != 'CPD' && route.query.code != 'HTS') {
+              this.activeContent = [];
             }
           }
         }, res => {
@@ -227,8 +231,8 @@ export default {
           if (s.nodeName == 'sign') {
             if (arr[i - 1].nodeName != 'sign') {
               html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
-              if(arr[i + 1].nodeName != 'sign'){
-                html +=signFlag + ' ' + arrowHtml
+              if (arr[i + 1].nodeName != 'sign') {
+                html += signFlag + ' ' + arrowHtml
               }
             } else if (arr[i + 1].nodeName != 'sign') {
               html += s.typeIdName + s.remark + ' ' + signFlag + ' ' + arrowHtml;
@@ -238,8 +242,8 @@ export default {
           } else if (s.nodeName == 'trans') {
             if (arr[i - 1].nodeName != 'trans') {
               html += signFlag + ' ' + s.typeIdName + s.remark + ' ';
-              if(arr[i + 1].nodeName != 'trans'){
-                html +=signFlag + ' ' + arrowHtml
+              if (arr[i + 1].nodeName != 'trans') {
+                html += signFlag + ' ' + arrowHtml
               }
             } else if (arr[i + 1].nodeName != 'trans') {
               html += s.typeIdName + s.remark + ' ' + signFlag + ' ' + arrowHtml;
@@ -261,16 +265,20 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    getAdvice(){
-      this.$http.post('/doc/getTaskDetail',{id:this.$route.params.id})
-      .then(res=>{
-        if(res.status==0){
-          this.advice=res.data;
-        }else{
+    getAdvice() {
+      this.$http.post('/doc/getTaskDetail', { id: this.$route.params.id })
+        .then(res => {
+          if (res.status == 0) {
+            this.advice = res.data;
+          } else {
 
-        }
-      })
-    }
+          }
+        })
+    },
+    getDistInfo() {
+      this.$refs.distAdvice.pageNumber = 1;
+      this.$refs.distAdvice.getDistInfo();
+    },
   }
 }
 
@@ -350,7 +358,7 @@ $sub:#1465C0;
   .adviceSpan {
     display: inline-block;
     padding-right: 10px;
-    word-break:break-word;
+    word-break: break-word;
   }
   .suggestHtml {
     i {

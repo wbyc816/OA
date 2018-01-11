@@ -88,6 +88,7 @@ export default {
       } else { //草稿箱第一次
         this.isDrafFirst = false;
       }
+      this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});  
     }
   }
 }

@@ -249,7 +249,7 @@
       <i class="el-icon-close backButton" @click="$router.go(-1)"></i>
       <el-form label-position="left" :model="dialogForm" :rules="dialogRule" ref="dialogForm" label-width="128px">
         <el-form-item label="合同子类型" prop="contractCode" placeholder="">
-          <el-select v-model="dialogForm.contractCode" ref="contractCode">
+          <el-select v-model="dialogForm.contractCode" ref="contractCode" @change="typeChange">
             <el-option v-for="item in contractCodeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
             </el-option>
           </el-select>
@@ -540,6 +540,9 @@ export default {
         repairContract: this.repairContractDoc.id, //   送修合同
       }
       this.$emit('submitMiddle', { airmRor: airmRor, airmRorItems: this.budgetTable, airmRorRepairs: this.factoryTable })
+    },
+    typeChange(val) {
+      this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});      
     },
     addDoc() {
 

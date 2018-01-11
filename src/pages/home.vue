@@ -361,16 +361,13 @@ export default {
   },
   mounted() {
     this.initChart();
-    if (!this.homeHasShow) {
-      this.$store.commit('setHomeHasShow', true);
-      this.setCookie('homeAd', '1')
-      setTimeout(() => {
-        this.homeVisible = true;
-      }, 500)
-      // setTimeout(() => {
-      //   this.homeVisible = false;
-      // }, 5000)
-    }
+    // if (!this.homeHasShow) {
+    //   this.$store.commit('setHomeHasShow', true);
+    //   this.setCookie('homeAd', '1')
+    //   setTimeout(() => {
+    //     this.homeVisible = true;
+    //   }, 500)
+    // }
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {

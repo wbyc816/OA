@@ -125,7 +125,7 @@ export default {
     JBC
   },
   created() {
-
+    this.$store.dispatch('getTemplate',{code:this.$route.params.code});
   },
   beforeRouteUpdate(to, from, next) {
     if (to.params.code == 'SWD' && this.userInfo.isConfidential != 1) {

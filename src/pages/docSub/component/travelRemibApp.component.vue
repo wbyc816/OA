@@ -980,7 +980,7 @@ export default {
                             item.rmb = res.data.amount;
                             item.exchangeRateId = res.data.rateId;
                             item.exchangeRate = res.data.rateReverse;
-                            if (this.budgetInfo.budgetRemain <= 0 || item.rmb > this.budgetInfo.budgetRemain) {
+                            if (!this.budgetInfo||this.budgetInfo.budgetRemain <= 0 || item.rmb > this.budgetInfo.budgetRemain) {
                               this.$message.warning('报销金额不能大于可用预算');
                               this.budgetTable = [];
                             } else {

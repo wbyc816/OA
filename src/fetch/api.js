@@ -175,5 +175,8 @@ export default {
   },
   getDict(code){
     return fetch('/api/getDict',{dictCode:code})
+  },
+  getTemplate(code,subCode){
+    return fetch('/doc/getFormTemplate',{docTypeCode:code,docSubTypeCode:subCode})
   }
 }

@@ -70,7 +70,7 @@
     </el-card>
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
       <span slot="title">公文归档</span>
-      <el-form :model="fileForm" :inline="!isRedFile&&!isInArray(addFileDoc,$route.query.code)" :rules="fileRules" ref="fileForm" class="fileForm" :class="{fileRed:isRedFile||isInArray(addFileDoc,$route.query.code)}">
+      <el-form :model="fileForm" :inline="!isRedFile" :rules="fileRules" ref="fileForm" class="fileForm" :class="{fileRed:isRedFile}">
         <el-form-item label="建议发文号:" v-if="isRedFile">
           <p class="fwNo">{{docDetialInfo.doc.fwNo}}</p>
         </el-form-item>
@@ -93,12 +93,12 @@
           </div>
           <el-button class="addButton" @click="showArchive"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
-        <el-form-item label="上传附件" prop="fileIds" v-if="isInArray(addFileDoc,$route.query.code)">
+        <!-- <el-form-item label="上传附件" prop="fileIds" v-if="isInArray(addFileDoc,$route.query.code)">
           <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.query.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove" :on-progress="handleProgress" :disabled="fileForm.fileIds.length>4||disabledUpload">
             <el-button size="small" type="primary" :disabled="fileForm.fileIds.length>4||disabledUpload" v-show="!isIE()||(fileForm.fileIds.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
           <p class="uploadInfo">最多上传5个附件</p>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="归档状态" class="textarea" prop="state">
           <el-radio-group class="myRadio" v-model="archiveState">
             <el-radio-button label="1" :disabled="docDetialInfo.doc.isFied == 2">通过<i></i></el-radio-button>
@@ -191,7 +191,6 @@ import { mapGetters } from 'vuex'
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
 const otherAdviceDoc = ["FWG", "SWD", "CPD", "HTS"]
-const addFileDoc = ["CPD", "HTS"]
 export default {
   name: 'docDetail',
   components: {
@@ -283,7 +282,6 @@ export default {
       otherAdviceDoc,
       fileSendVisible: false,
       sendTypes: [],
-      addFileDoc,
       taskFile: [],
       disabledUpload: false,
       submitLoading: false
@@ -395,9 +393,9 @@ export default {
             if (this.docDetialInfo.doc.pageCode != 'CPD') {
               this.currentView = this.docDetialInfo.doc.pageCode;
             }
-            if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
+            // if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
               this.getDistInfo();
-            }
+            // }
             if (route.query.code == 'FWG') {
               this.isRedFile = true;
               this.getSendType();
@@ -517,8 +515,8 @@ export default {
               });
             }
           }
-          if (this.isInArray(addFileDoc, this.$route.query.code)) {
-            params.fileIds = this.fileForm.fileIds.map(f => f.response.data);
+          if (this.$refs.myAdvice.ruleForm.attchment.length!=0) {
+            params.fileIds = this.$refs.myAdvice.ruleForm.attchment.map(f => f.response.data);
           }
           // console.log(params)
           this.submitLoading = true;

@@ -1,38 +1,35 @@
 <template>
-  <div id="app" :style="{'padding-top':$route.path=='/home'?'26px':'96px'}" v-if="login">
-    <div class="topBar" :class="{'active':scrollBanner}">
-      <div class="topNavbar">
-        <div class="container">
-          <span class="greetText">{{greetText}}好，欢迎您！</span>
-          <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
-          <a><i class="iconfont icon-1"></i> 简体</a>
-          <a href="#/set"><i class="iconfont icon-shezhi"></i> 设置</a>
-          <a @click="loginOut"><i class="iconfont icon-guanbi"></i> 登出</a>
+  <div id="app" v-if="login">
+    <div class="topBar">
+      <div class="container clearfix">
+        <router-link to="/home" class="sologo">
+          <img src="./assets/images/logo2.png" alt="">
+        </router-link>
+        <div class="rightNav">
+          <img src="./assets/images/chi.png" alt="" class="navImgBg">
+          <div class="topNavbar clearfix">
+            <div class="borderBg"></div>
+            <a href="http://fwoa.donghaiair.cn" target="_blank" class="oldLink"><i class="iconfont icon-zhexian"></i>旧版系统</a>
+            <div class="flRight">
+              <span class="greetText">{{greetText}}好，欢迎您！</span>
+              <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
+              <a><i class="iconfont icon-1"></i> 简体</a>
+              <a href="#/set"><i class="iconfont icon-shezhi"></i> 设置</a>
+              <a @click="loginOut"><i class="iconfont icon-guanbi"></i> 登出</a>
+            </div>
+          </div>
+          <div class="bottomNavbar">
+            <el-menu default-active="1" mode="horizontal" :router="true">
+              <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>
+              <el-menu-item :route="{path:'/doc'}" index="2">我的工作</el-menu-item>
+              <el-menu-item :route="{path:'/HR'}" index="5">个人中心</el-menu-item>
+              <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
+              <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
+              <!-- <el-menu-item :route="{path:''}" index="6"></el-menu-item> -->
+            </el-menu>
+          </div>
         </div>
       </div>
-      <nav class="navbar">
-        <div class="container">
-          <img src="./assets/images/chi.png" alt="" class="navImgBg">
-          <el-row>
-            <el-col :span="8">
-              <router-link to="/home" class="sologo">
-                <img src="./assets/images/logo2.png" alt="" v-if="scrollBanner">
-                <img src="./assets/images/logo1.png" alt="" v-else>
-              </router-link>
-            </el-col>
-            <el-col :span="16">
-              <el-menu default-active="1" mode="horizontal" :router="true">
-                <el-menu-item :route="{path:'/home'}" index="1">首页</el-menu-item>
-                <el-menu-item :route="{path:'/doc'}" index="2">我的工作</el-menu-item>
-                <el-menu-item :route="{path:'/HR'}" index="5">个人中心</el-menu-item>
-                <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
-                <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
-                <el-menu-item :route="{path:''}" index="6"><a href="http://fwoa.donghaiair.cn" target="_blank">旧版系统入口</a></el-menu-item>
-              </el-menu>
-            </el-col>
-          </el-row>
-        </div>
-      </nav>
     </div>
     <el-carousel height="382px" arrow="never" v-if="$route.path=='/home'">
       <el-carousel-item v-for="pic in homePics">
@@ -45,7 +42,7 @@
         <el-breadcrumb-item :to="{ path: breadcrumb.path }" v-for="breadcrumb in breadcrumbs">{{breadcrumb.meta.breadcrumb}}</el-breadcrumb-item>
       </el-breadcrumb>
       <!-- <keep-alive :include="/filesHome/"> -->
-        <router-view></router-view>
+      <router-view></router-view>
       <!-- </keep-alive> -->
     </div>
     <footer>
@@ -140,7 +137,7 @@ export default {
     this.getHomePics();
   },
   mounted() {
-    window.addEventListener('scroll', this.handleScroll);
+    // window.addEventListener('scroll', this.handleScroll);
     var routes = this.$router.options.routes;
     for (var a = 0; a < routes.length; a++) {
       if (!routes[a].redirect) {
@@ -265,7 +262,7 @@ $brown: #985D55;
 }
 
 #app {
-  padding-top: 26px;
+  padding-top: 96px;
   min-height: 100%;
   padding-bottom: 170px;
   position: relative;
@@ -277,18 +274,101 @@ $brown: #985D55;
   left: 0;
   width: 100vw;
   z-index: 999;
-
-  &.active {
-    .topNavbar {
-      background-color: #07A9E9;
-    }
-    .navbar {
-      background-color: #0460AE;
+  background-color: $main;
+  background-image: url(assets/images/leftCorner.png);
+  background-repeat: no-repeat;
+  .rightNav {
+    float: right;
+    width: 750px;
+    position: relative; // overflow-y:hidden;
+    // overflow-x:visible;
+    .navImgBg {
+      position: absolute;
+      box-sizing: border-box;
+      top: 0;
+      height: 98px;
+      right: -10px;
       z-index: 1;
-      ul.el-menu li {
+    }
+  }
+
+  .topNavbar {
+    position: relative;
+    .borderBg {
+      position: absolute;
+      border-bottom: 1px solid #fff;
+      width: 9999px;
+      left: 0;
+      bottom: 0;
+    }
+    .oldLink {
+      float: left;
+      line-height: 29px;
+      padding-left: 0;
+      i {
+        font-size: 13px;
+        padding-right: 5px;
+      }
+    }
+    .greetText {
+      color: #fff;
+    }
+    a {
+      color: #fff;
+      line-height: 25px;
+      padding: 0 15px;
+      text-decoration: none;
+      cursor: pointer;
+      display: initial;
+      position: relative;
+      z-index: 2;
+      &+a {
+        border-left: 1px solid #fff;
+      }
+      &:last-child {
+        padding-right: 0
+      }
+    }
+  }
+  .bottomNavbar {
+    position: relative;
+    z-index: 1;
+
+    ul {
+      // float: right;
+      box-shadow: none;
+      position: relative;
+      z-index: 2;
+      &.el-menu--horizontal .el-menu-item {
+        height: 70px;
+        line-height: 70px;
+        padding: 0 22px 0 22px !important;
         color: #fff;
         &.is-active {
           color: #FFD702;
+        }
+      }
+      &.el-menu {
+        background-color: inherit;
+        li {
+          line-height: 79px;
+          font-size: 19px;
+          text-decoration: none;
+          display: block;
+          position: relative;
+          overflow: hidden;
+          border-bottom: 2px solid transparent;
+          .el-submenu__title {
+            color: #fff;
+            font-size: 19px;
+          }
+          &:hover {
+            background: none !important;
+            border-bottom: 2px solid transparent;
+          }
+          &:first-child {
+            padding-left: 0!important;
+          }
         }
       }
     }
@@ -336,30 +416,10 @@ $brown: #985D55;
   }
 }
 
-.topNavbar {
-  background: #1465C0;
-  text-align: right;
-  .greetText {
-    color: #fff;
-  }
-  a {
-    color: #fff;
-    line-height: 25px;
-    padding: 0 15px;
-    text-decoration: none;
-    cursor: pointer;
-    display: initial;
-    &+a {
-      border-left: 1px solid #7B7B7B;
-    }
-    &:last-child {
-      padding-right: 0
-    }
-  }
-}
+
 
 .sologo {
-  line-height: 70px;
+  padding-top: 13px;
   font-size: 0;
   float: left;
   cursor: pointer;
@@ -380,149 +440,7 @@ $brown: #985D55;
   }
 }
 
-.navbar {
-  position: relative;
-  z-index: 3;
-  background-color: rgba(255, 255, 255, 0.8);
-  -webkit-transition-duration: .45s;
-  -webkit-transition-property: height;
-  -webkit-transition-delay: 0s;
-  -webkit-transition-timing-function: 'ease-in-out';
-  transition-duration: .45s;
-  transition-property: height;
-  transition-delay: 0s;
-  transition-timing-function: 'ease-in-out'; // margin-bottom: 15px;
-  .container {
-    position: relative;
-    .navImgBg {
-      position: absolute;
-      opacity: 0.14;
-      box-sizing: border-box;
-      top: -25px;
-      left: 265px;
-      z-index: 2;
-    }
-  }
-  ul {
-    float: right;
-    box-shadow: none;
-    &.el-menu--horizontal .el-menu-item {
-      height: 70px;
-      line-height: 70px;
-      padding: 0 22px 0 22px !important;
-      &.is-active {
-        color: #1465C0;
-      }
-    }
-    &.el-menu {
-      background-color: inherit;
-      li {
-        line-height: 79px;
-        font-size: 19px;
-        text-decoration: none;
-        display: block;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 2px solid transparent;
-        .el-submenu__title {
-          color: #777777;
-          font-size: 19px;
-        }
-        &:hover {
-          background: none !important;
-          border-bottom: 2px solid transparent;
-        }
-        &:last-child {
-          padding-left: 0!important;
-          padding-right: 0!important;
-          a {
-            display: inline-block;
-            padding-left: 22px;
-            float: left;
-          }
-        }
-      }
-    }
-  }
-  .sub-menu {
-    background: rgba(129, 85, 160, .85);
-    width: 100%;
-    height: 0;
-    overflow: hidden;
-    transition-property: height;
-    transition-duration: 1s;
-    -moz-transition-property: height;
-    /* Firefox 4 */
-    -moz-transition-duration: 1s;
-    /* Firefox 4 */
-    -webkit-transition-property: height;
-    /* Safari and Chrome */
-    -webkit-transition-duration: 1s;
-    /* Safari and Chrome */
-    -o-transition-property: height;
-    /* Opera */
-    -o-transition-duration: 1s;
-    /* Opera */
-    &.open {
-      height: 50px;
-    }
-    div.container>ul {
-      &>li {
-        float: left;
-        list-style: none;
-        position: relative;
-        flex: 1;
-        a,
-        span {
-          line-height: 50px;
-          color: #fff;
-          font-size: 18px;
-          text-decoration: none;
-          cursor: pointer
-        }
-      }
-      li+li {
-        margin-left: 20px;
-      }
-    }
-  }
-  .childMenu {
-    position: absolute;
-    top: 143px;
-    left: 0;
-    background: rgba(59, 49, 65, .91);
-    width: 100%;
-    z-index: 200;
-    -webkit-transition-duration: .45s;
-    -webkit-transition-property: all;
-    -webkit-transition-delay: 0s;
-    -webkit-transition-timing-function: 'ease-in-out';
-    transition-duration: .45s;
-    transition-property: all;
-    transition-delay: 0s;
-    transition-timing-function: 'ease-in-out';
-    overflow: hidden;
-    ul {
-      padding: 10px 0;
-      position: absolute;
-      -webkit-transition-duration: .45s;
-      -webkit-transition-property: left;
-      -webkit-transition-delay: 0s;
-      -webkit-transition-timing-function: 'ease-in-out';
-      transition-duration: .45s;
-      transition-property: left;
-      transition-delay: 0s;
-      transition-timing-function: 'ease-in-out';
-      li {
-        margin: 10px 0;
-        a {
-          color: #fff;
-          cursor: pointer
-        }
-      }
-    }
-  }
-}
+
 
 
 
@@ -564,7 +482,7 @@ footer {
       font-size: 14px;
       line-height: 80px;
       .appBox {
-        color: $main;
+        color: $sub;
         .leftBox {
           padding-right: 20px;
           margin: 10px 20px 10px 0;

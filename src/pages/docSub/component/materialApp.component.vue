@@ -1,6 +1,50 @@
 <template>
   <div class="materialApp clearfix">
-    <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px" class="clearBoth">
+
+    <el-form label-position="left" :model="materialForm" :rules="rules" ref="materialForm" label-width="128px">
+      <el-form-item label="物品名称" class="inlinItem" prop="productName">
+        <el-input v-model="materialForm.productName" :maxlength="25"></el-input>
+      </el-form-item>
+      <el-form-item label="型号" class="inlinItem" prop="specification">
+        <el-input v-model="materialForm.specification" :maxlength="25"></el-input>
+      </el-form-item>
+      <el-form-item label="单价" class="inlinItem" prop="plannedUnitPrice">
+        <money-input v-model="materialForm.plannedUnitPrice" :prepend="false">
+          <template slot="append">元</template>
+        </money-input>
+      </el-form-item>
+      <el-form-item label="数量" class="inlinItem" prop="quantity">
+        <money-input v-model="materialForm.quantity" :maxlength="5" :prepend="false" :append="false" type="int"></money-input>
+      </el-form-item>
+      <el-form-item label="备注" class="clearBoth">
+        <el-col :span="19">
+          <el-input v-model="materialForm.remark" class="fixF5" :maxlength="100">
+          </el-input>
+        </el-col>
+        <el-col :span="5">
+          <el-button @click='addMaterial' type="primary" class="addbutton1"><i class="el-icon-plus"></i> 添加</el-button>
+        </el-col>
+      </el-form-item>
+    </el-form>
+    <div class="appTable">
+      <el-table :data="materials" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加材料">
+        <el-table-column type="index" label="序号" width="55"></el-table-column>
+        <el-table-column property="productName" label="物品名称" width="160"></el-table-column>
+        <el-table-column property="specification" label="型号" width="65"></el-table-column>
+        <el-table-column property="plannedUnitPrice" label="单价" width="110"></el-table-column>
+        <el-table-column property="quantity" label="数量" width="100"></el-table-column>
+        <el-table-column property="remark" label="备注"></el-table-column>
+        <el-table-column label="操作" width="55">
+          <template scope="scope">
+            <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice | toThousands}}元 {{totalPrice | moneyCh}}</span></p>
+    </div>
+
+        <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px" class="clearBoth">
       <el-form-item label="预算年份" class="year">
         {{year}}
       </el-form-item>
@@ -58,48 +102,6 @@
         </el-table-column>
       </el-table>
       <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
-    </div>
-    <el-form label-position="left" :model="materialForm" :rules="rules" ref="materialForm" label-width="128px">
-      <el-form-item label="品名" class="inlinItem" prop="productName">
-        <el-input v-model="materialForm.productName" :maxlength="25"></el-input>
-      </el-form-item>
-      <el-form-item label="规格" class="inlinItem" prop="specification">
-        <el-input v-model="materialForm.specification" :maxlength="25"></el-input>
-      </el-form-item>
-      <el-form-item label="计划单价" class="inlinItem" prop="plannedUnitPrice">
-        <money-input v-model="materialForm.plannedUnitPrice" :prepend="false">
-          <template slot="append">元</template>
-        </money-input>
-      </el-form-item>
-      <el-form-item label="数量" class="inlinItem" prop="quantity">
-        <money-input v-model="materialForm.quantity" :maxlength="5" :prepend="false" :append="false" type="int"></money-input>
-      </el-form-item>
-      <el-form-item label="备注" class="clearBoth">
-        <el-col :span="19">
-          <el-input v-model="materialForm.remark" class="fixF5" :maxlength="100">
-          </el-input>
-        </el-col>
-        <el-col :span="5">
-          <el-button @click='addMaterial' type="primary" class="addbutton1"><i class="el-icon-plus"></i> 添加</el-button>
-        </el-col>
-      </el-form-item>
-    </el-form>
-    <div class="appTable">
-      <el-table :data="materials" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加材料">
-        <el-table-column type="index" label="序号" width="55"></el-table-column>
-        <el-table-column property="productName" label="品名" width="160"></el-table-column>
-        <el-table-column property="specification" label="规格" width="65"></el-table-column>
-        <el-table-column property="plannedUnitPrice" label="计划单价" width="110"></el-table-column>
-        <el-table-column property="quantity" label="数量" width="100"></el-table-column>
-        <el-table-column property="remark" label="备注"></el-table-column>
-        <el-table-column label="操作" width="55">
-          <template scope="scope">
-            <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice | toThousands}}元 {{totalPrice | moneyCh}}</span></p>
     </div>
   </div>
 </template>

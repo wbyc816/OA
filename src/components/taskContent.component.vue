@@ -189,7 +189,7 @@ export default {
     },
     deleteContent(ids) {
       this.searchLoading = true;
-      this.$http.post('/doc/deleteTaskTemplte', { ids: ids }, { body: true })
+      this.$http.post('/doc/deleteTaskTemplte', ids, { body: true })
         .then(res => {
           this.searchLoading = false;
           if (res.status == 0) {

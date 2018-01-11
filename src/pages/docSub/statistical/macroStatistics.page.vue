@@ -109,7 +109,7 @@ export default {
         this.searchParams.startTime = '';
         this.searchParams.endTime = '';
       }
-      this.searchParams.userId=this.userInfo.empId;
+      // this.searchParams.userId=this.userInfo.empId;
       this.$http.post("/doc/docMacroStatistics", this.searchParams, { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;

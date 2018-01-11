@@ -3,7 +3,7 @@
     <h4 class='doc-form_title'>合同信息</h4>
     <el-form label-position="left" :model="contractForm" :rules="contractRule" ref="contractForm" label-width="128px">
       <el-form-item label="合同子类型" prop="contractCode" placeholder="" class="deptArea">
-        <el-select v-model="contractForm.contractCode" style="width:100%" ref="contractCode">
+        <el-select v-model="contractForm.contractCode" style="width:100%" ref="contractCode" @change="typeChange">
           <el-option v-for="item in contractCodeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -432,6 +432,9 @@ export default {
         return false;
       }
       return true;
+    },
+    typeChange(val) {
+      this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});      
     },
     submitAll() {
       var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);

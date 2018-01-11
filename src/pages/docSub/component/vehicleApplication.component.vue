@@ -113,6 +113,7 @@ export default {
     typeChange(val){
       this.$emit('updateSuggest', val.dictCode);
       // console.log(val)
+      this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val.dictCode});
     },
     updateDep(dep) {
       this.selDep = dep;

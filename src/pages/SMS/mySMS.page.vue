@@ -28,7 +28,8 @@
       </el-collapse-transition>
     </el-card>
     <el-card class="borderCard searchResult" v-loading="searchLoading">
-      <el-table :data="searchData" class="myTable" @row-click="goDetail">
+      <el-table :data="searchData" class="myTable" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="sendUserName" label="发送人" width="130"></el-table-column>
         <el-table-column prop="reciUserName" label="接收人" width="130"></el-table-column>
         <el-table-column prop="content" label="短信内容" class-name="contentColumn"></el-table-column>
@@ -45,7 +46,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="pageBox" v-show="searchData.length>0">
+      <div class="pageBox clearfix" v-show="searchData.length>0">
+        <span v-show="selList.length!=0" class="bottomDel">已选<i>{{selList.length}}</i>条记录<i>删除</i></span>
         <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="searchParams.pageSize" layout="total, prev, pager, next, jumper" :total="totalSize">
         </el-pagination>
       </div>
@@ -78,7 +80,8 @@ export default {
           return time.getTime() >= +new Date();
         }
       },
-      showDetail: false
+      showDetail: false,
+      selList:[]
     }
   },
   computed: {
@@ -158,6 +161,9 @@ export default {
     },
     goDetail(row) {
       this.$router.push('/SMS/SMSDetail/' + row.id)
+    },
+    handleSelectionChange(val){
+      this.selList=val;
     }
   }
 }
@@ -236,7 +242,18 @@ $sub:#1465C0;
   }
   .pageBox {
     padding: 20px;
-    text-align: right;
+    .el-pagination{
+      float:right;
+    }
+    .bottomDel{
+      float:left;
+      i{
+        font-style: normal;
+        color:$main;
+        cursor:pointer;
+        padding:0 5px;
+      }
+    }
   }
 }
 

@@ -3,7 +3,7 @@
     <h4 class='doc-form_title'>合同信息</h4>
     <el-form label-position="left" :model="contractForm" :rules="contractRule" ref="contractForm" label-width="128px">
       <el-form-item label="合同子类型" prop="contractCode" placeholder="" class="deptArea">
-        <el-select v-model="contractForm.contractCode" style="width:100%">
+        <el-select v-model="contractForm.contractCode" style="width:100%" @change="typeChange">
           <el-option v-for="item in contractCodeList" :key="item.dictCode" ref="contractCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -29,7 +29,6 @@
         <li>开户银行 {{supplierInfo.accountBank}}</li>
         <li>银行账号 {{supplierInfo.accountCode}}</li>
       </ul>
-
       <el-form-item label="币种" class="arrArea" prop="currencyId">
         <el-select v-model="contractForm.currencyId" @change="currencyChange">
           <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
@@ -56,68 +55,54 @@
       <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
         <!-- <el-cascader :clearable="true" :options="budgetDeptList" ref="budgetDept" :props="budgetProp" v-model="airMaterialForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange"   ></el-cascader> -->
         <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="airMaterialForm.budgetDept" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" class="budgetDept" ref="budgetDept" style="width:100%"></el-cascader>
-          
       </el-form-item>
       <ul class="budgetInfo clearfix clearBoth" v-show="airMaterialInfo">
         <li>年度预算{{airMaterialInfo.budgetTotal | toThousands}}元</li>
         <li>可用预算{{airMaterialInfo.budgetRemain | toThousands}}元</li>
         <li>预算执行比例{{airMaterialInfo.execRateStr}}</li>
       </ul>
-
-
-    <el-form-item label="件号" prop="pieceNo" class="deptArea"> 
+      <el-form-item label="件号" prop="pieceNo" class="deptArea">
         <el-input ref="pieceNo" v-model="airMaterialForm.pieceNo" :maxlength="20">
         </el-input>
-    </el-form-item>
-    
-    <el-form-item label="件状态" prop="pieceState" class="arrArea" >
-      <el-select v-model="airMaterialForm.pieceState"   ref="pieceState" >
-        <el-option v-for="item in pieceStates"  :label="item.dictName" :value="item.dictCode"  :maxlength="4">
-        </el-option>
-      </el-select>
-    </el-form-item>
+      </el-form-item>
+      <el-form-item label="件状态" prop="pieceState" class="arrArea">
+        <el-select v-model="airMaterialForm.pieceState" ref="pieceState">
+          <el-option v-for="item in pieceStates" :label="item.dictName" :value="item.dictCode" :maxlength="4">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="合同数量" class="deptArea" prop="pieceNum" style="height:46px;">
-        <money-input ref="pieceNum" v-model="airMaterialForm.pieceNum"  :minlength="4" :maxlength="6" :prepend="false"  @change="changePieceNum">
+        <money-input ref="pieceNum" v-model="airMaterialForm.pieceNum" :minlength="4" :maxlength="6" :prepend="false" @change="changePieceNum">
         </money-input>
       </el-form-item>
-
-      <el-form-item label="索赔期/月" prop="claimMonth" class="arrArea" >
-          <el-input ref="claimMonth" v-model="airMaterialForm.claimMonth" :maxlength="7">
-          </el-input>
+      <el-form-item label="索赔期/月" prop="claimMonth" class="arrArea">
+        <el-input ref="claimMonth" v-model="airMaterialForm.claimMonth" :maxlength="7">
+        </el-input>
       </el-form-item>
-        
-      <el-form-item label="单位" prop="unit" class="deptArea" >
+      <el-form-item label="单位" prop="unit" class="deptArea">
         <el-input ref="unit" v-model="airMaterialForm.unit" :maxlength="8">
         </el-input>
       </el-form-item>
-
       <el-form-item label="单价" class="arrArea" prop="unitPrice">
-        <money-input ref="unitPrice" v-model="airMaterialForm.unitPrice"  :maxlength="8" :prepend="false"  @change="changeUnitPrice">
+        <money-input ref="unitPrice" v-model="airMaterialForm.unitPrice" :maxlength="8" :prepend="false" @change="changeUnitPrice">
         </money-input>
       </el-form-item>
-
-      <el-form-item label="总价" prop="totalPrice" class="deptArea" >
-          <el-input ref="totalPrice" v-model="airMaterialForm.totalPrice" :maxlength="12" readonly="">
-          </el-input>
-      </el-form-item>
-
-      <el-form-item label="要求到货天数" prop="arrivalDays" class="arrArea">
-       <el-input ref="arrivalDays" v-model="airMaterialForm.arrivalDays" :maxlength="8" @change="changeArrivalDays">
+      <el-form-item label="总价" prop="totalPrice" class="deptArea">
+        <el-input ref="totalPrice" v-model="airMaterialForm.totalPrice" :maxlength="12" readonly="">
         </el-input>
       </el-form-item>
-
+      <el-form-item label="要求到货天数" prop="arrivalDays" class="arrArea">
+        <el-input ref="arrivalDays" v-model="airMaterialForm.arrivalDays" :maxlength="8" @change="changeArrivalDays">
+        </el-input>
+      </el-form-item>
       <el-form-item label="航材中文名称" prop="airmaterialNameZn" :maxlength="20" placeholder="" class="deptArea">
-          <el-input ref="airmaterialNameZn" v-model="airMaterialForm.airmaterialNameZn">
-          </el-input>
+        <el-input ref="airmaterialNameZn" v-model="airMaterialForm.airmaterialNameZn">
+        </el-input>
       </el-form-item>
-
       <el-form-item label="航材英文名称" prop="airmaterialNameEn" placeholder="" class="arrArea">
-          <el-input ref="airmaterialNameEn" v-model="airMaterialForm.airmaterialNameEn">
-          </el-input>
+        <el-input ref="airmaterialNameEn" v-model="airMaterialForm.airmaterialNameEn">
+        </el-input>
       </el-form-item>
-
-
-
       <el-button type="primary" @click="addBudget" style="float:right"><i class="el-icon-plus"></i> 添加</el-button>
       <!-- <el-form-item label="合计金额" prop="totalItemMoney" class="offerPrice clearfix clearBoth">
         <money-input v-model="airMaterialForm.totalItemMoney" :prepend="false">
@@ -149,10 +134,9 @@
                     <span>执行比例</span>
                     <p>{{props.row.execRateStr}}</p>
                   </div>
-                  
                 </div>
                 <div class="width50">
-                    <div>
+                  <div>
                     <span>航材英文名称</span>
                     <p>{{props.row.airmaterialNameEn}}</p>
                   </div>
@@ -160,7 +144,6 @@
                     <span>件状态</span>
                     <p>{{props.row.pieceState}}</p>
                   </div>
-                 
                 </div>
                 <div class="width50">
                   <div>
@@ -172,7 +155,6 @@
                     <p>{{props.row.arrivalDays}}</p>
                   </div>
                 </div>
-               
                 <div class="width50">
                   <div>
                     <span>索赔期/月</span>
@@ -187,9 +169,6 @@
           <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
           <el-table-column property="unitPrice" label="单价"></el-table-column>
           <el-table-column property="totalPrice" label="总价"></el-table-column>
-
- 
-          
           <el-table-column label="操作" width="55">
             <template scope="scope">
               <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
@@ -238,13 +217,13 @@ import { mapGetters } from 'vuex'
 export default {
   components: { MoneyInput },
   data() {
-   var validatorpieceNum = (rule, value, callback) => {
+    var validatorpieceNum = (rule, value, callback) => {
       if (value && value.length != 0) {
-        if (value.length<4) {
+        if (value.length < 4) {
           callback(new Error("输入长度应该大于4"));
-        } else if(this.airMaterialForm.unitPrice*value>999999999999){
+        } else if (this.airMaterialForm.unitPrice * value > 999999999999) {
           callback(new Error("总价超额"));
-        }else{
+        } else {
           callback();
         }
       } else {
@@ -253,10 +232,10 @@ export default {
     };
     var validatorUnitPrice = (rule, value, callback) => {
       if (value && value.length != 0) {
-       if(value*this.airMaterialForm.pieceNum*value>999999999999){
-         console.log(value*this.airMaterialForm.pieceNum*value)
+        if (value * this.airMaterialForm.pieceNum * value > 999999999999) {
+          console.log(value * this.airMaterialForm.pieceNum * value)
           callback(new Error("总价超额"));
-        }else{
+        } else {
           callback();
         }
       } else {
@@ -300,8 +279,8 @@ export default {
         currencyId: '',
         offerPrice: ''
       },
-     
-      pieceStates:[],
+
+      pieceStates: [],
       bookTypes: [],
       budgetDate: {},
 
@@ -310,28 +289,28 @@ export default {
       useBudget: 0,
       execRateStr: "0%",
       airMaterialForm: {
-        pieceState:[],
+        pieceState: [],
         year: new Date(),
         budgetDept: [],
-        pieceNo:"",
-        pieceState:"",
-        pieceNum:"",
-        claimMonth:"",
-        unit:"",
-        unitPrice:"",
-        airmaterialNameZn:"",
-        totalPrice:"",
-        
-        arrivalDays:"",
-        airmaterialNameEn:"",
+        pieceNo: "",
+        pieceState: "",
+        pieceNum: "",
+        claimMonth: "",
+        unit: "",
+        unitPrice: "",
+        airmaterialNameZn: "",
+        totalPrice: "",
+
+        arrivalDays: "",
+        airmaterialNameEn: "",
       },
       airmaterialRule: {
         pieceNo: [{ required: true, message: '请输入件号', trigger: 'blur' }],
-        pieceNum: [{ required: true, message: '请输入合同数量', trigger: 'blur' },{ validator: validatorpieceNum, trigger: 'blur,change' }],
+        pieceNum: [{ required: true, message: '请输入合同数量', trigger: 'blur' }, { validator: validatorpieceNum, trigger: 'blur,change' }],
         budgetDept: [{ type: 'array', required: true, message: '请预算机构', trigger: 'blur' }],
         pieceState: [{ required: true, message: '请选择件状态', trigger: 'blur' }],
         arrivalDays: [{ required: true, message: '请输入要求到货天数', trigger: 'blur' }],
-        unitPrice: [{ required: true, message: '请输入单价', trigger: 'blur' },{ validator: validatorUnitPrice, trigger: 'blur,change' }],
+        unitPrice: [{ required: true, message: '请输入单价', trigger: 'blur' }, { validator: validatorUnitPrice, trigger: 'blur,change' }],
         unit: [{ required: true, message: '请输入单位', trigger: 'blur' }],
         airmaterialNameZn: [{ required: true, message: '请输入航材中文名称', trigger: 'blur' }],
         airmaterialNameEn: [{ required: true, message: '请输入航材英文名称', trigger: 'blur' }],
@@ -409,17 +388,20 @@ export default {
     }
   },
   methods: {
-     getPieceState(){
-      this.$http.post('/api/getDict', { 
-          "dictCode":"DOC17"
-       })
-      .then(res => {
-        if (res.status == 0) {
-         this.pieceStates=res.data;
-        }
-      })
+    getPieceState() {
+      this.$http.post('/api/getDict', {
+          "dictCode": "DOC17"
+        })
+        .then(res => {
+          if (res.status == 0) {
+            this.pieceStates = res.data;
+          }
+        })
     },
-      changeArrivalDays(val) {
+    typeChange(val) {
+      this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});      
+    },
+    changeArrivalDays(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
       if (val) {
         this.airMaterialForm.arrivalDays = val[0];
@@ -429,26 +411,26 @@ export default {
         this.$refs.arrivalDays.setCurrentValue('')
       }
     },
-    changeUnitPrice(val){
+    changeUnitPrice(val) {
       val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
       if (val) {
         this.airMaterialForm.unitPrice = val[0];
         // this.$refs.unitPrice.setCurrentValue(val[0]);
-        this.airMaterialForm.totalPrice=this.numFixed2(this.airMaterialForm.pieceNum*this.airMaterialForm.unitPrice);
+        this.airMaterialForm.totalPrice = this.numFixed2(this.airMaterialForm.pieceNum * this.airMaterialForm.unitPrice);
       } else {
         this.airMaterialForm.unitPrice = '';
         // this.$refs.unitPrice.setCurrentValue('')
       }
     },
-    changePieceNum(val){
-     
+    changePieceNum(val) {
+
       val = val.toString().match(/^\d+(?:\.\d{0,2})?/);
       if (val) {
         this.airMaterialForm.pieceNum = val[0];
         // this.$refs.pieceNum.setCurrentValue(val[0]);
-         this.airMaterialForm.totalPrice=this.numFixed2(this.airMaterialForm.pieceNum*this.airMaterialForm.unitPrice);
+        this.airMaterialForm.totalPrice = this.numFixed2(this.airMaterialForm.pieceNum * this.airMaterialForm.unitPrice);
       } else {
-         this.airMaterialForm.pieceNum = '';
+        this.airMaterialForm.pieceNum = '';
         // this.$refs.pieceNum.setCurrentValue('')
       }
     },
@@ -462,8 +444,8 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
-      this.combineObj(this.contractForm,obj.contractForm,['createTime']);
-      this.contractForm.createTime=new Date(obj.contractForm.createTime);
+      this.combineObj(this.contractForm, obj.contractForm, ['createTime']);
+      this.contractForm.createTime = new Date(obj.contractForm.createTime);
       this.airMaterialTable = obj.airMaterialTable;
       this.factoryTable = obj.factoryTable;
       if (this.contractForm.supplierIds.length != 0) {
@@ -498,9 +480,9 @@ export default {
     submitAll() {
       var contractType = this.contractCodeList.find(d => d.dictCode == this.contractForm.contractCode);
       var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
-      var that=this;
-      var airmPosItems={
-       
+      var that = this;
+      var airmPosItems = {
+
         "airmPosItems": that.airMaterialTable.map(function(tabel) {
           return {
             "budgetDeptId": tabel.budgetDeptCode, //预算部门id
@@ -509,51 +491,51 @@ export default {
             "budgetItemId": tabel.budgetItemId, //预算科目id
             "money": tabel.budgetMoney, //预算钱数
             "budgetYear": tabel.budgetYear, //预算年数
-            "money": that.totalMoney || 0,   //金额
-            "accurencyName":  currency.currencyCode,  //币种
-            "exchangeRateId": currency.exchangeId ,  //汇率
-            "exchangeRate": currency.exchangeRate,  //汇率id
-            "rmb": that.totalRmb || 0,  //人民币
-            "airmaterialNameZn": tabel.airmaterialNameZn,  //航材中文名称
-            "pieceNo": tabel.pieceNo,   //件号
-            "pieceStatus": tabel.pieceState,  //件状态
-            "pieceNum": tabel.pieceNum,   //合同中的件数量
-            "unit": tabel.unit,   //单位
-            "unitPrice": tabel.unitPrice,  //单价
-            "totalPrice": tabel.totalPrice,  //总价=单位*单价
-            "airmaterialNameEn": tabel.airmaterialNameEn,  //航材英文名称
-            "claimMonth": tabel.claimMonth ,//索赔期/月
-            arrivalDays:tabel.arrivalDays//到货天数
+            "money": that.totalMoney || 0, //金额
+            "accurencyName": currency.currencyCode, //币种
+            "exchangeRateId": currency.exchangeId, //汇率
+            "exchangeRate": currency.exchangeRate, //汇率id
+            "rmb": that.totalRmb || 0, //人民币
+            "airmaterialNameZn": tabel.airmaterialNameZn, //航材中文名称
+            "pieceNo": tabel.pieceNo, //件号
+            "pieceStatus": tabel.pieceState, //件状态
+            "pieceNum": tabel.pieceNum, //合同中的件数量
+            "unit": tabel.unit, //单位
+            "unitPrice": tabel.unitPrice, //单价
+            "totalPrice": tabel.totalPrice, //总价=单位*单价
+            "airmaterialNameEn": tabel.airmaterialNameEn, //航材英文名称
+            "claimMonth": tabel.claimMonth, //索赔期/月
+            arrivalDays: tabel.arrivalDays //到货天数
           }
         })
-          
+
       };
-      
-    var airmPos= {
+
+      var airmPos = {
 
 
-            "budgetYear":that.year,         //预算年度
-            supplierId: that.supplierInfo.id, //  供应商id
-            supplierName: that.supplierInfo.supplierName, //  供应商名
-            supplierBank: that.supplierInfo.accountBank, //  供应商开户银行
-            supplierBankAccountName: that.supplierInfo.accountName, //  供应商开户账号名
-            advancePaymentPercent: that.contractForm.advancePaymentPercent, //  预付款百分比
-            "totalMoney": that.totalMoney || 0,   //总金额
-            "isAdvancePayment": that.contractForm.isAdvancePayment,  //付款方式,1预付 0后付
-            createTime: that.contractForm.createTime, //   填表日期（创建日期）（推送日期）
-            contractNo: that.contractForm.contractNo, //  合同号
-            "accurencyName":  currency.currencyName,  //币种
-            "exchangeRateId": currency.exchangeId ,  //汇率
-            "exchangeRate": currency.exchangeRate,  //汇率id
-            priority: that.contractForm.priority, //  优先级   
-            "contractSubType": contractType.dictCode,   //合同子类型
-            "contractSubName": contractType.dictName,   //合同子类型
-            "rmb": that.totalRmb || 0,  //人民币
-          
-        
-    };
+        "budgetYear": that.year, //预算年度
+        supplierId: that.supplierInfo.id, //  供应商id
+        supplierName: that.supplierInfo.supplierName, //  供应商名
+        supplierBank: that.supplierInfo.accountBank, //  供应商开户银行
+        supplierBankAccountName: that.supplierInfo.accountName, //  供应商开户账号名
+        advancePaymentPercent: that.contractForm.advancePaymentPercent, //  预付款百分比
+        "totalMoney": that.totalMoney || 0, //总金额
+        "isAdvancePayment": that.contractForm.isAdvancePayment, //付款方式,1预付 0后付
+        createTime: that.contractForm.createTime, //   填表日期（创建日期）（推送日期）
+        contractNo: that.contractForm.contractNo, //  合同号
+        "accurencyName": currency.currencyName, //币种
+        "exchangeRateId": currency.exchangeId, //汇率
+        "exchangeRate": currency.exchangeRate, //汇率id
+        priority: that.contractForm.priority, //  优先级   
+        "contractSubType": contractType.dictCode, //合同子类型
+        "contractSubName": contractType.dictName, //合同子类型
+        "rmb": that.totalRmb || 0, //人民币
 
-      this.$emit('submitMiddle', { airmPos:airmPos,  airmPosItems:airmPosItems.airmPosItems })
+
+      };
+
+      this.$emit('submitMiddle', { airmPos: airmPos, airmPosItems: airmPosItems.airmPosItems })
     },
     getContractCodeList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC18' })
@@ -585,7 +567,7 @@ export default {
     getCurrencyList() {
       if (this.currencyList.length !== 0) {
         if (!this.isDraft) {
-          
+
         }
       } else {
         this.$store.dispatch('getCurrency')
@@ -690,14 +672,14 @@ export default {
     },
     addBudget() {
       this.$refs.airMaterialForm.validate((valid) => {
-        if(this.totalMoney+this.airMaterialForm.totalPrice<1000000000000){
+        if (this.totalMoney + this.airMaterialForm.totalPrice < 1000000000000) {
           if (valid) {
             var dep = this.getBudgetDep();
             var temp = {};
             temp.budgetDeptCode = dep.budgetDeptCode;
             temp.budgetDept = this.$refs.budgetDept.currentLabels[0] + "/" + this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
             temp.budgetDeptName = this.airMaterialForm.budgetDeptName;
-            temp.execRateStr = this. airMaterialInfo.execRateStr;
+            temp.execRateStr = this.airMaterialInfo.execRateStr;
             temp.airmaterialNameZn = this.airMaterialForm.airmaterialNameZn;
             temp.pieceNo = this.airMaterialForm.pieceNo;
             temp.pieceState = this.$refs.pieceState.selectedLabel;
@@ -721,11 +703,11 @@ export default {
             this.airMaterialInfo = '';
             this.$refs.airMaterialForm.resetFields();
 
-        } else{
+          } else {
 
-        }
-      }else {
-            this.$message({
+          }
+        } else {
+          this.$message({
             message: '合同总金额超额',
             type: 'warning'
           });

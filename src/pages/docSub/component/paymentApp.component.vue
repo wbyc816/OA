@@ -293,6 +293,7 @@ export default {
         this.$emit('updateSuggest', val)
       }
       this.isfirst = false;
+      this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});      
     },
     submitForm() {
       if (this.checkBudgetTable()) {
@@ -507,7 +508,7 @@ export default {
       var dep = this.getBudgetDep();
       var temp = this.budgetTable.find(b => b.budgetDeptId == dep.budgetDeptCode && b.budgetItemId == dep.budgetItemCode)
       if (temp == undefined) {
-        if (this.budgetInfo.budgetRemain <= 0 || rmb > this.budgetInfo.budgetRemain) {
+        if (!this.budgetInfo||this.budgetInfo.budgetRemain <= 0 || rmb > this.budgetInfo.budgetRemain) {
           this.$message.warning('申请金额不能大于可用预算金额');
           return false
         } else {

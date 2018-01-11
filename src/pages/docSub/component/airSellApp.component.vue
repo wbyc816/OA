@@ -3,7 +3,7 @@
     <h4 class='doc-form_title'>合同信息</h4>
     <el-form label-position="left" :model="contractForm" :rules="contractRule" ref="contractForm" label-width="128px">
       <el-form-item label="合同子类型" prop="contractCode" placeholder="" class="deptArea">
-        <el-select v-model="contractForm.contractCode" style="width:100%" ref="contractCode">
+        <el-select v-model="contractForm.contractCode" style="width:100%" ref="contractCode" @change="typeChange">
           <el-option v-for="item in contractCodeList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -81,11 +81,11 @@
         </el-input>
       </el-form-item>
       <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
-        <money-input v-model="budgetForm.pieceNum" type="int" :prepend="false" :append="false" :maxlength="6">
+        <money-input v-model="budgetForm.pieceNum" type="int" :prepend="false" :append="false" :maxlength="4">
         </money-input>
       </el-form-item>
       <el-form-item label="单价" prop="unitPrice" class="arrArea">
-        <money-input v-model="budgetForm.unitPrice" :prepend="false" :append="false">
+        <money-input v-model="budgetForm.unitPrice" :prepend="false" min="1000" :append="false">
         </money-input>
       </el-form-item>
       <el-form-item label="总价"  class="offerPrice clearfix clearBoth">
@@ -114,8 +114,8 @@
                     <p>{{props.row.excutionRatio}}</p>
                   </div>
                   <div>
-                    <span>合同数量</span>
-                    <p>{{props.row.pieceNum}}</p>
+                    <span>序号</span>
+                    <p>{{props.row.airmaterialCode}}</p>
                   </div>
                 </div>
                 <div class="width50">
@@ -128,18 +128,13 @@
                     <p>{{props.row.unit}}</p>
                   </div>
                 </div>
-                <div class="width50">
-                  <div>
-                    <span>单价</span>
-                    <p>{{props.row.unitPrice}}</p>
-                  </div>
-                </div>
               </div>
             </template>
           </el-table-column>
           <el-table-column property="airmaterialNameZn" label="器材中文名称"></el-table-column>
           <el-table-column property="pieceNo" label="件号" width="120"></el-table-column>
-          <el-table-column property="airmaterialCode" label="序号" width="120"></el-table-column>
+          <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
+          <el-table-column property="unitPrice" label="单价" width="120"></el-table-column>
           <el-table-column property="totalPrice" label="总价" width="150"></el-table-column>
           <el-table-column label="操作" width="55">
             <template scope="scope">
@@ -350,6 +345,9 @@ export default {
         rmbTotalMoney: this.totalRmb, //人民币总金额
       }
       this.$emit('submitMiddle', { airmSell: airmSell, items: this.budgetTable })
+    },
+    typeChange(val) {
+      this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});      
     },
     getContractCodeList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC19' })

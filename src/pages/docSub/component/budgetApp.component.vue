@@ -2,7 +2,7 @@
   <div class="budgetApp">
     <el-form label-position="left" :model="budgetForm" :rules="rules" ref="budgetForm" label-width="128px">
       <el-form-item label="申请类型" prop="type" class="deptArea">
-        <el-select v-model="budgetForm.type" value-key="dictCode">
+        <el-select v-model="budgetForm.type" value-key="dictCode" @change="typeChange">
           <el-option v-for="item in types" :label="item.dictName" :value="item">
           </el-option>
         </el-select>
@@ -155,6 +155,9 @@ export default {
     getDraft(obj) {
       this.budgetTable = obj;
     },
+    typeChange(val) {
+      this.$store.dispatch('getTemplate', { code: this.$route.params.code, subCode: val.dictCode });
+    },
     addBudget() {
       this.$refs.budgetForm.validate((valid) => {
         if (valid) {
@@ -214,8 +217,10 @@ export default {
     checkBudget() {
       var dep = this.getBudgetDep();
       var temp = this.budgetTable.find(b => b.budgetItemId == dep.budgetItemCode)
-
-      if (temp == undefined) {
+      if (!this.useBudget) {
+        this.$message.warning('该科目无预算信息');
+        return false
+      } else if (temp == undefined) {
         return true;
       } else {
         this.$message.warning('不能添加相同的预算科目')
@@ -259,7 +264,7 @@ export default {
               this.$emit('submitMiddle', false);
               return false;
             }
-          }else{
+          } else {
             this.$emit('submitMiddle', this.params);
           }
         } else {

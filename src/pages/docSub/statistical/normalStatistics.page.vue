@@ -140,7 +140,7 @@ export default {
         this.searchParams.startTime = '';
         this.searchParams.endTime = '';
       }
-      this.searchParams.userId=this.userInfo.empId;
+      this.searchParams.userId = this.userInfo.empId;
       this.$http.post("/doc/docStatistics", this.searchParams, { body: true }).then(res => {
         setTimeout(function() {
           this.searchLoading = false;
@@ -159,9 +159,9 @@ export default {
       this.searchParams.pageNumber = page;
       this.getData()
     },
-    goDetail(row){
+    goDetail(row) {
       // console.log(row);
-      this.$router.push({path:'/doc/docInfo/'+row.id,query:{code:row.docTypeCode}})
+      this.$router.push({ path: '/doc/docInfo/' + row.id, query: { code: row.docTypeCode } })
     },
     search() {
       this.searchParams.pageNumber = 1;
@@ -191,11 +191,13 @@ export default {
     },
     getDepList() {
       if (this.depList.length == 0) {
-        this.$http.post('doc/docTaskDept',{userId:this.userInfo.empId})
+        this.$http.post('doc/docTaskDept', { userId: this.userInfo.empId })
           .then(res => {
             if (res.status == 0) {
               this.depList = res.data;
-              this.searchParams.taskDeptId=res.data[0].deptId;
+              if (this.depList.length < 2) {
+                this.searchParams.taskDeptId = res.data[0].deptId;
+              }
             } else {
 
             }
@@ -210,8 +212,8 @@ export default {
 $main: #0460AE;
 $sub:#1465C0;
 #normalStatistics {
-  .el-cascader__label{
-    line-height:46px;
+  .el-cascader__label {
+    line-height: 46px;
   }
   .searchOptions {
     .el-card__body {

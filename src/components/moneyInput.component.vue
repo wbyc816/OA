@@ -64,7 +64,7 @@ export default {
           }
         }
       } else if (this.type == 'int') {
-        val = val.toString().match(/^[1-9][0-9]{0,}/)
+        val = val.toString().match(/^[1-9][0-9]{0,}/);
       } else if (this.type == 'int0' || this.type == 'bankCode') {
         val = val.toString().match(/^[0-9]{0,}/)
       } else if (this.type == 'invoice') {
@@ -85,19 +85,19 @@ export default {
     },
     blurInput(event) {
       if (this.type == 'money') {
-        var temp = event.target.value.split('.');
-
-        if (temp.length == 2 && (temp[1] == undefined || temp[1] == '' || temp[1] == null)) {
-          this.$emit('input', temp[0]);
-          this.$emit('change', temp[0]);
-          this.$refs.input.setCurrentValue(temp[0]);
-        } else if (temp[0] === '') {
-          if (this.min) {
-            this.$emit('input', this.min);
-            this.$emit('change', this.min);
-            this.$refs.input.setCurrentValue(this.min);
-          }
+        var temp = event.target.value;
+        if (this.min && (parseFloat(temp) < parseFloat(this.min) || temp == '')) {
+          temp = this.min;
         }
+        temp = temp.toString().split('.');
+        if (temp.length == 2 && (temp[1] == undefined || temp[1] == '' || temp[1] == null)) {
+          temp = temp[0];
+        } else {
+          temp = temp.join('.');
+        }
+        this.$emit('input', temp);
+        this.$emit('change', temp);
+        this.$refs.input.setCurrentValue(temp);
       } else if (this.type == 'invoice') {
         var temp = event.target.value.replace(/\,$/, '');
         this.$emit('input', temp);
@@ -122,7 +122,7 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 .moenyInput {
-
+  height:46px;
   .el-input {
     height: 46px;
     .el-input-group__append,

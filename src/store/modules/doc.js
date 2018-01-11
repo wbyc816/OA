@@ -33,8 +33,8 @@ const state = {
     "docImportTypeCode": "",
     "docImportType": "",
   },
-  suggestPath:{
-    suggests:''
+  suggestPath: {
+    suggests: ''
   },
   extraDocs: [],
   processView: false,
@@ -49,7 +49,8 @@ const state = {
   },
   staticsPower: '', //1所有 2无审批者 0无
   isSubmit: false,
-  secretaryInfo: ''
+  secretaryInfo: '',
+  docTemplate: ''
 }
 
 const actions = {
@@ -272,6 +273,22 @@ const actions = {
       }, res => {
 
       })
+  },
+  //获取请示模板
+  getTemplate({ commit, state }, params) {
+    api.getTemplate(params.code,params.subCode)
+      .then(res => {
+        if(res.status==0){
+          if(res.data){
+            commit(types.GET_TEMPLATE, res.data.template);
+          }          
+        }
+      }, res => {
+        // Notification({
+        //   message: '获取公文类别失败！',
+        //   type: 'error'
+        // });
+      })
   }
 }
 
@@ -294,6 +311,7 @@ const getters = {
   taskUser: state => state.taskUser,
   secretaryInfo: state => state.secretaryInfo,
   suggestPath: state => state.suggestPath,
+  docTemplate: state => state.docTemplate,
 }
 
 const mutations = {
@@ -327,6 +345,9 @@ const mutations = {
   },
   [types.SET_PROCESS_VIEW](state, res) {
     state.processView = res;
+  },
+  [types.GET_TEMPLATE](state,data){
+    state.docTemplate=data;
   },
   setConfident(state, payLoad) {
     state.selConfident = payLoad

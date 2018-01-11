@@ -2,7 +2,7 @@
   <div class="editorWrap" :class="{'isFocus':isFocus}">
     <div v-html="content" @input="result" ref="editor" style="height:400px" @focus="isFocus=true" @blur="isFocus=false">
     </div>
-    <div class="tempBox" @click="setContent(tempText)">
+    <div class="tempBox" @click="setContent(docTemplate)">
       <i class="iconfont icon-moban"></i>模板
     </div>
     <p class="remainNum" :style="{color:isOver?'#ff4949':''}">
@@ -33,19 +33,15 @@ export default {
     ...mapGetters([
       'baseURL',
       'docType',
-      'userInfo'
+      'userInfo',
+      'docTemplate'
     ])
   },
   watch: {
-    docType: function(newval) {
-      if (newval.length != 0) {
-        this.handleTemp();
-      }
-    }
+
   },
   mounted() {
-    var that=this;
-    this.handleTemp();
+    var that = this;
     const editor = new WangEditor(this.$refs.editor);
     editor.config.printLog = false;
     editor.config.menus = ['bold', 'underline', 'italic', 'eraser', 'forecolor', 'bgcolor', '|', 'unorderlist', 'orderlist', 'alignleft', 'aligncenter', 'alignright', 'indent'];
@@ -55,7 +51,7 @@ export default {
     };
     editor.create();
     this.$refs.editor.blur();
-    this.editor = editor;
+    this.editor = editor;    
   },
   methods: {
     result() {
@@ -70,12 +66,6 @@ export default {
           this.remainNum = 0;
         }
         this.$emit('updateLen', num)
-      }
-    },
-    handleTemp() {
-      if (this.docType.length != 0) {
-        var doc = this.docType.find(d => d.docTypeCode == this.$route.params.code);
-        this.tempText = doc.temPlate;
       }
     },
     setContent(val) {
