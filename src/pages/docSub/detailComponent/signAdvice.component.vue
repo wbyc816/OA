@@ -28,6 +28,16 @@
 
         </el-col>
       </el-form-item>
+
+        <el-form-item label="附件" prop="attchment">
+          <el-col :span='18'>
+          <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
+            <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>19"  v-show="!isIE()||(ruleForm.attchment.length<=19&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+          </el-upload>
+         </el-col>
+        <p class="uploadInfo">单个附件不能超过500MB</br>最多上传20个附件</p>
+      </el-form-item>
+
       <el-form-item>
         <el-col :span='18'>
           <el-button type="primary" size="large" class="submitButton" @click="submitSign">提交</el-button>
@@ -57,6 +67,7 @@ export default {
       ruleForm: {
         taskContent: '',
         state: '',
+        attchment:[],
         signUserName: '',
       },
       rules: {
@@ -66,6 +77,11 @@ export default {
       },
       dialogTableVisible: false,
       reciver: '',
+      difLength: 0,
+      upCount: 0,
+      fileIds: [],
+      fileIdArr:[],
+      successUps: [],
     }
   },
   computed: {
@@ -81,6 +97,56 @@ export default {
     }
   },
   methods: {
+    initAttchment(list) {
+      this.successUps = list;
+      this.ruleForm.attchment = this.successUps;
+    },
+    handleAvatarSuccess(res, file, fileList) {
+      this.fileIds = fileList;
+      this.upCount++;
+      if (this.upCount == this.difLength) {
+        var params = {
+          taskContent: this.ruleForm.des,
+        }
+        if (this.isSaveForm) {
+          params.files = JSON.stringify(this.fileIds);
+        } else {
+          params.fileId = this.fileIds.map(f => f.response.data);
+          this.fileIdArr= params.fileId;
+        }
+      }
+    },
+    checkAttchment() { //检查是否需要上传
+      this.difLength = this.ruleForm.attchment.length;
+      this.ruleForm.attchment.forEach(f => {
+        if (this.successUps.find(s => s.uid == f.uid)) {
+          this.difLength--;
+        }
+      })
+    },
+    handleAvatarError(res, file) {
+      this.$emit('submitEnd', false);
+      this.$message.error('附件上传失败，请重试');
+    },
+    handleChange(file, fileList) {
+      // const isPDF = file.raw.type === 'application/pdf';
+      const isLt10M = file.size / 1024 / 1024 < 500;
+      // if (!isPDF) {
+      //   this.$message.error('上传附件只能是 PDF 格式!');
+      // }
+      if (!isLt10M) {
+        this.$message.error('上传附件大小不能超过 500MB!');
+      }
+      if (isLt10M) {
+        this.ruleForm.attchment = fileList;
+        this.$refs.myUpload.submit();
+      } else {
+        this.$refs.myUpload.uploadFiles.splice(this.$refs.myUpload.uploadFiles.length - 1, 1)
+      }
+    },
+    handleRemove(file, fileList) {
+      this.ruleForm.attchment = fileList;
+    },
     adviceChange(val) {
       if (val == 1) {
         this.ruleForm.taskContent = '同意。'
@@ -129,6 +195,7 @@ export default {
             this.docTask();
           } else { //人员会签
             var params = {
+
               "state": this.ruleForm.state,
               "signContent": this.ruleForm.taskContent,
               "signUserId": this.userInfo.empId,
@@ -153,7 +220,9 @@ export default {
       });
     },
     docTask() { //部门会签
+      this.fileId= this.ruleForm.attchment.map(f => f.response.data);
       var params = {
+        fileIds:this.fileId,
         docId: this.docDetail.id,
         "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
         "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
@@ -176,15 +245,16 @@ export default {
             this.$message.error('会签失败' + res.message);
           }
         }, res => {
-
         })
     },
     endDepSign() { //部门结束会签
+      this.fileId= this.ruleForm.attchment.map(f => f.response.data);
       this.$refs.ruleForm.validateField('state', (error) => {
         if (error == '') {
           this.$refs.ruleForm.validateField('taskContent', (error1) => {
             if (error1 == '') {
               var params = {
+                fileIds:this.fileId,
                 docId: this.docDetail.id,
                 "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
                 "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
