@@ -72,7 +72,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="合同数量" class="deptArea" prop="pieceNum" style="height:46px;">
-        <money-input ref="pieceNum" v-model="airMaterialForm.pieceNum" :minlength="4" :maxlength="6" :prepend="false" @change="changePieceNum">
+        <money-input ref="pieceNum" v-model="airMaterialForm.pieceNum" :maxlength="6" :prepend="false" @change="changePieceNum">
         </money-input>
       </el-form-item>
       <el-form-item label="索赔期/月" prop="claimMonth" class="arrArea">
@@ -219,9 +219,7 @@ export default {
   data() {
     var validatorpieceNum = (rule, value, callback) => {
       if (value && value.length != 0) {
-        if (value.length < 4) {
-          callback(new Error("输入长度应该大于4"));
-        } else if (this.airMaterialForm.unitPrice * value > 999999999999) {
+        if (this.airMaterialForm.unitPrice * value > 999999999999) {
           callback(new Error("总价超额"));
         } else {
           callback();

@@ -43,7 +43,7 @@
 import TransferDialog from '../../components/transferDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
 export default {
-  name:'SMSApp',
+  name: 'SMSApp',
   components: {
     TransferDialog
   },
@@ -119,14 +119,18 @@ export default {
       this.customNums.splice(index, 1);
     },
     submitApp() {
-      this.$refs.appForm.validate((valid) => {
-        if (valid) {
-          this.postApp();
-        } else {
-          this.$message.warning('请检查填写字段')
-          return false;
-        }
-      });
+      if (this.appForm.person.length !== 0 || this.customNums.length !== 0) {
+        this.$refs.appForm.validate((valid) => {
+          if (valid) {
+            this.postApp();
+          } else {
+            this.$message.warning('请检查填写字段')
+            return false;
+          }
+        });
+      }else{
+        this.$message.warning('请选择接收人')
+      }
     },
     postApp() {
       this.submitLoading = true;

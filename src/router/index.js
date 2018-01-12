@@ -64,8 +64,8 @@ const mySMS = () =>
   import ('pages/SMS/mySMS.page')
 const SMSDetail = () =>
   import ('pages/SMS/SMSDetail.page')
-// const SMSSearch = () =>
-//   import ('pages/SMS/SMSSearch.page')
+const SMSSearch = () =>
+  import ('pages/SMS/SMSSearch.page')
 const SMSApp = () =>
   import ('pages/SMS/SMSApp.page')
 
@@ -367,14 +367,14 @@ const router = new Router({
             breadcrumb: "短信详情",
           }
         },
-        // {
-        //   path: '/SMS/SMSSearch',
-        //   name: 'SMSSearch',
-        //   component: SMSSearch,
-        //   meta: {
-        //     breadcrumb: "短信管理",
-        //   }
-        // },
+        {
+          path: '/SMS/SMSSearch',
+          name: 'SMSSearch',
+          component: SMSSearch,
+          meta: {
+            breadcrumb: "短信管理",
+          }
+        },
         {
           path: '/SMS',
           redirect: '/SMS/mySMS'

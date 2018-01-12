@@ -85,7 +85,7 @@
         </money-input>
       </el-form-item>
       <el-form-item label="单价" prop="unitPrice" class="arrArea">
-        <money-input v-model="budgetForm.unitPrice" :prepend="false" min="1000" :append="false">
+        <money-input v-model="budgetForm.unitPrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
       <el-form-item label="总价"  class="offerPrice clearfix clearBoth">
