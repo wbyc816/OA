@@ -119,7 +119,7 @@ export default {
       this.searchLoading = true;
       this.searchParams.docType = this.docTypes[this.docTypes.length - 1];
       var params = this.clone(this.searchParams);
-      if (this.timeline && this.timeline.length != 0) {
+      if (this.timeline && this.timeline.length != 0&&this.timeline[0]) {
         params.startTime = this.timeFilter(+this.timeline[0], 'date');
         params.endTime = this.timeFilter(+this.timeline[1], 'date');
       } else {

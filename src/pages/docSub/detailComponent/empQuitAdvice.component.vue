@@ -3,7 +3,7 @@
     <h4 class='doc-form_title'>工作交接登记</h4>
     <div class="boxWrap">
       <h4 class='doc-form_title' v-if="currentDepName">{{currentDepName}}</h4>
-      <table bgcolor="#fff" class="adviceList" width="100%" cellspacing="0" v-if="infoTable.length>0">
+      <table bgcolor="#fff" class="adviceList" width="100%" :class="{isOwnerDept:showLeader}" cellspacing="0" v-if="infoTable.length>0">
         <thead>
           <tr>
             <th v-for="title in tableTitle" align="left">{{title}}</th>
@@ -13,8 +13,10 @@
           <tr v-for="sign in infoTable">
             <td>{{sign.taskName}}</td>
             <td>{{sign.signContent}}</td>
-            <td>{{sign.signUserName}}</td>
+            <td>{{sign.isHandover==1?sign.takeOverName:sign.signUserName}}</td>
             <td>{{sign.remark}}</td>
+            <td v-if="tempTable.indexOf(sign)===0&&showLeader" :rowspan="tempTable.length" style="padding-right:13px;">{{directAdvice.signContent}}</td>
+            <td v-if="sign.isHandover==0&&showLeader">/</td>
           </tr>
         </tbody>
       </table>
@@ -35,7 +37,7 @@
         </el-col>
         <el-col :span='24' v-if="leaderAdvice">
           <div class="adviceBox">
-            <span class="title">部门总经理意见</span>
+            <span class="title">{{leaderAdvice.taskName}}意见</span>
             <el-input v-model="leaderAdvice.signContent" type="textarea" resize="none" :rows="3" :maxlength="100"></el-input>
           </div>
         </el-col>
@@ -100,7 +102,10 @@ export default {
       currentDepName: '',
       tableTitle: ['项目', '移交情况', '交接人', '其他'],
       submitLoading: false,
-      activeName: ''
+      activeName: '',
+      showLeader: false,
+      directAdvice: '',
+      tempTable:[]
     }
   },
   created() {},
@@ -113,13 +118,22 @@ export default {
             this.isLeader = true;
             this.currentDepName = s.signDeptMajorName;
           } else if (s.isView == 0) {
-            this.infoTable.push(s);
-            this.currentDepName = s.signDeptMajorName;
+            if (s.isHandover == 1 && s.isTaskNameOther == 1) {
+              this.directAdvice = s;
+            } else {
+              this.infoTable.push(s);
+              this.currentDepName = s.signDeptMajorName;
+            }
           } else {
             this.submitInfo.push(s);
             this.currentDepName = s.signDeptMajorName;
           }
         })
+        if (this.infoTable.some(item => item.isHandover == 1)) {
+          this.tableTitle = this.tableTitle.concat(['直属领导意见']);
+          this.showLeader = true;
+          this.tempTable=this.infoTable.filter(item=>item.isHandover);
+        }
       }
       if (newVal) {
         if (this.info.singInfoVo && this.info.singInfoVo.length != 0) {
@@ -145,23 +159,23 @@ export default {
     },
     submit() {
       if (this.isLeader) { //领导
-        var params=[];
-        var success=true;
+        var params = [];
+        var success = true;
         if (this.info.doc.isOwnDeptSign == 1) {
           if (this.submitInfo.every(s => s.signContent != '') && this.submitInfo.filter(s => s.isTaskNameOther != 1).every(s => s.takeOverId != '')) {
-            params=this.submitInfo;
-          }else{
-            success=false;
+            params = this.submitInfo;
+          } else {
+            success = false;
           }
 
         }
-        if (this.leaderAdvice.signContent !== ''&&success) {
+        if (this.leaderAdvice.signContent !== '' && success) {
           params.push(this.leaderAdvice);
           this.doTask(params);
         } else {
-          success=false;
+          success = false;
         }
-        if(!success){
+        if (!success) {
           this.$message.warning('请填写信息！');
         }
       } else if (this.info.doc.isOwnDeptSign == 1) { //本部门

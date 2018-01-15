@@ -53,6 +53,7 @@
       </div>
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
       <dist-advice ref="distAdvice"></dist-advice>
+      <!-- <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'"></quit-advice> -->
       <div class="backButton">
         <el-button type="primary" @click="showDistribute=true" v-if="!hasBack">公文分发</el-button>
       </div>
@@ -201,8 +202,6 @@ export default {
       }
       if (route.query.code == 'LZS') {
         url = '/doc/getDocDimissionInfo';
-        params.empId = this.userInfo.empId;
-        params.id = params.docId;
       }
       this.$http.post(url, params)
         .then(res => {

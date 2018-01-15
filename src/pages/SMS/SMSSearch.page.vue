@@ -1,76 +1,82 @@
 <template>
-  <div id="meetingSearch">
+  <div id="SMSSearch">
     <el-card class="borderCard searchOptions">
       <div slot="header">
-        <span>会议通知</span>
-        <i class="iconfont icon-shuaxin" @click="reset"></i>
+        <span>短信管理</span>
+        <span class="detailButton" @click="showDetail=!showDetail">{{!showDetail?'高级搜索':'收起'}}</span>
       </div>
-      <el-row :gutter="12">
-        <el-col :span="8">
-          <el-input v-model.trim="searchParams.conferenceTitle" placeholder="会议名称" :maxlength="50"></el-input>
-        </el-col>
-        <el-col :span="5">
-          <el-date-picker v-model="searchParams.reserveDate" type="date" :editable="false" style="width:100%" placeholder="日期"></el-date-picker>
-        </el-col>
-        <el-col :span="8">
-          <el-input v-model="searchParams.convenerName" placeholder="发起人"></el-input>
-        </el-col>
-        <!-- <el-col :span="3" v-show="status!=3">
-          <el-select v-model="status" placeholder="状态">
-            <el-option key="0" label="全部" value="0"></el-option>
-            <el-option key="1" label="正常" value="1"></el-option>
-            <el-option key="2" label="已取消" value="2"></el-option>
-            <el-option key="3" label="已结束" value="3"></el-option>
-          </el-select>
-        </el-col> -->
-        <el-col :span="3">
-          <el-button type="primary" @click="search" :disabled="searchLoading">搜索</el-button>
-        </el-col>
-      </el-row>
+      <el-collapse-transition>
+        <div v-show="showDetail">
+          <el-row :gutter="12">
+            <el-col :span="18">
+              <el-input v-model.trim="searchParams.content" placeholder="短信内容" :maxlength="50"></el-input>
+            </el-col>
+            <el-col :span="6">
+              <el-select v-model="searchParams.sendStatus" style="width:100%" placeholder="短信状态" clearable>
+                <el-option label="发送成功" value="1"></el-option>
+                <el-option label="发送失败" value="0"></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="18">
+              <el-input  :value="sendText" readonly class="sendInput">
+                <el-select v-model="selType" slot="prepend" placeholder="发送人" clearable style="width:100px" @change="typeChange">
+                  <el-option label="人员" value="person"></el-option>
+                  <el-option label="部门" value="dep"></el-option>
+                </el-select>
+                <el-button slot="append" icon="search" :disabled="!selType" @click="showDialog"></el-button>
+              </el-input>
+            </el-col>
+            <el-col :span="6">
+              <el-select v-model="searchParams.sts" style="width:100%" placeholder="删除状态" clearable>
+                <el-option label="已删除" value="1"></el-option>
+                <el-option label="未删除" value="0"></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="18">
+              <el-date-picker v-model="timeline" placeholder="起始至截至日期" type="daterange" :editable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+            </el-col>
+            <el-col :span="3" :offset="3">
+              <el-button type="primary" @click="search" :disabled="searchLoading" class="searchButton">搜索</el-button>
+            </el-col>
+          </el-row>
+        </div>
+      </el-collapse-transition>
     </el-card>
     <el-card class="borderCard searchResult" v-loading="searchLoading">
-      <el-table :data="searchData" class="myTable" @row-click="goDetail">
-        <el-table-column prop="conferenceTitle" label="会议名称"></el-table-column>
-        <el-table-column prop="convenerName" label="发起人" width="100"></el-table-column>
-        <el-table-column prop="reserveDate" label="会议日期" width="100">
+      <el-table :data="searchData" class="myTable">
+        <el-table-column prop="sendUserName" label="发送人" width="130"></el-table-column>
+        <el-table-column prop="reciUserName" label="接收人" width="130"></el-table-column>
+        <el-table-column prop="content" label="短信内容" class-name="contentColumn"></el-table-column>
+        <el-table-column prop="sendStatus" label="短信状态" width="100">
           <template scope="scope">
-            {{scope.row.reserveDate | time('date')}}
+            <span :class="{errorText:scope.row.sendStatus=='0'}">{{scope.row.sendStatus=='1'?'发送成功':'发送失败'}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="beginTime" label="开始时间" width="80">
+        <el-table-column prop="sendTime" label="发送日期" width="100"></el-table-column>
+        <el-table-column label="操作" class-name="clickItem" width="70">
           <template scope="scope">
-            {{scope.row.beginTime | time('hours')}}
-          </template>
-        </el-table-column>
-        <el-table-column prop="endTime" label="结束时间" width="80">
-          <template scope="scope">
-            {{scope.row.endTime | time('hours')}}
-          </template>
-        </el-table-column>
-        <el-table-column prop="roomName" label="房间" width="70"></el-table-column>
-        <el-table-column prop="roomPlace" label="位置" width="100"></el-table-column>
-        <el-table-column label="状态" class-name="clickItem" width="90">
-          <template scope="scope">
-            <template v-if="scope.row.isEnd!=1">
-              <span v-if="scope.row.isCancel==1">已取消</span>
-              <span class="cancelButton" v-else>正常</span>
-            </template>
-            <template v-else>
-              <span>已结束</span>
-            </template>
+            <span class="cancelButton" @click.stop="goDetail(scope.row)">查看</span>
           </template>
         </el-table-column>
       </el-table>
-      <div class="pageBox" v-show="searchData.length>0">
-        <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
+      <div class="pageBox clearfix" v-show="searchData.length>0">
+        <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="searchParams.pageSize" layout="total, prev, pager, next, jumper" :total="totalSize">
         </el-pagination>
       </div>
     </el-card>
+    <person-dialog @updatePerson="updatePerson" selText="发送人" :visible.sync="personVisible" admin="1"></person-dialog>
+    <dep-dialog :dialogVisible.sync="depVisible" :data="selDepList" dialogType="multi" @updateDep="updateDep"></dep-dialog>
   </div>
 </template>
 <script>
+import PersonDialog from '../../components/personDialog.component'
+import DepDialog from '../../components/depDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
 export default {
+  components: {
+    PersonDialog,
+    DepDialog
+  },
   data() {
     return {
       searchData: [],
@@ -78,84 +84,74 @@ export default {
       value1: '',
       reserveDate: '',
       searchParams: {
-        "conferenceTitle": "",
-        "reserveDate": "",
-        "isMyLaunched": "2",
-        "pageSize": 10,
+        "pageSize": 15,
         "pageNumber": 1,
-        "convenerName": "",
-        "shortType": 2,
-        "isCancel": "",
-        "isEnd": ""
+        "userId": "",
+        "content": "",
+        "sendStatus": "",
+        "startTime": "",
+        "endTime": "",
+        "sts":"",
+        "deptIds":[],
       },
+      timeline: [],
       totalSize: 0,
-      status: '',
-      searchLoading: false
+      searchLoading: false,
+      pickerOptions0: {
+        disabledDate(time) {
+          return time.getTime() >= +new Date();
+        }
+      },
+      showDetail: false,
+      selType:'',
+      personVisible:false,
+      depVisible:false,
+      selPerson:'',
+      selDepList:[]
     }
   },
   computed: {
+    sendText:function(){
+      var text='';
+      if(this.selType==='person'){
+        text=this.selPerson.name;
+      }else if(this.selType==='dep'){
+        text=this.selDepList.map(d=>d.name).join(' , ')
+      }
+      return text;
+    },
     ...mapGetters([
       'userInfo',
       'roomList',
     ])
   },
   created() {
-    this.initPage(this.$route.params);
+    this.getData();
   },
-  beforeRouteUpdate(to, from, next) {
-    this.initPage(to.params);
-    next();
+  activated() {
+    this.getData();
   },
   methods: {
-    initPage(params) {
-      if (params.type) {
-        var type = params.type
-        // console.log(type)
-
-        if (type == 2) {
-          this.status = '2'
-        } else if (type == 3) {
-          this.status = '3'
-        } else {
-          this.status = ''
-        }
-      }
-      this.getData();
-    },
     getData() {
-      var that = this;
       this.searchLoading = true;
-      var params = Object.assign({ empId: this.userInfo.empId }, this.clone(this.searchParams))
-      if (this.searchParams.reserveDate) {
-        params.reserveDate = this.searchParams.reserveDate.getTime();
+      if (this.timeline && this.timeline.length != 0&&this.timeline[0]) {
+        this.searchParams.startTime = this.timeFilter(+this.timeline[0], 'date') + ' 00:00:00';
+        this.searchParams.endTime = this.timeFilter(+this.timeline[1], 'date') + ' 23:59:59';
+      } else {
+        this.searchParams.startTime = '';
+        this.searchParams.endTime = '';
       }
-      switch (this.status) {
-        case "0": //全部
-          params.isEnd = '';
-          params.isCancel = '';
-          params.isMyLaunched = '2'
-          break;
-        case '1': //正常
-          params.isEnd = '0';
-          params.isCancel = '0';
-          params.isMyLaunched = '2'
-          break;
-        case '2': //已取消
-          params.isEnd = '0';
-          params.isCancel = '1';
-          params.isMyLaunched = '';
-          break;
-        case '3': //已结束
-          params.isEnd = '1';
-          params.isCancel = '0';
-          params.isMyLaunched = '';
-          break;
-        default:
-          params.isMyLaunched = '2';
+      if(this.selPerson){
+        this.searchParams.userId=this.selPerson.empId;
+      }else if(this.selDepList.length!==0){
+        this.searchParams.deptIds=this.selDepList.map(d=>d.id);
+      }else {
+        this.searchParams.userId='';
+        this.searchParams.deptIds=[];
       }
-      this.$http.post("/conference/conferReserveList", params, { body: true }).then(res => {
-        setTimeout(function() {
-          that.searchLoading = false;
+      this.$http.post("/tSmsSend/smsManageList", this.searchParams, { body: true }).then(res => {
+        setTimeout(() => {
+          this.searchLoading = false;
         }, 200)
         if (res.status == 0) {
           this.searchData = res.data.records;
@@ -176,14 +172,25 @@ export default {
       this.searchParams.pageNumber = 1;
       this.getData();
     },
-    reset() {
-      this.searchParams.conferenceTitle = '';
-      this.searchParams.reserveDate = '';
-      this.searchParams.convenerName = '';
-      this.searchParams.status = '';
-    },
     goDetail(row) {
-      this.$router.push('/meeting/bookingDetail/' + row.id)
+      this.$router.push('/SMS/SMSDetail/' + row.id)
+    },
+    updatePerson(val){
+      this.selPerson=val;
+    },
+    updateDep(list){
+      this.selDepList=list;
+    },
+    showDialog(){
+      if(this.selType==='person'){
+        this.personVisible=true;
+      }else if(this.selType==='dep'){
+        this.depVisible=true;
+      }
+    },
+    typeChange(){
+      this.selPerson='';
+      this.selDepList=[];
     }
   }
 }
@@ -192,29 +199,46 @@ export default {
 <style lang='scss'>
 $main: #0460AE;
 $sub:#1465C0;
-#meetingSearch {
+#SMSSearch {
   .searchOptions {
+    .detailButton {
+      float: right;
+      color: $main;
+      cursor: pointer;
+    }
     .el-card__body {
+      padding-bottom: 13px;
       .el-col {
-        margin-top: 13px;
-        margin-bottom: 13px;
+        margin-top: 13px; // margin-bottom: 13px;
       }
       .el-col-6 {
         .el-select {
           width: 100%;
         }
       }
-      .el-col-8 {
-        .el-select {
-          width: 60%;
-        }
-      }
-
-      button {
+      .searchButton {
         height: 46px; // width: 40%;
         // float: right;
         font-size: 18px;
         width: 100%;
+      }
+      .sendInput{
+        .el-input-group__prepend{
+          border-radius: 0;
+        }
+        .el-input-group__append{
+          border-radius: 0;
+          button{
+            height: 46px;
+            background-color: $main;
+            color:#fff;
+            font-size: 20px;
+          }
+          .el-button.is-disabled, .el-button.is-disabled:hover, .el-button.is-disabled:focus{
+            background-color: rgb(238, 241, 246);
+                color: rgb(191, 202, 217);
+          }
+        }
       }
     }
   }
@@ -229,18 +253,28 @@ $sub:#1465C0;
         tr td:first-child .cell {
           padding-left: 15px;
         }
-
         td {
-          height: 70px;
+          height: 60px;
         }
         td.clickItem {
           .cancelButton {
             color: $main;
+            cursor: pointer;
           }
         }
         td.timeItem {
           padding-right: 25px;
         }
+      }
+      .contentColumn {
+        .cell {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+      }
+      .errorText {
+        color: red;
       }
     }
     .total {
@@ -253,7 +287,9 @@ $sub:#1465C0;
   }
   .pageBox {
     padding: 20px;
-    text-align: right;
+    .el-pagination {
+      float: right;
+    }
   }
 }
 

@@ -63,7 +63,7 @@ export default {
       searchRes: '',
       initData: true,
       depVisible: false,
-      initDep: [],
+      initDep: [],   
       isFirst: true
     }
   },
@@ -79,11 +79,11 @@ export default {
     data: { //初始化数据
       type: [Array, Object, String]
     },
-    isSaveInit: {
+    isSaveInit: {   //是否保留第一次初始化是数据
       type: Boolean,
       default: false
     },
-    disableDep: {
+    disableDep: {   //禁止选择的部门列表
       type: [Array],
       default: function() {
         return []
@@ -170,6 +170,7 @@ export default {
         if (this.selDep) {
           this.$emit('updateDep', this.selDep);
           this.$emit('update:dialogVisible', false)
+          this.depVisible=false;
           this.selDep = '';
         } else {
           this.$message({
@@ -179,7 +180,8 @@ export default {
         }
       } else {
         if (this.multipleSelection.length != 0) {
-
+          this.depVisible=false;
+          this.$emit('update:dialogVisible', false)
           this.$emit('updateDep', this.multipleSelection);
         } else {
           this.$message({

@@ -42,12 +42,12 @@
         <el-table-column label="操作" class-name="clickItem" width="90">
           <template scope="scope">
             <span class="cancelButton" @click.stop="goDetail(scope.row)">查看</span>
-            <span class="cancelButton" @click.stop="cancel(scope.row)">删除</span>
+            <span class="cancelButton" @click.stop="deleteSMS([scope.row.id])">删除</span>
           </template>
         </el-table-column>
       </el-table>
       <div class="pageBox clearfix" v-show="searchData.length>0">
-        <span v-show="selList.length!=0" class="bottomDel">已选<i>{{selList.length}}</i>条记录<i>删除</i></span>
+        <span v-show="selList.length!=0" class="bottomDel">已选<i>{{selList.length}}</i>条记录<i @click="deleteSel">删除</i></span>
         <el-pagination @current-change="handleCurrentChange" :current-page="searchParams.pageNumber" :page-size="searchParams.pageSize" layout="total, prev, pager, next, jumper" :total="totalSize">
         </el-pagination>
       </div>
@@ -103,7 +103,7 @@ export default {
   methods: {
     getData() {
       this.searchLoading = true;
-      if (this.timeline && this.timeline.length != 0) {
+      if (this.timeline && this.timeline.length != 0&&this.timeline[0]) {
         this.searchParams.startTime = this.timeFilter(+this.timeline[0], 'date') + ' 00:00:00';
         this.searchParams.endTime = this.timeFilter(+this.timeline[1], 'date') + ' 23:59:59';
       } else {
@@ -139,13 +139,17 @@ export default {
       this.searchParams.roomPlace = '';
       this.searchParams.roomId = '';
     },
-    cancel(row) {
-      this.$confirm('确定删除此条短信记录?', '提示', {
+    deleteSel(){
+      var ids=this.selList.map(s=>s.id);
+      this.deleteSMS(ids);
+    },
+    deleteSMS(ids) {
+      this.$confirm('确定删除所选短信记录?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.post('/tSmsSend/deleteById', { id: row.id })
+        this.$http.post('/tSmsSend/deleteById', ids,{body:true})
           .then(res => {
             if (res.status == 0) {
               this.$message.success('删除成功');

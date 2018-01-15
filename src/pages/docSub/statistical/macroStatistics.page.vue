@@ -102,7 +102,7 @@ export default {
     getData() {
       this.searchLoading = true;
       this.searchParams.docType = this.docTypes[this.docTypes.length - 1];
-      if (this.timeline && this.timeline.length != 0) {
+      if (this.timeline && this.timeline.length != 0&&this.timeline[0]) {
         this.searchParams.startTime = this.timeFilter(+this.timeline[0], 'date');
         this.searchParams.endTime = this.timeFilter(+this.timeline[1], 'date');
       } else {
