@@ -9,13 +9,13 @@
       <el-col :span='6'>
         <el-menu mode="vertical" v-bind:router="true" class="mySideLink">
           <el-menu-item-group title="短信">
-            <el-menu-item index='1' :route="{path:'/SMS/SMSApp'}">
+            <el-menu-item index='1' :route="{path:'/SMS/SMSApp'}" v-if="userInfo.smsManger>0">
               新建短信
             </el-menu-item>
             <el-menu-item index='2' :route="{path:'/SMS/mySMS'}">
               我的短信
             </el-menu-item>
-            <el-menu-item index='3' :route="{path:'/SMS/SMSSearch'}">
+            <el-menu-item index='3' :route="{path:'/SMS/SMSSearch'}" v-if="userInfo.smsManger>0">
               短信管理
             </el-menu-item>
           </el-menu-item-group>
@@ -29,16 +29,15 @@ import { mapGetters, mapMutations } from 'vuex'
 export default {
 
   data() {
-    return {};
+    return {
+    };
   },
-  created() {},
+  created() {
+  },
   methods: {
-
   },
   watch: {
-    '$route' (to, from) {
-      // this.$store.dispatch('getConferenceNum');
-    }
+    
   },
   computed: {
     ...mapGetters([

@@ -55,9 +55,9 @@
               <el-button class="searchButton" @click="submitParam">搜索</el-button>
             </el-col>
             <el-collapse-transition>
-              <el-col :span="8" v-if="hasSub" v-show="docCode&&Array.isArray(subCodeList[docCode])">
-                <el-select v-model="subCode" placeholder="公文子类型" clearable v-if="Array.isArray(subCodeList[docCode])">
-                  <el-option v-for="item in subCodeList[docCode]" :label="item.dictName" :value="item.dictCode"></el-option>
+              <el-col :span="8" v-if="hasSub" v-show="selCode">
+                <el-select v-model="subCode" placeholder="公文子类型" clearable v-if="Array.isArray(subCodeList[selCode])">
+                  <el-option v-for="item in subCodeList[selCode]" :label="item.dictName" :value="item.dictCode"></el-option>
                 </el-select>
               </el-col>
             </el-collapse-transition>
@@ -128,7 +128,8 @@ export default {
       personList: [],
       showDetail: false,
       subCodeList: {},
-      subCode: ''
+      subCode: '',
+      selCode:''
     }
   },
   computed: {
@@ -226,15 +227,19 @@ export default {
     getSubCode() {
       if (this.docTypes.length != 0) {
         var docCode = this.docTypes[this.docTypes.length - 1];
+
         if (!this.subCodeList[docCode]) {
           this.$http.post('/doc/getDocSubCode', { docTypeCode: docCode })
             .then(res => {
-              if (res.status == 0) {
+              this.selCode=docCode;
+              if (res.status == 0&&res.data.length!==0) {
                 this.$set(this.subCodeList, docCode, res.data);
               } else {
                 this.$set(this.subCodeList, docCode, 'none');
               }
             })
+        }else{
+          this.selCode=docCode;
         }
       }
     },

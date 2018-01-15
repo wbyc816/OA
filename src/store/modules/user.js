@@ -6,7 +6,7 @@ const state = {
   userInfo: {
     "name": "",
     "empId": "",
-
+    "smsManger":0   // 3 部门级  4 公司级
   },
   dutys:[],
   isReady: false,

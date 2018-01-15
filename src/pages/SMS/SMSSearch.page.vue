@@ -18,12 +18,12 @@
               </el-select>
             </el-col>
             <el-col :span="18">
-              <el-input  :value="sendText" readonly class="sendInput">
+              <el-input :value="sendText" readonly class="sendInput">
                 <el-select v-model="selType" slot="prepend" placeholder="发送人" clearable style="width:100px" @change="typeChange">
                   <el-option label="人员" value="person"></el-option>
                   <el-option label="部门" value="dep"></el-option>
                 </el-select>
-                <el-button slot="append" icon="search" :disabled="!selType" @click="showDialog"></el-button>
+                <el-button slot="append" icon="search" :disabled="!selType||(selType==='dep'&&userInfo.smsManger===1)" @click="showDialog"></el-button>
               </el-input>
             </el-col>
             <el-col :span="6">
@@ -64,7 +64,7 @@
         </el-pagination>
       </div>
     </el-card>
-    <person-dialog @updatePerson="updatePerson" selText="发送人" :visible.sync="personVisible" admin="1"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" selText="发送人" :visible.sync="personVisible" :admin="userInfo.smsManger===4?'1':'0'"></person-dialog>
     <dep-dialog :dialogVisible.sync="depVisible" :data="selDepList" dialogType="multi" @updateDep="updateDep"></dep-dialog>
   </div>
 </template>
@@ -91,8 +91,8 @@ export default {
         "sendStatus": "",
         "startTime": "",
         "endTime": "",
-        "sts":"",
-        "deptIds":[],
+        "sts": "",
+        "deptIds": [],
       },
       timeline: [],
       totalSize: 0,
@@ -103,20 +103,20 @@ export default {
         }
       },
       showDetail: false,
-      selType:'',
-      personVisible:false,
-      depVisible:false,
-      selPerson:'',
-      selDepList:[]
+      selType: '',
+      personVisible: false,
+      depVisible: false,
+      selPerson: '',
+      selDepList: []
     }
   },
   computed: {
-    sendText:function(){
-      var text='';
-      if(this.selType==='person'){
-        text=this.selPerson.name;
-      }else if(this.selType==='dep'){
-        text=this.selDepList.map(d=>d.name).join(' , ')
+    sendText: function() {
+      var text = '';
+      if (this.selType === 'person') {
+        text = this.selPerson.name;
+      } else if (this.selType === 'dep') {
+        text = this.selDepList.map(d => d.name).join(' , ')
       }
       return text;
     },
@@ -126,28 +126,36 @@ export default {
     ])
   },
   created() {
-    this.getData();
+    // if (this.userInfo.smsManger === 0) {
+    //   this.$router.push('/SMS/mySMS')
+    // } else {
+      // this.getData();
+    // }
   },
   activated() {
-    this.getData();
+    if (this.userInfo.smsManger === 0) {
+      this.$router.push('/SMS/mySMS')
+    } else {
+      this.getData();
+    }
   },
   methods: {
     getData() {
       this.searchLoading = true;
-      if (this.timeline && this.timeline.length != 0&&this.timeline[0]) {
+      if (this.timeline && this.timeline.length != 0 && this.timeline[0]) {
         this.searchParams.startTime = this.timeFilter(+this.timeline[0], 'date') + ' 00:00:00';
         this.searchParams.endTime = this.timeFilter(+this.timeline[1], 'date') + ' 23:59:59';
       } else {
         this.searchParams.startTime = '';
         this.searchParams.endTime = '';
       }
-      if(this.selPerson){
-        this.searchParams.userId=this.selPerson.empId;
-      }else if(this.selDepList.length!==0){
-        this.searchParams.deptIds=this.selDepList.map(d=>d.id);
-      }else {
-        this.searchParams.userId='';
-        this.searchParams.deptIds=[];
+      if (this.selPerson) {
+        this.searchParams.userId = this.selPerson.empId;
+      } else if (this.selDepList.length !== 0) {
+        this.searchParams.deptIds = this.selDepList.map(d => d.id);
+      } else {
+        this.searchParams.userId = '';
+        this.searchParams.deptIds = [];
       }
       this.$http.post("/tSmsSend/smsManageList", this.searchParams, { body: true }).then(res => {
         setTimeout(() => {
@@ -175,22 +183,26 @@ export default {
     goDetail(row) {
       this.$router.push('/SMS/SMSDetail/' + row.id)
     },
-    updatePerson(val){
-      this.selPerson=val;
+    updatePerson(val) {
+      this.selPerson = val;
     },
-    updateDep(list){
-      this.selDepList=list;
+    updateDep(list) {
+      this.selDepList = list;
     },
-    showDialog(){
-      if(this.selType==='person'){
-        this.personVisible=true;
-      }else if(this.selType==='dep'){
-        this.depVisible=true;
+    showDialog() {
+      if (this.selType === 'person') {
+        this.personVisible = true;
+      } else if (this.selType === 'dep') {
+        this.depVisible = true;
       }
     },
-    typeChange(){
-      this.selPerson='';
-      this.selDepList=[];
+    typeChange() {
+      this.selPerson = '';
+      if(this.userInfo.smsManger===1){
+        this.selDepList=[{id:this.userInfo.deptVo.fatherDeptId,name:this.userInfo.deptVo.fatherDept}];
+      }else{
+        this.selDepList = [];
+      }      
     }
   }
 }
@@ -222,21 +234,23 @@ $sub:#1465C0;
         font-size: 18px;
         width: 100%;
       }
-      .sendInput{
-        .el-input-group__prepend{
+      .sendInput {
+        .el-input-group__prepend {
           border-radius: 0;
         }
-        .el-input-group__append{
+        .el-input-group__append {
           border-radius: 0;
-          button{
+          button {
             height: 46px;
             background-color: $main;
-            color:#fff;
+            color: #fff;
             font-size: 20px;
           }
-          .el-button.is-disabled, .el-button.is-disabled:hover, .el-button.is-disabled:focus{
+          .el-button.is-disabled,
+          .el-button.is-disabled:hover,
+          .el-button.is-disabled:focus {
             background-color: rgb(238, 241, 246);
-                color: rgb(191, 202, 217);
+            color: rgb(191, 202, 217);
           }
         }
       }

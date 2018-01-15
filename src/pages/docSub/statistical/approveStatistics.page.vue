@@ -191,7 +191,7 @@ export default {
         this.loading = true;
         clearTimeout(this.meTimeout);
         this.meTimeout = setTimeout(() => {
-          this.$http.post('/emp/queryEmpDeptList', { name: query, deptId: this.userInfo.isConfidential==1?'':this.userInfo.deptParentId, pageNumber: 1, pageSize: 50 })
+          this.$http.post('/emp/queryEmpDeptList', { name: query, deptId: this.staticsPower==1?'':this.userInfo.deptParentId, pageNumber: 1, pageSize: 50 })
             .then(res => {
               this.loading = false;
               if (res.status == 0) {
