@@ -128,6 +128,10 @@ const flightReport = () =>
 const flightException = () =>
   import ('pages/flightException.page')
 
+  
+const QARData = () =>
+  import ('pages/QARData.page')
+
 
 Vue.use(Router)
 
@@ -177,6 +181,13 @@ const router = new Router({
       component: flightException,
       meta: {
         breadcrumb: "飞行计划书数据异常报表",
+      }
+    }, {
+      path: '/QARData',
+      name: 'QARData',
+      component: QARData,
+      meta: {
+        breadcrumb: "QAR数据展示",
       }
     }, {
       path: '/diningMenu',
