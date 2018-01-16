@@ -1,5 +1,5 @@
 <template>
-  <div class="distributeDialog">
+  <div class="distributeDialog" > 
     <el-dialog :visible.sync="dialogVisible" size="small" class="myDialog" custom-class="archiveSubmitDialog" @close="close" v-loading="submitLoading">
       <span slot="title">公文分发</span>
       <el-form label-position="left" :model="distributeForm" :rules="distributeFormRule" ref="distributeForm" label-width="75px">
@@ -142,6 +142,9 @@ export default {
 </script>
 <style lang='scss'>
 .distributeDialog {
+  .myDialog .el-dialog__body{
+    max-height:600px;overflow:auto
+  }
   .archiveSubmitDialog {
     width: 600px;
     .el-dialog__body {
