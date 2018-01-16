@@ -47,7 +47,7 @@ const state = {
     "conferenceNum": 0,
     "pendingNum": 0
   },
-  staticsPower: '', //1所有 2无审批者 0无
+  staticsPower: '', // 1 公司 2 部门 0 无
   isSubmit: false,
   secretaryInfo: '',
   docTemplate: ''

@@ -78,14 +78,13 @@ export default {
     }
   },
   computed: {
-
     ...mapGetters([
       'userInfo',
     ])
   },
   created() {
-    if (!this.userInfo.isDocsec || this.userInfo.isDocsec[0] != 1) {
-      // this.$router.push('/meeting/meetingSearch/1')
+    if (this.userInfo.smsManger===0) {
+      this.$router.push('/SMS/mySMS')
     }
   },
   methods: {
