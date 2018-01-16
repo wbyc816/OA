@@ -82,7 +82,7 @@
 
         <el-table-column prop="aEngoffTime" label="A关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.aEngoffTime }}</span>
+                <span>{{ scope.row.aEngoffTime | time('hours') }}</span>
             </template>
         </el-table-column>
 
@@ -210,7 +210,7 @@
 
         <el-table-column prop="aEngoffTime" label="A关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.aEngoffTime }}</span>
+                <span>{{ scope.row.aEngoffTime | time('hours') }}</span>
             </template>
         </el-table-column>
 

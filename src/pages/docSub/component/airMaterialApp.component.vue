@@ -231,7 +231,6 @@ export default {
     var validatorUnitPrice = (rule, value, callback) => {
       if (value && value.length != 0) {
         if (value * this.airMaterialForm.pieceNum * value > 999999999999) {
-          console.log(value * this.airMaterialForm.pieceNum * value)
           callback(new Error("总价超额"));
         } else {
           callback();
@@ -382,7 +381,6 @@ export default {
     },
     totalMoney: function(newval) {
       this.getTotalRmb();
-      console.log(newval)
     }
   },
   methods: {
@@ -605,7 +603,6 @@ export default {
       this.$refs.factoryForm.validate((valid) => {
         if (valid) {
           var currency = this.currencyList.find(c => c.currencyCode === this.factoryForm.currencyId);
-          console.log(currency)
           var item = {
             supplierName: this.$refs.factorySupplier.currentLabels[this.$refs.factorySupplier.currentLabels.length - 1], //厂家名
             offerPrice: this.factoryForm.offerPrice, //报价
@@ -630,7 +627,6 @@ export default {
             res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
             this.budgetDeptList = res.data
           } else {
-            console.log(res)
           }
         }, res => {})
     },
@@ -670,7 +666,9 @@ export default {
     },
     addBudget() {
       this.$refs.airMaterialForm.validate((valid) => {
-        if (this.totalMoney + this.airMaterialForm.totalPrice < 1000000000000) {
+        console.log(this.contractForm.currencyId)
+        if(this.contractForm.currencyId!=""){
+          if (this.totalMoney + this.airMaterialForm.totalPrice < 1000000000000) {
           if (valid) {
             var dep = this.getBudgetDep();
             var temp = {};
@@ -697,7 +695,6 @@ export default {
             temp.budgetYear = this.year;
 
             this.airMaterialTable.push(temp);
-            console.log(this.airMaterialTable)
             this.airMaterialInfo = '';
             this.$refs.airMaterialForm.resetFields();
 
@@ -710,6 +707,14 @@ export default {
             type: 'warning'
           });
         }
+
+        }else{
+           this.$message({
+            message: '请先选则币种',
+            type: 'warning'
+          });
+        }
+        
       });
     },
     deleteBudget(index) {
