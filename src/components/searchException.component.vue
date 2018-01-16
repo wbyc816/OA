@@ -58,7 +58,10 @@
           <el-button class="searchButton" @click="submitParam">搜索</el-button>
         </el-col>
          <el-col :span="6">
-          <el-button class="searchButton" @click="exportExcel">导出</el-button>
+          <el-button class="searchButton" @click="exportExcel">导出展示报表</el-button>
+        </el-col>
+        <el-col :span="6">
+          <el-button class="searchButton" @click="exportExcel2">导出异常报表</el-button>
         </el-col>
       </el-row>
     </el-card>
@@ -184,6 +187,11 @@ export default {
     exportExcel(){
       console.log(this.baseURL)
        window.open(this.baseURL+"/foc/export2Excel?flightNo="+this.params.flightNo+"&beginTime="+this.params.beginTime +"&endTime="+this.params.endTime+"&departureAirport="+this.params.departureAirport+"&arrivalAirport="+this.params.arrivalAirport )
+
+    },
+    exportExcel2(){
+      console.log(this.baseURL)
+       window.open(this.baseURL+"/foc/exportQAR?flightNo="+this.params.flightNo+"&beginTime="+this.params.beginTime +"&endTime="+this.params.endTime+"&departureAirport="+this.params.departureAirport+"&arrivalAirport="+this.params.arrivalAirport )
 
     },
     getDate(){
