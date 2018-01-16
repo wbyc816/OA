@@ -80,9 +80,9 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="inn" label="A关车时间" width="100">
+        <el-table-column prop="aEngoffTime" label="A关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.inn | time('hours')}}</span>
+                <span>{{ scope.row.aEngoffTime }}</span>
             </template>
         </el-table-column>
 
@@ -208,9 +208,9 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="inn" label="A关车时间" width="100">
+        <el-table-column prop="aEngoffTime" label="A关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.inn | time('hours')}}</span>
+                <span>{{ scope.row.aEngoffTime }}</span>
             </template>
         </el-table-column>
 
