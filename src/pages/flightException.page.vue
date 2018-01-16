@@ -29,13 +29,9 @@
 
        
 
-         <el-table-column prop="engonTime" label="Q开车时间" width="100">
-             <template scope="scope">
-                <span>{{ scope.row.engonTime | time('hours')}}</span>
-            </template>
-        </el-table-column>
+         
 
-         <el-table-column prop="diffEngonTime" label="开车差值时间" width="120">
+         <el-table-column prop="diffEngonTime" label="滑出时间" width="120">
             <template scope="scope">
                 <span v-if="scope.row.diffEngonTime_sts==1" style="color:red">{{ scope.row.diffEngonTime}}分钟</span>
                 <span v-if="scope.row.diffEngonTime_sts==0">{{ scope.row.diffEngonTime}}分钟</span>
@@ -84,9 +80,9 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="inn" label="A滑入时间" width="100">
+        <el-table-column prop="aEngoffTime" label="A关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.inn | time('hours')}}</span>
+                <span>{{ scope.row.aEngoffTime }}</span>
             </template>
         </el-table-column>
 
@@ -161,13 +157,9 @@
             </template>
         </el-table-column>
 
-         <el-table-column prop="engonTime" label="Q开车时间" width="100">
-             <template scope="scope">
-                <span>{{ scope.row.engonTime | time('hours')}}</span>
-            </template>
-        </el-table-column>
+         
 
-         <el-table-column prop="diffEngonTime" label="开车差值时间" width="130">
+         <el-table-column prop="diffEngonTime" label="滑出时间" width="130">
             <template scope="scope">
                 <span v-if="scope.row.diffEngonTime_sts==1" style="color:red">{{ scope.row.diffEngonTime}}分钟</span>
                 <span v-if="scope.row.diffEngonTime_sts==0">{{ scope.row.diffEngonTime}}分钟</span>
@@ -216,9 +208,9 @@
             </template>
         </el-table-column>
 
-        <el-table-column prop="inn" label="A滑入时间" width="100">
+        <el-table-column prop="aEngoffTime" label="A关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.inn | time('hours')}}</span>
+                <span>{{ scope.row.aEngoffTime }}</span>
             </template>
         </el-table-column>
 
