@@ -16,7 +16,7 @@ const actions = {
   getDeptList({ commit, rootState }, payload) {
     api.getDeptList()
       .then(res => {
-        commit(types.GET_DEPT_LIST, res)
+        commit(types.GET_DEPT_LIST, res.data.deptList)
       })
   },
   //按搜索条件查部门人员
@@ -78,8 +78,8 @@ const getters = {
 }
 
 const mutations = {
-  [types.GET_DEPT_LIST](state, res) {
-    state.depts = res.data.deptList
+  [types.GET_DEPT_LIST](state, list) {
+    state.depts = list
   },
   [types.QUERY_EMP_LIST](state, res) {
     state.searchRes = res

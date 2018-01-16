@@ -142,8 +142,12 @@ export default {
 </script>
 <style lang='scss'>
 .distributeDialog {
+  .el-dialog__wrapper{
+  overflow-y:auto;
+  }
   .archiveSubmitDialog {
     width: 600px;
+    margin-bottom:20px;
     .el-dialog__body {
       padding: 25px 25px 25px 8px;
     }
@@ -153,6 +157,8 @@ export default {
       }
       .reciverList {
         flex: 1;
+        max-height: 250px;
+        overflow-y: auto;
         .el-tag {
           margin-right: 5px;
         }

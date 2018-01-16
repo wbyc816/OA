@@ -168,7 +168,7 @@ const actions = {
           if (payLoad && payLoad.hasSecretary) {
             res.data.deptList.push(state.secretaryInfo)
           }
-          commit(types.GET_DEPT_LIST, res, { root: true })
+          commit(types.GET_DEPT_LIST, res.data.deptList, { root: true })
         }
       }, res => {
         // Notification({

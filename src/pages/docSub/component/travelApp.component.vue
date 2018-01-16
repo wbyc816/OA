@@ -42,7 +42,7 @@
         <span class="usge" v-show="budgetInfo.execRateStr">預算已使用率 {{budgetInfo.execRateStr}}</span>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :data="travelForm.person" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :data="travelForm.person" dialogType="multi" :visible.sync="signDialogVisible" hasLeaderDep></person-dialog>
   </div>
 </template>
 <script>

@@ -102,7 +102,7 @@
         <el-form-item label="归档状态" class="textarea" prop="state">
           <el-radio-group class="myRadio" v-model="archiveState">
             <el-radio-button label="1" :disabled="docDetialInfo.doc.isFied == 2">通过<i></i></el-radio-button>
-            <el-radio-button label="2">不通过<i></i></el-radio-button>
+            <el-radio-button label="2" :disabled="docDetialInfo.doc.isFied == 3">不通过<i></i></el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -252,7 +252,7 @@ export default {
       currentView: '',
       archiveForm: {
         res: '',
-        all:'',
+        all: '',
         personList: [],
         depList: []
       },
@@ -394,7 +394,7 @@ export default {
               this.currentView = this.docDetialInfo.doc.pageCode;
             }
             // if (this.docDetialInfo.task[0].state == 3 || this.docDetialInfo.task[0].state == 4) {
-              this.getDistInfo();
+            this.getDistInfo();
             // }
             if (route.query.code == 'FWG') {
               this.isRedFile = true;
@@ -515,7 +515,7 @@ export default {
               });
             }
           }
-          if (this.$refs.myAdvice.ruleForm.attchment.length!=0) {
+          if (this.$refs.myAdvice.ruleForm.attchment.length != 0) {
             params.fileIds = this.$refs.myAdvice.ruleForm.attchment.map(f => f.response.data);
           }
           // console.log(params)
@@ -551,8 +551,8 @@ export default {
     removeDep(index) {
       this.archiveForm.depList.splice(index, 1);
     },
-    removeAll(){
-      this.archiveForm.all='';
+    removeAll() {
+      this.archiveForm.all = '';
     },
     changePay() {
       this.$confirm('确定已付款?', '提示', {
@@ -574,7 +574,7 @@ export default {
       });
     },
     dialogSubmit() {
-      if (this.archiveForm.personList.length > 0 || this.archiveForm.depList.length>0||this.archiveForm.all) {
+      if (this.archiveForm.personList.length > 0 || this.archiveForm.depList.length > 0 || this.archiveForm.all) {
         if (this.docDetialInfo.task[0].state == 3) {
           this.docDistribution();
         } else {
@@ -598,7 +598,7 @@ export default {
         "operateType": '1',
         "empIds": [],
         "deptIds": this.archiveForm.depList.map(d => d.id),
-        "disType":this.archiveForm.all?'all':''
+        "disType": this.archiveForm.all ? 'all' : ''
       }
       this.archiveForm.personList.forEach(person => {
         var temp = {
@@ -645,7 +645,7 @@ export default {
       }
     },
     getDistInfo() {
-      this.$refs.distAdvice.pageNumber=1;
+      this.$refs.distAdvice.pageNumber = 1;
       this.$refs.distAdvice.getDistInfo();
     },
     handleAvatarSuccess(res, file, fileList) {
@@ -949,6 +949,8 @@ $sub:#1465C0;
           }
           .reciverList {
             flex: 1;
+            max-height: 250px;
+            overflow-y: auto;
             .el-tag {
               margin-right: 5px;
             }

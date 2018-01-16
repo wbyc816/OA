@@ -155,7 +155,7 @@
             <el-menu-item index="7" @click.native="goToOthers('/flightReport')" v-if="userInfo.isDocsec&&userInfo.isDocsec[2]==1"><i class="iconfont icon-99"></i>飞行报表<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="8" @click.native="goToOthers('/flightException')" v-if="userInfo.isDocsec&&userInfo.isDocsec[3]==1"><i class="iconfont icon-plane1"></i>飞行任务书数据异常监控<i class="el-icon-arrow-right"></i></el-menu-item>
             <!-- <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item> -->
-            <el-menu-item index="10" @click.native="goToOthers('/QARData')"><i class="iconfont icon-edit"></i>QAR数据展示<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="10" @click.native="goToOthers('/QARData')" v-if="userInfo.isDocsec&&userInfo.isDocsec[4]==1"><i class="iconfont icon-edit"></i>QAR数据展示<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -214,7 +214,8 @@ const otherLinks = [
   { "icon": "changyong", "text": "常用办公软件", "link": "/softDownload" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
-  { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
+  { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080"},
+  // { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
   { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },

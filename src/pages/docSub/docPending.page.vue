@@ -264,7 +264,7 @@ export default {
     calWidth(doc) {
       var width = 1;
       if (doc.isOvertime) {
-        width -= 0.16
+        width -= 0.165
       }
       if (doc.docImprotType != '普通' && doc.docImprotType != '') {
         width -= 0.14

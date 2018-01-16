@@ -54,8 +54,11 @@
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
       <dist-advice ref="distAdvice"></dist-advice>
       <!-- <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'"></quit-advice> -->
-      <div class="backButton">
+      <div class="backButton clearfix">
         <el-button type="primary" @click="showDistribute=true" v-if="!hasBack">公文分发</el-button>
+        <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" v-if="showDowload($route.query.code)">
+          <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
+        </a>
       </div>
     </el-card>
     <back-button :backTop="186"></back-button>
@@ -291,6 +294,13 @@ $sub:#1465C0;
     padding-bottom: 20px;
     .el-button {
       width: 150px;
+    }
+    a {
+      float: right;
+      i {
+        font-size: 22px;
+        vertical-align: middle;
+      }
     }
   }
   .docheader {

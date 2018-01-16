@@ -59,22 +59,15 @@
         <div class="copyRight clearfix">
           <div class="appBox flLeft clearfix">
             <div class="leftBox flLeft">
-              <i class="iconfont icon-fankui"></i>
+              <!-- <i class="iconfont icon-fankui"></i> -->
               <span>APP下载</span>
             </div>
-            <div class="rightBox flLeft" @mouseenter="qrShow=true" @mouseleave="qrShow=false">
-              <img src="./assets/images/logo3.png" alt="">
-              <span>东海E网APP</span>
-              <transition name="el-zoom-in-bottom">
-                <div class="qrBox" v-show="qrShow">
-                  <span>东海E网APP</span>
-                  <img src="http://efile.donghaiair.cn/install/QRcode_ewang.png" alt="">
-                  <p class="phoneIcon">
-                    <i class="iconfont icon-anzhuo"></i>
-                    <i class="iconfont icon-ios"></i>
-                  </p>
-                </div>
-              </transition>
+            <div class="rightBox flLeft">
+              <div class="qrBox">
+                <img src="http://efile.donghaiair.cn/install/QRcode_ewang.png" alt="">
+                <i class="iconfont icon-anzhuo"></i>
+                <i class="iconfont icon-ios"></i>
+              </div>
             </div>
           </div>
           <span class="flRight">COPYRIGHT @2017 东海航空有限公司 ALLRIGHTS RESERVED</span>
@@ -264,7 +257,7 @@ $brown: #985D55;
 #app {
   padding-top: 96px;
   min-height: 100%;
-  padding-bottom: 170px;
+  padding-bottom: 190px;
   position: relative;
 }
 
@@ -481,6 +474,7 @@ footer {
       text-align: right;
       font-size: 14px;
       line-height: 80px;
+      padding: 5px 0;
       .appBox {
         color: $sub;
         .leftBox {
@@ -507,71 +501,25 @@ footer {
           font-size: 0;
           cursor: pointer;
           position: relative;
-          >img {
-            vertical-align: middle;
-            padding: 5px 7px;
-            box-shadow: 1px 3px 10px #cecece;
-            border-radius: 4px;
-            margin-right: 15px;
-          }
-          >span {
-            font-size: 15px;
-            vertical-align: middle;
-            display: inline-block;
-            width: 56px;
-            line-height: 19px;
-            text-align: left;
-          }
-          .el-zoom-in-bottom-enter-active,
-          .el-zoom-in-bottom-leave-active {
-            opacity: 1;
-            transform: scaleY(1);
-            transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms, opacity 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms;
-            transform-origin: center bottom
-          }
-          .el-zoom-in-bottom-enter,
-          .el-zoom-in-bottom-leave-active {
-            opacity: 0;
-            transform: scaleY(0)
-          }
           .qrBox {
-            // display: none;
-            position: absolute;
-            bottom: 75px;
-            left: -45px;
-            width: 140px;
-            padding: 0 7px 5px;
+            width: 110px;
+            padding: 0 0 0 20px;
             line-height: 1;
-            background: rgba(255, 255, 255, 0.95);
-            text-align: left;
-            box-shadow: 0 0 8px #dedede;
-            span {
-              font-size: 15px;
-              padding: 12px 0 6px;
-              display: inline-block;
-            }
+            position: relative;
             img {
               width: 100%;
               height: auto;
             }
-            .phoneIcon {
-              text-align: right;
-              padding: 5px 0;
-              i {
-                font-size: 20px;
-                color: #555;
-                padding-left: 7px; // vertical-align:top;
-              }
-              .icon-anzhuo {
-                font-size: 22px;
-                position: relative;
-                top: 2px;
-              }
+            i {
+              font-size: 20px;
+              color: #555;
+              position: absolute;
+              left: -5px;
+              top: 42px
             }
-          }
-          &:hover {
-            .qrBox {
-              display: block;
+            .icon-anzhuo {
+              top: 17px;
+              font-size: 22px;
             }
           }
         }

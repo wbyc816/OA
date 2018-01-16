@@ -43,6 +43,9 @@
       </el-collapse-transition>
     </el-card>
     <el-card class="borderCard searchResult" v-loading="searchLoading">
+      <div slot="header">
+        <el-button type="primary" :disabled="searchData.length===0" class="flRight" @click="exprotList">导出EXCEL</el-button>
+      </div>
       <el-table :data="searchData" class="myTable">
         <el-table-column prop="sendUserName" label="发送人" width="130"></el-table-column>
         <el-table-column prop="reciUserName" label="接收人" width="130"></el-table-column>
@@ -64,7 +67,7 @@
         </el-pagination>
       </div>
     </el-card>
-    <person-dialog @updatePerson="updatePerson" selText="发送人" :visible.sync="personVisible" :admin="userInfo.smsManger===4?'1':'0'"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" selText="发送人" :visible.sync="personVisible" :admin="userInfo.smsManger===4?'1':'0'" :selfDisable="false"></person-dialog>
     <dep-dialog :dialogVisible.sync="depVisible" :data="selDepList" dialogType="multi" @updateDep="updateDep"></dep-dialog>
   </div>
 </template>
@@ -107,7 +110,8 @@ export default {
       personVisible: false,
       depVisible: false,
       selPerson: '',
-      selDepList: []
+      selDepList: [],
+      tempParams:''
     }
   },
   computed: {
@@ -123,6 +127,7 @@ export default {
     ...mapGetters([
       'userInfo',
       'roomList',
+      'baseURL'
     ])
   },
   created() {
@@ -157,6 +162,7 @@ export default {
         this.searchParams.userId = '';
         this.searchParams.deptIds = [];
       }
+      this.tempParams=this.clone(this.searchParams);
       this.$http.post("/tSmsSend/smsManageList", this.searchParams, { body: true }).then(res => {
         setTimeout(() => {
           this.searchLoading = false;
@@ -203,6 +209,29 @@ export default {
       }else{
         this.selDepList = [];
       }      
+    },
+    exprotList(){
+      var url=this.baseURL+'/tSmsSend/smsExport?';
+      const params=this.tempParams;
+      if(params.content){
+        url+='content='+params.content+'&'
+      }
+      if(params.userId){
+        url+='userId='+params.userId+'&'
+      }
+      if(params.sendStatus){
+        url+='sendStatus='+params.sendStatus+'&'
+      }
+      if(params.startTime){
+        url+='startTime='+ params.startTime + '&';
+        url+='endTime='+ params.endTime + '&';
+      }
+      if(params.sts){
+        url+='sts='+params.sts+'&'
+      }if(params.deptIds.length!==0){
+        url+='deptIds='+params.deptIds.join(',')
+      }
+      window.open(url);
     }
   }
 }
@@ -260,6 +289,12 @@ $sub:#1465C0;
     padding: 0;
     tr th:first-child .cell {
       padding-left: 15px;
+    }
+    .el-card__header{
+      overflow:hidden;
+      .el-button{
+        border-radius:4px;
+      }
     }
     .el-card__body {
       padding: 0;

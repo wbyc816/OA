@@ -47,9 +47,7 @@
 <script>
 import OrganList from './organlist.component'
 import { mapGetters, mapMutations } from 'vuex'
-const leaderDep = {
-  data: {
-    deptList: [{
+const leaderDep = [{
       childNode: [],
       code: "",
       companyName: "",
@@ -67,8 +65,6 @@ const leaderDep = {
       updateTime: "",
       updateUser: ""
     }]
-  }
-}
 export default {
   components: {
     OrganList
@@ -81,7 +77,8 @@ export default {
       initialReady: true,
       searchButton: false,
       personVisible: false,
-      initData: true
+      initData: true,
+
     }
   },
   props: {
@@ -116,6 +113,10 @@ export default {
       type: Boolean,
       default: false
     },
+    hasLeaderDep:{
+      type:Boolean,
+      default:false
+    },
     deptId:{
       type: String,
       default: ''
@@ -125,12 +126,13 @@ export default {
     'visible': function(newVal) {
       this.personVisible = newVal;
       if (newVal) {
+        this.initialReady=true;
         this.initData = true;
         if (this.isLeaderDep) {   //是否只显示领导
           setTimeout(() => {
             this.$store.commit('GET_DEPT_LIST', leaderDep);
           }, 500)
-          this.$store.dispatch('setQueryDepId', leaderDep.data.deptList[0].id);
+          this.$store.dispatch('setQueryDepId', leaderDep[0].id);
         } else {
           if (this.admin !== '') {
             if (this.admin == '0') {
@@ -167,6 +169,12 @@ export default {
         //   this.selPerson=this.clone(this.data);
         // }
       }
+    },
+    depts(newValue){
+      if((newValue != '' || newValue != undefined || newValue != null)&&this.hasLeaderDep&&!this.isAdmin&&this.initialReady){
+        this.initialReady=false;
+        this.$store.commit('GET_DEPT_LIST', this.depts.concat(leaderDep))
+      }
     }
   },
   computed: {
@@ -175,7 +183,8 @@ export default {
       'searchLoading',
       'searchRes',
       'depPageNumber',
-      'isAdmin'
+      'isAdmin',
+      'depts'
     ])
   },
   created() {
