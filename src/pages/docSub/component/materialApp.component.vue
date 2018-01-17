@@ -1,6 +1,5 @@
 <template>
   <div class="materialApp clearfix">
-
     <el-form label-position="left" :model="materialForm" :rules="rules" ref="materialForm" label-width="128px">
       <el-form-item label="物品名称" class="inlinItem" prop="productName">
         <el-input v-model="materialForm.productName" :maxlength="25"></el-input>
@@ -9,31 +8,71 @@
         <el-input v-model="materialForm.specification" :maxlength="25"></el-input>
       </el-form-item>
       <el-form-item label="单价" class="inlinItem" prop="plannedUnitPrice">
-        <money-input v-model="materialForm.plannedUnitPrice" :prepend="false">
-          <template slot="append">元</template>
+        <money-input v-model="materialForm.plannedUnitPrice" :prepend="false" :append="false">
         </money-input>
       </el-form-item>
       <el-form-item label="数量" class="inlinItem" prop="quantity">
         <money-input v-model="materialForm.quantity" :maxlength="5" :prepend="false" :append="false" type="int"></money-input>
       </el-form-item>
-      <el-form-item label="备注" class="clearBoth">
-        <el-col :span="19">
-          <el-input v-model="materialForm.remark" class="fixF5" :maxlength="100">
-          </el-input>
-        </el-col>
-        <el-col :span="5">
-          <el-button @click='addMaterial' type="primary" class="addbutton1"><i class="el-icon-plus"></i> 添加</el-button>
-        </el-col>
+      <el-form-item label="预算年份" class="year clearBoth">
+        {{year}}
       </el-form-item>
-    </el-form>
-    <div class="appTable">
-      <el-table :data="materials" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加材料">
-        <el-table-column type="index" label="序号" width="55"></el-table-column>
-        <el-table-column property="productName" label="物品名称" width="160"></el-table-column>
+      <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
+        <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="materialForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%"></el-cascader>
+      </el-form-item>
+      <ul class="budgetInfo clearfix clearBoth" v-show="budgetInfo">
+        <li>年度预算{{budgetInfo.budgetTotal | toThousands}}元</li>
+        <li>可用预算{{budgetInfo.budgetRemain | toThousands}}元</li>
+        <li>预算执行比例{{budgetInfo.execRateStr}}</li>
+      </ul>
+      <el-form-item label="总价" class="deptArea" prop="appMoney" style="width:60%">
+        <el-input :value="appMoney" readonly>
+          <el-tooltip content="修改币种将清空已添加的物品列表" v-model="showTip" slot="prepend" placement="left" effect="light" manual>
+            <el-select v-model="activeCurrency" ref="currency" style="width:90px" @change="currencyChange"@visible-change="listShow">
+              <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
+            </el-select>
+          </el-tooltip>
+        </el-input>
+      </el-form-item>
+      <el-form-item label="" class="arrArea" style="width:40%">
+        <el-button type="primary" @click="addMaterial" class="addBudget"><i class="el-icon-plus"></i> 添加</el-button>
+      </el-form-item>
+    
+    <div class="appTable clearBoth">
+      <el-table :data="materials" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加物品">
+        <el-table-column type="expand">
+          <template scope="props">
+            <div class="remarkBox">
+              <span>预算机构/科目</span>
+              <p>{{props.row.budgetDeptName}}/{{props.row.budgetItemName}}</p>
+            </div>
+            <div class="remarkBox">
+              <span>预算年度</span>
+              <p>{{props.row.budgetYear}}</p>
+            </div>
+            <div class="remarkBox">
+              <span>费用归属部门</span>
+              <p>{{props.row.budgetDeptName}}</p>
+            </div>
+            <div class="remarkBox">
+              <span>执行比例</span>
+              <p>{{props.row.rate}}</p>
+            </div>
+            <div class="remarkBox">
+              <span>币种</span>
+              <p>{{props.row.accurencyName}}</p>
+            </div>
+            <div class="remarkBox">
+              <span>人民币</span>
+              <p>{{props.row.rmb}}元</p>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column property="productName" label="物品名称"></el-table-column>
         <el-table-column property="specification" label="型号" width="65"></el-table-column>
         <el-table-column property="plannedUnitPrice" label="单价" width="110"></el-table-column>
         <el-table-column property="quantity" label="数量" width="100"></el-table-column>
-        <el-table-column property="remark" label="备注"></el-table-column>
+        <el-table-column property="money" label="总价" width="160"></el-table-column>
         <el-table-column label="操作" width="55">
           <template scope="scope">
             <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
@@ -41,68 +80,12 @@
           </template>
         </el-table-column>
       </el-table>
-      <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice | toThousands}}元 {{totalPrice | moneyCh}}</span></p>
+      <p class="totalPrice" v-show="totalPrice!=0">合计人民币<span>{{totalPrice | toThousands}}元 {{totalPrice | moneyCh}}</span></p>
     </div>
-
-        <el-form label-position="left" :model="budgetForm" :rules="budgetRule" ref="budgetForm" label-width="128px" class="clearBoth">
-      <el-form-item label="预算年份" class="year">
-        {{year}}
-      </el-form-item>
-      <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
-        <el-cascader :clearable="true" :options="budgetDeptList" :props="budgetProp" v-model="budgetForm.budgetDept" :show-all-levels="false" @active-item-change="handleItemChange" @change="depChange" popper-class="myCascader" style="width:100%"></el-cascader>
-      </el-form-item>
-      <ul class="budgetInfo clearfix clearBoth" v-show="budgetInfo">
-        <li>年度预算{{budgetInfo.budgetTotal | toThousands}}元</li>
-        <li>可用预算{{budgetInfo.budgetRemain | toThousands}}元</li>
-        <li>预算执行比例{{budgetInfo.execRateStr}}</li>
-      </ul>
-      <el-form-item label="申请金额" class="deptArea" prop="appMoney" style="width:60%">
-        <money-input v-model="budgetForm.appMoney">
-          <el-select v-model="activeCurrency" slot="prepend" ref="currency" style="width:90px">
-            <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
-          </el-select>
-          <template slot="append">元</template>
-        </money-input>
-      </el-form-item>
-      <el-form-item label="说明" prop="remark" placeholder="" class="clearBoth">
-        <el-input v-model="budgetForm.remark"></el-input>
-      </el-form-item>
-      <el-form-item label="">
-        <el-button type="primary" @click="addBudget" class="addBudget"><i class="el-icon-plus"></i> 添加</el-button>
+    <el-form-item label="总金额" class="deptArea">
+        <el-input :value="totalMoney" readonly></el-input>
       </el-form-item>
     </el-form>
-    <div class="appTable clearBoth">
-      <el-table :data="budgetTable" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加预算项">
-        <el-table-column type="expand">
-          <template scope="props">
-            <div class="remarkBox">
-              <span>说明</span>
-              <p>{{props.row.remark}}</p>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column property="budgetDeptName" label="预算年度" width="75">
-          <template scope="scope">
-            {{year}}
-          </template>
-        </el-table-column>
-        <el-table-column property="budgetDeptName" label="预算机构/科目">
-          <template scope="scope">
-            {{scope.row.budgetDeptName}}/{{scope.row.budgetItemName}}
-          </template>
-        </el-table-column>
-        <el-table-column property="accurencyName" label="币种" width="75"></el-table-column>
-        <el-table-column property="money" label="申请金额" width="140"></el-table-column>
-        <el-table-column property="rmb" label="人民币(元)" width="125"></el-table-column>
-        <el-table-column label=" " width="55">
-          <template scope="scope">
-            <el-button @click.native.prevent="deleteBudget(scope.$index)" type="text" size="small" icon="delete">
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
-    </div>
   </div>
 </template>
 <script>
@@ -117,23 +100,24 @@ export default {
         specification: '',
         quantity: '',
         plannedUnitPrice: '',
-        remark: ''
+        budgetDept: [],
+
       },
       rules: {
         productName: [{ required: true, message: '请输入品名', trigger: 'blur' }],
         specification: [{ required: true, message: '请输入规格', trigger: 'blur' }],
         quantity: [{ required: true, message: '请输入数量' }],
         plannedUnitPrice: [{ required: true, message: '请输入单价' }],
+        budgetDept: [{ type: 'array', required: true, message: '请选择预算机构/科目', trigger: 'blur' }],
+        // appMoney: [{ required: true, message: '请输入申请金额', trigger: 'blur' }],
       },
       materials: [],
       budgetForm: {
-        budgetDept: [],
-        appMoney: '',
-        remark: ''
+
       },
+      showTip: false,
       budgetRule: {
-        budgetDept: [{ type: 'array', required: true, message: '请选择预算机构/科目', trigger: 'blur' }],
-        appMoney: [{ required: true, message: '请输入申请金额', trigger: 'blur' }],
+
       },
       budgetDeptList: [],
       budgetInfo: '',
@@ -151,23 +135,30 @@ export default {
       if (this.materials.length != 0) {
         var num = 0;
         this.materials.forEach(m => {
-          num += m.plannedUnitPrice * m.quantity
+          num += m.rmb
         })
         return parseFloat(this.numFixed2(num))
       } else {
         return 0
       }
     },
-    totalMoney() {
+    appMoney() {
       var num = 0;
-      if (this.budgetTable.length != 0) {
-        this.budgetTable.forEach(b => {
-          if (b.rmb) {
-            num += b.rmb;
-          }
-        })
+      if (this.materialForm.quantity && this.materialForm.plannedUnitPrice) {
+        num = parseInt(this.materialForm.quantity) * parseFloat(this.materialForm.plannedUnitPrice)
       }
       return parseFloat(this.numFixed2(num))
+    },
+    totalMoney() {
+      if (this.materials.length != 0) {
+        var num = 0;
+        this.materials.forEach(m => {
+          num += parseFloat(m.money)
+        })
+        return parseFloat(this.numFixed2(num))
+      } else {
+        return 0
+      }
     },
     ...mapGetters([
       'submitLoading',
@@ -190,7 +181,6 @@ export default {
   methods: {
     saveForm() {
       var params = JSON.stringify({
-        budgetTable: this.budgetTable,
         materials: this.materials,
       });
 
@@ -198,21 +188,49 @@ export default {
     },
     getDraft(obj) {
       this.materials = obj.materials;
-      this.budgetTable = obj.budgetTable;
     },
     addMaterial() {
       this.$refs.materialForm.validate((valid) => {
         if (valid) {
-          var temp = this.clone(this.materialForm);
-          temp.plannedUnitPrice = this.fomatFloat(temp.plannedUnitPrice, 1);
-          temp.quantity = parseInt(temp.quantity);
-          this.materials.push(temp);
-          this.$refs.materialForm.resetFields();
-          this.materialForm.remark = '';
+          var dep = this.getBudgetDep();
+          var currency = this.currencyList.find(c => c.currencyCode === this.activeCurrency);
+          var item = {
+            "productName": this.materialForm.productName,
+            "specification": this.materialForm.specification,
+            "quantity": parseInt(this.materialForm.quantity),
+            "plannedUnitPrice": this.fomatFloat(this.materialForm.plannedUnitPrice, 1),
+            "budgetDeptId": dep.budgetDeptCode, //预算部门id
+            "budgetDeptName": dep.budgetDeptName, //预算部门名
+            "budgetItemId": dep.budgetItemCode, //预算科目id
+            "budgetItemName": dep.budgetItemName, //预算科目名
+            "money": this.appMoney, //金额
+            "rmb": 0, //人民币
+            "accurencyName": currency.currencyName, //币种名称
+            "exchangeRateId": currency.exchangeId, //汇率id
+            "budgetYear": this.year,
+            "exchangeRate": currency.exchangeRate,
+            "rate": this.budgetInfo.execRateStr
+          }
+          this.$http.post('/doc/getRmbByExchangeRate', { currencyId: currency.currencyCode, amount: item.money })
+            .then(res => {
+              if (res.status == 0) {
+                item.rmb = res.data.amount;
+                this.materials.push(item);
+                this.$refs.materialForm.resetFields();
+              } else {
+                this.$message.error(res.message)
+              }
+            })
         } else {
           return false;
         }
       });
+    },
+    currencyChange() {
+      this.materials = [];
+    },
+    listShow(val){
+      this.showTip=val;
     },
     deleteRow(index) {
       this.materials.splice(index, 1)
@@ -222,77 +240,28 @@ export default {
     },
     submitForm() {
       if (this.checkTable()) {
-        this.$emit('submitMiddle', { materials: this.materials, materialItem: this.budgetTable });
+        var params = this.materials.map(function(s) {
+          delete s.rate;
+          return s;
+        })
+        this.$emit('submitMiddle', { materials: params });
       } else {
         this.$emit('submitMiddle', false);
       }
     },
     checkTable() {
-      if (this.budgetTable.length != 0) {
-        if (this.materials.length != 0) {
-          return true
-        } else {
-          this.$message.warning('请添加材料');
-          return false;
-        }
+      if (this.materials.length != 0) {
+        return true
       } else {
-        this.$message.warning('未添加预算项');
+        this.$message.warning('请添加材料');
         return false;
       }
     },
-    addBudget() {
-      this.$refs.budgetForm.validate((valid) => {
-        if (valid) {
-          var dep = this.getBudgetDep();
-          var currency = this.currencyList.find(c => c.currencyCode === this.activeCurrency);
-          var item = {
-            "budgetDeptId": dep.budgetDeptCode, //预算部门id
-            "budgetDeptName": dep.budgetDeptName, //预算部门名
-            "budgetItemId": dep.budgetItemCode, //预算科目id
-            "budgetItemName": dep.budgetItemName, //预算科目名
-            "money": this.budgetForm.appMoney, //金额
-            "rmb": 0, //人民币
-            "accurencyName": currency.currencyName, //币种名称
-            "exchangeRateId": currency.exchangeId, //汇率id
-            "remark": this.budgetForm.remark,
-            "budgetYear": this.year,
-            "exchangeRate": currency.exchangeRate,
-          }
-          this.$http.post('/doc/getRmbByExchangeRate', { currencyId: currency.currencyCode, amount: item.money })
-            .then(res => {
-              if (res.status == 0) {
-                item.rmb = res.data.amount;
-                if (this.checkBuudget(item.rmb, dep)) {
-                  this.budgetTable.push(item);
-                  this.budgetForm.budgetDept = [];
-                  this.budgetForm.appMoney = '';
-                  this.budgetForm.remark = '';
-                  this.budgetInfo = '';
-                }
-              } else {
-                console.log('货币兑换失败')
-              }
-            })
-        }
-      })
-    },
-    deleteBudget(index) {
-      this.budgetTable.splice(index, 1);
-    },
-    checkBuudget(rmb, dep) {
-      var temp = this.budgetTable.find(b => b.budgetDeptId == dep.budgetDeptCode && b.budgetItemId == dep.budgetItemCode)
-      if (temp == undefined) {
-        return true
-      } else {
-        this.$message.warning('不能添加相同的预算科目')
-        return false
-      }
-    },
     getBudgetDep() {
-      var len = this.budgetForm.budgetDept.length;
+      var len = this.materialForm.budgetDept.length;
       var temp = this.budgetDeptList;
       for (var i = 0; i < len; i++) {
-        temp = temp.find(dep => dep.budgetItemCode == this.budgetForm.budgetDept[i]);
+        temp = temp.find(dep => dep.budgetItemCode == this.materialForm.budgetDept[i]);
         if (temp.items && temp.items.length != 0) {
           temp = temp.items;
         }
@@ -377,7 +346,7 @@ $main:#0460AE;
     border: 1px solid #D5DADF;
     border-top: none;
     font-size: 15px;
-    text-align:right;
+    text-align: right;
     span {
       margin-left: 5px;
       color: $main;
@@ -400,7 +369,7 @@ $main:#0460AE;
     }
   }
   .addBudget {
-    width: 220px;
+    width: 100%;
     height: 45px;
   }
   .appTable {
@@ -410,29 +379,19 @@ $main:#0460AE;
       height: 60px;
     }
   }
-  .totalMoney {
-    text-align: right;
-    font-size: 15px;
-    line-height: 38px;
-    padding-right: 30px;
-
-    border: 1px solid #D5DADF;
-    border-top: none;
-    span {
-      color: $main;
-    }
-  }
   .remarkBox {
     overflow: hidden;
     display: table;
     font-size: 15px;
     table-layout: fixed;
     min-height: 57px;
+    width: 50%;
+    float: left;
     span {
       color: #99a9bf;
       padding: 0 0 0 10px;
       line-height: 36px;
-      width: 90px;
+      width: 117px;
       display: table-cell;
       vertical-align: middle;
       word-wrap: break-word;
