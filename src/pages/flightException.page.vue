@@ -31,7 +31,7 @@
 
          
 
-         <el-table-column prop="diffEngonTime" label="滑出时间" width="120">
+         <el-table-column prop="diffEngonTime" label="滑出差值时间" width="120">
             <template scope="scope">
                 <span v-if="scope.row.diffEngonTime_sts==1" style="color:red">{{ scope.row.diffEngonTime}}分钟</span>
                 <span v-if="scope.row.diffEngonTime_sts==0">{{ scope.row.diffEngonTime}}分钟</span>
@@ -82,7 +82,7 @@
 
         <el-table-column prop="aEngoffTime" label="A关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.aEngoffTime | time('hours') }}</span>
+                <span>{{ Date.parse(new Date(scope.row.aEngoffTime)) | time("hours") }}</span>
             </template>
         </el-table-column>
 
@@ -159,7 +159,7 @@
 
          
 
-         <el-table-column prop="diffEngonTime" label="滑出时间" width="130">
+         <el-table-column prop="diffEngonTime" label="滑出差值时间" width="130">
             <template scope="scope">
                 <span v-if="scope.row.diffEngonTime_sts==1" style="color:red">{{ scope.row.diffEngonTime}}分钟</span>
                 <span v-if="scope.row.diffEngonTime_sts==0">{{ scope.row.diffEngonTime}}分钟</span>
@@ -210,7 +210,7 @@
 
         <el-table-column prop="aEngoffTime" label="A关车时间" width="100">
             <template scope="scope">
-                <span>{{ scope.row.aEngoffTime | time('hours') }}</span>
+                <span>{{ Date.parse(new Date(scope.row.aEngoffTime)) | time("hours") }}</span>
             </template>
         </el-table-column>
 

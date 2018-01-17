@@ -21,7 +21,7 @@
               </div>
               <div>
                 <span>执行比例</span>
-                <p>{{cExecRate}}</p>
+                <p>{{props.row.cExecRate}}</p>
               </div>
             </div>
             <div class="width50">
@@ -133,8 +133,12 @@ export default {
   methods: {
     tesst() {
       console.log()
-      this.cExecRate = this.info[0].budgetExeststisVoList[0].cExecRate
-      console.log(this.info)
+      // this.cExecRate = this.info[0].budgetExeststisVoList[0].cExecRate
+      for(var i=0;i<this.info[0].airmPosItems.length;i++){
+        this.info[0].airmPosItems[i].cExecRate=this.info[0].budgetExeststisVoList[i].cExecRate
+      }
+     
+      console.log(this.info[0].airmPosItems)
     }
   }
 }
