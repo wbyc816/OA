@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span='7' class="sideBox">
         <side-Person-Search></side-Person-Search>
-        <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-if="!/Statistics/.test($route.path)">
+        <el-menu mode="vertical" router class="mySideLink" v-if="!/Statistics/.test($route.path)">
           <el-menu-item-group title="公文流转">
             <template v-for='(item,index) in navMenu'>
               <el-menu-item v-if='item.path' :index='index.toString()' :route="{path:item.path}">{{item.title}}
@@ -86,11 +86,13 @@
         </table>
       </div>
     </el-dialog>
+    <useful-set-dialog></useful-set-dialog>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import SidePersonSearch from '../components/sidePersonSearch.component'
+import UsefulSetDialog from '../components/usefulSetDialog.component'
 export default {
   data() {
     return {
@@ -138,7 +140,7 @@ export default {
       'staticsPower'
     ])
   },
-  components: { SidePersonSearch },
+  components: { SidePersonSearch,UsefulSetDialog },
   created() {
     this.$store.dispatch('getAdminStatus');
     this.$store.dispatch('getDocTips');
@@ -219,7 +221,6 @@ export default {
     },
     'processView' (newValue) {
       this.processDialogView = newValue;
-
     },
     docTips(newVal) {
       this.tips = [];

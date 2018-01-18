@@ -1,7 +1,6 @@
 <template>
   <div class="distributeDialog">
-    <el-dialog :visible.sync="dialogVisible" size="small" class="myDialog" custom-class="archiveSubmitDialog" @close="close" v-loading="submitLoading">
-      <span slot="title">公文分发</span>
+    <el-dialog :visible.sync="dialogVisible" title="公文分发" size="small" class="myDialog" custom-class="archiveSubmitDialog" @close="close" v-loading="submitLoading"  :modal-append-to-body="false">
       <el-form label-position="left" :model="distributeForm" :rules="distributeFormRule" ref="distributeForm" label-width="75px">
         <el-form-item class='reciverWrap' label="收件人">
           <div class="reciverList">
@@ -18,7 +17,9 @@
           <el-button class="addButton" @click="personVisible = true"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="分发意见" prop="res">
-          <el-input type="textarea" :rows="6" resize='none' v-model="distributeForm.res" :maxlength="100"></el-input>
+          <!-- <el-input type="textarea" :rows="6" resize='none' v-model="distributeForm.res" :maxlength="100"></el-input> -->
+          <task-content v-model="distributeForm.res"></task-content>
+
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="dialogSubmitButton" @click="dialogSubmit">分发</el-button>
@@ -31,9 +32,11 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import MajorDialog from './majorDialog.component'
+import TaskContent from './taskContent.component'
 export default {
   components: {
-    MajorDialog
+    MajorDialog,
+    TaskContent
   },
   data() {
     return {
@@ -148,6 +151,8 @@ export default {
   .archiveSubmitDialog {
     width: 600px;
     margin-bottom:20px;
+    transform:none;
+    margin-left: -300px;
     .el-dialog__body {
       padding: 25px 25px 25px 8px;
     }
