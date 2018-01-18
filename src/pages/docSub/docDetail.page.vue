@@ -313,14 +313,13 @@ export default {
         } else {
           return this.docDetialInfo.doc.isTask == 1 && this.docDetialInfo.doc.isSign != 1
         }
-
       } else {
         return false
       }
     },
     showdArchiveButton() {
       var isShow = false;
-      if (this.docDetialInfo.doc != {} && (this.docDetialInfo.doc.isFied == 1 || this.docDetialInfo.doc.isFied == 2)) {
+      if (this.docDetialInfo.doc != {} && (this.docDetialInfo.doc.isFied != 0)) {
         isShow = true;
       }
 

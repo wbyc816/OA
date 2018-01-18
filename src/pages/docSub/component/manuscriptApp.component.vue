@@ -8,7 +8,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="发文目录" prop="catalogueName">
-        <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="manuscriptForm.catalogueName" style="width:100%" popper-class="myCascader">
+        <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="manuscriptForm.catalogueName" style="width:100%" ref="catalogue" popper-class="myCascader">
         </el-cascader>
       </el-form-item>
       <el-form-item label="发文日期" prop="issueDate">
@@ -319,6 +319,7 @@ export default {
           "classify1": this.manuscriptForm.classify1, //发文类型 
           "issueDate": this.manuscriptForm.issueDate.getTime(), //发文日期
           "catalogueId": this.manuscriptForm.catalogueName[this.manuscriptForm.catalogueName.length - 1], //目录 
+          "catalogueName":this.$refs.catalogue.currentLabels.join('/'),
           "signId": this.manuscriptForm.signId, //签发人
           "printNum": this.manuscriptForm.printNum,
           "storeNum": this.manuscriptForm.storeNum

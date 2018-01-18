@@ -14,7 +14,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="收文目录" prop="catalogueName" class="clearBoth">
-        <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="checkInForm.catalogueName" style="width:100%" popper-class="myCascader">
+        <el-cascader expand-trigger="hover" :options="catalogueList" :props="defaultProp" v-model="checkInForm.catalogueName" style="width:100%" popper-class="myCascader" ref="catalogue">
         </el-cascader>
       </el-form-item>
       <el-form-item label="收文日期" prop="receiveTime">
@@ -133,6 +133,7 @@ export default {
           receiveTime:+this.checkInForm.receiveTime,
           receiveCompany: this.checkInForm.receiveCompany,
           catalogueId: this.checkInForm.catalogueName[this.checkInForm.catalogueName.length - 1],
+          catalogueName:this.$refs.catalogue.currentLabels.join('/'),
         },
         wordFileId: this.checkInForm.wordFileId
       }

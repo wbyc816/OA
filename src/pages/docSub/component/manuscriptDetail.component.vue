@@ -10,7 +10,7 @@
     </el-col> -->
     <el-col :span="24">
       <h1 class="title">发文目录</h1>
-      <p v-if="info" class="textContent">{{info[0].catalogueId}}</p>
+      <p v-if="info" class="textContent">{{info[0].catalogueName}}</p>
     </el-col>
     <!-- <el-col :span="24">
       <h1 class="title">发布范围</h1>
@@ -72,8 +72,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const depList = [{ name: '综合部', max: 10, min: 90 }, { name: '后勤部', max: 10, min: 70 }, { name: '法律部', max: 10, min: 90 }]
-const personList = [{ name: '王城', max: 10, min: 90 }, { name: '李健', max: 10, min: 70 }, { name: '孙浩', max: 10, min: 90 }]
+
 export default {
   components: {  },
   props: {
@@ -85,8 +84,6 @@ export default {
   },
   data() {
     return {
-      depList,
-      personList,
       types: [],
       pageNum: 1,
       totalNum: 0,

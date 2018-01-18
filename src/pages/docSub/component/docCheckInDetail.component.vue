@@ -9,8 +9,8 @@
       <p v-if="info" class="textContent">{{info[0].classify2}}</p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">发文目录</h1>
-      <p v-if="info" class="textContent">{{info[0].catalogueId}}</p>
+      <h1 class="title">收文目录</h1>
+      <p v-if="info" class="textContent">{{info[0].catalogueName}}</p>
     </el-col>
     <!-- <el-col :span="12">
       <h1 class="title">来文文号</h1>

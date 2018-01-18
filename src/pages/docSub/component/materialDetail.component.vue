@@ -1,34 +1,57 @@
 <template>
   <div class="materialDetail">
-    <el-table :data="info[0].material" empty-text="未添加材料" class="appTable">
-      <el-table-column type="index" label=" " width="40"></el-table-column>
-      <el-table-column property="productName" label="品名" width="180"></el-table-column>
-      <el-table-column property="specification" label="规格" width="90"></el-table-column>
-      <el-table-column property="plannedUnitPrice" label="计划单价" width="100"></el-table-column>
-      <el-table-column property="quantity" label="数量" width="90"></el-table-column>
-      <el-table-column property="remark" label="备注"></el-table-column>
-    </el-table>
-    <p class="totalPrice" v-show="totalPrice!=0">合计金额<span>{{totalPrice | toThousands}}元 {{totalPrice | moneyCh}}</span></p>
-    <el-table :data="info[0].materialItem" :stripe="true" highlight-current-row  class="appTable">
+    <el-table :data="info" :stripe="true" highlight-current-row style="width: 100%" empty-text="未添加材料">
       <el-table-column type="expand">
         <template scope="props">
           <div class="remarkBox">
-            <span>说明</span>
-            <p>{{props.row.remark}}</p>
+            <span>预算机构/科目</span>
+            <p>{{props.row.budgetDeptName}}/{{props.row.budgetItemName}}</p>
+          </div>
+          <div class="remarkBox">
+            <span>预算年度</span>
+            <p>{{props.row.budgetYear}}</p>
+          </div>
+          <div class="remarkBox">
+            <span>费用归属部门</span>
+            <p>{{props.row.budgetDeptName}}</p>
+          </div>
+          <div class="remarkBox">
+            <span>执行比例</span>
+            <p>{{props.row.budgetExeststisVo.cExecRate}}</p>
+          </div>
+          <div class="remarkBox">
+            <span>币种</span>
+            <p>{{props.row.accurencyName}}</p>
+          </div>
+          <div class="remarkBox">
+            <span>人民币</span>
+            <p>{{props.row.rmb}}元</p>
           </div>
         </template>
       </el-table-column>
-      <el-table-column property="budgetYear" label="预算年度" width="75">
-      </el-table-column>
-      <el-table-column property="budgetDeptName" label="预算机构/科目">
+      <el-table-column property="productName" label="物品名称"></el-table-column>
+      <el-table-column property="specification" label="型号" width="65"></el-table-column>
+      <el-table-column property="plannedUnitPrice" label="单价" width="110"></el-table-column>
+      <el-table-column property="quantity" label="数量" width="100"></el-table-column>
+      <el-table-column property="money" label="总价" width="160"></el-table-column>
+      <el-table-column label="操作" width="70">
         <template scope="scope">
-          {{scope.row.budgetDeptName}}/{{scope.row.budgetItemName}}
+          <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
+          </el-button>
         </template>
       </el-table-column>
-      <el-table-column property="accurencyName" label="币种" width="75"></el-table-column>
-      <el-table-column property="money" label="申请金额" width="140"></el-table-column>
-      <el-table-column property="rmb" label="人民币(元)" width="125"></el-table-column>
     </el-table>
+    <p class="totalPrice" v-show="totalPrice!=0">合计人民币<span>{{totalPrice | toThousands}}元 {{totalPrice | moneyCh}}</span></p>
+    <el-row style="border-top: 1px solid #D5DADF;">
+      <el-col :span="12" class="rightBorder">
+        <h1 class="title">总金额</h1>
+        <p v-if="info" class="textContent">{{totalMoney}}</p>
+      </el-col>
+      <el-col :span="12">
+        <h1 class="title">币种</h1>
+        <p v-if="info" class="textContent">{{info[0].accurencyName}}</p>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
@@ -45,15 +68,22 @@ export default {
   mounted() {},
   computed: {
     totalPrice: function() {
-      if (this.info[0].material.length != 0) {
+      if (this.info.length != 0) {
         var num = 0;
-        this.info[0].material.forEach(m => {
+        this.info.forEach(m => {
           num += m.plannedUnitPrice * m.quantity
         })
         return parseFloat(this.numFixed2(num))
       } else {
         return 0
       }
+    },
+    totalMoney() {
+      var num = 0;
+      this.info.forEach(m => {
+        num += parseFloat(m.money)
+      })
+      return parseFloat(this.numFixed2(num))
     },
     ...mapGetters([
       'submitLoading'
@@ -89,11 +119,13 @@ $main:#0460AE;
     font-size: 15px;
     table-layout: fixed;
     min-height: 57px;
+    width: 50%;
+    float: left;
     span {
       color: #99a9bf;
       padding: 0 0 0 10px;
       line-height: 36px;
-      width: 90px;
+      width: 117px;
       display: table-cell;
       vertical-align: middle;
       word-wrap: break-word;

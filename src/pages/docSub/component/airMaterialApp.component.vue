@@ -710,7 +710,7 @@ export default {
 
         }else{
            this.$message({
-            message: '请先选则币种',
+            message: '请先选择币种',
             type: 'warning'
           });
         }
