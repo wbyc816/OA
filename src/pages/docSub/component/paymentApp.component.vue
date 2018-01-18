@@ -90,11 +90,20 @@
       <el-form-item label="收款供应商" prop="supplierIds">
         <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="paymentProp" v-model="paymentForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier">
         </el-cascader>
+         
       </el-form-item>
-      <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
-        <li>开户银行 {{supplierInfo.accountBank}}</li>
-        <li>收款账户 {{supplierInfo.accountName}}</li>
+
+      <el-form-item label="供应商银行信息" prop="supplierInfos" v-show="ifSupplierChange">
+       <el-select v-model="paymentForm.supplierInfos"  ref="supplierInfos" @change="changeSelect">
+          <el-option :label="item.accountBank" :value="item.accountCode" v-for="item in supplierInfo"></el-option>
+        </el-select>
+      </el-form-item>
+      <div v-show="ifChangeSelect">
+      <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;" >
+        <li>开户银行 {{accountName}}</li>
+        <li>收款账户 {{accountBank}}</li>
       </ul>
+      </div>
       <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea">
         <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType">
           <el-option v-for="item in payMthods" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
@@ -165,9 +174,14 @@ export default {
       },
       // year: new Date().getFullYear(),
       budgetDeptList: [],
+     
       budgetInfo: '',
       payTypes: [],
       currencyList: [],
+      accountBank:"",
+      accountName:"",
+      ifSupplierChange:false,
+      ifChangeSelect:false,
       invoiceList: [],
       activeCurrency: '',
       activeInvoice: '',
@@ -180,9 +194,11 @@ export default {
         payTypeCode: '',
         invoiceAttach: [],
         feeType: [],
-        isAdvancePayment: '0'
+        isAdvancePayment: '0',
+        supplierInfos:"",
       },
       paymentRule: {
+        supplierInfos: [{ required: true, message: '请选择供应商银行信息', trigger: 'blur' }],
         contractCode: [{ required: true, message: '请选择合同类型', trigger: 'blur' }],
         payMthodCode: [{ required: true, message: '请选择付款方式', trigger: 'blur' }],
         supplierIds: [{ type: 'array', required: true, message: '请选择收款供应商', trigger: 'blur' }],
@@ -219,7 +235,7 @@ export default {
       },
       isfirst: false,
       prePayTemp: [],
-      draftFirst1: false
+      draftFirst1: false,
     }
   },
   computed: {
@@ -309,18 +325,21 @@ export default {
       }
     },
     submitAll() {
+      
       var payMthod = this.payMthods.find(i => i.dictCode == this.paymentForm.payMthodCode);
       var payType = this.payTypes.find(i => i.dictCode == this.paymentForm.payTypeCode);
       var feeType = this.getFeeType();
+
       var finPayment = {
         "paymentTypeCode": payType.dictCode, //付款申请类型code, DOC04中
         "paymentTypeName": payType.dictName, //付款申请类型名
         "budgetYear": this.year, //预算年份
-        "supplierId": this.supplierInfo.id, //供应商id
-        "supplierName": this.supplierInfo.supplierName, //供应商名
-        "supplierBank": this.supplierInfo.accountBank, //供应商开户银行
-        "supplierBankAccountName": this.supplierInfo.accountName, //供应商开户账号名
-        "supplierBankAccountCode": this.supplierInfo.accountCode, //供应商开户账号编号
+
+        "supplierId": this.id, //供应商id
+        "supplierBank": this.accountName, //供应商开户银行
+        "supplierBankAccountName": this.accountNamePer, //供应商开户账号名
+        "supplierBankAccountCode": this.accountBank, //供应商开户账号编号
+
         "totalMoney": this.totalMoney, //合计金额
         "paymentMethodCode": payMthod.dictCode, //付款方式code 
         "paymentMethodName": payMthod.dictName, //付款方式名
@@ -330,6 +349,20 @@ export default {
         "costTypeCode": feeType.dictCode, //费用类型code , FIN04和FIN05 中
         "costTypeName": feeType.dictName //费用类型名
       };
+      this.$http.post('/Supplier/getSupplierBankInfo', { 
+          accountCode: this.accountBank
+        })
+        .then(res => {
+          if (res.status == '0') {
+            this.supplierName = res.data.supplierName;
+            finPayment.supplierId=res.data.id;
+            finPayment.supplierBankAccountName=res.data.accountName;
+            finPayment.supplierName=res.data.supplierName;
+          } 
+        }, res => {
+
+      });
+      
       var paymentItems = this.clone(this.budgetTable).map(function(b) {
         delete b.currencyCode;
         delete b.budegetRemain;
@@ -337,6 +370,7 @@ export default {
         return b;
       });
       var finFileIds = this.paymentForm.contractAttach.map(c => c.response.data).concat(this.paymentForm.invoiceAttach.map(c => c.response.data));
+      console.log(finPayment)
       this.$emit('submitMiddle', { finPayment: finPayment, paymentItems: paymentItems, finFileIds: finFileIds })
     },
     checkBudgetTable() {
@@ -629,9 +663,32 @@ export default {
         .then(res => {
           if (res.status == '0') {
             res.data.forEach((s, index) => {
-              s.id = s.supplierName;
+              s.id = s.supplierName;             
             })
-            this.supplierList = res.data;
+            var a=[];
+            
+            var arr=[];
+            for(var i=0;i<res.data.length;i++){
+              var c=res.data[i].supplierName;
+              for(var j=0;j<res.data[i].supplierBeans.length;j++){
+                if(res.data[i].supplierBeans[j]){
+                  arr.push({supplierBanks:res.data[i].supplierBeans[j].supplierBanks,supplier: res.data[i].supplierBeans[j].supplier,supplierName:res.data[i].supplierBeans[j].supplier.supplierName,id:res.data[i].supplierBeans[j].supplier.supplierName})
+                }
+              }  
+              var b={
+                id:c,
+                supplierName:c,
+                supplier:arr
+              };
+              a.push(b)
+              arr=[];
+            }           
+            console.log(a)
+
+            this.supplierList = a;
+            // this.supplierList = res.data;
+            // console.log(res.data)
+
             if (this.draftFirst) {
               this.draftFirst = false;
               this.supplierChange();
@@ -692,11 +749,22 @@ export default {
       var temp = this.supplierList;
       for (var i = 0; i < len; i++) {
         temp = temp.find(s => s.id == this.paymentForm.supplierIds[i]);
-        if (temp.supplier && temp.supplier.length != 0) {
-          temp = temp.supplier;
+        if (temp.supplier && temp.supplier.length != 0 &&i==0) {
+            temp=temp.supplier;
         }
       }
-      this.supplierInfo = temp
+      if(temp){
+        this.supplierInfo = temp.supplierBanks;
+        this.ifSupplierChange=true;
+      }else{
+
+      }
+      
+    },
+    changeSelect() {
+       this.ifChangeSelect=true;
+       this.accountName=this.$refs.supplierInfos.selectedLabel
+       this.accountBank=this.$refs.supplierInfos.value
     },
     getFeeType() {
       var len = this.paymentForm.feeType.length;

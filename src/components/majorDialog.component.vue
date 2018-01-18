@@ -433,6 +433,7 @@ export default {
     addDep(store, data) {
       var temp = this.depList.find((dep, index) => dep.id == data.id);
       this.all='';
+      
       if (temp) {
         var index = this.depList.indexOf(temp)
         if(this.hasLevel){
@@ -495,6 +496,11 @@ export default {
       return row.empId+row.postId
     },
     submitPerson() {
+      console.log(this.depList)
+      console.log(this.all)
+      console.log(this.personList)
+      console.log(this.outList)
+
       this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList,outList:this.outList })
       this.$emit('update:visible', false)
     },

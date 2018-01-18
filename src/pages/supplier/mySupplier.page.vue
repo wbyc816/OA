@@ -15,7 +15,7 @@
           <el-input v-model="searchParams.supplierCity" placeholder="所在城市"></el-input>
         </el-col>
         <el-col :span="6">
-          <el-select v-model="searchParams.supplierStatus" placeholder="客户状态":clearable="true">
+          <el-select v-model="searchParams.supplierStatus" placeholder="客户状态" :clearable="true">
             <el-option :key="item.dictCode" :label="item.dictName" :value="item.dictCode" v-for="item in supplierStatus"></el-option>
           </el-select>
         </el-col>
@@ -66,7 +66,7 @@ export default {
         "supplierStatus": "",
         "pageSize": 10,
         "pageNumber": 1,
-        "type":1
+        "type":2
       },
       totalSize: 1,
       status: '',
