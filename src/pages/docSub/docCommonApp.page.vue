@@ -125,18 +125,22 @@ export default {
     JBC
   },
   created() {
-    this.$store.dispatch('getTemplate',{code:this.$route.params.code});
+    this.$store.dispatch('getTemplate', { code: this.$route.params.code });
   },
   beforeRouteUpdate(to, from, next) {
-    if (to.params.code == 'SWD' && this.userInfo.isConfidential != 1) {
+    if ((to.params.code == 'SWD' && this.userInfo.isConfidential != 1) || (to.params.code == 'CLS' && this.userInfo.isPurchase != 1)) {
       this.$router.push(from.path);
     } else {
       next();
     }
   },
   mounted() {
-    if (this.isReady && this.$route.params.code == 'SWD' && this.userInfo.isConfidential != 1) {
-      this.$router.push('/doc/docSub');
+    if (this.isReady) {
+      if ((this.$route.params.code == 'SWD' && this.userInfo.isConfidential != 1) || (this.$route.params.code == 'CLS' && this.userInfo.isPurchase != 1)) {
+        this.$router.push('/doc/docSub');
+      } else {
+        this.initDoc();
+      }
     } else {
       this.initDoc();
     }
@@ -144,7 +148,7 @@ export default {
   watch: {
     isReady: function(val) {
       if (val) {
-        if (this.$route.params.code == 'SWD' && this.userInfo.isConfidential != 1) {
+        if ((this.$route.params.code == 'SWD' && this.userInfo.isConfidential != 1) || (this.$route.params.code == 'CLS' && this.userInfo.isPurchase != 1)) {
           this.$router.push('/doc/docSub');
         }
       }
@@ -205,7 +209,7 @@ export default {
         if (this.$route.query.id) {
           params.id = this.$route.query.id
         }
-        Object.assign(temp, params, this.reciver,this.suggestPath, this.selConfident, this.selUrgency, this.middleParams)
+        Object.assign(temp, params, this.reciver, this.suggestPath, this.selConfident, this.selUrgency, this.middleParams)
         this.$store.commit('setIsSubmit', true);
         this.submitParam = temp;
         this.saveDoc();
@@ -268,7 +272,7 @@ export default {
           if (this.$route.query.id) {
             temp.id = this.$route.query.id
           }
-          Object.assign(temp, params, this.reciver,this.suggestPath, this.selConfident, this.selUrgency);
+          Object.assign(temp, params, this.reciver, this.suggestPath, this.selConfident, this.selUrgency);
           finalParam = temp;
         }
         this.$http.post(this.doc.url, finalParam, { body: true })

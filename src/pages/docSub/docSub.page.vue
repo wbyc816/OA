@@ -5,7 +5,7 @@
         <span>行政申请</span>
       </div>
       <el-row :gutter='15'>
-        <el-col :span="6" v-for="item in adminData" v-if="item.require?userInfo.isConfidential==1:true">
+        <el-col :span="6" v-for="item in adminData" v-if="item.require?userInfo[item.require]==1:true">
           <doc-list :data='item'></doc-list>
         </el-col>
       </el-row>
@@ -71,8 +71,8 @@ const adminData = [
   { 'logo': 'icon-file11', 'color': '#FF5F88', 'text': '发文稿纸', 'link': '/doc/docCommonApp/FWG' },
   { 'logo': 'icon-car', 'font': '20px', 'color': '#A5A3FF', 'text': '用车申请', 'link': '/doc/docCommonApp/YCS' },
   { 'logo': 'icon-plane2', 'font': '20px', 'color': '#9FD867', 'text': '差旅申请', 'link': '/doc/docCommonApp/CLV' },
-  { 'logo': 'icon-documents', 'font': '26px', 'color': '#FF5F88', 'text': '采购申请', 'link': '/doc/docCommonApp/CLS' },
-  { 'logo': 'icon-biaodan', 'font': '28px', 'color': '#5BB5FC', 'text': '收文登记处理', 'link': '/doc/docCommonApp/SWD', "require": true },
+  { 'logo': 'icon-documents', 'font': '26px', 'color': '#FF5F88', 'text': '采购申请', 'link': '/doc/docCommonApp/CLS',"require": "isPurchase" },
+  { 'logo': 'icon-biaodan', 'font': '28px', 'color': '#5BB5FC', 'text': '收文登记处理', 'link': '/doc/docCommonApp/SWD', "require": "isConfidential" },
   { 'logo': 'icon-hetong1', 'font': '28px', 'color': '#FFE066', 'text': '合同申请', 'link': '/doc/docCommonApp/HTS' },
 ];
 const financeData = [

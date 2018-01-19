@@ -281,7 +281,7 @@
         </el-upload>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :selfDisable="false" :visible.sync="personDialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :selfDisable="false" :visible.sync="personDialogVisible" hasLeaderDep></person-dialog>
   </div>
 </template>
 <script>
