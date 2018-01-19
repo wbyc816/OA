@@ -96,6 +96,12 @@ import { mapGetters } from 'vuex'
 import PersonDialog from '../../../components/personDialog.component'
 import MoneyInput from '../../../components/moneyInput.component'
 import MajorDialog from '../../../components/majorDialog.component'
+const catalogAbleList = [
+  { code: 'ADM0401', comList: ['公司发文', '公司新闻', '人事任免', 'HR政策', '办事指南', '使用手册', '规章制度'], depList: [] },
+  { code: 'ADM0403', comList: ['业务通告'], depList: ['all'] },
+  { code: 'ADM0402', comList: ['会议纪要'], depList: ['all'] },
+  { code: 'ADM0404', comList: [], depList: ['all'] }
+]
 export default {
   components: { PersonDialog, MajorDialog, MoneyInput },
   data() {
@@ -235,25 +241,36 @@ export default {
         this.files = [];
         this.$emit('updateSuggest', val);
         this.manuscriptForm.catalogueName = [];
-        this.catalogueList.forEach(c => {
-          if (val === 'ADM0401' && c.name === '部门级') {
-            c.disabled = true;
-          } else if (val === 'ADM0404' && c.name === '公司级') {
-            c.disabled = true;
-          } else {
-            c.disabled = false;
-          }
-          c.catalogues.forEach(d => {
-            if (val === 'ADM0401'&&c.name==='公司级' && (d.name === '公司收文'||d.name === '各类模板'||d.name === '会议纪要'||d.name === '业务通告')) {
-              d.disabled = true;
-            } else {
-              d.disabled=false;
-            }
-          })
-        })
+        this.triggerAbleCatalog(val);
       } else { //草稿箱第一次
         this.isDrafFirst = false;
       }
+    },
+    triggerAbleCatalog(val){
+      var ableList=catalogAbleList.find(c=>c.code===val);
+      console.log(ableList)
+      this.catalogueList.forEach(c => {
+        var temp=[];
+        if(c.name==='公司级'){
+          temp=ableList.comList;
+        }else if(c.name==='部门级'){
+          temp=ableList.depList;
+        }
+        if(temp.length===0){
+          c.disabled=true;
+        }else{
+          c.disabled=false;
+          if(temp.indexOf('all')===-1){
+            c.catalogues.forEach(d=>{
+              if(temp.indexOf(d.name)!==-1){
+                d.disabled=false;
+              }else{
+                d.disabled=true;
+              }
+            })
+          }
+        }
+      })
     },
     updateSign(reciver) {
       this.manuscriptForm.signName = reciver.name;
@@ -319,7 +336,7 @@ export default {
           "classify1": this.manuscriptForm.classify1, //发文类型 
           "issueDate": this.manuscriptForm.issueDate.getTime(), //发文日期
           "catalogueId": this.manuscriptForm.catalogueName[this.manuscriptForm.catalogueName.length - 1], //目录 
-          "catalogueName":this.$refs.catalogue.currentLabels.join('/'),
+          "catalogueName": this.$refs.catalogue.currentLabels.join('/'),
           "signId": this.manuscriptForm.signId, //签发人
           "printNum": this.manuscriptForm.printNum,
           "storeNum": this.manuscriptForm.storeNum
@@ -469,8 +486,8 @@ export default {
             loopMap(res.data);
             res.data.forEach(r => {
               r.disabled = false;
-              r.catalogues.forEach(d=>{
-                d.disabled=false;
+              r.catalogues.forEach(d => {
+                d.disabled = false;
               })
             })
             this.catalogueList = res.data;

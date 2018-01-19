@@ -50,7 +50,8 @@ const state = {
   staticsPower: '', // 1 公司 2 部门 0 无
   isSubmit: false,
   secretaryInfo: '',
-  docTemplate: ''
+  docTemplate: '',
+  showUsefulSetDialog:false
 }
 
 const actions = {
@@ -312,6 +313,7 @@ const getters = {
   secretaryInfo: state => state.secretaryInfo,
   suggestPath: state => state.suggestPath,
   docTemplate: state => state.docTemplate,
+  showUsefulSetDialog: state => state.showUsefulSetDialog,
 }
 
 const mutations = {
@@ -375,6 +377,9 @@ const mutations = {
   },
   setSuggestPath(state, payLoad) {
     state.suggestPath = payLoad;
+  },
+  setUsefulSetDialog(state,payLoad){
+    state.showUsefulSetDialog=payLoad;
   }
 }
 

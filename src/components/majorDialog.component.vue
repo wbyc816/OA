@@ -155,7 +155,7 @@
       }
     }
     .el-tree-node__content {
-
+      position: relative;
       .depAdd {
         font-size: 14px;
         display: none;
@@ -519,7 +519,7 @@ export default {
       if(data.name!='东海航空有限公司'){
         return ( <span >
           <span >
-          <span > { data.name } < /span> < /span > <span style = "float: right; margin-right: 20px" >
+          <span > { data.name } < /span> < /span > <span style = "position:absolute;top:0; right: 20px" >
           <el-button class = "depAdd"
           type = "primary"
           icon = "plus"

@@ -1,6 +1,6 @@
 <template>
   <div id="docPending">
-    <search-options title="公文签批" @search="setOptions" hasOverTime isCollapse hasSub></search-options>
+    <search-options title="公文签批" @search="setOptions" hasOverTime isCollapse hasSub :defaultExpand="searchOptionExpand"></search-options>
     <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId==leaderEmpid" v-loading.body="searchLoading">
       <el-table-column type="selection" width="35" class-name="selectionColumn" label-class-name="selectionColumnLabel">
       </el-table-column>
@@ -47,7 +47,7 @@
       </caption>
       <thead>
         <tr>
-          <th v-for="title in tableTitle" align="left">{{title}}</th>
+          <th v-for="title in tableTitle" align="left" @click="$router.push('/doc/docPending')">{{title}}</th>
         </tr>
       </thead>
       <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">
@@ -137,7 +137,8 @@ export default {
       },
       selDocs: [],
       docId: '',
-      showDistribute: false
+      showDistribute: false,
+      searchOptionExpand:false
     }
   },
   computed: {
@@ -154,7 +155,8 @@ export default {
   },
   created() {
     if (this.$route.params.isOverTime) {
-      this.searchOptions.isOverTime = '1'
+      this.searchOptions.isOverTime = '1';
+      this.searchOptionExpand=true;
     }
     this.getData();
   },
