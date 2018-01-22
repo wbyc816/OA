@@ -148,23 +148,25 @@
             </el-form-item>
           </template>
           <h4 class='doc-form_title clearBoth'>账务</h4>
+          <el-form label-position="left" :model="appFormAccount" :rules="rules" ref="appForm" label-width="128px" class="clearfix">
           <el-form-item label="信用额度" prop="accountLimit" class="deptArea">
-            <el-input v-model="appForm.accountLimit"></el-input>
+            <el-input v-model="appFormAccount.accountLimit"></el-input>
           </el-form-item>
           <el-form-item label="信用期间" prop="timeline" class="arrArea">
-            <el-date-picker v-model="appForm.timeline" type="daterange" style="width:100%">
+            <el-date-picker v-model="appFormAccount.timeline" type="daterange" style="width:100%">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="开户行" prop="accountBank" class="deptArea" :rules="[ { required: isPersonal, message: '请输入开户行' }]">
-            <el-input v-model="appForm.accountBank"></el-input>
+          <el-form-item label="开户行" prop="accountBank" class="deptArea" ref="accountBank" :rules="[ { required: isPersonal, message: '请输入开户行' }]">
+            <el-input v-model="appFormAccount.accountBank"></el-input>
           </el-form-item>
-          <el-form-item label="账户名称" prop="accountName" class="arrArea" :rules="[ { required: isPersonal, message: '请输入账户名称' }]">
-            <el-input v-model="appForm.accountName"></el-input>
+          <el-form-item label="账户名称" prop="accountName" class="arrArea" ref="accountName" :rules="[ { required: isPersonal, message: '请输入账户名称' }]">
+            <el-input v-model="appFormAccount.accountName"></el-input>
           </el-form-item>
-          <el-form-item label="银行账户" prop="accountCode" class="deptArea" :rules="[ { required: isPersonal, message: '请输入银行账户' }]">
-            <el-input v-model="appForm.accountCode"></el-input>
+          <el-form-item label="银行账户" prop="accountCode" class="deptArea" ref="accountCode" :rules="[ { required: isPersonal, message: '请输入银行账户' }]">
+            <el-input v-model="appFormAccount.accountCode"></el-input>
           </el-form-item>
-            <el-button @click='addBudget' type="primary" style="width:100px" class="arrArea"><i class="el-icon-plus"></i> 添加</el-button>          <template v-if="!isPersonal">
+            <el-button @click='addBudget' type="primary" style="width:100px" class="arrArea"><i class="el-icon-plus"></i> 添加</el-button>          
+          </el-form>
             <div style="width:750px;margin-bottom:20px;" v-show="!appForm.type||appForm.type.dictCode!=='DOC2602'">
           <el-table :data="accountTable" :stripe="true" highlight-current-row class="appTable" >
           
@@ -181,7 +183,7 @@
             </el-table-column>
           </el-table>
         </div>
-           
+           <template v-if="!isPersonal">
             <h4 class='doc-form_title clearBoth'>联系人</h4>
             <el-form-item label="姓名" prop="contactName" class="deptArea">
               <el-input v-model="appForm.contactName"></el-input>
@@ -281,13 +283,21 @@ export default {
       param:{},
       dialogTableVisible: false,
       fileSendVisible: false,
+      appFormAccount:{
+        timeline:"",
+        accountLimit:"",
+        accountBank:"",
+        accountName:"",
+        accountCode:"",
+          
+      },
       appForm: {
         fileSend: {
           personList: [],
           all: '',
           depList: []
         },
-       
+        supplierBankId:"",
         supplierTypeCode: '',
         supplierName: '',
         supplierAbbreviation: '',
@@ -307,13 +317,15 @@ export default {
         classifyMediumCode: '',
         classifySuperiorCode: '',
         classifyManagerEmpId: '',
-        accountLimit: '',
+        // accountLimit: '',
         supplierLicenseNumber: '',
         supplierCreditCode: '',
-        timeline: [],
-        accountBank: '',
-        accountName: '',
-        accountCode: '',
+        // timeline: [],
+        // accountBank: '',
+        // accountName: '',
+        // accountCode: '',
+        
+
         contactName: '',
         contactTitleCode: '',
         contactJobtitle: '',
@@ -323,7 +335,8 @@ export default {
         supplierLicense: '',
         accountLicense: '',
         contactIdcards: '',
-        isOpen: 0
+        isOpen: 0,
+        
       },
       rules: {
         fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
@@ -404,6 +417,7 @@ export default {
       this.getCompanyTypes();
       this.getGains();
       this.getDetail();
+      this.getSupplierTypes();
     } else {
       this.getSendType();
       this.getIndustryList(); //行业      
@@ -460,27 +474,32 @@ export default {
       closePerson(index) {
       this.appForm.fileSend.personList.splice(index, 1);
     },
-  
     addBudget() {
-      if(this.appForm.accountLimit!=""||this.appForm.timeline!=""||this.appForm.accountBank!=""||this.appForm.accountName!=""||this.appForm.accountCode!=""){
+          if((this.appFormAccount.accountLimit!=""||this.appFormAccount.timeline!=""||this.appFormAccount.accountBank!=""||this.appFormAccount.accountName!=""||this.appFormAccount.accountCode!="")){
+          if(this.isPersonal==false||(this.isPersonal==true&&this.appFormAccount.accountBank!=""&&this.appFormAccount.accountName!=""&&this.appFormAccount.accountCode!="")){
+            var temp = {};
+            temp.accountLimit = this.appFormAccount.accountLimit;
+            if(this.appFormAccount.timeline[0])
+            temp.timeline = util.formatTime(this.appFormAccount.timeline[0].getTime(), 'yyyy-MM-dd')+"/"+util.formatTime(this.appFormAccount.timeline[1].getTime(), 'yyyy-MM-dd');
+            temp.sort= this.accountTable.length+1;
+            temp.accountBank = this.appFormAccount.accountBank;
+            temp.accountName = this.appFormAccount.accountName;
+            temp.accountCode = this.appFormAccount.accountCode;
+            this.accountTable.push(temp);
+            this.appFormAccount.accountLimit="";
+            this.appFormAccount.accountBank="";
+            this.appFormAccount.accountName="";
+            this.appFormAccount.accountCode="";
+            this.appFormAccount.timeline=[];
+            this.showData = 0;
+          }else{
+          this.$message.warning('请检查账务未填写字段！')
+        }
           
-          var temp = {};
-          temp.accountLimit = this.appForm.accountLimit;
-          temp.timeline = util.formatTime(this.appForm.timeline[0].getTime(), 'yyyy-MM-dd')+"/"+util.formatTime(this.appForm.timeline[1].getTime(), 'yyyy-MM-dd');
-          
-          temp.accountBank = this.appForm.accountBank;
-          temp.accountName = this.appForm.accountName;
-          temp.accountCode = this.appForm.accountCode;
-          this.accountTable.push(temp);
-          this.appForm.accountLimit="";
-          this.appForm.accountBank="";
-          this.appForm.accountName="";
-          this.appForm.accountCode="";
-          this.appForm.timeline=[];
-          this.showData = 0;
-      }  else{
-         this.$message.warning('请检查账务未填写字段！')
-      }
+        }else{
+          this.$message.warning('请检查账务未填写字段！')
+        }
+    
     },
     deleteRow(index) {
       this.accountTable.splice(index, 1)
@@ -508,15 +527,19 @@ export default {
           params.supplierSendBean=that.param.supplierSendBean;
           params.supplierBanks= this.accountTable.map(function(tabel) {
               return {
+                sort: tabel.sort,
                 "accountBank": tabel.accountBank,  //开户银行
                 "accountName": tabel.accountName,  //账号名称
                 "accountCode": tabel.accountCode,  //银行账户
                 "createUser": tabel.PersonDialogcreateUser,   //创建人
                 "accountLimit": tabel.accountLimit,  //信用额度
-                "accountFrom": tabel.timeline.split("/")[0],  //信用开始时间
-                "accountTo": tabel.timeline.split("/")[1]  //信用结束时间
+                "accountFrom": tabel.timeline?tabel.timeline.split("/")[0]:"",  //信用开始时间
+                "accountTo": tabel.timeline?tabel.timeline.split("/")[1]:""  //信用结束时间
               }
-            }),
+          }),
+          params.supplierBankId = this.supplierBankId;
+          params.supplierName = this.appForm.supplierName;
+          params.supplierBankAccountName = this.appForm.supplierBankAccountName;
           params.supplierTypeName = this.$refs.supplierType.selectedLabel;
           params.classifyStatusName = this.$refs.supplierStatus.selectedLabel;
           if (!this.isPersonal) {
@@ -529,13 +552,14 @@ export default {
             params.classifySuperiorName = this.$refs.super.selectedLabel;
           }
           params.classifyManagerName = this.classifyManagerName;
-          if (params.timeline.length > 0) {
+          if (params.timeline) {
+            console.log(params.timeline)
             params.accountFrom = +new Date(params.timeline[0]);
             params.accountTo = +new Date(params.timeline[1]);
           }
           params.contactTitleName = this.$refs.contactTitle.selectedLabel;
           params.createUser = this.userInfo.empId;
-
+          // console.log(params)
           delete params.timeline;
           if (this.isPersonal) {
             delete params.supplierAbbreviation;
@@ -560,6 +584,7 @@ export default {
             params.updateUser = this.userInfo.empId;
             postPath = "/Supplier/updateSupplier";
           }
+          
           var par={
             supplier:{
               supplierTypeCode:params.supplierTypeCode,
@@ -631,6 +656,7 @@ export default {
             },
             supplierBanks:params.supplierBanks
           };
+          console.log(par)
           this.$http.post(postPath, par, { body: true })
             .then(res => {
               this.submitLoading = false;
@@ -651,12 +677,20 @@ export default {
       this.$http.post('/Supplier/getSupplierInfo', { id: this.$route.params.id })
         .then(res => {
           if (res.status == 0) {
+            this.suplierId=res.data.supplier.supplierId;
+            this.supplierBankId=res.data.supplier.supplierBankId;
             this.isPersonal = res.data.supplier.supplierTypeCode == 'ADM0111';
-            this.combineObj(this.appForm, res.data.supplier, ['classifyIndustryCode'],res.data.supplierBanks,);
-            this.classifyManagerName = res.data.supplier.classifyManagerName;
-            this.oldName = res.data.supplier.supplierName;
-            this.accountTable = res.data.supplierBanks?res.data.supplierBanks:[];
+            
+            this.combineObj(this.appForm, res.data.supplier, ['classifyIndustryCode']);
 
+            this.classifyManagerName = res.data.supplier.classifyManagerName;
+            this.appForm.supplierTypeCode=res.data.supplier.supplierTypeCode;
+            this.oldName = res.data.supplier.supplierName;
+            for(var i=0;i<res.data.supplierBanks.length;i++){
+              res.data.supplierBanks[i].timeline=util.formatTime(res.data.supplierBanks[i].accountFrom, 'yyyy-MM-dd')+"/"+util.formatTime(res.data.supplierBanks[i].accountTo, 'yyyy-MM-dd');
+              console.log( res.data.supplierBanks[i].timeline)
+           }
+            this.accountTable = res.data.supplierBanks?res.data.supplierBanks:[];
             if (res.data.supplierBanks.accountFrom) {
               this.appForm.timeline.push(new Date(res.data.supplier.accountFrom));
               this.appForm.timeline.push(new Date(res.data.supplier.accountTo));
@@ -715,6 +749,7 @@ export default {
             }
             this.appForm.fileSend.personList=perlist;
             this.appForm.fileSend.depList=deplist;
+
             this.id=res.data.supplier.id;
             // this.submitMiddle();
           } else {
@@ -724,7 +759,10 @@ export default {
         })
     },
     typeChange(val) {
-      this.isPersonal = val == 'ADM0111'
+      if(this.isPersonal = val == 'ADM0111'){
+        this.accountTable=[];
+      }
+      
     },
     licenseSuccess(response, file, fileList) {
       this.appForm.supplierLicense = response.data
@@ -886,7 +924,9 @@ export default {
               r.fullname = r.tradeName;
               r.id = index.toString();
             })
+            delete res.data[1].trades
             this.industryList = res.data;
+            console.log(this.industryList)
             if (this.$route.params.id != 'all') {
               this.handIndustry(val);
             }
@@ -898,7 +938,9 @@ export default {
     handIndustry(val) {
       var arr = [];
       this.industryList.forEach(item => {
+        if(item.trades)
         item.trades.forEach(child => {
+
           if (child.id == val) {
             arr.push(item.id);
             arr.push(child.id);
