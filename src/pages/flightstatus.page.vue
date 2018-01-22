@@ -19,18 +19,18 @@
             <el-col :span="8">
               <div class="flightNo" v-show="flightStatusType=='flightNo'">
                 <el-select v-model="flightNoTitle">
-                  <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
+                  <el-option v-for="item in options" :label="item.label" :value="item.label"></el-option>
                 </el-select>
                 <el-input v-model="flightNoValue" :maxlength="10" @keyup.enter.native="getData"></el-input>
               </div>
               <div class="route" v-show="flightStatusType=='route'">
                 <!-- <el-input v-model="tripFrom" placeholder="出发地"></el-input> -->
-                <el-select v-model="tripFrom.airportName" filterable placeholder="出发地" @change="handleFrom">
-                  <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item.airportName">
+                <el-select v-model="tripFrom" filterable placeholder="出发地"  value-key="cityName">
+                  <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item" :disabled="tripTo&&tripTo.city3cody===item.city3cody">
                   </el-option>
                 </el-select>
-                <el-select v-model="tripTo.airportName" filterable placeholder="目的地" @change="handleTo">
-                  <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item.airportName">
+                <el-select v-model="tripTo" filterable placeholder="目的地"  value-key="cityName">
+                  <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item" :disabled="tripFrom&&tripFrom.city3cody===item.city3cody">
                   </el-option>
                 </el-select>
               </div>
@@ -42,7 +42,7 @@
         </el-card>
         <el-card class="borderCard searchResult">
           <div slot="header">
-            <span @click="show">总计{{totalSize}}个航班</span>
+            <span>总计{{totalSize}}个航班</span>
           </div>
           <table bgcolor="#fff" class="myTableList" width="100%" cellspacing="0" v-loading.body="searchLoading">
             <caption>
@@ -101,8 +101,8 @@ export default {
       options,
       flightNoTitle: 'DZ',
       flightNoValue: "",
-      tripFrom: { airportName: '' },
-      tripTo: { airportName: '' },
+      tripFrom: null,
+      tripTo: null,
       statusValue,
       searchLoading: false,
       flightList: [],
@@ -135,6 +135,7 @@ export default {
       this.flightStatusType = 'flightNo';
       this.searchDate = routeParam.date;
       this.flightNoTitle = routeParam.flightNoTitle;
+      console.log(this.flightNoTitle)
       this.flightNoValue = routeParam.flightNoValue;
       this.getToFlightNo();
     } else if (routeParam.type == 'date') {
@@ -153,17 +154,8 @@ export default {
     this.$store.dispatch('getAirPortList');
   },
   methods: {
-    handleFrom(val) {
-      this.tripFrom =this.clone(this.airPortList.find(i=>i.airportName==val));
-    },
-    handleTo(val) {
-      this.tripTo = this.clone(this.airPortList.find(i=>i.airportName==val));
-    },
     showDialog() {
       this.paymentView = true;
-    },
-    show() {
-      
     },
     changDate() {
       let temp = new Date(this.searchDate);
@@ -172,36 +164,25 @@ export default {
         month = '0' + month;
       }
       this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
-      
     },
     getData() {
-      if (this.searchDate != 'NaN-NaN-NaN') {
-        if (this.flightStatusType == "route") {
-          if (this.tripFrom.city3cody && this.tripTo.city3cody) {
-            if (this.tripFrom.city3cody == this.tripTo.city3cody) {
-              this.$message.warning('出发地与目的地相同，请重新选择路线！')
-            } else {
-              this.getToRound();
-            }
-          } else {
-            this.getToDate();
-          }
-        } else if (this.flightStatusType == "flightNo") {
-          if (this.flightNoValue) {
-            this.getToFlightNo();
-          } else {
-            this.getToDate();
-          }
+      if (this.flightStatusType == "route") {
+        if (this.tripFrom && this.tripTo) {
+          this.getToRound();
+        } else {
+          this.$message.warning('请选择出发地与目的地！')
+        }
+      } else if (this.flightStatusType == "flightNo") {
+        if (this.flightNoValue) {
+          this.getToFlightNo();
         } else {
           this.getToDate();
         }
       } else {
-        this.$message.warning('请选择航班日期!')
+        this.getToDate();
       }
-
     },
     getToDate() {
-      var that = this;
       this.searchLoading = true;
       this.$http.post("/flight/getFlightByDate", {
         flightDate: this.searchDate,
@@ -209,8 +190,8 @@ export default {
         pageSize: "10"
       }).then(res => {
         setTimeout(function() {
-          that.searchLoading = false;
-        }, 200)
+          this.searchLoading = false;
+        }.bind(this), 200)
         if (res.status == 0) {
           this.flightList = res.flightList;
           this.totalSize = res.totalSize;
@@ -223,7 +204,6 @@ export default {
       })
     },
     getToFlightNo() {
-      var that = this;
       this.searchLoading = true;
       this.$http.post("/flight/getFlightByNo", {
         flightDate: this.searchDate,
@@ -232,8 +212,8 @@ export default {
         pageSize: "10"
       }).then(res => {
         setTimeout(function() {
-          that.searchLoading = false;
-        }, 200)
+          this.searchLoading = false;
+        }.bind(this), 200)
         if (res.status == 0) {
           this.flightList = res.flightList;
           this.totalSize = res.totalSize;
@@ -246,18 +226,17 @@ export default {
       })
     },
     getToRound() {
-      var that = this;
       this.searchLoading = true;
       this.$http.post("/flight/getFlightByFromTo", {
         flightDate: this.searchDate,
-        dep: that.tripFrom.city3cody,
-        arr: that.tripTo.city3cody,
+        dep: this.tripFrom.city3cody,
+        arr: this.tripTo.city3cody,
         pageNumber: this.pageNumber,
         pageSize: "10"
       }).then(res => {
         setTimeout(function() {
-          that.searchLoading = false;
-        }, 200)
+          this.searchLoading = false;
+        }.bind(this), 200)
         if (res.status == 0) {
           this.flightList = res.flightList;
           this.totalSize = res.totalSize;

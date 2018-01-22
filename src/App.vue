@@ -41,9 +41,10 @@
         <el-breadcrumb-item :to="{ path: '/' }"> <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: breadcrumb.path }" v-for="breadcrumb in breadcrumbs">{{breadcrumb.meta.breadcrumb}}</el-breadcrumb-item>
       </el-breadcrumb>
-      <!-- <keep-alive :include="/filesHome/"> -->
-      <router-view></router-view>
-      <!-- </keep-alive> -->
+      <keep-alive >
+        <router-view v-if="$route.meta.keepAlive"></router-view>
+      </keep-alive>
+      <router-view v-if="!$route.meta.keepAlive"></router-view>
     </div>
     <footer>
       <div class="container">

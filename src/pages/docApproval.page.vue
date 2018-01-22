@@ -18,6 +18,7 @@
             </template>
           </el-menu-item-group>
         </el-menu>
+        <!-- 公文统计入口侧边栏 根据权限及路由字段判断显示与否 -->
         <el-menu mode="vertical" v-bind:router="true" class="mySideLink" v-if="/Statistics/.test($route.path)&&staticsPower">
           <el-menu-item-group title="公文流转">
             <el-menu-item index='/doc/macroStatistics' v-if="staticsPower==1">宏观统计<i class="el-icon-arrow-right"></i>

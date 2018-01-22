@@ -100,7 +100,8 @@ const catalogAbleList = [
   { code: 'ADM0401', comList: ['公司发文', '公司新闻', '人事任免', 'HR政策', '办事指南', '使用手册', '规章制度'], depList: [] },
   { code: 'ADM0403', comList: ['业务通告'], depList: ['all'] },
   { code: 'ADM0402', comList: ['会议纪要'], depList: ['all'] },
-  { code: 'ADM0404', comList: [], depList: ['all'] }
+  { code: 'ADM0404', comList: [], depList: ['all'] },
+  { code: 'ADM0406', comList: ['all'], depList: ['all'] }
 ]
 export default {
   components: { PersonDialog, MajorDialog, MoneyInput },
@@ -248,7 +249,6 @@ export default {
     },
     triggerAbleCatalog(val){
       var ableList=catalogAbleList.find(c=>c.code===val);
-      console.log(ableList)
       this.catalogueList.forEach(c => {
         var temp=[];
         if(c.name==='公司级'){

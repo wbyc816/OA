@@ -1,6 +1,7 @@
 <template>
   <div id="docPending">
     <search-options title="公文签批" @search="setOptions" hasOverTime isCollapse hasSub :defaultExpand="searchOptionExpand"></search-options>
+    <!-- 一键审批权限 由常量leaderEmpid控制 -->
     <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId==leaderEmpid" v-loading.body="searchLoading">
       <el-table-column type="selection" width="35" class-name="selectionColumn" label-class-name="selectionColumnLabel">
       </el-table-column>
@@ -112,7 +113,6 @@ import { mapGetters } from 'vuex'
 
 const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '操作']
 const leaderEmpid = 'C35215E25CE0CA7858829540EFF44FA8'
-// const leaderEmpid='3BCF6EECB2611212E088D0D91F2ADE9C'  //杨总
 export default {
   data() {
     return {

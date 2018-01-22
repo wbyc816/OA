@@ -26,18 +26,19 @@
             <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
               <i class="link iconfont icon-liucheng" @click="getProcess(doc.id)"></i>
             </el-tooltip>
+            <!-- 撤回权限由后台返回字段isBack控制 0 无权限 1 有权限 -->
             <el-tooltip content="撤回" placement="top" :enterable="false" effect="light" v-if="doc.isBack!=0">
               <i class="link iconfont icon-chehui" @click="doBack(doc.id)"></i>
             </el-tooltip>
             <el-tooltip content="分发" placement="top" :enterable="false" effect="light">
               <i class="link iconfont icon-share1" @click="distribute(doc.id)"></i>
             </el-tooltip>
+            <!-- 导出PDF权限 只有当公文申请人为当前登陆人 且符合特殊公文类型(由全局方法showDowload 判断) 才能导出 -->
             <el-tooltip content="导出" placement="top" :enterable="false" effect="light">
               <a :href="baseURL+'/pdf/exportPdf?docId='+doc.id" target="_blank" v-if="doc.taskUserId==userInfo.empId&&showDowload(doc.docTypeCode)">
               <i class="link iconfont icon-icon202"></i>
               </a>
             </el-tooltip>
-            
           </td>
         </tr>
       </tbody>

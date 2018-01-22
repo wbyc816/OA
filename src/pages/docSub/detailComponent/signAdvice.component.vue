@@ -4,9 +4,11 @@
     <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" class="exportButton" v-if="showDowload($route.query.code)">
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
         </a>
-      </h4>
+      </h4> 
     <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
-      <el-form-item label="会签意见" class="textarea" prop="state">
+
+      <!-- 收文登记没有不同意选项 -->
+      <el-form-item label="会签意见" class="textarea" prop="state" v-show="docDetail.pageCode!=='SWD'">
         <el-col :span='18'>
           <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
             <el-radio-button label="1">同意<i></i></el-radio-button>
@@ -14,6 +16,8 @@
           </el-radio-group>
         </el-col>
       </el-form-item>
+
+      <!-- 只有部门会签能选择接收人(docDetail.signDoc==1) -->
       <el-form-item class="textarea signWrap" label="接收人" prop="signUserName" v-if="docDetail.signDoc==1">
         <el-col :span='18' class="clearfix">
           <el-input class="search" :value="ruleForm.signUserName" :readonly="true">
@@ -24,27 +28,27 @@
       <el-form-item label="会签内容" prop="taskContent" class="textarea">
         <el-col :span='18'>
           <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="$route.query.code==='HTS'?500:100"></el-input>
-          <!-- <task-content v-model="ruleForm.taskContent"  :maxlength="100"></task-content> -->
-
         </el-col>
       </el-form-item>
-
-        <el-form-item label="附件" prop="attchment">
-          <el-col :span='18'>
+      <el-form-item label="附件" prop="attchment">
+        <el-col :span='18'>
           <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
-            <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4"  v-show="!isIE()||(ruleForm.attchment.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+            <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4" v-show="!isIE()||(ruleForm.attchment.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
-         </el-col>
+        </el-col>
         <p class="uploadInfo">单个附件不能超过500MB</br>最多上传5个附件</p>
       </el-form-item>
-
       <el-form-item>
         <el-col :span='18'>
           <el-button type="primary" size="large" class="submitButton" @click="submitSign">提交</el-button>
+
+          <!-- isManager字段判断是否有结束会签权限 1有 0 无 -->
           <el-button size="large" class="docArchiveButton" @click="endDepSign" v-if="docDetail.isManager==1&&docDetail.signDoc==1">结束会签</el-button>
         </el-col>
       </el-form-item>
     </el-form>
+
+    <!-- 部门会签人员选择不能跨部门 -->
     <person-dialog @updatePerson="updatePerson" admin="0" :deptId="docDetail.deptId" :visible.sync="dialogTableVisible" dialogType="radio"></person-dialog>
   </div>
 </template>
@@ -67,7 +71,7 @@ export default {
       ruleForm: {
         taskContent: '',
         state: '',
-        attchment:[],
+        attchment: [],
         signUserName: '',
       },
       rules: {
@@ -80,7 +84,7 @@ export default {
       difLength: 0,
       upCount: 0,
       fileIds: [],
-      fileIdArr:[],
+      fileIdArr: [],
       successUps: [],
     }
   },
@@ -92,9 +96,11 @@ export default {
     ])
   },
   created() {
-    if(this.docDetail.pageCode==='SWD'){
-      this.ruleForm.taskContent='已阅。'
+    if (this.docDetail.pageCode === 'SWD') {
+      this.ruleForm.state = '1'
+      this.ruleForm.taskContent = '已阅。';
     }
+    // 判断公文详情里defaultSuggestVo字段，有值则为固定流接收人不可改
     if (this.docDetail.defaultSuggestVo.reciUserId) {
       this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
     }
@@ -115,7 +121,7 @@ export default {
           params.files = JSON.stringify(this.fileIds);
         } else {
           params.fileId = this.fileIds.map(f => f.response.data);
-          this.fileIdArr= params.fileId;
+          this.fileIdArr = params.fileId;
         }
       }
     },
@@ -132,11 +138,8 @@ export default {
       this.$message.error('附件上传失败，请重试');
     },
     handleChange(file, fileList) {
-      // const isPDF = file.raw.type === 'application/pdf';
       const isLt10M = file.size / 1024 / 1024 < 500;
-      // if (!isPDF) {
-      //   this.$message.error('上传附件只能是 PDF 格式!');
-      // }
+
       if (!isLt10M) {
         this.$message.error('上传附件大小不能超过 500MB!');
       }
@@ -197,9 +200,9 @@ export default {
           if (this.docDetail.signDoc == 1) { //部门会签
             this.docTask();
           } else { //人员会签
-            this.fileId= this.ruleForm.attchment.map(f => f.response.data);
+            this.fileId = this.ruleForm.attchment.map(f => f.response.data);
             var params = {
-              fileIds:this.fileId,
+              fileIds: this.fileId,
               "state": this.ruleForm.state,
               "signContent": this.ruleForm.taskContent,
               "signUserId": this.userInfo.empId,
@@ -224,9 +227,9 @@ export default {
       });
     },
     docTask() { //部门会签
-      this.fileId= this.ruleForm.attchment.map(f => f.response.data);
+      this.fileId = this.ruleForm.attchment.map(f => f.response.data);
       var params = {
-        fileIds:this.fileId,
+        fileIds: this.fileId,
         docId: this.docDetail.id,
         "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
         "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,
@@ -248,17 +251,16 @@ export default {
           } else {
             this.$message.error('会签失败' + res.message);
           }
-        }, res => {
-        })
+        }, res => {})
     },
     endDepSign() { //部门结束会签
-      this.fileId= this.ruleForm.attchment.map(f => f.response.data);
+      this.fileId = this.ruleForm.attchment.map(f => f.response.data);
       this.$refs.ruleForm.validateField('state', (error) => {
         if (error == '') {
           this.$refs.ruleForm.validateField('taskContent', (error1) => {
             if (error1 == '') {
               var params = {
-                fileIds:this.fileId,
+                fileIds: this.fileId,
                 docId: this.docDetail.id,
                 "taskDeptMajorName": this.userInfo.deptVo.fatherDept,
                 "taskDeptMajorId": this.userInfo.deptVo.fatherDeptId,

@@ -14,7 +14,10 @@
             <el-col style="text-align: center" v-for="item in tableTitle" :key="tableTitle[item]" :span="24/tableTitle.length">{{item}}</el-col>
           </el-row>
         </div>
-        <div class="alignCenter" v-if="!salaryData.length"><br>暂无数据<br></div>
+        <div class="alignCenter" v-if="!salaryData.length">
+          <br>暂无数据
+          <br>
+        </div>
         <div class="salaryList" v-for="mouthData in salaryData" @click="goSalary(mouthData.salaryMonth)">
           <el-row>
             <el-col class="el-col" v-for="i in tableFields" :span="24/tableTitle.length">
@@ -45,7 +48,7 @@ export default {
       tableFields,
       startDate: '',
       endDate: '',
-      salaryDialogVisible:false,
+      salaryDialogVisible: false,
       paginate: {
         pageSizes: [5, 10, 12, 36],
         currentSize: 10,
@@ -60,15 +63,15 @@ export default {
       'userInfo'
     ])
   },
-  mounted(){
+  mounted() {
     // this.checkPassword();
   },
   created() {
-    this.getParam()
-    // this.getData()
+
   },
-  beforeRouteEnter (to, from, next) {
-    next(vm=>{
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getParam()
       vm.checkPassword();
     })
   },
@@ -77,32 +80,31 @@ export default {
     this.getParam()
     this.checkPassword()
   },
-  beforeRouteLeave (to, from, next) {
-    this.salaryDialogVisible=false;
+  beforeRouteLeave(to, from, next) {
+    this.salaryDialogVisible = false;
     next();
   },
   methods: {
-    checkPassword(){
-      if(this.getCookie('salaryAccount')==this.userInfo.empId){
+    checkPassword() {
+      if (this.getCookie('salaryAccount') == this.userInfo.empId) {
         this.getData();
-      }else{
-        this.salaryDialogVisible=true;
+      } else {
+        this.salaryDialogVisible = true;
       }
     },
     getParam() {
-      let month=this.$route.params.param;
-      if(month!=1){
+      let month = this.$route.params.param;
+      if (month != 1) {
         let param = month.split('@')
         this.startDate = param[0]
         this.endDate = param[1]
-      }else{
-        this.startDate='';
-        this.endDate=''
+      } else {
+        this.startDate = '';
+        this.endDate = ''
       }
     },
     getData() {
       this.$http.post("/salary/getHistorySalary", {
-        // empId: '77CDFC1E11E36A23BB030892EE00B8CF',
         empId: this.userInfo.empId,
         pageSize: this.paginate.currentSize,
         pageNumber: this.paginate.currentPage,
@@ -111,15 +113,15 @@ export default {
       }).then(res => {
         if (res.status == 0) {
           const records = res.data.records
-          this.paginate.total = records.length       //  给分页器提供数据
-          this.salaryData=records;
+          this.paginate.total = records.length //  给分页器提供数据
+          this.salaryData = records;
         }
       }, res => {
 
       })
     },
-    goSalary(date){
-      this.$router.push('/HR/salary/'+date);
+    goSalary(date) {
+      this.$router.push('/HR/salary/' + date);
     },
     handleSizeChange(val) {
       this.paginate.currentSize = val;
@@ -129,9 +131,9 @@ export default {
       this.paginate.currentPage = val;
       this.getData()
     },
-    updateSalary(val){
+    updateSalary(val) {
       console.log(val);
-      if(val){
+      if (val) {
         this.getData();
       }
     }
@@ -206,4 +208,5 @@ $sub:#1465C0;
     text-align: center!important;
   }
 }
+
 </style>

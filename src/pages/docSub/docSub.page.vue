@@ -5,6 +5,7 @@
         <span>行政申请</span>
       </div>
       <el-row :gutter='15'>
+        <!-- 采购申请、收文登记处理申请 权限由后台返回权限 userInfo中对应字段控制 -->
         <el-col :span="6" v-for="item in adminData" v-if="item.require?userInfo[item.require]==1:true">
           <doc-list :data='item'></doc-list>
         </el-col>
