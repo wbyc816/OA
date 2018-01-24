@@ -240,7 +240,7 @@ export default {
     },
     submitForm() {
       if (this.checkTable()) {
-        var params = this.materials.map(function(s) {
+        var params = this.clone(this.materials).map(function(s) {
           delete s.rate;
           return s;
         })

@@ -71,7 +71,7 @@
               </div>
             </div>
           </div>
-          <span class="flRight">COPYRIGHT @2017 东海航空有限公司 ALLRIGHTS RESERVED</span>
+          <span class="flRight">COPYRIGHT @2018 东海航空有限公司 ALLRIGHTS RESERVED</span>
         </div>
       </div>
     </footer>

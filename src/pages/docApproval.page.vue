@@ -190,6 +190,7 @@ export default {
       }
     },
     getPower() {
+      // 获取公文统计入口权限
       if (this.staticsPower === '') {
         this.$http.post('/doc/checkStatisticsPower', { userId: this.userInfo.empId })
           .then(res => {

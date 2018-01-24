@@ -150,11 +150,19 @@
             <el-menu-item index="9" @click.native="goToOthers('/HR/newsListHr/FIL0306')"><i class="iconfont icon-xiazai1"></i>各类模板下载<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="3" @click.native="goToOthers('/PresidentMailbox')"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
+
+            <!-- 会议预订权限 userInfo.isDocsec[0]判断 1 有 0 无 -->
             <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')" v-if="userInfo.isDocsec&&userInfo.isDocsec[0]==1"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="6" @click.native="goToOthers('/supplier')"><i class="iconfont icon-geren"></i>客户维护<i class="el-icon-arrow-right"></i></el-menu-item>
+
+            <!-- 飞行报表权限 userInfo.isDocsec[2]判断 1 有 0 无 -->
             <el-menu-item index="7" @click.native="goToOthers('/flightReport')" v-if="userInfo.isDocsec&&userInfo.isDocsec[2]==1"><i class="iconfont icon-99"></i>飞行报表<i class="el-icon-arrow-right"></i></el-menu-item>
+
+            <!-- 飞行任务书数据异常监控权限 userInfo.isDocsec[3]判断 1 有 0 无 -->
             <el-menu-item index="8" @click.native="goToOthers('/flightException')" v-if="userInfo.isDocsec&&userInfo.isDocsec[3]==1"><i class="iconfont icon-plane1"></i>飞行任务书数据异常监控<i class="el-icon-arrow-right"></i></el-menu-item>
-            <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item>
+            <!-- <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item> -->
+
+            <!-- QAR数据展示权限 userInfo.isDocsec[4]判断 1 有 0 无 -->
             <el-menu-item index="10" @click.native="goToOthers('/QARData')" v-if="userInfo.isDocsec&&userInfo.isDocsec[4]==1"><i class="iconfont icon-edit"></i>QAR数据展示<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
@@ -165,8 +173,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-dialog :visible.sync="homeVisible" size="large" custom-class="homeDialog">
-      <!-- <img src="../assets/images/homeImg.jpg" alt=""> -->
+    <!-- <el-dialog :visible.sync="homeVisible" size="large" custom-class="homeDialog">
       <el-carousel height="432px" arrow="hover">
         <el-carousel-item>
           <img src="../assets/images/homeImg1.jpg">
@@ -181,7 +188,7 @@
           <img src="../assets/images/homeImg4.jpg">
         </el-carousel-item>
       </el-carousel>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 <script>
