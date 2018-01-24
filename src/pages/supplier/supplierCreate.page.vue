@@ -68,12 +68,28 @@
           <el-form-item label="传真" prop="supplierFax" class="arrArea" v-if="!isPersonal">
             <el-input v-model="appForm.supplierFax"></el-input>
           </el-form-item>
-          <el-form-item label="是否公开" prop="supplierFax" class="deptArea">
+          <!-- <el-form-item label="是否公开" prop="supplierFax" class="deptArea">
             <el-radio-group v-model="appForm.isOpen" class="myRadio">
               <el-radio-button :label="1">是<i></i></el-radio-button>
               <el-radio-button :label="0">否<i></i></el-radio-button>
             </el-radio-group>
+          </el-form-item> -->
+
+          <el-form-item label="发布范围" prop="fileSend" class="reciverWrap">
+            <div class="reciverList">
+              <el-tag key="all" :closable="true" v-show="appForm.fileSend.all.max" type="primary" @close="closeAll">
+                {{'所有人('+appForm.fileSend.all.min+'-'+appForm.fileSend.all.max+')'}}
+              </el-tag>
+              <el-tag :key="dep.id" :closable="true" type="primary" @close="closeDep(index)" v-for="(dep,index) in appForm.fileSend.depList">
+                {{dep.name+'('+dep.min+'-'+dep.max+')'}}
+              </el-tag>
+              <el-tag :key="person.id" :closable="true" type="primary" @close="closePerson(index)" v-for="(person,index) in appForm.fileSend.personList">
+                {{person.name}}
+              </el-tag>
+            </div>
+            <el-button class="addButton" @click="fileSendVisible=true"><i class="el-icon-plus"></i></el-button>
           </el-form-item>
+
           <el-form-item label="介绍" prop="supplierIntroduction" class="clearBoth">
             <el-input type="textarea" :rows="4" resize="none" v-model="appForm.supplierIntroduction"></el-input>
           </el-form-item>
@@ -132,23 +148,42 @@
             </el-form-item>
           </template>
           <h4 class='doc-form_title clearBoth'>账务</h4>
+          <el-form label-position="left" :model="appFormAccount" :rules="rules" ref="appForm" label-width="128px" class="clearfix">
           <el-form-item label="信用额度" prop="accountLimit" class="deptArea">
-            <el-input v-model="appForm.accountLimit"></el-input>
+            <el-input v-model="appFormAccount.accountLimit"></el-input>
           </el-form-item>
           <el-form-item label="信用期间" prop="timeline" class="arrArea">
-            <el-date-picker v-model="appForm.timeline" type="daterange" style="width:100%">
+            <el-date-picker v-model="appFormAccount.timeline" type="daterange" style="width:100%">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="开户行" prop="accountBank" class="deptArea" :rules="[ { required: isPersonal, message: '请输入开户行' }]">
-            <el-input v-model="appForm.accountBank"></el-input>
+          <el-form-item label="开户行" prop="accountBank" class="deptArea" ref="accountBank" :rules="[ { required: isPersonal, message: '请输入开户行' }]">
+            <el-input v-model="appFormAccount.accountBank"></el-input>
           </el-form-item>
-          <el-form-item label="账户名称" prop="accountName" class="arrArea" :rules="[ { required: isPersonal, message: '请输入账户名称' }]">
-            <el-input v-model="appForm.accountName"></el-input>
+          <el-form-item label="账户名称" prop="accountName" class="arrArea" ref="accountName" :rules="[ { required: isPersonal, message: '请输入账户名称' }]">
+            <el-input v-model="appFormAccount.accountName"></el-input>
           </el-form-item>
-          <el-form-item label="银行账户" prop="accountCode" class="deptArea" :rules="[ { required: isPersonal, message: '请输入银行账户' }]">
-            <el-input v-model="appForm.accountCode"></el-input>
+          <el-form-item label="银行账户" prop="accountCode" class="deptArea" ref="accountCode" :rules="[ { required: isPersonal, message: '请输入银行账户' }]">
+            <el-input v-model="appFormAccount.accountCode"></el-input>
           </el-form-item>
-          <template v-if="!isPersonal">
+            <el-button @click='addBudget' type="primary" style="width:100px" class="arrArea"><i class="el-icon-plus"></i> 添加</el-button>          
+          </el-form>
+            <div style="width:750px;margin-bottom:20px;" v-show="!appForm.type||appForm.type.dictCode!=='DOC2602'">
+          <el-table :data="accountTable" :stripe="true" highlight-current-row class="appTable" >
+          
+            <el-table-column property="accountLimit" label="信用额度"></el-table-column>
+            <el-table-column property="timeline" label="信用期间" width="200"></el-table-column>
+            <el-table-column property="accountBank" label="开户行" width="100"></el-table-column>
+            <el-table-column property="accountName" label="账户名称" width="150"></el-table-column>
+             <el-table-column property="accountCode" label="银行账户" ></el-table-column>
+            <el-table-column label="操作" width="55">
+              <template scope="scope">
+                <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+           <template v-if="!isPersonal">
             <h4 class='doc-form_title clearBoth'>联系人</h4>
             <el-form-item label="姓名" prop="contactName" class="deptArea">
               <el-input v-model="appForm.contactName"></el-input>
@@ -191,6 +226,7 @@
             </el-form-item>
           </template>
         </el-form>
+        <major-dialog :params="appForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
         <div class='doc-form-submit_btn'>
           <el-button type="primary" @click="submitApp">提交</el-button>
         </div>
@@ -202,9 +238,19 @@
 <script>
 import PersonDialog from '../../components/personDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
+import MajorDialog from '../../components/majorDialog.component'
+import util from '../../common/util'
+
 export default {
-  components: { PersonDialog },
+  components: { PersonDialog , MajorDialog},
   data() {
+    var checkFileSend = (rule, value, callback) => {
+      if (value.all.max || value.personList.length != 0 || value.depList != 0) {
+        callback();
+      } else {
+        callback(new Error('请选择发布范围'))
+      }
+    };
     var checkMedium = (rule, value, callback) => {
       if (value && value == this.appForm.classifySuperiorCode) {
         callback(new Error('中介机构与上级单位不能相同'))
@@ -234,8 +280,24 @@ export default {
       }
     };
     return {
+      param:{},
       dialogTableVisible: false,
+      fileSendVisible: false,
+      appFormAccount:{
+        timeline:"",
+        accountLimit:"",
+        accountBank:"",
+        accountName:"",
+        accountCode:"",
+          
+      },
       appForm: {
+        fileSend: {
+          personList: [],
+          all: '',
+          depList: []
+        },
+        supplierBankId:"",
         supplierTypeCode: '',
         supplierName: '',
         supplierAbbreviation: '',
@@ -255,13 +317,15 @@ export default {
         classifyMediumCode: '',
         classifySuperiorCode: '',
         classifyManagerEmpId: '',
-        accountLimit: '',
+        // accountLimit: '',
         supplierLicenseNumber: '',
         supplierCreditCode: '',
-        timeline: [],
-        accountBank: '',
-        accountName: '',
-        accountCode: '',
+        // timeline: [],
+        // accountBank: '',
+        // accountName: '',
+        // accountCode: '',
+        
+
         contactName: '',
         contactTitleCode: '',
         contactJobtitle: '',
@@ -271,9 +335,11 @@ export default {
         supplierLicense: '',
         accountLicense: '',
         contactIdcards: '',
-        isOpen: 0
+        isOpen: 0,
+        
       },
       rules: {
+        fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
         supplierName: [{ required: true, message: '请输入客户名称' }, { validator: checkName, trigger: 'blur' }],
         supplierAbbreviation: [{ required: true, message: '请输入客户简称' }, ],
         supplierAddress: [{ required: true, message: '请输入地址' }, ],
@@ -326,7 +392,11 @@ export default {
       supplierId: '',
       oldName: '',
       isPersonal: false,
-      disabledUpload: false
+      disabledUpload: false,
+      accountTable:[],
+      sendTypes: [],
+      id:"",
+
     }
   },
   computed: {
@@ -339,15 +409,17 @@ export default {
     ])
   },
   created() {
+    this.getSendType();
     if (this.$route.params.id != 'all') {
-      this.getSupplierTypes();
       this.getTitleList();
       this.getSupplierStatus();
       this.getSupplierScales();
       this.getCompanyTypes();
       this.getGains();
       this.getDetail();
+      this.getSupplierTypes();
     } else {
+      this.getSendType();
       this.getIndustryList(); //行业      
       this.appForm.classifyManagerEmpId = this.userInfo.empId;
       this.classifyManagerName = this.userInfo.name;
@@ -361,11 +433,113 @@ export default {
     }
   },
   methods: {
+    closeAll() {
+      this.appForm.fileSend.all = '';
+    },
+    updateFileSend(params) {
+      this.appForm.fileSend = params;
+    },
+    submitMiddle() {
+
+      var that=this;
+      this.params = {
+        "supplierSendBean": {
+          "sendTypeAll": {
+            "sendType": this.sendTypes.find(type => type.dictEname == 'all').dictCode, //发布范围i人类型
+            "max": this.appForm.fileSend.all.max, //最大
+            "min": this.appForm.fileSend.all.min //最小
+          },
+          "sendTypeDept": [],
+          "sendTypeEmp": {
+            "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
+            "ids": this.appForm.fileSend.personList.map(person => person.empId),
+            "empPostId": this.appForm.fileSend.personList.map(person => person.postId)
+          }
+        },
+      }
+      
+      this.params.supplierSendBean.sendTypeDept = this.appForm.fileSend.depList.map(function(dep) {
+        return {
+          sendType: that.sendTypes.find(type => type.dictEname == 'department').dictCode,
+          id: dep.id,
+          max: dep.max,
+          min: dep.min
+        }
+      });
+      this.param=this.params;
+    },
+    closeDep(index) {
+      this.appForm.fileSend.depList.splice(index, 1);
+    },
+      closePerson(index) {
+      this.appForm.fileSend.personList.splice(index, 1);
+    },
+    addBudget() {
+          if((this.appFormAccount.accountLimit!=""||this.appFormAccount.timeline!=""||this.appFormAccount.accountBank!=""||this.appFormAccount.accountName!=""||this.appFormAccount.accountCode!="")){
+          if(this.isPersonal==false||(this.isPersonal==true&&this.appFormAccount.accountBank!=""&&this.appFormAccount.accountName!=""&&this.appFormAccount.accountCode!="")){
+            var temp = {};
+            temp.accountLimit = this.appFormAccount.accountLimit;
+            if(this.appFormAccount.timeline[0])
+            temp.timeline = util.formatTime(this.appFormAccount.timeline[0].getTime(), 'yyyy-MM-dd')+"/"+util.formatTime(this.appFormAccount.timeline[1].getTime(), 'yyyy-MM-dd');
+            temp.sort= this.accountTable.length+1;
+            temp.accountBank = this.appFormAccount.accountBank;
+            temp.accountName = this.appFormAccount.accountName;
+            temp.accountCode = this.appFormAccount.accountCode;
+            this.accountTable.push(temp);
+            this.appFormAccount.accountLimit="";
+            this.appFormAccount.accountBank="";
+            this.appFormAccount.accountName="";
+            this.appFormAccount.accountCode="";
+            this.appFormAccount.timeline=[];
+            this.showData = 0;
+          }else{
+          this.$message.warning('请检查账务未填写字段！')
+        }
+          
+        }else{
+          this.$message.warning('请检查账务未填写字段！')
+        }
+    
+    },
+    deleteRow(index) {
+      this.accountTable.splice(index, 1)
+    },
+     getSendType() {
+      this.$http.post('/api/getDict', { dictCode: 'FIL01' })
+        .then(res => {
+          if (res.status == '0') {
+            this.sendTypes = res.data;
+          } else {
+            console.log('获取主送类型失败')
+          }
+        })
+    },
+
+
+
     submitApp() {
+      var that=this;
       this.$refs.appForm.validate((validate) => {
         if (validate) {
+          that.submitMiddle();
           this.submitLoading = true;
           var params = this.clone(this.appForm);
+          params.supplierSendBean=that.param.supplierSendBean;
+          params.supplierBanks= this.accountTable.map(function(tabel) {
+              return {
+                sort: tabel.sort,
+                "accountBank": tabel.accountBank,  //开户银行
+                "accountName": tabel.accountName,  //账号名称
+                "accountCode": tabel.accountCode,  //银行账户
+                "createUser": tabel.PersonDialogcreateUser,   //创建人
+                "accountLimit": tabel.accountLimit,  //信用额度
+                "accountFrom": tabel.timeline?tabel.timeline.split("/")[0]:"",  //信用开始时间
+                "accountTo": tabel.timeline?tabel.timeline.split("/")[1]:""  //信用结束时间
+              }
+          }),
+          params.supplierBankId = this.supplierBankId;
+          params.supplierName = this.appForm.supplierName;
+          params.supplierBankAccountName = this.appForm.supplierBankAccountName;
           params.supplierTypeName = this.$refs.supplierType.selectedLabel;
           params.classifyStatusName = this.$refs.supplierStatus.selectedLabel;
           if (!this.isPersonal) {
@@ -378,12 +552,14 @@ export default {
             params.classifySuperiorName = this.$refs.super.selectedLabel;
           }
           params.classifyManagerName = this.classifyManagerName;
-          if (params.timeline.length > 0) {
+          if (params.timeline) {
+            console.log(params.timeline)
             params.accountFrom = +new Date(params.timeline[0]);
             params.accountTo = +new Date(params.timeline[1]);
           }
           params.contactTitleName = this.$refs.contactTitle.selectedLabel;
           params.createUser = this.userInfo.empId;
+          // console.log(params)
           delete params.timeline;
           if (this.isPersonal) {
             delete params.supplierAbbreviation;
@@ -408,7 +584,80 @@ export default {
             params.updateUser = this.userInfo.empId;
             postPath = "/Supplier/updateSupplier";
           }
-          this.$http.post(postPath, params, { body: true })
+          
+          var par={
+            supplier:{
+              supplierTypeCode:params.supplierTypeCode,
+              supplierTypeName:params.supplierTypeName,
+              supplierName:params.supplierName,
+              supplierAbbreviation:params.supplierAbbreviation,
+              supplierTelephone:params.supplierTelephone,
+              supplierEmail:params.supplierEmail,
+              supplierAddress:params.supplierAddress,
+              supplierZipcode:params.supplierZipcode,
+              supplierCity:params.supplierCity,
+              supplierWebsite:params.supplierWebsite,
+              supplierIntroduction:params.supplierIntroduction,
+              accountBank:params.accountBank,
+              classifyStatusCode:params.classifyStatusCode,
+              classifyStatusName:params.classifyStatusName,
+              classifyScaleCode:params.classifyScaleCode,
+              classifyScaleName:params.classifyScaleName,
+              classifyCompanyCode:params.classifyCompanyCode,
+              classifyCompanyName:params.classifyCompanyName,
+              classifyGainCode:params.classifyGainCode,
+              classifyGainName:params.classifyGainName,
+              classifyIndustryCode:params.classifyIndustryCode,
+              classifyIndustryName:params.classifyIndustryName,
+              classifyMediumCode:params.classifyMediumCode,
+              classifyMediumName:params.classifyMediumName,
+              classifySuperiorCode:params.classifySuperiorCode,
+              classifySuperiorName:params.classifySuperiorName,
+              classifyManagerEmpId:params.classifyManagerEmpId,
+              classifyManagerName:params.classifyManagerName,
+              accountLimit:params.accountLimit,
+              accountFrom:params.accountFrom,
+              accountTo:params.accountTo,
+              accountBank:params.accountBank,
+              accountName:params.accountName,
+              accountCode:params.accountCode,
+              contactName:params.contactName,
+              contactTitleName:params.contactTitleName,
+              contactJobtitle:params.contactJobtitle,
+              contactEmail:params.contactEmail,
+              contactOfficePhone:params.contactOfficePhone,
+              contactMobilePhone:params.contactMobilePhone,
+              remark:params.remark,
+              createTime:params.createTime,
+              createUser:params.createUser,
+              updateTime:params.updateTime,
+              updateUser:params.updateUser,
+              sts:params.sts,
+              isOpen:params.isOpen,
+              supplierNo:params.supplierNo,
+              supplierFax:params.supplierFax,
+              supplierLicenseNumber:params.supplierLicenseNumber,
+              supplierCreditCode:params.supplierCreditCode,
+              supplierLicense:params.supplierLicense,
+              supplierLicenseFileName:params.supplierLicenseFileName,
+              accountLicense:params.accountLicense,
+              accountLicenseFileName:params.accountLicenseFileName,
+              contactIdcards:params.contactIdcards,
+              contactIdcardsFileName:params.contactIdcardsFileName,
+              supplierBankId:params.supplierBankId,
+              supplierLicensePath:params.supplierLicensePath,
+              accountLicensePath:params.accountLicensePath,
+              contactIdcardsPath:params.contactIdcardsPath,
+              supplierSendBean:params.supplierSendBean,
+              contactTitleCode:params.contactTitleCode,
+              contactTitleCode:params.contactTitleCode,
+              contactTitleCode:params.contactTitleCode,
+              id:this.id,
+            },
+            supplierBanks:params.supplierBanks
+          };
+          console.log(par)
+          this.$http.post(postPath, par, { body: true })
             .then(res => {
               this.submitLoading = false;
               if (res.status == 0) {
@@ -428,31 +677,81 @@ export default {
       this.$http.post('/Supplier/getSupplierInfo', { id: this.$route.params.id })
         .then(res => {
           if (res.status == 0) {
-            this.isPersonal = res.data.supplierTypeCode == 'ADM0111';
-            this.combineObj(this.appForm, res.data, ['classifyIndustryCode']);
-            console.log(this.appForm)
-            this.classifyManagerName = res.data.classifyManagerName;
-            this.oldName = res.data.supplierName;
-            if (res.data.accountFrom) {
-              this.appForm.timeline.push(new Date(res.data.accountFrom));
-              this.appForm.timeline.push(new Date(res.data.accountTo));
+            this.suplierId=res.data.supplier.supplierId;
+            this.supplierBankId=res.data.supplier.supplierBankId;
+            this.isPersonal = res.data.supplier.supplierTypeCode == 'ADM0111';
+            
+            this.combineObj(this.appForm, res.data.supplier, ['classifyIndustryCode']);
+
+            this.classifyManagerName = res.data.supplier.classifyManagerName;
+            this.appForm.supplierTypeCode=res.data.supplier.supplierTypeCode;
+            this.oldName = res.data.supplier.supplierName;
+            for(var i=0;i<res.data.supplierBanks.length;i++){
+              res.data.supplierBanks[i].timeline=util.formatTime(res.data.supplierBanks[i].accountFrom, 'yyyy-MM-dd')+"/"+util.formatTime(res.data.supplierBanks[i].accountTo, 'yyyy-MM-dd');
+              console.log( res.data.supplierBanks[i].timeline)
+           }
+            this.accountTable = res.data.supplierBanks?res.data.supplierBanks:[];
+            if (res.data.supplierBanks.accountFrom) {
+              this.appForm.timeline.push(new Date(res.data.supplier.accountFrom));
+              this.appForm.timeline.push(new Date(res.data.supplier.accountTo));
             }
-            if (res.data.classifyMediumCode) {
-              this.mediumList = [{ id: res.data.classifyMediumCode, supplierName: res.data.classifyMediumName }]
+            if (res.data.supplier.classifyMediumCode) {
+              this.mediumList = [{ id: res.data.supplier.classifyMediumCode, supplierName: res.data.supplier.classifyMediumName }]
             }
-            if (res.data.classifySuperiorCode) {
-              this.superList = [{ id: res.data.classifySuperiorCode, supplierName: res.data.classifySuperiorName }]
+            if (res.data.supplier.classifySuperiorCode) {
+              this.superList = [{ id: res.data.supplier.classifySuperiorCode, supplierName: res.data.supplier.classifySuperiorName }]
             }
-            if (res.data.accountLicense) {
-              this.permitsList.push({ name: res.data.accountLicenseFileName, url: res.data.accountLicensePath })
+            if (res.data.supplier.accountLicense) {
+              this.permitsList.push({ name: res.data.supplier.accountLicenseFileName, url: res.data.supplier.accountLicensePath })
             }
-            if (res.data.supplierLicense) {
-              this.licenseList.push({ name: res.data.supplierLicenseFileName, url: res.data.supplierLicensePath })
+            if (res.data.supplier.supplierLicense) {
+              this.licenseList.push({ name: res.data.supplier.supplierLicenseFileName, url: res.data.supplier.supplierLicensePath })
             }
-            if (res.data.contactIdcards) {
-              this.IdcardsList.push({ name: res.data.contactIdcardsFileName, url: res.data.contactIdcardsPath })
+            if (res.data.supplier.contactIdcards) {
+              this.IdcardsList.push({ name: res.data.supplier.contactIdcardsFileName, url: res.data.supplier.contactIdcardsPath })
             }
-            this.getIndustryList(res.data.classifyIndustryCode); //行业
+
+            this.getIndustryList(res.data.supplier.classifyIndustryCode); //行业
+            var perlist=[];
+            var deplist=[];
+            for(var i=0;i<res.data.supplierSendInfoBeans.length;i++){
+              if(res.data.supplierSendInfoBeans[i].type=="FIL0101"){
+                perlist.push(
+                   {
+                   name:res.data.supplierSendInfoBeans[i].name,
+                   postId:res.data.supplierSendInfoBeans[i].empPostId,
+                   empId:res.data.supplierSendInfoBeans[i].sendId,
+                   name:res.data.supplierSendInfoBeans[i].name,
+                   deptParentName:res.data.supplierSendInfoBeans[i].majorDept,
+                   
+                }
+                )
+              }
+              if(res.data.supplierSendInfoBeans[i].type=="FIL0102"){
+                deplist.push(
+                   {
+                   name:res.data.supplierSendInfoBeans[i].name,
+                   postId:res.data.supplierSendInfoBeans[i].empPostId,
+                   empId:res.data.supplierSendInfoBeans[i].sendId,
+                   name:res.data.supplierSendInfoBeans[i].name,
+                   deptParentName:res.data.supplierSendInfoBeans[i].majorDept,
+                   max:100,
+                   min:0
+                }
+                )
+              }
+              if(res.data.supplierSendInfoBeans[i].type=="FIL0104"){
+                this.appForm.fileSend.all={
+                  max:100,
+                  min:0
+                }
+              }
+            }
+            this.appForm.fileSend.personList=perlist;
+            this.appForm.fileSend.depList=deplist;
+
+            this.id=res.data.supplier.id;
+            // this.submitMiddle();
           } else {
 
           }
@@ -460,7 +759,10 @@ export default {
         })
     },
     typeChange(val) {
-      this.isPersonal = val == 'ADM0111'
+      if(this.isPersonal = val == 'ADM0111'){
+        this.accountTable=[];
+      }
+      
     },
     licenseSuccess(response, file, fileList) {
       this.appForm.supplierLicense = response.data
@@ -622,7 +924,9 @@ export default {
               r.fullname = r.tradeName;
               r.id = index.toString();
             })
+            delete res.data[1].trades
             this.industryList = res.data;
+            console.log(this.industryList)
             if (this.$route.params.id != 'all') {
               this.handIndustry(val);
             }
@@ -634,7 +938,9 @@ export default {
     handIndustry(val) {
       var arr = [];
       this.industryList.forEach(item => {
+        if(item.trades)
         item.trades.forEach(child => {
+
           if (child.id == val) {
             arr.push(item.id);
             arr.push(child.id);

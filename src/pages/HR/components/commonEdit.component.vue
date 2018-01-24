@@ -128,12 +128,13 @@ export default {
       }
     },
     creatRule(item) {
-      console.log(item)
       var rules = [{ type: item.type == 'boolean' ? 'number' : item.type, required: true, message: item.label + '不能为空', trigger: 'blur' }];
       if (item.rule) {
         rules.push(item.rule)
       }
-     console.log(rules)
+      if(item.label=="公文号"||item.label=="管理级别"){
+        return [];
+      }
       return rules
     },
     addItem(name) {
