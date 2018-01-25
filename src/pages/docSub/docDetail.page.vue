@@ -13,21 +13,22 @@
         </div>
       </div>
       <div class="baseInfoBox commonBox">
-        <!-- <h4 class='doc-form_title'>公文信息</h4> -->
         <el-row>
           <el-col :span="24">
             <h1 class="title">标题</h1>
             <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
+          <!-- 四类特殊公文显示特殊审批意见 -->
           <component v-bind:is="computeView" :info="docDetialInfo.otherInfo" :docDetialInfo="docDetialInfo" v-if="computeView"></component>
+          <!-- 发文稿纸不显示请示内容 -->
           <el-col :span="24" style="min-height:90px" v-if="$route.query.code!='FWG'">
             <h1 class="title">请示内容</h1>
             <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
           </el-col>
           <el-collapse v-model="activeContent" class="clearBoth">
             <el-collapse-item title="附加内容" name="1">
+              <!-- 根据路由加载不同的公文的详情显示页 -->
               <component v-bind:is="currentView" :info="docDetialInfo.otherInfo" :docDetialInfo="docDetialInfo" :state="docDetialInfo.task[0].state" :open="activeContent" class="clearfix">
-                <!-- 组件在 vm.currentview 变化时改变！ -->
               </component>
               <el-row>
                 <el-col :span="24">
@@ -55,15 +56,21 @@
       </div>
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
       <dist-advice ref="distAdvice"></dist-advice>
+      <!-- 公文结束时才显示操作区(公文分发,导出PDF等) -->
       <div class="operateBox" v-if="docDetialInfo.task[0].state==3||docDetialInfo.task[0].state==4">
         <el-button type="primary" class="myButton" @click="DialogSubmitVisible=true">公文分发</el-button>
         <el-button class="myButton" v-if="docDetialInfo.doc.isPay" @click="changePay" :disabled="docDetialInfo.doc.isView!=1">{{docDetialInfo.doc.isView==1?'付款':'已付款'}}</el-button>
+        <!-- 根据全局配置公文类型显示导出PDF功能 -->
         <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" v-if="showDowload($route.query.code)">
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
         </a>
       </div>
+
+      <!-- 离职公文特殊意见显示 -->
       <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'"></quit-advice>
       <my-advice :docDetail="docDetialInfo.doc" :otherInfo="docDetialInfo.otherInfo" :taskDetail="docDetialInfo.taskDetail" :suggestHtml="suggestHtml" v-if="showMyadvice" ref="myAdvice">
+
+        <!-- docDetialInfo.doc.isFied判断有无归档权限 1有 0无 -->
         <el-button size="large" class="docArchiveButton" @click="showArchiveDialog" v-if="showdArchiveButton" slot="docArchive"><i class="iconfont icon-archive" slot="docArchive"></i>归档</el-button>
       </my-advice>
       <sign-advice :docDetail="docDetialInfo.doc" v-if="docDetialInfo.doc.isSign==1&&$route.query.code!='LZS'"></sign-advice>
@@ -71,6 +78,8 @@
     <el-dialog :visible.sync="DialogArchiveVisible" size="small" class="myDialog" custom-class="archiveDialog">
       <span slot="title">公文归档</span>
       <el-form :model="fileForm" :inline="!isRedFile" :rules="fileRules" ref="fileForm" class="fileForm" :class="{fileRed:isRedFile}">
+
+        <!-- 发文稿纸时可以上传正文，更改发布范围 -->
         <el-form-item label="建议发文号:" v-if="isRedFile">
           <p class="fwNo">{{docDetialInfo.doc.fwNo}}</p>
         </el-form-item>
@@ -93,13 +102,10 @@
           </div>
           <el-button class="addButton" @click="showArchive"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
-        <!-- <el-form-item label="上传附件" prop="fileIds" v-if="isInArray(addFileDoc,$route.query.code)">
-          <el-upload class="myUpload" :multiple="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.query.code}" :on-success="handleAvatarSuccess" ref="myUpload" :before-upload="beforeUpload" :on-remove="handleRemove" :on-progress="handleProgress" :disabled="fileForm.fileIds.length>4||disabledUpload">
-            <el-button size="small" type="primary" :disabled="fileForm.fileIds.length>4||disabledUpload" v-show="!isIE()||(fileForm.fileIds.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
-          </el-upload>
-          <p class="uploadInfo">最多上传5个附件</p>
-        </el-form-item> -->
+        <!-- 发文稿纸时可以上传正文，更改发布范围 -->
+
         <el-form-item label="归档状态" class="textarea" prop="state">
+          <!-- 归档状态是否可选由后台返回数据docDetialInfo.doc.isFied控制 -->
           <el-radio-group class="myRadio" v-model="archiveState">
             <el-radio-button label="1" :disabled="docDetialInfo.doc.isFied == 2">通过<i></i></el-radio-button>
             <el-radio-button label="2" :disabled="docDetialInfo.doc.isFied == 3">不通过<i></i></el-radio-button>
@@ -129,7 +135,6 @@
           <el-button class="addButton" @click="selectArchivePerson"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="分发意见" prop="res">
-          <!-- <el-input type="textarea" :rows="6" resize='none' v-model="archiveForm.res" :maxlength="100"></el-input> -->
           <task-content v-model="archiveForm.res"></task-content>
         </el-form-item>
         <el-form-item>
@@ -138,7 +143,6 @@
       </el-form>
     </el-dialog>
     <major-dialog :params="archiveForm" @updatePerson="updateArchivePerson" :visible.sync="dialogArchivePersonVisible" :hasLevel="false"></major-dialog>
-    <!-- <person-dialog @updatePerson="updateArchivePerson" :data="archiveForm.personList" admin="1" :visible.sync="dialogArchivePersonVisible" dialogType="multi"></person-dialog> -->
     <major-dialog :params="fileForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
     <back-button :backTop="186"></back-button>
   </div>

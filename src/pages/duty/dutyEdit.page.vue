@@ -254,7 +254,11 @@ export default {
 
 </script>
 <style scope lang="scss">
-@import '../../assets/scss/color.scss';
+$main: #0460AE;
+$brown: #985D55;
+$lan:#0460AE;
+$sub:#1465C0;
+$line: #D5DADF;
 
 #dutyEdit {
   &.scrollDisappear {

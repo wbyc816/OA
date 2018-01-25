@@ -7,6 +7,7 @@
       </div>
       <el-row :gutter="12">
         <el-col :span="6">
+          <!-- 当统计权限为部门级时(部门列表数量为1) 呈报部门默认为本部门且不可选 -->
           <el-select v-model="searchParams.taskDeptId" placeholder="呈报部门" clearable :disabled="depList.length<2">
             <el-option :key="item.deptId" :label="item.deptName" :value="item.deptId" v-for="item in depList"></el-option>
           </el-select>
@@ -112,6 +113,7 @@ export default {
     ])
   },
   created() {
+    // 统计页面权限判断
     if (this.staticsPower == 0) {
       this.$router.replace('/doc/docSub');
     } else {
@@ -123,6 +125,7 @@ export default {
 
   },
   watch: {
+    // 统计页面权限判断
     staticsPower: function(newVal) {
       if (newVal == 0) {
         this.$router.replace('/doc/docSub');

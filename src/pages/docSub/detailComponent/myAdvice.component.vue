@@ -6,36 +6,50 @@
         </a>
     </h4>
     <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
+      <!-- 收文登记没有审批意见选择，默认为同意且不可选不同意 -->
+      <!-- 正常审批选择不同意时会调取后台不同意的接收人 -->
       <el-form-item label="审批意见" class="textarea" prop="state">
         <el-col :span='18'>
           <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
             <el-radio-button label="1">{{$route.query.code!=='SWD'?'同意':'正常办理'}}<i></i></el-radio-button>
             <el-radio-button label="2" v-if="$route.query.code!=='SWD'">不同意<i></i></el-radio-button>
+            <!--承办部门办理权限 四类特殊公文且具有承办部门办理权限（docDetail.isTaskUser） -->
             <el-radio-button label="6" class="isChen" v-if="docDetail.isTaskUser==1&&hasSecretary()">承办部门办理<i></i></el-radio-button>
           </el-radio-group>
         </el-col>
       </el-form-item>
+      <!-- 审批类型能否选择 当有部门会签权限、人员会签权限或不在会签中 可选 -->
+      <!-- 离职公文特殊 当在部门会签中时不可选审批类型 -->
       <el-form-item label="审批类型" class="textarea" v-if="showSignType">
         <el-col :span='18'>
           <el-radio-group class="myRadio" v-model="signType" @change="signTypeChange">
             <el-radio-button label="0" :disabled="disableApproval">审批<i></i></el-radio-button>
+            <!-- 部门会签权限字段isDept 1 有 0 无 -->
             <el-radio-button label="1" :disabled="chooseDisable" v-if="docDetail.isDept==1">部门会签<i></i></el-radio-button>
+            <!-- 人员会签权限字段isPerson 1 有 0 无 -->
             <el-radio-button label="2" :disabled="chooseDisable" v-if="docDetail.isPerson==1">人员会签<i></i></el-radio-button>
           </el-radio-group>
         </el-col>
       </el-form-item>
+      <!-- 判断当前公文不在会签中 -->
+      <!-- 离职公文特殊 当在部门会签中时不可选接收人 -->
       <el-form-item class="textarea signWrap" label="接收人" prop="sign" v-if="!(currentView=='LZS'&&docDetail.isDept==1)">
         <el-col :span='18' class="clearfix">
+          <!-- 非会签显示 -->
           <el-input class="search" :value="ruleForm.sign[0]?ruleForm.sign[0].signUserName:''" :readonly="true" v-show="signType==0">
             <template slot="append">
               <el-button @click="selSignPerson" :disabled="chooseDisable">选择</el-button>
               <i class="iconfont icon-renyuanshezhi defaultPerson" @click="defaultVisible=true" v-if="!chooseDisable"></i>
             </template>
           </el-input>
+          <!-- 会签显示 -->
           <div class="signList" v-show="signType!=0">
+            <!-- 会签部门列表显示 -->
+            <!-- 特殊规则下会添加默认部门且不可删除,由ableDeoClose字段控制 -->
             <el-tag :key="person.signDeptMajorId" :closable="ableDepClose(person.signDeptMajorId)" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==1">
               {{person.signDeptMajorName}}
             </el-tag>
+            <!-- 会签人员列表显示 -->
             <el-tag :key="person.empId" :closable="true" type="primary" @close="closeSign(index)" v-for="(person,index) in ruleForm.sign" v-show="signType==2">
               {{person.signUserName}}
             </el-tag>
@@ -50,27 +64,24 @@
       </el-form-item>
       <el-form-item label="审批内容" prop="taskContent" class="textarea">
         <el-col :span='18'>
-          <!-- <el-input type="textarea" v-model="ruleForm.taskContent" resize="none" :rows="8" :maxlength="500">
-          </el-input> -->
           <task-content v-model="ruleForm.taskContent"></task-content>
         </el-col>
       </el-form-item>
+      <!-- 离职公文下特殊显示 -->
       <el-form-item label="约定离职日期" class="textarea" prop="planDate" v-if="currentView=='LZS'&&docDetail.isDept==1">
         <el-col :span='18'>
           <el-date-picker v-model="ruleForm.planDate" type="date" placeholder="选择离职日期" :picker-options="pickerOptions0" style="width:100%">
           </el-date-picker>
         </el-col>
       </el-form-item>
-
-       <el-form-item label="附件" prop="attchment">
-          <el-col :span='18'>
+      <el-form-item label="附件" prop="attchment">
+        <el-col :span='18'>
           <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
-            <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4"  v-show="!isIE()||(ruleForm.attchment.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
+            <el-button size="small" type="primary" :disabled="ruleForm.attchment.length>4" v-show="!isIE()||(ruleForm.attchment.length<=4&&!disabledUpload)">上传附件<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
-         </el-col>
+        </el-col>
         <p class="uploadInfo">单个附件不能超过500MB</br>最多上传5个附件</p>
       </el-form-item>
-
       <el-form-item>
         <el-col :span='18'>
           <el-button type="primary" size="large" class="submitButton" @click="submit">提交</el-button>
@@ -78,9 +89,17 @@
         </el-col>
       </el-form-item>
     </el-form>
+    <!-- 正常审批人员选择 -->
+    <!-- 是否能跨部门由normalPersonAdmin返回值控制 1 是 0 否 -->
+    <!-- 是否显示机要秘书根据权限字段isAdmin、是否是四类特殊公文(hasSecretary()返回)且没有承办人员权限(isTaskUser)共同控制 -->
     <person-dialog @updatePerson="updatePerson" :admin="normalPersonAdmin" :visible.sync="dialogTableVisible" dialogType="radio" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isTaskUser!=1"></person-dialog>
-    <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :deptId="docDetail.deptId" :data="signPersons"></person-dialog>
+    <!-- 设置默认接收人权限同上 -->
     <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="normalPersonAdmin" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isTaskUser!=1"></person-dialog>
+    <!-- 人员会签人员选择 -->
+    <!-- 是否能跨部门由公文详情中isAdmin来控制 1 是 0 否 -->
+    <person-dialog @updatePerson="updateSignPerson" :admin="docDetail.isAdmin==1?'1':'0'" :visible.sync="signPersonVisible" dialogType="multi" :deptId="docDetail.deptId" :data="signPersons"></person-dialog>
+    <!-- 部门会签部门选择 -->
+    <!-- 发文稿纸为非承办部门办理时，公司发文或会议纪要不能选择综合管理部 -->
     <dep-dialog :dialogVisible.sync="signDepVisible" :data="signDeps" dialogType="multi" @updateDep="updateSignDep" :disableDep="disableDep" isSaveInit></dep-dialog>
   </div>
 </template>
@@ -166,14 +185,14 @@ export default {
         taskContent: '同意。',
         state: '1',
         sign: [],
-        attchment:[],
+        attchment: [],
         planDate: ''
       },
       rules: {
         sign: [{ type: 'array', validator: checkSign, required: true }],
         state: [{ required: true, message: '请选择审批意见' }],
         planDate: [{ required: true, type: 'date', message: '请选择离职日期' }],
-        taskContent: [{ required: true, message: '请填写审批内容',trigger: 'blur,change' }]
+        taskContent: [{ required: true, message: '请填写审批内容', trigger: 'blur,change' }]
       },
       successUps: [],
       dialogTableVisible: false,
@@ -198,8 +217,8 @@ export default {
       difLength: 0,
       upCount: 0,
       fileIds: [],
-      fileIdArr:[],
-      isSaveForm:false,
+      fileIdArr: [],
+      isSaveForm: false,
       initHTSDeps,
       disableApproval: false
     }
@@ -254,11 +273,12 @@ export default {
       this.getSecretaryInfo();
     }
     this.currentView = this.docDetail.pageCode;
-    if(this.currentView==='SWD'){
-      this.ruleForm.taskContent='已阅。'
+    if (this.currentView === 'SWD') {
+      this.ruleForm.taskContent = '已阅。'
     }
+    // 判断公文详情里defaultSuggestVo字段，有值则为固定流接收人不可改，无值取后台返回默认接收人
     if (this.docDetail.defaultSuggestVo.reciUserId) {
-      this.handleReciver(this.docDetail.defaultSuggestVo); //设置收件人，固定流
+      this.handleReciver(this.docDetail.defaultSuggestVo);
     } else {
       this.getDefaultReciver();
     }
@@ -279,7 +299,7 @@ export default {
           params.files = JSON.stringify(this.fileIds);
         } else {
           params.fileId = this.fileIds.map(f => f.response.data);
-          this.fileIdArr= params.fileId;
+          this.fileIdArr = params.fileId;
         }
       }
     },
@@ -341,6 +361,7 @@ export default {
       return secretaryDoc.find(d => d == this.$route.query.code) != undefined;
     },
     getAdminReci() {
+      // 获取正常审批不同意时默认接收人，此接收人不可更改
       if (this.adminReci) {
         if (this.userInfo.empId != this.adminReci.secUserId && this.adminReci.secUserId) {
           var person = {
@@ -426,7 +447,11 @@ export default {
     },
     adviceChange(val) {
       if (val == 1) {
-        this.ruleForm.taskContent = '同意。';
+        if (this.$route.query.code === 'SWD') {
+          this.ruleForm.taskContent = '已阅。';
+        } else {
+          this.ruleForm.taskContent = '同意。';
+        }
         this.disableApproval = false;
         if (this.signType == 0) {
           if (this.docDetail.defaultSuggestVo.reciUserId) {
@@ -447,7 +472,11 @@ export default {
           this.signTypeChange('1')
         }
       } else {
-        this.ruleForm.taskContent = "同意。";
+        if (this.$route.query.code === 'SWD') {
+          this.ruleForm.taskContent = '已阅。';
+        } else {
+          this.ruleForm.taskContent = '同意。';
+        }
         this.disableApproval = true;
         this.signType = '1';
         if (this.signType == 1) {
@@ -612,9 +641,9 @@ export default {
           subType = 2
         }
       }
-      this.fileId= this.ruleForm.attchment.map(f => f.response.data);
+      this.fileId = this.ruleForm.attchment.map(f => f.response.data);
       var params = {
-        fileIds:this.fileId,
+        fileIds: this.fileId,
         docId: this.docDetail.id,
         "taskUserName": this.userInfo.name,
         "taskUserId": this.userInfo.empId,
@@ -681,7 +710,7 @@ $sub:#1465C0;
       vertical-align: middle;
     }
   }
-  .uploadInfo{
+  .uploadInfo {
     position: absolute;
     left: 75%;
     font-size: 13px;
@@ -696,7 +725,7 @@ $sub:#1465C0;
     display: flex;
     -ms-flex-direction: row-reverse;
     flex-direction: row-reverse;
-}
+  }
   .myRadio {
     line-height: 45px;
     .el-radio-button .el-radio-button__inner {

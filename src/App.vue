@@ -41,9 +41,10 @@
         <el-breadcrumb-item :to="{ path: '/' }"> <i class="iconfont icon-home home"></i> 首页</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: breadcrumb.path }" v-for="breadcrumb in breadcrumbs">{{breadcrumb.meta.breadcrumb}}</el-breadcrumb-item>
       </el-breadcrumb>
-      <!-- <keep-alive :include="/filesHome/"> -->
-      <router-view></router-view>
-      <!-- </keep-alive> -->
+      <keep-alive >
+        <router-view v-if="$route.meta.keepAlive"></router-view>
+      </keep-alive>
+      <router-view v-if="!$route.meta.keepAlive"></router-view>
     </div>
     <footer>
       <div class="container">
@@ -70,7 +71,7 @@
               </div>
             </div>
           </div>
-          <span class="flRight">COPYRIGHT @2017 东海航空有限公司 ALLRIGHTS RESERVED</span>
+          <span class="flRight">COPYRIGHT @2018 东海航空有限公司 ALLRIGHTS RESERVED</span>
         </div>
       </div>
     </footer>

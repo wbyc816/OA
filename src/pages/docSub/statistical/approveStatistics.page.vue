@@ -97,6 +97,7 @@ export default {
     ])
   },
   created() {
+    // 统计页面权限判断
     if (this.staticsPower == 0) {
       this.$router.replace('/doc/docSub');
     } else {
@@ -108,6 +109,7 @@ export default {
     }
   },
   watch: {
+    // 统计页面权限判断
     staticsPower: function(newVal) {
       if (newVal == 0) {
         this.$router.replace('/doc/docSub');

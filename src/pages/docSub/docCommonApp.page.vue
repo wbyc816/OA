@@ -5,12 +5,17 @@
         <span v-text='doc.docName'></span>
       </div>
       <div>
+        <!-- 公文申请公用头部 -->
         <subject class='doc-section' :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject>
+
+        <!-- 公文申请公用底部 -->
         <description class='doc-section' ref="description" @submitEnd="submitEnd" @saveEnd="saveEnd" :options="options">
-          <!-- <manuscript-app  @submitMiddle="submitMiddle"></manuscript-app> -->
+
+          <!-- 各类型公文独有部分,根据路由params.code字段加载不同组件 -->
+          <!-- 作为插槽插入公用底部 -->
           <component v-bind:is="$route.params.code" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'" @updateSuggest="updateSuggest">
-            <!-- 组件在 vm.currentview 变化时改变！ -->
           </component>
+          
         </description>
         <div class='clearfix'>
           <el-button type="primary" @click="submitDoc" class="submitButton">提交</el-button>

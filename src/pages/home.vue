@@ -125,17 +125,17 @@
             <el-select v-model="flightNoTitle">
               <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
             </el-select>
-            <el-input class="search">
+            <el-input class="search" v-model.trim="flightNoValue">
               <el-button slot="append" @click="searchFlight" :maxlength="10">搜索</el-button>
             </el-input>
           </div>
           <div class="route" v-show="flightStatusType=='route'">
-            <el-select v-model="tripFrom.airportName" filterable placeholder="出发地" @change="handleFrom">
-              <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item.airportName">
+            <el-select v-model="tripFrom" filterable placeholder="出发地" value-key="cityName">
+              <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item" :disabled="tripTo&&tripTo.city3cody===item.city3cody">
               </el-option>
             </el-select>
-            <el-select v-model="tripTo.airportName" filterable placeholder="目的地" @change="handleTo">
-              <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item.airportName">
+            <el-select v-model="tripTo" filterable placeholder="目的地" value-key="cityName">
+              <el-option v-for="item in airPortList" :key="item.airportName" :label="item.cityName" :value="item" :disabled="tripFrom&&tripFrom.city3cody===item.city3cody">
               </el-option>
             </el-select>
             <el-button @click="searchFlight">搜索</el-button>
@@ -150,11 +150,19 @@
             <el-menu-item index="9" @click.native="goToOthers('/HR/newsListHr/FIL0306')"><i class="iconfont icon-xiazai1"></i>各类模板下载<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="3" @click.native="goToOthers('/PresidentMailbox')"><i class="iconfont icon-mail"></i>总裁邮箱<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="4" @click.native="goToOthers('/diningMenu')"><i class="iconfont icon-bianmingongjumeishicaipu"></i>食堂菜谱<i class="el-icon-arrow-right"></i></el-menu-item>
+
+            <!-- 会议预订权限 userInfo.isDocsec[0]判断 1 有 0 无 -->
             <el-menu-item index="5" @click.native="goToOthers('/meeting/meetingApp')" v-if="userInfo.isDocsec&&userInfo.isDocsec[0]==1"><i class="iconfont icon-Group22"></i>会议预订<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="6" @click.native="goToOthers('/supplier')"><i class="iconfont icon-geren"></i>客户维护<i class="el-icon-arrow-right"></i></el-menu-item>
+
+            <!-- 飞行报表权限 userInfo.isDocsec[2]判断 1 有 0 无 -->
             <el-menu-item index="7" @click.native="goToOthers('/flightReport')" v-if="userInfo.isDocsec&&userInfo.isDocsec[2]==1"><i class="iconfont icon-99"></i>飞行报表<i class="el-icon-arrow-right"></i></el-menu-item>
+
+            <!-- 飞行任务书数据异常监控权限 userInfo.isDocsec[3]判断 1 有 0 无 -->
             <el-menu-item index="8" @click.native="goToOthers('/flightException')" v-if="userInfo.isDocsec&&userInfo.isDocsec[3]==1"><i class="iconfont icon-plane1"></i>飞行任务书数据异常监控<i class="el-icon-arrow-right"></i></el-menu-item>
             <!-- <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item> -->
+
+            <!-- QAR数据展示权限 userInfo.isDocsec[4]判断 1 有 0 无 -->
             <el-menu-item index="10" @click.native="goToOthers('/QARData')" v-if="userInfo.isDocsec&&userInfo.isDocsec[4]==1"><i class="iconfont icon-edit"></i>QAR数据展示<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
@@ -165,8 +173,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-dialog :visible.sync="homeVisible" size="large" custom-class="homeDialog">
-      <!-- <img src="../assets/images/homeImg.jpg" alt=""> -->
+    <!-- <el-dialog :visible.sync="homeVisible" size="large" custom-class="homeDialog">
       <el-carousel height="432px" arrow="hover">
         <el-carousel-item>
           <img src="../assets/images/homeImg1.jpg">
@@ -181,7 +188,7 @@
           <img src="../assets/images/homeImg4.jpg">
         </el-carousel-item>
       </el-carousel>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 <script>
@@ -189,7 +196,6 @@ import { mapGetters } from 'vuex'
 import SearchDate from '../components/searchDate'
 import MessageCenter from '../components/message'
 import SidePersonSearch from '../components/sidePersonSearch.component'
-// import DocList from '../components/doc'
 import Duty from '../components/duty.component'
 import Highcharts from 'highcharts/highstock';
 import HighchartsMore from 'highcharts/highcharts-more';
@@ -214,7 +220,7 @@ const otherLinks = [
   { "icon": "changyong", "text": "常用办公软件", "link": "/softDownload" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
-  { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080"},
+  { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080" },
   // { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
@@ -230,7 +236,7 @@ const pieoption = {
   }
 };
 const options = [{
-  value: '选项1',
+  value: 'DZ',
   label: 'DZ'
 }, ];
 const pieBg = ['#97BBCD', '#F7464A', '#DCDCDC', '#7ED0CF']
@@ -279,16 +285,6 @@ export default {
             }
           }
         },
-        //  series: [{
-        //     type: 'pie',
-        //     name: '航班占比',
-        //     data: [
-        //         ['到达'],
-        //         ['延误'],
-        //         ['出发'],
-        //         ['计划'],
-        //     ]
-        // }]
         series: [{
           size: "120px",
           type: 'pie',
@@ -303,13 +299,14 @@ export default {
       pieoption,
       otherLinks,
       tripType: 'date',
-      tripFrom: { airportName: '' },
-      tripTo: { airportName: '' },
+      tripFrom: null,
+      tripTo: null,
       flightStatusType: 'flightNo',
+      flightNoValue:'',
       options,
       hr1: [],
       hr2: [],
-      flightNoTitle: '选项1',
+      flightNoTitle: 'DZ',
       showDrag: [false, false, false, false, false, false, false, false, false, false, false],
       showInfo: [false, false, false, false, false, false, false, false, false, false, false],
       optionsDragLeft: {
@@ -361,8 +358,7 @@ export default {
       'homeHasShow'
     ])
   },
-  mounted() {
-    this.initChart();
+  activated() {
     // if (!this.homeHasShow) {
     //   this.$store.commit('setHomeHasShow', true);
     //   this.setCookie('homeAd', '1')
@@ -370,14 +366,6 @@ export default {
     //     this.homeVisible = true;
     //   }, 500)
     // }
-  },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.getTips();
-    })
-  },
-  created() {
-    this.$store.dispatch('getAirPortList');
     let temp = new Date();
     let month = temp.getMonth() + 1;
     if (month < 10) {
@@ -389,6 +377,14 @@ export default {
     this.getFlightTrends();
     this.getOtherNews('FIL0301');
     this.getOtherNews('FIL0303');
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getTips();
+    })
+  },
+  created() {
+    this.$store.dispatch('getAirPortList');
   },
   watch: {
     docTips(newVal) {
@@ -419,12 +415,6 @@ export default {
           this.chart = new Highcharts.Chart(this.$refs.mypie, this.optionOne);
         })
     },
-    initChart() {
-      // console.log(this.$el);
-      // this.$el.style.width = 100 + 'px';
-      // this.$el.style.height =  100+'px';
-      this.chart = new Highcharts.Chart(this.$refs.mypie, this.optionOne);
-    },
     goToOthers(link) {
       if (typeof link === 'string') {
         if (/^http/.test(link)) {
@@ -444,20 +434,8 @@ export default {
         }
       }
     },
-    dragShow(index) {
-      this.showDrag.splice(index, 1, true);
-    },
-    dragHide(index) {
-      this.showDrag.splice(index, 1, false);
-    },
     getTips() {
       this.$store.dispatch('getDocTips');
-    },
-    handleFrom(val) {
-      this.tripFrom = this.clone(this.airPortList.find(i => i.airportName == val));
-    },
-    handleTo(val) {
-      this.tripTo = this.clone(this.airPortList.find(i => i.airportName == val));
     },
     changDate() {
       let temp = new Date(this.searchDate);
@@ -468,44 +446,18 @@ export default {
       this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
     },
     searchFlight() {
-      if (this.searchDate != 'NaN-NaN-NaN') {
-        if (this.flightStatusType == "route") {
-          if (this.tripFrom.city3cody && this.tripTo.city3cody) {
-            if (this.tripFrom.city3cody == this.tripTo.city3cody) {
-              this.$message.warning('出发地与目的地相同，请重新选择路线！')
-            } else {
-              // this.getToRound();
-
-              this.$router.push({ name: 'flightStatus', params: { 'type': 'route', 'date': this.searchDate, 'tripFrom': this.tripFrom, 'tripTo': this.tripTo } })
-              this.tripFrom = { 'airportName': '' };
-              this.tripTo = { 'airportName': '' };
-              this.searchDate = '';
-            }
-          } else {
-            // this.getToDate();
-            this.$router.push({ name: 'flightStatus', params: { 'type': 'date', 'date': this.searchDate } })
-            this.searchDate = '';
-          }
-        } else if (this.flightStatusType == "flightNo") {
-          console.log(1111)
-
-          if (this.flightNoValue) {
-            // this.getToFlightNo();
-            this.$router.push({ name: 'flightStatus', params: { 'type': 'route', 'date': this.searchDate, 'flightNoValue': this.flightNoValue, 'flightNoValue': this.flightNoValue } })
-            this.searchDate = '';
-          } else {
-            console.log(1112)
-            // this.getToDate();
-            this.$router.push({ name: 'flightStatus', params: { 'type': 'date', 'date': this.searchDate } })
-            this.searchDate = '';
-          }
+      if (this.flightStatusType == "route") {
+        if (this.tripFrom && this.tripTo) {
+          this.$router.push({ name: 'flightStatus', params: { 'type': 'route', 'date': this.searchDate, 'tripFrom': this.tripFrom, 'tripTo': this.tripTo } })
         } else {
-          // this.getTorDate();
-          this.$router.push({ name: 'flightStatus', params: { 'type': 'date', 'date': this.searchDate } })
-          this.searchDate = '';
+          this.$message.warning('请选择出发地与目的地！')
         }
-      } else {
-        this.$message.warning('请选择航班日期!')
+      } else if (this.flightStatusType == "flightNo") {
+        if(this.flightNoValue){
+          this.$router.push({ name: 'flightStatus', params: {'type':'flightNo', 'flightNoTitle': this.flightNoTitle, 'date': this.searchDate, 'flightNoValue': this.flightNoValue } })
+        }else{
+          this.$router.push({ name: 'flightStatus', params: {'type':'date','date': this.searchDate} })
+        }       
       }
     },
     getDoneList() {
@@ -543,18 +495,24 @@ export default {
         })
     },
     getNews() {
-      this.$http.post('/api/getDict', { dictCode: 'ADM04' })
-        .then(res => {
-          if (res.status == 0) {
-            res.data.forEach(r => this.newsList.push({ name: r.dictName, code: r.dictCode, child: [] }));
-            this.activeName = this.newsList[0].code;
-            this.getNew();
-          } else {
+      if (this.newsList.length === 0) {
+        this.$http.post('/api/getDict', { dictCode: 'ADM04' })
+          .then(res => {
+            if (res.status == 0) {
+              res.data.forEach(r =>
+                this.newsList.push({ name: r.dictName, code: r.dictCode, child: [] })
+              );
+              this.activeName = this.newsList[0].code;
+              this.getNew();
+            } else {
 
-          }
-        }, res => {
+            }
+          }, res => {
 
-        })
+          })
+      } else {
+        this.getNew();
+      }
     },
     getNew(tab) {
       this.$http.post('/doc/selectFileList', { empId: this.userInfo.empId, classify1: this.activeName, sort: 0 })

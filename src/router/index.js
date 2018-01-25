@@ -6,7 +6,7 @@ import jquery from 'jquery'
 import store from '../store/'
 //公文
 const doc = () =>
-  import ('pages/Doc-Approval')
+  import ('pages/docApproval.page')
 const docSub = () =>
   import ('pages/docSub/docSub.page')
 const docTracking = () =>
@@ -146,7 +146,10 @@ const router = new Router({
   routes: [{
       path: '/home',
       name: 'home',
-      component: home
+      component: home,
+      meta:{
+        keepAlive: true // 需要被缓存
+      }
     }, {
       path: '/contactList',
       name: 'contactList',
@@ -202,6 +205,7 @@ const router = new Router({
       component: FilesHome,
       meta: {
         breadcrumb: "文件首页",
+        keepAlive: true // 需要被缓存
       }
     }, {
       path: '/PresidentMailbox',
@@ -528,8 +532,10 @@ router.beforeEach((to, from, next) => {
     // console.log(history)
     if (history.length != 0 && history[history.length - 1].path === to.path) {
       jquery('body,html').scrollTop(history[history.length - 1].top);
+      // console.log(jquery('body,html').scrollTop())
       store.commit('popHistory');
     } else {
+      // console.log(jquery('body,html').scrollTop())
       store.commit('pushHistory', { path: from.path, top: jquery('body,html').scrollTop() });
       jquery('body,html').animate({ scrollTop: 0 }, 50);
     }

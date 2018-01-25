@@ -59,7 +59,7 @@ export default {
             password: this.passwordValidateForm.password
           }).then(res => {
             if (res.status == 0) {
-              this.setCookie('salaryAccount', this.userInfo.empId, 10 / 60 / 24);
+              this.setCookie('salaryAccount', this.userInfo.empId, 10*60*1000);
               this.$emit('updateSalary', true);
               this.$emit('update:visible', false)
             } else {
