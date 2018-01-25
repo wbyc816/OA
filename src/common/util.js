@@ -37,7 +37,7 @@ function getCookie(c_name) {
 
 function setCookie(c_name, value, expiredays) {
   var exdate = new Date()
-  exdate.setDate(exdate.getDate() + expiredays)
+  exdate.setTime(exdate.getTime() + expiredays)
   document.cookie = c_name + "=" + escape(value) + ";path=/" +
     ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString() + "")
 }
