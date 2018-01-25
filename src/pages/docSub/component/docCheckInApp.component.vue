@@ -105,7 +105,7 @@ export default {
     },
     beforeUpload(file) {
       var isJPG;
-      const isLt10M = file.size / 1024 / 1024 < 10;
+      const isLt10M = file.size / 1024 / 1024 < 20;
       if (file.type) {
           isJPG = file.type === 'application/pdf';
         } else {
@@ -116,7 +116,7 @@ export default {
         this.$message.error('上传文件只能是 PDF 格式!');
       }
       if (!isLt10M) {
-        this.$message.error('上传文件大小不能超过 10MB!');
+        this.$message.error('上传文件大小不能超过 20MB!');
       }
       return isJPG && isLt10M;
     },
