@@ -103,6 +103,10 @@ export default {
       type: Boolean,
       default: false
     },
+    defaultExpand:{
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -168,7 +172,7 @@ export default {
     ])
   },
   created() {
-    if (!this.isCollapse) {
+    if (!this.isCollapse||this.defaultExpand) {
       this.showDetail = true;
     }
     if (this.$route.params.isOverTime) {

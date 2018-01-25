@@ -129,7 +129,8 @@
           <el-button class="addButton" @click="selectArchivePerson"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="分发意见" prop="res">
-          <el-input type="textarea" :rows="6" resize='none' v-model="archiveForm.res" :maxlength="100"></el-input>
+          <!-- <el-input type="textarea" :rows="6" resize='none' v-model="archiveForm.res" :maxlength="100"></el-input> -->
+          <task-content v-model="archiveForm.res"></task-content>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="dialogSubmitButton" @click="dialogSubmit">分发</el-button>
@@ -145,6 +146,7 @@
 <script>
 import BackButton from '../../components/backButton.component.vue'
 import PersonDialog from '../../components/personDialog.component'
+import TaskContent from '../../components/taskContent.component'
 import QuitAdvice from './detailComponent/empQuitAdvice.component'
 import DistAdvice from './detailComponent/distAdvice.component'
 import MajorDialog from '../../components/majorDialog.component'
@@ -195,6 +197,7 @@ export default {
   name: 'docDetail',
   components: {
     PersonDialog,
+    TaskContent,
     BackButton,
     QuitAdvice,
     MajorDialog,

@@ -44,7 +44,7 @@
         <el-input v-model="personForm.birthplace" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="工作邮箱" prop="workEmail">
-        <el-input v-model="personForm.workEmail" :maxlength="20"></el-input>
+        <el-input v-model="personForm.workEmail" :maxlength="100"></el-input>
       </el-form-item>
       <el-form-item label="身高" prop="height">
         <el-input v-model="personForm.height" :maxlength="20"></el-input>

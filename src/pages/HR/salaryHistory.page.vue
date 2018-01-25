@@ -61,16 +61,25 @@ export default {
     ])
   },
   mounted(){
-    this.checkPassword();
+    // this.checkPassword();
   },
   created() {
     this.getParam()
-    this.getData()
+    // this.getData()
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm=>{
+      vm.checkPassword();
+    })
   },
   beforeRouteUpdate(to, from, next) {
     next()
     this.getParam()
     this.checkPassword()
+  },
+  beforeRouteLeave (to, from, next) {
+    this.salaryDialogVisible=false;
+    next();
   },
   methods: {
     checkPassword(){

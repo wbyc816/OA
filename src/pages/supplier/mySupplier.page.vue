@@ -66,7 +66,7 @@ export default {
         "supplierStatus": "",
         "pageSize": 10,
         "pageNumber": 1,
-        "type":2
+        "type":1
       },
       totalSize: 1,
       status: '',

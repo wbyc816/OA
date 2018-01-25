@@ -34,7 +34,7 @@
         </el-card>
         <!-- 新闻 -->
         <el-card class="news">
-          <p slot="header"><span @click="homeVisible=true">新闻</span>
+          <p slot="header"><span>新闻</span>
             <router-link to="FilesHome">更多</router-link>
           </p>
           <el-tabs v-model="activeName" class="myTab" @tab-click="getNew">

@@ -227,10 +227,15 @@ export default {
     ])
   },
   mounted() {
-    this.checkPassword();
+    // this.checkPassword();
   },
   created() {
     this.init();
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm=>{
+      vm.checkPassword();
+    })
   },
   beforeRouteUpdate(to, from, next) {
     this.init();
