@@ -286,8 +286,10 @@ export default {
   },
   methods: {
     saveForm() {
+      console.log(this.ifSupplierChange)
       var params = JSON.stringify({
         bankinfo:{
+          ifSupplierChange:this.ifSupplierChange,
           ifChangeSelect:this.ifChangeSelect,
           supplierName:this.supplierName,
           "supplierBank": this.supplierBank, //供应商开户银行
@@ -312,6 +314,7 @@ export default {
       if (this.paymentForm.supplierIds.length != 0) {
         this.draftFirst = true;
       }
+
       this.getFileCatalogue(obj);
       this.getPrePayTemp();
     },
@@ -777,7 +780,7 @@ export default {
             this.supplierBank=val.bankinfo.supplierBank;
             this.accountCode=val.bankinfo.supplierBankAccountCode;
             this.ifChangeSelect=val.bankinfo.ifChangeSelect;
-            this.ifSupplierChange=true;
+            this.ifSupplierChange=val.bankinfo.ifSupplierChange;
             this.supplierName=val.bankinfo.supplierName;
             this.supplierBankAccountName=val.bankinfo.supplierBankAccountName;
             this.supplierBankAccountCode=val.bankinfo.supplierBankAccountCode;

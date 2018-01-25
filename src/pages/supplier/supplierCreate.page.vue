@@ -693,8 +693,8 @@ export default {
             this.appForm.supplierTypeCode=res.data.supplier.supplierTypeCode;
             this.oldName = res.data.supplier.supplierName;
             for(var i=0;i<res.data.supplierBanks.length;i++){
+              if(res.data.supplierBanks[i].accountFrom!=="")
               res.data.supplierBanks[i].timeline=util.formatTime(res.data.supplierBanks[i].accountFrom, 'yyyy-MM-dd')+"/"+util.formatTime(res.data.supplierBanks[i].accountTo, 'yyyy-MM-dd');
-              // console.log( res.data.supplierBanks[i].timeline)
            }
             this.accountTable = res.data.supplierBanks?res.data.supplierBanks:[];
             if (res.data.supplierBanks.accountFrom) {

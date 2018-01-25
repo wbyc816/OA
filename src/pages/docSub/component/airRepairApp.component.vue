@@ -480,6 +480,7 @@ export default {
     saveForm() {
       var params = JSON.stringify({
         bankinfo:{
+          ifSupplierChange:this.ifSupplierChange,
           ifChangeSelect:this.ifChangeSelect,
           supplierName:this.supplierName,
           "supplierBank": this.supplierBank, //供应商开户银行
@@ -649,7 +650,7 @@ export default {
             this.supplierBank=val.bankinfo.supplierBank;
             this.accountCode=val.bankinfo.supplierBankAccountCode;
             this.ifChangeSelect=val.bankinfo.ifChangeSelect;
-            this.ifSupplierChange=true;
+            this.ifSupplierChange=val.bankinfo.ifSupplierChange;
             this.supplierName=val.bankinfo.supplierName;
             this.supplierBankAccountName=val.bankinfo.supplierBankAccountName;
             this.supplierBankAccountCode=val.bankinfo.supplierBankAccountCode;
@@ -665,6 +666,7 @@ export default {
           temp = temp.supplier;
         }
       }
+      this.supplierName=temp.supplierName;
       this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
           .then(res => {
             if (res.status == 0) {
