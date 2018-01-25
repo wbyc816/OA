@@ -75,6 +75,7 @@
             </el-radio-group>
           </el-form-item> -->
 
+          <el-col :span='19'>
           <el-form-item label="发布范围" prop="fileSend" class="reciverWrap">
             <div class="reciverList">
               <el-tag key="all" :closable="true" v-show="appForm.fileSend.all.max" type="primary" @close="closeAll">
@@ -89,6 +90,10 @@
             </div>
             <el-button class="addButton" @click="fileSendVisible=true"><i class="el-icon-plus"></i></el-button>
           </el-form-item>
+          </el-col>
+          <el-col :span='5'>
+             <p class="publishScope">（发布范围默认增加本人）</p>
+          </el-col>
 
           <el-form-item label="介绍" prop="supplierIntroduction" class="clearBoth">
             <el-input type="textarea" :rows="4" resize="none" v-model="appForm.supplierIntroduction"></el-input>
@@ -244,13 +249,13 @@ import util from '../../common/util'
 export default {
   components: { PersonDialog , MajorDialog},
   data() {
-    var checkFileSend = (rule, value, callback) => {
-      if (value.all.max || value.personList.length != 0 || value.depList != 0) {
-        callback();
-      } else {
-        callback(new Error('请选择发布范围'))
-      }
-    };
+    // var checkFileSend = (rule, value, callback) => {
+    //   if (value.all.max || value.personList.length != 0 || value.depList != 0) {
+    //     callback();
+    //   } else {
+    //     callback(new Error('请选择发布范围'))
+    //   }
+    // };
     var checkMedium = (rule, value, callback) => {
       if (value && value == this.appForm.classifySuperiorCode) {
         callback(new Error('中介机构与上级单位不能相同'))
@@ -339,7 +344,7 @@ export default {
         
       },
       rules: {
-        fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
+        // fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
         supplierName: [{ required: true, message: '请输入客户名称' }, { validator: checkName, trigger: 'blur' }],
         supplierAbbreviation: [{ required: true, message: '请输入客户简称' }, ],
         supplierAddress: [{ required: true, message: '请输入地址' }, ],
@@ -440,7 +445,6 @@ export default {
       this.appForm.fileSend = params;
     },
     submitMiddle() {
-
       var that=this;
       this.params = {
         "supplierSendBean": {
@@ -453,7 +457,6 @@ export default {
           "sendTypeEmp": {
             "sendType": this.sendTypes.find(type => type.dictEname == 'person').dictCode,
             "ids": this.appForm.fileSend.personList.map(person => person.empId),
-            "empPostId": this.appForm.fileSend.personList.map(person => person.postId)
           }
         },
       }
@@ -525,6 +528,9 @@ export default {
           this.submitLoading = true;
           var params = this.clone(this.appForm);
           params.supplierSendBean=that.param.supplierSendBean;
+          params.supplierSendBean.sendTypeEmp.ids.unshift(this.userInfo.empId);
+          console.log( params.supplierSendBean.sendTypeEmp)
+          
           params.supplierBanks= this.accountTable.map(function(tabel) {
               return {
                 sort: tabel.sort,
@@ -553,7 +559,7 @@ export default {
           }
           params.classifyManagerName = this.classifyManagerName;
           if (params.timeline) {
-            console.log(params.timeline)
+            // console.log(params.timeline)
             params.accountFrom = +new Date(params.timeline[0]);
             params.accountTo = +new Date(params.timeline[1]);
           }
@@ -656,7 +662,7 @@ export default {
             },
             supplierBanks:params.supplierBanks
           };
-          console.log(par)
+          // console.log(par)
           this.$http.post(postPath, par, { body: true })
             .then(res => {
               this.submitLoading = false;
@@ -688,7 +694,7 @@ export default {
             this.oldName = res.data.supplier.supplierName;
             for(var i=0;i<res.data.supplierBanks.length;i++){
               res.data.supplierBanks[i].timeline=util.formatTime(res.data.supplierBanks[i].accountFrom, 'yyyy-MM-dd')+"/"+util.formatTime(res.data.supplierBanks[i].accountTo, 'yyyy-MM-dd');
-              console.log( res.data.supplierBanks[i].timeline)
+              // console.log( res.data.supplierBanks[i].timeline)
            }
             this.accountTable = res.data.supplierBanks?res.data.supplierBanks:[];
             if (res.data.supplierBanks.accountFrom) {
@@ -716,14 +722,15 @@ export default {
             var deplist=[];
             for(var i=0;i<res.data.supplierSendInfoBeans.length;i++){
               if(res.data.supplierSendInfoBeans[i].type=="FIL0101"){
+                if(res.data.supplierSendInfoBeans[i].isMine==1){
+                  continue;
+                }
                 perlist.push(
                    {
                    name:res.data.supplierSendInfoBeans[i].name,
-                   postId:res.data.supplierSendInfoBeans[i].empPostId,
                    empId:res.data.supplierSendInfoBeans[i].sendId,
                    name:res.data.supplierSendInfoBeans[i].name,
                    deptParentName:res.data.supplierSendInfoBeans[i].majorDept,
-                   
                 }
                 )
               }
@@ -731,12 +738,12 @@ export default {
                 deplist.push(
                    {
                    name:res.data.supplierSendInfoBeans[i].name,
-                   postId:res.data.supplierSendInfoBeans[i].empPostId,
                    empId:res.data.supplierSendInfoBeans[i].sendId,
                    name:res.data.supplierSendInfoBeans[i].name,
                    deptParentName:res.data.supplierSendInfoBeans[i].majorDept,
                    max:100,
-                   min:0
+                   min:0,
+                   id:res.data.supplierSendInfoBeans[i].sendId,
                 }
                 )
               }
@@ -747,6 +754,7 @@ export default {
                 }
               }
             }
+            console.log(res.data.supplierSendInfoBeans)
             this.appForm.fileSend.personList=perlist;
             this.appForm.fileSend.depList=deplist;
 
@@ -926,7 +934,7 @@ export default {
             })
             delete res.data[1].trades
             this.industryList = res.data;
-            console.log(this.industryList)
+            // console.log(this.industryList)
             if (this.$route.params.id != 'all') {
               this.handIndustry(val);
             }
@@ -966,6 +974,11 @@ export default {
 </script>
 <style lang='scss'>
 #supplierApp {
+  .publishScope{
+    color: #9a9a9a;
+    font-size: 13px;
+    line-height: 50px;
+  }
   .docBaseBox {
     padding-right: 50px;
     border-bottom: none;

@@ -36,11 +36,22 @@
       <el-form-item label="收款供应商" prop="supplierIds" class="clearBoth">
         <el-cascader expand-trigger="hover" :options="supplierList" filterable :props="supplierProp" v-model="contractForm.supplierIds" style="width:100%" popper-class="myCascader" @change="supplierChange" ref="supplier" :disabled="isRead">
         </el-cascader>
+      </el-form-item>   
+      <el-form-item label="供应商银行信息" prop="supplierInfos" v-if="ifSupplierChange">
+       <el-select v-model="contractForm.supplierInfos"  ref="supplierInfos" @change="changeSelect">
+          <el-option :label="item.accountBank+'/'+item.accountCode" :value="item.accountCode" v-for="item in supplierInfo"></el-option>
+        </el-select>
       </el-form-item>
-      <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
+      <div v-show="ifChangeSelect">
+      <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;" >
+        <li>开户银行 {{accountBank}}</li>
+        <li>收款账户 {{accountCode}}</li>
+      </ul>
+      </div>
+      <!-- <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
         <li>开户银行 {{supplierInfo.accountBank}}</li>
         <li>银行账号 {{supplierInfo.accountCode}}</li>
-      </ul>
+      </ul> -->
       <!-- <el-form-item label="送修合同" prop="repairContract">
         <el-col :span='21' class="repairContract" style="left: -6px;position: relative;">
           <div class="docsBox">
@@ -302,6 +313,11 @@ export default {
   components: { MoneyInput, SearchOptions },
   data() {
     return {
+      supplierBankAccountName:"",
+      supplierName:"",
+      supplierBank:"",
+      supplierBankAccountCode:"",
+      supplierId:"",
       year: new Date().getFullYear(),
       contractForm: {
         createTime: new Date(),
@@ -317,9 +333,11 @@ export default {
         repairPurchasePriceRate: '',
         currencyId: '',
         isAdvancePayment: '0',
-        advancePaymentPercent: ''
+        advancePaymentPercent: '',
+        supplierInfos:"",
       },
       contractRule: {
+        supplierInfos: [{ required: true, message: '请选择供应商银行信息', trigger: 'blur' }],
         contractCode: [{ required: true, message: '请选择合同子类型', trigger: 'blur' }],
         priority: [{ required: true, message: '请选择优先级', trigger: 'blur' }],
         advancePaymentPercent: [{ required: true, message: '请输入预付款百分比', trigger: 'blur' }],
@@ -396,8 +414,16 @@ export default {
         "pageSize": 5
       },
       totalSize: 0,
-      isRead: false
+      isRead: false,
+      accountBank:"",
+      accountName:"",
+      ifSupplierChange:false,
+      ifChangeSelect:false,
+      accountCode:"",
+      supplierId:"",
+      
     }
+    
 
   },
   created() {
@@ -453,6 +479,14 @@ export default {
   methods: {
     saveForm() {
       var params = JSON.stringify({
+        bankinfo:{
+          ifChangeSelect:this.ifChangeSelect,
+          supplierName:this.supplierName,
+          "supplierBank": this.supplierBank, //供应商开户银行
+          "supplierBankAccountName": this.supplierBankAccountName, //供应商开户账号名
+          "supplierBankAccountCode": this.accountCode, //供应商开户账号编号
+          supplierId: this.supplierId, //  供应商id
+        },
         budgetTable: this.budgetTable,
         factoryTable: this.factoryTable,
         contractForm: this.contractForm,
@@ -474,7 +508,7 @@ export default {
         if (this.supplierList.length == 0) {
           this.getSupplier();
         } else {
-          this.supplierChange();
+          this.supplierChange(obj);
         }
       }
     },
@@ -512,15 +546,26 @@ export default {
     submitAll() {
       var contractType = this.contractCodeList.find(d => d.dictCode == this.contractForm.contractCode);
       var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
+
+      
+      console.log(666)
+      console.log(this.supplierBank)
+      console.log(666)
       var airmRor = {
         docTypeCode: contractType.dictCode, // 合同子类型
         docTypeName: contractType.dictName, // 合同子类型
         priority: this.contractForm.priority, //  优先级   
         currencyId: currency.currencyCode, //   币种id
-        supplierId: this.supplierInfo.id, //  供应商id
-        supplierName: this.supplierInfo.supplierName, //  供应商名
-        supplierBank: this.supplierInfo.accountBank, //  供应商开户银行
-        supplierBankAccountName: this.supplierInfo.accountName, //  供应商开户账号名
+        supplierName:this.supplierName,
+        "supplierBank": this.supplierBank, //供应商开户银行
+        "supplierBankAccountName": this.supplierBankAccountName, //供应商开户账号名
+        // "supplierBankAccountCode": this.accountCode, //供应商开户账号编号
+        supplierId: this.supplierId, //  供应商id
+
+        // supplierId: this.supplierInfo.id, //  供应商id
+        // supplierName: this.supplierInfo.supplierName, //  供应商名
+        // supplierBank: this.supplierInfo.accountBank, //  供应商开户银行
+        // supplierBankAccountName: this.supplierInfo.accountName, //  供应商开户账号名
         advancePaymentPercent: this.contractForm.advancePaymentPercent, //  预付款百分比
         contractNo: this.contractForm.contractNo, //  合同号
         createTime: +this.contractForm.createTime, //   填表日期（创建日期）（推送日期）
@@ -539,6 +584,7 @@ export default {
         exchangeRate: currency.exchangeRate, //    汇率
         repairContract: this.repairContractDoc.id, //   送修合同
       }
+      console.log(airmRor)
       this.$emit('submitMiddle', { airmRor: airmRor, airmRorItems: this.budgetTable, airmRorRepairs: this.factoryTable })
     },
     typeChange(val) {
@@ -584,6 +630,33 @@ export default {
       }
     },
     supplierChange(val) {
+       if(val.bankinfo){
+        console.log(val)
+        var len = this.contractForm.supplierIds.length;
+        var temp = this.supplierList;
+      
+        for (var i = 0; i < len; i++) {
+          temp = temp.find(s => s.id == this.contractForm.supplierIds[i]);
+          if (temp.supplier && temp.supplier.length != 0) {
+            temp = temp.supplier;
+          }
+        } 
+        this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
+        .then(res => {
+          if (res.status == 0) {
+            this.supplierInfo =  res.data;
+            this.accountBank=val.bankinfo.supplierBank;
+            this.supplierBank=val.bankinfo.supplierBank;
+            this.accountCode=val.bankinfo.supplierBankAccountCode;
+            this.ifChangeSelect=val.bankinfo.ifChangeSelect;
+            this.ifSupplierChange=true;
+            this.supplierName=val.bankinfo.supplierName;
+            this.supplierBankAccountName=val.bankinfo.supplierBankAccountName;
+            this.supplierBankAccountCode=val.bankinfo.supplierBankAccountCode;
+          } else {
+          }
+        })
+      }else{
       var len = this.contractForm.supplierIds.length;
       var temp = this.supplierList;
       for (var i = 0; i < len; i++) {
@@ -592,7 +665,50 @@ export default {
           temp = temp.supplier;
         }
       }
-      this.supplierInfo = temp;
+      this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
+          .then(res => {
+            if (res.status == 0) {
+              this.supplierInfo =  res.data;
+              this.accountBank="";
+              this.accountCode="";
+              if(res.data.length==1){
+                 this.supplierBank=res.data[0].accountBank;
+                 this.supplierBankAccountName=res.data[0].accountName;
+                 this.accountBank=res.data[0].accountBank;
+                 this.accountCode=res.data[0].accountCode;
+                 this.ifSupplierChange=false;
+                 this.ifChangeSelect=true;
+              }else{
+                this.ifSupplierChange=true;
+                this.ifChangeSelect=false;
+              }
+            } else {
+            }
+          })
+      }
+     
+    },
+    changeSelect() {
+      this.ifChangeSelect=true;
+      if(this.$refs.supplierInfos.selectedLabel.indexOf("/")>0){
+        this.accountBank=this.$refs.supplierInfos.selectedLabel.split("/")[0];
+        this.supplierBank=this.$refs.supplierInfos.selectedLabel.split("/")[0];
+      }else{
+         this.accountBank=this.$refs.supplierInfos.selectedLabel;
+         this.supplierBank=this.$refs.supplierInfos.selectedLabel;
+      }
+      this.accountCode=this.$refs.supplierInfos.value;
+      var that=this;
+      this.$http.post('/Supplier/getSupplierBankInfo', { accountCode:this.$refs.supplierInfos.value })
+      .then(res => {
+        if (res.status == 0) {
+          that.supplierBankAccountName=res.data.accountName;
+          that.supplierName=res.data.supplierName;
+          that.ifChangeSelect=true;
+          that.supplierId=res.data.id;
+        } else {
+        }
+      })
     },
     isSupplierUniqueChange(val) {
       if (val === '1') {
