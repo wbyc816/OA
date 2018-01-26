@@ -80,7 +80,7 @@ export default {
       Object.assign(this.paramsList, params)
       if (this.successCount == 6) {
         this.submitLoading = false;
-        this.getCheckId()       
+        this.getCheckId()
       }
     },
     nextClick(tabName) {
@@ -96,6 +96,7 @@ export default {
         .then(res => {
           if (res.status == 0) {
             if (res.data === 0) { //待审核
+              this.activeName = '';
               this.$message.warning('简历审核中，无法修改！')
               this.msg = "简历审核中..."
             } else {
@@ -122,22 +123,35 @@ export default {
     },
     getCheckId() {
       this.submitLoading = true;
-      this.$http.post('/resume/insertCheck', { empId: this.userInfo.empId }, { body: true })
+      this.$http.post('/resume/checkState', { empId: this.userInfo.empId })
         .then(res => {
           if (res.status == 0) {
-            Object.keys(this.paramsList).forEach(name => {
-              if (Array.isArray(this.paramsList[name])) {
-                this.paramsList[name].forEach(p => {
-                  p.checkId = res.data;
+            if (res.data === 0) { //待审核
+              this.submitLoading = false;
+              this.$message.warning('简历审核中，无法修改！')
+            } else {
+              this.$http.post('/resume/insertCheck', { empId: this.userInfo.empId }, { body: true })
+                .then(res => {
+                  if (res.status == 0) {
+                    Object.keys(this.paramsList).forEach(name => {
+                      if (Array.isArray(this.paramsList[name])) {
+                        this.paramsList[name].forEach(p => {
+                          p.checkId = res.data;
+                        })
+                      } else {
+                        this.paramsList[name].checkId = res.data;
+                      }
+                    })
+                    // console.log(this.paramsList);
+                    this.UpdateResume();
+                  } else {
+                    this.submitLoading = false;
+                  }
                 })
-              } else {
-                this.paramsList[name].checkId = res.data;
-              }
-            })
-            console.log(this.paramsList);
-            this.UpdateResume();
+            }
           } else {
             this.submitLoading = false;
+            this.$message.error('提交失败,请重新提交');
           }
         })
     },
@@ -146,12 +160,14 @@ export default {
         .then(res => {
           this.submitLoading = false;
           if (res.status == 0) {
+
             this.$notify.success('提交修改申请成功,请等待后台审核!');
             this.$router.push('/HR/resume');
           } else {
             this.$message.error('提交失败,请重新提交');
             this.$router.push('/HR/resume')
           }
+          this.activeName = '';
         })
     }
   }
