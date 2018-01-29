@@ -341,6 +341,7 @@ export default {
       contractCodeList: [],
       priorityList: [],
       budgetDeptList: [],
+      id: '',
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7;
@@ -618,6 +619,7 @@ export default {
             temp = temp.supplier;
           }
         } 
+        this.id=temp.id;
         this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
         .then(res => {
           if (res.status == 0) {
@@ -642,6 +644,7 @@ export default {
           temp = temp.supplier;
         }
       }
+      this.id=temp.id;
       this.supplierName=temp.supplierName;
       this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
           .then(res => {

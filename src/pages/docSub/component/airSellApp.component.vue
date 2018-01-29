@@ -215,6 +215,7 @@ export default {
       budgetTable: [],
       supplierInfo: '',
       budgetInfo: '',
+      id: '',
       contractCodeList: [],
       pieceStatusList:[],
       priorityList: [],
@@ -446,6 +447,7 @@ export default {
             temp = temp.supplier;
           }
         } 
+        this.id=temp.id;
         this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
         .then(res => {
           if (res.status == 0) {
@@ -470,6 +472,7 @@ export default {
           temp = temp.supplier;
         }
       }
+      this.id=temp.id;
       this.supplierName=temp.supplierName;
       this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
           .then(res => {

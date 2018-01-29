@@ -239,6 +239,7 @@ export default {
       accountCode:"",
       supplierBank:"",
       supplierBankAccountName:"",
+      id:"",
     }
   },
   computed: {
@@ -377,7 +378,7 @@ export default {
       var finFileIds = this.paymentForm.contractAttach.map(c => c.response.data).concat(this.paymentForm.invoiceAttach.map(c => c.response.data));
 
       this.$http.post('/Supplier/getSupplierBankInfo', { 
-          accountCode: this.accountCode
+          id: this.id
         })
         .then(res => {
           if (res.status == '0') {
@@ -771,7 +772,7 @@ export default {
             temp = temp.supplier;
           }
         }
-        console.log(val)
+        this.id=temp.id;
         this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
         .then(res => {
           if (res.status == 0) {
@@ -796,6 +797,8 @@ export default {
           temp = temp.supplier;
         }
       }
+      this.id=temp.id;
+      this.supplierName=temp.supplierName;
       this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
           .then(res => {
             if (res.status == 0) {
@@ -830,7 +833,7 @@ export default {
       }
       this.accountCode=this.$refs.supplierInfos.value;
       var that=this;
-      this.$http.post('/Supplier/getSupplierBankInfo', { accountCode:this.$refs.supplierInfos.value })
+      this.$http.post('/Supplier/getSupplierBankInfo', { id:this.id })
       .then(res => {
         if (res.status == 0) {
           that.supplierBankAccountName=res.data.accountName;

@@ -239,6 +239,7 @@ export default {
       budgetInfo: '',
       priorityList: [],
       budgetDeptList: [],
+      id:"",
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7;
@@ -433,6 +434,7 @@ export default {
             temp = temp.supplier;
           }
         } 
+        this.id=temp.id;
         this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
         .then(res => {
           if (res.status == 0) {
@@ -457,6 +459,7 @@ export default {
           temp = temp.supplier;
         }
       }
+      this.id=temp.id;
       this.supplierName=temp.supplierName;
       this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
           .then(res => {
@@ -493,7 +496,7 @@ export default {
       
       this.accountCode=this.$refs.supplierInfos.value;
       var that=this;
-      this.$http.post('/Supplier/getSupplierBankInfo', { accountCode:this.$refs.supplierInfos.value })
+      this.$http.post('/Supplier/getSupplierBankInfo', { id: this.id })
       .then(res => {
         if (res.status == 0) {
           that.supplierBankAccountName=res.data.accountName;
