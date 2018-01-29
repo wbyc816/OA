@@ -160,7 +160,7 @@
 
             <!-- 飞行任务书数据异常监控权限 userInfo.isDocsec[3]判断 1 有 0 无 -->
             <el-menu-item index="8" @click.native="goToOthers('/flightException')" v-if="userInfo.isDocsec&&userInfo.isDocsec[3]==1"><i class="iconfont icon-plane1"></i>飞行任务书数据异常监控<i class="el-icon-arrow-right"></i></el-menu-item>
-            <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item>
+            <!-- <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item> -->
 
             <!-- QAR数据展示权限 userInfo.isDocsec[4]判断 1 有 0 无 -->
             <el-menu-item index="10" @click.native="goToOthers('/QARData')" v-if="userInfo.isDocsec&&userInfo.isDocsec[4]==1"><i class="iconfont icon-edit"></i>QAR数据展示<i class="el-icon-arrow-right"></i></el-menu-item>
@@ -475,12 +475,14 @@ export default {
                   this.doneHeight = 90;
                   break;
                 case 3:
-                  this.doneHeight = 130;
+                  this.doneHeight = 145;
                   break;
                 case 5: case 6:
                   this.doneHeight = 120;
+                  break;
                 case 7: case 8:
                   this.doneHeight = 175;
+                  break;
                 default:
                   this.doneHeight = 210;
               }

@@ -26,7 +26,7 @@
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
       <el-form-item label="总价" class="deptArea" prop="appMoney" style="width:60%">
-        <money-input v-model="materialForm.appMoney" :append="false">
+        <money-input :value="materialForm.appMoney" :append="false" readonly>
           <el-tooltip content="修改币种将清空已添加的物品列表" v-model="showTip" slot="prepend" placement="left" effect="light" manual>
             <el-select v-model="activeCurrency" ref="currency" style="width:90px" @change="currencyChange"@visible-change="listShow">
               <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
