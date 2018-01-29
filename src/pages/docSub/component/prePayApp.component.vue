@@ -21,7 +21,7 @@
         </money-input>
       </el-form-item>
       <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
-        <money-input v-model="budgetForm.invoiceNum" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号" :append="false" type="invoice" :maxlength="250">
+        <money-input v-model="budgetForm.invoiceNum" :disabled="activeInvoice!='FIN0201'" placeholder="用 , 分割多个票号" :append="false" type="invoice" :maxlength="1000">
           <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange">
             <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
           </el-select>

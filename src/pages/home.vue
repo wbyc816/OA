@@ -15,7 +15,7 @@
         <!-- 待办事项 -->
         <el-card class="bedoneList" :class="{'noLine':doneLength<4}" v-if="doneLength!=0">
           <p slot="header">待办事项 <span>{{doneLength}}</span></p>
-          <el-carousel :height="doneHeight+'px'" :autoplay="false" :indicator-position="doneLength>6?'outside':'none'" arrow="never">
+          <el-carousel :height="doneHeight+'px'" :autoplay="false" :indicator-position="doneLength>10?'outside':'none'" arrow="never">
             <el-carousel-item v-for="(list,index) in doneList" :key="index">
               <el-row :gutter="20">
                 <el-col :span="doneLength>3?12:24" v-for="(item,itemIndex) in list" :class="{higher:itemIndex>1&&doneLength>3}">
@@ -472,18 +472,24 @@ export default {
                   break;
                 case 2:
                 case 4:
-                  this.doneHeight = 100;
+                  this.doneHeight = 90;
                   break;
                 case 3:
-                  this.doneHeight = 150;
+                  this.doneHeight = 130;
                   break;
+                case 5: case 6:
+                  this.doneHeight = 120;
+                case 7: case 8:
+                  this.doneHeight = 175;
                 default:
-                  this.doneHeight = 150;
+                  this.doneHeight = 210;
               }
+              res.data=res.data.slice(0,100);
               res.data.forEach((r, index) => r.index = index + 1);
-              for (var i = 0; i < res.data.length; i += 6) {
-                if (res.data.slice(i, i + 6)) {
-                  this.doneList.push(res.data.slice(i, i + 6))
+              this.doneList=[];
+              for (var i = 0; i < res.data.length; i += 10) {
+                if (res.data.slice(i, i + 10)) {
+                  this.doneList.push(res.data.slice(i, i + 10))
                 }
               }
             } else {
@@ -1023,12 +1029,12 @@ $sub:#1465C0;
       background: transparent;
     }
     .el-col {
-      line-height: 60px;
+      line-height: 50px;
       font-size: 15px;
       cursor: pointer;
       position: relative;
       &.higher {
-        line-height: 50px;
+        line-height: 40px;
         .timeline {
           p:first-child {
             visibility: hidden;
@@ -1071,7 +1077,7 @@ $sub:#1465C0;
         text-align: right;
         font-size: 12px;
         right: 10px;
-        top: 5px;
+        top: -2px;
         p:first-child {
           padding-top: 10px;
         }

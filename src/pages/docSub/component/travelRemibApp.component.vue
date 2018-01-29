@@ -208,7 +208,7 @@
           <li>预算执行比例{{budgetInfo.execRateStr}}</li>
         </ul>
         <el-form-item label="发票类型" prop="invoiceNum" placeholder="" class="clearBoth">
-          <money-input v-model="budgetForm.invoiceNum" :disabled="activeInvoice!='FIN0201'||budgetTable.length>0" placeholder="用 , 分割多个票号" :append="false" type="invoice" :maxlength="250">
+          <money-input v-model="budgetForm.invoiceNum" :disabled="activeInvoice!='FIN0201'||budgetTable.length>0" placeholder="用 , 分割多个票号" :append="false" type="invoice" :maxlength="1000">
             <el-select v-model="activeInvoice" slot="prepend" style="width:160px" @change="invoiceTypeChange" :disabled="budgetTable.length>0">
               <el-option v-for="item in invoiceList" :key="item.dictCode" :label="item.dictName" :value="item.dictCode"></el-option>
             </el-select>

@@ -8,6 +8,9 @@
         <slot name="append"></slot>
       </template>
     </el-input>
+    <transition name="el-zoom-in-top">
+      <p class="fullTip" v-if="type==='invoice'" v-show="value.length===maxlength">已达到最大输入长度</p>
+    </transition>
   </div>
 </template>
 <script>
@@ -68,7 +71,7 @@ export default {
       } else if (this.type == 'int0' || this.type == 'bankCode') {
         val = val.toString().match(/^[0-9]{0,}/)
       } else if (this.type == 'invoice') {
-        val = val.toString().match(/^[0-9]([0-9]\,|[0-9]){0,}/)
+        val = val.toString().match(/(\d+(-|,|-\d+,)?)*/)
       }
       if (val) {
         if (this.max && parseFloat(val[0]) > parseFloat(this.max)) {
@@ -122,7 +125,16 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 .moenyInput {
-  height:46px;
+  height: 46px;
+  position: relative;
+  .fullTip {
+    position: absolute;
+    line-height:1;
+    bottom: -16px;
+    color: $main;
+    right: 0;
+    font-size: 12px;
+  }
   .el-input {
     height: 46px;
     .el-input-group__append,

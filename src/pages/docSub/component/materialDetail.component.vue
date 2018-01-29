@@ -34,14 +34,8 @@
       <el-table-column property="plannedUnitPrice" label="单价" width="110"></el-table-column>
       <el-table-column property="quantity" label="数量" width="100"></el-table-column>
       <el-table-column property="money" label="总价" width="160"></el-table-column>
-      <el-table-column label="操作" width="70">
-        <template scope="scope">
-          <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
-          </el-button>
-        </template>
-      </el-table-column>
     </el-table>
-    <p class="totalPrice" v-show="totalPrice!=0">合计人民币<span>{{totalPrice | toThousands}}元 {{totalPrice | moneyCh}}</span></p>
+    <p class="totalPrice" v-show="totalMoney!=0">合计人民币<span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
     <el-row style="border-top: 1px solid #D5DADF;">
       <el-col :span="12" class="rightBorder">
         <h1 class="title">总金额</h1>

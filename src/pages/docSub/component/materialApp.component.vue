@@ -8,11 +8,11 @@
         <el-input v-model="materialForm.specification" :maxlength="25"></el-input>
       </el-form-item>
       <el-form-item label="单价" class="inlinItem" prop="plannedUnitPrice">
-        <money-input v-model="materialForm.plannedUnitPrice" :prepend="false" :append="false">
+        <money-input v-model="materialForm.plannedUnitPrice" :prepend="false" :append="false" @change="caculateTotal">
         </money-input>
       </el-form-item>
       <el-form-item label="数量" class="inlinItem" prop="quantity">
-        <money-input v-model="materialForm.quantity" :maxlength="5" :prepend="false" :append="false" type="int"></money-input>
+        <money-input v-model="materialForm.quantity" :maxlength="5" :prepend="false" :append="false" type="int" @change="caculateTotal"></money-input>
       </el-form-item>
       <el-form-item label="预算年份" class="year clearBoth">
         {{year}}
@@ -26,13 +26,13 @@
         <li>预算执行比例{{budgetInfo.execRateStr}}</li>
       </ul>
       <el-form-item label="总价" class="deptArea" prop="appMoney" style="width:60%">
-        <el-input :value="appMoney" readonly>
+        <money-input v-model="materialForm.appMoney" :append="false">
           <el-tooltip content="修改币种将清空已添加的物品列表" v-model="showTip" slot="prepend" placement="left" effect="light" manual>
             <el-select v-model="activeCurrency" ref="currency" style="width:90px" @change="currencyChange"@visible-change="listShow">
               <el-option :label="currency.currencyName" :value="currency.currencyCode" v-for="currency in currencyList"></el-option>
             </el-select>
           </el-tooltip>
-        </el-input>
+        </money-input>
       </el-form-item>
       <el-form-item label="" class="arrArea" style="width:40%">
         <el-button type="primary" @click="addMaterial" class="addBudget"><i class="el-icon-plus"></i> 添加</el-button>
@@ -69,10 +69,10 @@
           </template>
         </el-table-column>
         <el-table-column property="productName" label="物品名称"></el-table-column>
-        <el-table-column property="specification" label="型号" width="65"></el-table-column>
+        <el-table-column property="specification" label="型号" width="130"></el-table-column>
         <el-table-column property="plannedUnitPrice" label="单价" width="110"></el-table-column>
         <el-table-column property="quantity" label="数量" width="100"></el-table-column>
-        <el-table-column property="money" label="总价" width="160"></el-table-column>
+        <el-table-column property="money" label="总价" width="130"></el-table-column>
         <el-table-column label="操作" width="55">
           <template scope="scope">
             <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
@@ -101,15 +101,15 @@ export default {
         quantity: '',
         plannedUnitPrice: '',
         budgetDept: [],
-
+        appMoney:0
       },
       rules: {
         productName: [{ required: true, message: '请输入品名', trigger: 'blur' }],
-        specification: [{ required: true, message: '请输入规格', trigger: 'blur' }],
+        // specification: [{ required: true, message: '请输入规格', trigger: 'blur' }],
         quantity: [{ required: true, message: '请输入数量' }],
         plannedUnitPrice: [{ required: true, message: '请输入单价' }],
         budgetDept: [{ type: 'array', required: true, message: '请选择预算机构/科目', trigger: 'blur' }],
-        // appMoney: [{ required: true, message: '请输入申请金额', trigger: 'blur' }],
+        appMoney: [{ type: 'number',required: true, message: '请输入总价', trigger: 'blur' }],
       },
       materials: [],
       budgetForm: {
@@ -142,13 +142,13 @@ export default {
         return 0
       }
     },
-    appMoney() {
-      var num = 0;
-      if (this.materialForm.quantity && this.materialForm.plannedUnitPrice) {
-        num = parseInt(this.materialForm.quantity) * parseFloat(this.materialForm.plannedUnitPrice)
-      }
-      return parseFloat(this.numFixed2(num))
-    },
+    // appMoney() {
+    //   var num = 0;
+    //   if (this.materialForm.quantity && this.materialForm.plannedUnitPrice) {
+    //     num = parseInt(this.materialForm.quantity) * parseFloat(this.materialForm.plannedUnitPrice)
+    //   }
+    //   return parseFloat(this.numFixed2(num))
+    // },
     totalMoney() {
       if (this.materials.length != 0) {
         var num = 0;
@@ -189,6 +189,13 @@ export default {
     getDraft(obj) {
       this.materials = obj.materials;
     },
+    caculateTotal(){
+      var money=0;
+      if(this.materialForm.plannedUnitPrice&&this.materialForm.quantity){
+        money=parseFloat(this.numFixed2(parseInt(this.materialForm.quantity) * parseFloat(this.materialForm.plannedUnitPrice)));
+      }
+      this.materialForm.appMoney=money;
+    },
     addMaterial() {
       this.$refs.materialForm.validate((valid) => {
         if (valid) {
@@ -198,12 +205,12 @@ export default {
             "productName": this.materialForm.productName,
             "specification": this.materialForm.specification,
             "quantity": parseInt(this.materialForm.quantity),
-            "plannedUnitPrice": this.fomatFloat(this.materialForm.plannedUnitPrice, 1),
+            "plannedUnitPrice": this.materialForm.plannedUnitPrice,
             "budgetDeptId": dep.budgetDeptCode, //预算部门id
             "budgetDeptName": dep.budgetDeptName, //预算部门名
             "budgetItemId": dep.budgetItemCode, //预算科目id
             "budgetItemName": dep.budgetItemName, //预算科目名
-            "money": this.appMoney, //金额
+            "money": this.materialForm.appMoney, //金额
             "rmb": 0, //人民币
             "accurencyName": currency.currencyName, //币种名称
             "exchangeRateId": currency.exchangeId, //汇率id
@@ -217,6 +224,8 @@ export default {
                 item.rmb = res.data.amount;
                 this.materials.push(item);
                 this.$refs.materialForm.resetFields();
+                this.caculateTotal();
+                this.budgetInfo=''
               } else {
                 this.$message.error(res.message)
               }
