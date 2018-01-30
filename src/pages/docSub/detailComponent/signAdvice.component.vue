@@ -1,12 +1,15 @@
 <template>
   <div class="signAdvice">
-    <h4 class='doc-form_title'>我的会签意见
-    <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" class="exportButton" v-if="showDowload($route.query.code)">
-          <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
-        </a>
-      </h4> 
+    <h4 class='doc-form_title'>
+      我的会签意见
+      <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" class="exportButton" v-if="showDowload($route.query.code)">
+            <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
+      </a>
+      <doc-return :docId="$route.params.id" class="retrunButton" @confirm="$router.push('/doc/docPending')" v-if="docDetail.isReturn!==0" warnText="此操作将在会签中删除本节点记录">
+        <el-button type="text"><i class="iconfont icon-chehui"></i>退回</el-button>
+      </doc-return>
+    </h4>
     <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
-
       <!-- 收文登记没有不同意选项 -->
       <el-form-item label="会签意见" class="textarea" prop="state" v-show="docDetail.pageCode!=='SWD'">
         <el-col :span='18'>
@@ -16,7 +19,6 @@
           </el-radio-group>
         </el-col>
       </el-form-item>
-
       <!-- 只有部门会签能选择接收人(docDetail.signDoc==1) -->
       <el-form-item class="textarea signWrap" label="接收人" prop="signUserName" v-if="docDetail.signDoc==1">
         <el-col :span='18' class="clearfix">
@@ -41,13 +43,11 @@
       <el-form-item>
         <el-col :span='18'>
           <el-button type="primary" size="large" class="submitButton" @click="submitSign">提交</el-button>
-
           <!-- isManager字段判断是否有结束会签权限 1有 0 无 -->
           <el-button size="large" class="docArchiveButton" @click="endDepSign" v-if="docDetail.isManager==1&&docDetail.signDoc==1">结束会签</el-button>
         </el-col>
       </el-form-item>
     </el-form>
-
     <!-- 部门会签人员选择不能跨部门 -->
     <person-dialog @updatePerson="updatePerson" admin="0" :deptId="docDetail.deptId" :visible.sync="dialogTableVisible" dialogType="radio"></person-dialog>
   </div>
@@ -56,10 +56,12 @@
 import { mapGetters } from 'vuex'
 import PersonDialog from '../../../components/personDialog.component'
 import TaskContent from '../../../components/taskContent.component'
+import DocReturn from '../../../components/docReturn.component'
 export default {
   components: {
     PersonDialog,
-    TaskContent
+    TaskContent,
+    DocReturn
   },
   props: {
     docDetail: {
@@ -300,13 +302,24 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 .signAdvice {
-  .exportButton {
+  .exportButton,.retrunButton {
     float: right;
     position: relative;
     top: -10px;
     i {
       font-size: 22px;
       vertical-align: middle;
+    }
+  }
+  .retrunButton {
+    .el-button {
+      color: rgb(191, 202, 217);
+      &:hover {
+        color: $main;
+      }
+    }
+    i {
+      margin-right: 5px;
     }
   }
   .myRadio {

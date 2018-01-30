@@ -73,6 +73,11 @@
             <el-tooltip content="分发" placement="top" :enterable="false" effect="light">
               <i class="link iconfont icon-share1" @click="distribute(doc.id)"></i>
             </el-tooltip>
+            <el-tooltip content="退回" placement="top" :enterable="false" effect="light">
+              <doc-return :docId="doc.id" @confirm="getData" v-if="doc.isReturn!==0">
+                <i class="link iconfont icon-chehui"></i>
+              </doc-return>
+            </el-tooltip>
           </td>
         </tr>
       </tbody>
@@ -108,6 +113,7 @@
 <script>
 import SearchOptions from '../../components/searchOptions.component'
 import DistributeDialog from '../../components/distributeDialog.component'
+import DocReturn from '../../components/docReturn.component'
 import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
 
@@ -138,7 +144,7 @@ export default {
       selDocs: [],
       docId: '',
       showDistribute: false,
-      searchOptionExpand:false
+      searchOptionExpand: false
     }
   },
   computed: {
@@ -151,12 +157,13 @@ export default {
   },
   components: {
     SearchOptions,
-    DistributeDialog
+    DistributeDialog,
+    DocReturn
   },
   created() {
     if (this.$route.params.isOverTime) {
       this.searchOptions.isOverTime = '1';
-      this.searchOptionExpand=true;
+      this.searchOptionExpand = true;
     }
     this.getData();
   },
@@ -266,13 +273,13 @@ export default {
     calWidth(doc) {
       var width = 1;
       if (doc.isOvertime) {
-        width -= 0.165
+        width -= 0.18
       }
       if (doc.docImprotType != '普通' && doc.docImprotType != '') {
-        width -= 0.14
+        width -= 0.16
       }
       if (doc.docDenseType != '平件' && doc.docDenseType != '') {
-        width -= 0.14
+        width -= 0.16
       }
       return parseInt(width * 100) + '%'
     },
@@ -302,7 +309,7 @@ $main: #0460AE;
     margin-top: 20px;
   }
   thead {
-    $widths: (1: 5%, 2: 38%, 3: 10%, 4: 11%, 5:10%, 6: 12%);
+    $widths: (1: 5%, 2: 36%, 3: 10%, 4: 11%, 5:10%, 6: 15%);
     @each $num,
     $width in $widths {
       th:nth-child(#{$num}) {

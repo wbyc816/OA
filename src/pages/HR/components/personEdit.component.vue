@@ -55,7 +55,7 @@
       <el-form-item label="身份证号" prop="idNumber">
         <el-input v-model="personForm.idNumber" :maxlength="18"></el-input>
       </el-form-item>
-      <el-form-item label="参加工作日期" prop="joinDate">
+      <el-form-item label="入职时间" prop="joinDate">
         <el-date-picker type="date" v-model="personForm.joinDate" style="width: 100%;" :editable="false" :clearable="false"></el-date-picker>
       </el-form-item>
       <div class="borderBox"></div>
@@ -197,6 +197,7 @@ export default {
     },
     nextClick() {
       this.$refs['personForm'].validate((valid) => {
+        console.log(this.personForm.birthday)
         if (valid) {
           this.$emit('nextClick', 'contract')
         } else {

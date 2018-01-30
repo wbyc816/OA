@@ -1,9 +1,13 @@
 <template>
   <div class='myAdvice'>
-    <h4 class='doc-form_title'>我的审批意见 
-      <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" class="exportButton" v-if="showDowload($route.query.code)">
+    <h4 class='doc-form_title'>
+      我的审批意见      
+      <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" class="exportButton" v-if="showDowload($route.query.code)">        
           <el-button type="text"><i class="iconfont icon-icon202"></i>导出PDF</el-button>
-        </a>
+      </a>
+      <doc-return :docId="$route.params.id" class="retrunButton" @confirm="$router.push('/doc/docPending')" v-if="docDetail.isReturn!==0">
+        <el-button type="text"><i class="iconfont icon-chehui"></i>退回</el-button>
+      </doc-return>
     </h4>
     <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
       <!-- 收文登记没有审批意见选择，默认为同意且不可选不同意 -->
@@ -92,6 +96,7 @@
     <!-- 正常审批人员选择 -->
     <!-- 是否能跨部门由normalPersonAdmin返回值控制 1 是 0 否 -->
     <!-- 是否显示机要秘书根据权限字段isAdmin、是否是四类特殊公文(hasSecretary()返回)且没有承办人员权限(isTaskUser)共同控制 -->
+    <!-- 发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 出部门选择人为 综合管理部（李妙伟）,其它为机要秘书 -->
     <person-dialog @updatePerson="updatePerson" :admin="normalPersonAdmin" :visible.sync="dialogTableVisible" dialogType="radio" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isTaskUser!=1"></person-dialog>
     <!-- 设置默认接收人权限同上 -->
     <person-dialog @updatePerson="updateDefaultPerson" selText="默认收件人" :visible.sync="defaultVisible" :admin="normalPersonAdmin" :deptId="docDetail.deptId" :hasSecretary="docDetail.isAdmin==1&&hasSecretary()&&docDetail.isTaskUser!=1"></person-dialog>
@@ -108,6 +113,7 @@ import { mapGetters } from 'vuex'
 import PersonDialog from '../../../components/personDialog.component'
 import DepDialog from '../../../components/depDialog.component'
 import TaskContent from '../../../components/taskContent.component'
+import DocReturn from '../../../components/docReturn.component'
 
 const arrowHtml = '<i class="iconfont icon-jiantouyou"></i>'
 const signFlag = '<i class="signFlag">#</i>'
@@ -150,7 +156,8 @@ export default {
   components: {
     PersonDialog,
     DepDialog,
-    TaskContent
+    TaskContent,
+    DocReturn
   },
   props: {
     docDetail: {
@@ -334,8 +341,6 @@ export default {
     handleRemove(file, fileList) {
       this.ruleForm.attchment = fileList;
     },
-
-
     getSecretaryInfo() {
       if (!this.secretaryInfo) {
         var roleUserState = 0; // 机要秘书
@@ -345,7 +350,7 @@ export default {
         }
         //发文稿纸 类型为公司发文或会议纪要时 不是综合管理部的人 添加默认部门
         if ((typeName === '公司发文' || typeName === '会议纪要') && this.userInfo.deptId != initFWGDeps[0].id && this.userInfo.deptParentId != initFWGDeps[0].id) {
-          roleUserState = 1; // 综合管理部
+          roleUserState = 1; // 综合管理部（暂为李妙伟）
         }
         this.$http.post('doc/getSecInfo', { roleUserState: roleUserState })
           .then(res => {
@@ -701,13 +706,25 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 .myAdvice {
-  .exportButton {
+  .exportButton,
+  .retrunButton {
     float: right;
     position: relative;
     top: -10px;
     i {
       font-size: 22px;
       vertical-align: middle;
+    }
+  }
+  .retrunButton {
+    .el-button {
+      color: rgb(191, 202, 217);
+      &:hover {
+        color: $main;
+      }
+    }
+    i {
+      margin-right: 5px;
     }
   }
   .uploadInfo {

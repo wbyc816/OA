@@ -2,6 +2,7 @@
   <div class="quitAdvice" v-if="info.signs||info.singInfoVo">
     <h4 class='doc-form_title'>工作交接登记</h4>
     <div class="boxWrap">
+      <!-- 部门内意见显示 -->
       <h4 class='doc-form_title' v-if="currentDepName">{{currentDepName}}</h4>
       <table bgcolor="#fff" class="adviceList" width="100%" :class="{isOwnerDept:showLeader}" cellspacing="0" v-if="infoTable.length>0">
         <thead>
@@ -15,11 +16,13 @@
             <td>{{sign.signContent}}</td>
             <td>{{sign.isHandover==1?sign.takeOverName:sign.signUserName}}</td>
             <td>{{sign.remark}}</td>
+            <!-- 直属领导意见 -->
             <td v-if="tempTable.indexOf(sign)===0&&showLeader" :rowspan="tempTable.length" style="padding-right:13px;">{{directAdvice.signContent}}</td>
             <td v-if="sign.isHandover==0&&showLeader">/</td>
           </tr>
         </tbody>
       </table>
+      <!-- 填写意见区 -->
       <el-row :gutter="60">
         <el-col :span="12" v-for="(sign,index) in submitInfo">
           <div class="adviceBox">
@@ -43,6 +46,7 @@
         </el-col>
       </el-row>
     </div>
+    <!-- 所有部门会签完后意见总汇 -->
     <el-tabs v-model="activeName" @tab-click="handleClick" v-if="info.singInfoVo">
       <el-tab-pane :label="index==0?'所在部门':item.deptName" :name="item.deptName" v-for="(item,index) in info.singInfoVo">
         <table bgcolor="#fff" class="adviceList" :class="{isOwnerDept:item.isOwnerDept==1}" width="100%" cellspacing="0">
@@ -112,24 +116,29 @@ export default {
   watch: {
     info: function(newVal) {
       if (this.info.signs) {
-        this.info.signs.forEach(s => {
-          if (s.isDeptPrincipalEnd == 1) {
+        this.info.signs.forEach(s => {    //会签意见分类
+          
+          // isDeptPrincipalEnd  判断是否部门总经理
+          // isHandover  判断是否本部门交接
+          // isTaskNameOther  判断是否是直属领导意见
+          // isView   判断意见是否只显示不编辑
+          if (s.isDeptPrincipalEnd == 1) {    //领导会签意见填写
             this.leaderAdvice = s;
             this.isLeader = true;
             this.currentDepName = s.signDeptMajorName;
-          } else if (s.isView == 0) {
-            if (s.isHandover == 1 && s.isTaskNameOther == 1) {
+          } else if (s.isView == 0) {           //判断意见是否只显示不编辑
+            if (s.isHandover == 1 && s.isTaskNameOther == 1) {  //判断当前意见是否是直属领导意见
               this.directAdvice = s;
-            } else {
+            } else {                        //其他意见显示
               this.infoTable.push(s);
               this.currentDepName = s.signDeptMajorName;
             }
-          } else {
+          } else {              //其它可填写信息
             this.submitInfo.push(s);
             this.currentDepName = s.signDeptMajorName;
           }
         })
-        if (this.infoTable.some(item => item.isHandover == 1)) {
+        if (this.infoTable.some(item => item.isHandover == 1)) {   //判断是否本部门内工作交接
           this.tableTitle = this.tableTitle.concat(['直属领导意见']);
           this.showLeader = true;
           this.tempTable=this.infoTable.filter(item=>item.isHandover);
@@ -138,7 +147,6 @@ export default {
       if (newVal) {
         if (this.info.singInfoVo && this.info.singInfoVo.length != 0) {
           this.activeName = this.info.singInfoVo[0].deptName;
-          console.log(this.activeName)
         }
       }
     }
