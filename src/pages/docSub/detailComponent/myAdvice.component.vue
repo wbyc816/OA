@@ -275,6 +275,9 @@ export default {
       'secretaryInfo'
     ])
   },
+  beforeDestroy(){
+    this.$store.commit('setSecretaryInfo','');
+  },
   created() {
     if (this.hasSecretary()) {
       this.getSecretaryInfo();
