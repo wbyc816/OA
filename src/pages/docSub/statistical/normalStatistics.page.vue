@@ -42,7 +42,7 @@
         </span>
         <!-- <span class="download"><i class="iconfont icon-icon202"></i>导出报表</span> -->
       </div>
-      <el-table :data="searchData" class="myTable" @row-click="goDetail">
+      <el-table :data="searchData" class="myTable" @row-click="goDetail" :row-class-name="tableRowClassName">
         <el-table-column prop="docTypeName" label="公文类型" width="100"></el-table-column>
         <el-table-column prop="taskUser" label="呈报人" width="100"></el-table-column>
         <el-table-column prop="docTitle" label="公文标题"></el-table-column>
@@ -136,7 +136,7 @@ export default {
     getData() {
       this.searchLoading = true;
       this.searchParams.docType = this.docTypes[this.docTypes.length - 1];
-      if (this.timeline && this.timeline.length != 0&&this.timeline[0]) {
+      if (this.timeline && this.timeline.length != 0 && this.timeline[0]) {
         this.searchParams.startTime = this.timeFilter(+this.timeline[0], 'date');
         this.searchParams.endTime = this.timeFilter(+this.timeline[1], 'date');
       } else {
@@ -165,6 +165,12 @@ export default {
     goDetail(row) {
       // console.log(row);
       this.$router.push({ path: '/doc/docInfo/' + row.id, query: { code: row.docTypeCode } })
+    },
+    tableRowClassName(row, index) {
+      if (row.state == 4) {
+        return 'disAgree';
+      }
+      return '';
     },
     search() {
       this.searchParams.pageNumber = 1;
@@ -267,7 +273,30 @@ $sub:#1465C0;
         tr td:first-child .cell {
           padding-left: 15px;
         }
-
+        tr.disAgree {
+          background: #FFF0F0 !important;
+          td:nth-child(5) {
+            position: relative;
+            overflow:hidden;
+            .cell {
+              z-index: 2;
+              position: relative;
+            }
+            &:before {
+              font-weight: normal;
+              content: "\e743";
+              font-family: "iconfont" !important;
+              font-size: 70px;
+              font-style: normal;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+              position: absolute;
+              top: -7px;
+              right: -4px;
+              color: #F4B8B2;
+            }
+          }
+        }
         td {
           height: 70px;
         }

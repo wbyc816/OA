@@ -14,7 +14,7 @@
         <el-input v-model="personForm.nameEn" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item label="出生日期" prop="birthday">
-        <el-date-picker type="date" v-model="personForm.birthday" style="width: 100%;" :editable="false" :clearable="false" @change="function(val){personForm.birthday=val}"></el-date-picker>
+        <el-date-picker type="date" v-model="personForm.birthday" style="width: 100%;" :editable="false" :clearable="false"></el-date-picker>
       </el-form-item>
       <el-form-item label="国籍" prop="nationality1">
         <el-input v-model="personForm.nationality1" :maxlength="20"></el-input>

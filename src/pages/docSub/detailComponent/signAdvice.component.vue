@@ -322,6 +322,15 @@ $main:#0460AE;
       margin-right: 5px;
     }
   }
+  .uploadInfo {
+    position: absolute;
+    left: 75%;
+    font-size: 13px;
+    color: #9a9a9a;
+    line-height: 15px;
+    top: 7px;
+    white-space: nowrap;
+  }
   .myRadio {
     line-height: 45px;
     .el-radio-button .el-radio-button__inner {

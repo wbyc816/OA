@@ -1,5 +1,5 @@
 <template>
-  <div class="docReturn" @click="open" v-if="false">
+  <div class="docReturn" @click="open">
     <slot></slot>
   </div>
 </template>

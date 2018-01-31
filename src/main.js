@@ -10,6 +10,7 @@ import './assets/fonts/iconfont.css'
 import './filters/filters.js'
 // import pdfjsLib from 'pdfjs-dist'
 import './common/util.js'
+import './common/globalSet.js'
 import './common/polyfill.js'
 
 import store from  './store'
