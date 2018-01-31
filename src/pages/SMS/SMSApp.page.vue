@@ -28,8 +28,8 @@
             </div>
           </el-form-item>
           <el-form-item label="短信内容" prop="messageContent">
-            <el-input type="textarea" :rows="6" resize='none' v-model="appForm.messageContent" :maxlength="100"></el-input>
-            <p class="maxText">短信内容最多为100个字</p>
+            <el-input type="textarea" :rows="8" resize='none' v-model="appForm.messageContent" :maxlength="990"></el-input>
+            <p class="maxText">短信内容最多为990个字</p>
           </el-form-item>
         </el-form>
         <div class='doc-form-submit_btn'>

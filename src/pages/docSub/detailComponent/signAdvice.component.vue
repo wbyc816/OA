@@ -17,6 +17,9 @@
             <el-radio-button label="1">同意<i></i></el-radio-button>
             <el-radio-button label="2">不同意<i></i></el-radio-button>
           </el-radio-group>
+          <p class="tipText" v-if="docDetail.signDoc==1">
+            若需征询部门人员意见，请选择接收人并点击“提交”；若直接处理该文会签或意见征询完毕，请填写会签意见并点击“结束会签”。
+          </p>
         </el-col>
       </el-form-item>
       <!-- 只有部门会签能选择接收人(docDetail.signDoc==1) -->
@@ -302,7 +305,8 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 .signAdvice {
-  .exportButton,.retrunButton {
+  .exportButton,
+  .retrunButton {
     float: right;
     position: relative;
     top: -10px;
@@ -321,6 +325,13 @@ $main:#0460AE;
     i {
       margin-right: 5px;
     }
+  }
+  .tipText {
+    padding-top:7px;
+    font-size: 13px;
+    color: #9a9a9a;
+    line-height: 15px;
+        margin-bottom: -10px;
   }
   .uploadInfo {
     position: absolute;
