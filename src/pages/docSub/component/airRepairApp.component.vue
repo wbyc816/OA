@@ -548,11 +548,11 @@ export default {
         this.$emit('submitMiddle', false);
         return false;
       }
-      if (this.totalMoney == 0) {
-        this.$message.warning('合计金额不能为0');
-        this.$emit('submitMiddle', false);
-        return false;
-      }
+      // if (this.totalMoney == 0) {
+      //   this.$message.warning('合计金额不能为0');
+      //   this.$emit('submitMiddle', false);
+      //   return false;
+      // }
       return true;
     },
     submitAll() {
