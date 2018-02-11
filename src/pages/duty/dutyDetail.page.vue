@@ -26,7 +26,7 @@
               <el-input v-model="empName" placeholder="值班人"></el-input>
             </el-col>
             <el-col :span="8">
-              <el-button class="search" @click="search" type="primary">搜索</el-button>
+              <el-button class="search" @click="search('true')" type="primary">搜索</el-button>
             </el-col>
           </el-row>
           <!-- <el-button class="search" @click="search" type="primary">搜索</el-button> -->
@@ -128,7 +128,10 @@ export default {
     deptChange(val) {
       this.deptName = val
     },
-    search() {
+    search(val) {
+      if(val){
+        this.paginate.currentPage=1;
+      }
       api.getDutyMessage({
         startDate: this.startDate,
         endDate: this.endDate,

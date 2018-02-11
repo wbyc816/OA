@@ -423,7 +423,7 @@ export default {
       this.$refs.guestTicketAppFormFirst.validate((valid) => {
         if (valid) {
           var temp={};
-          if(this.guestTicketAppFormFirst.genger=="M"){
+          if(this.guestTicketAppFormFirst.genger=="M"||this.guestTicketAppFormFirst.genger=="男"){
             temp.genger="男";
           }else{
             temp.genger="女";
@@ -522,7 +522,7 @@ export default {
      
       this.flightPersonTable=obj.flightPersonTable;
       for(let i=0;i<this.flightPersonTable.length;i++){
-        if(this.flightPersonTable[i].genger=="M"){
+        if(this.flightPersonTable[i].genger=="M"||this.flightPersonTable[i].genger=="男"){
           this.flightPersonTable[i].genger="男"
         }else{
           this.flightPersonTable[i].genger="女"

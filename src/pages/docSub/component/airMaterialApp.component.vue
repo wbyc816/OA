@@ -12,7 +12,7 @@
         <el-date-picker v-model="contractForm.createTime" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
       <el-form-item label="合同号" prop="contractNo" class="deptArea">
-        <el-input v-model="contractForm.contractNo" :maxlength="20">
+        <el-input v-model="contractForm.contractNo" :maxlength="200">
         </el-input>
       </el-form-item>
       <el-form-item label="优先级" prop="priority" placeholder="" class="arrArea">
@@ -390,7 +390,8 @@ export default {
           }
         })
       }
-      return num || ''
+      
+      return num.toFixed(2) || ''
     },
     ...mapGetters([
       'submitLoading',
@@ -778,7 +779,7 @@ export default {
     addBudget() {
       this.$refs.airMaterialForm.validate((valid) => {
         if(this.contractForm.currencyId!=""){
-          if (this.totalMoney + this.airMaterialForm.totalPrice < 1000000000000) {
+          if (Number(this.totalMoney) + Number(this.airMaterialForm.totalPrice) < 1000000000000) {
           if (valid) {
             var dep = this.getBudgetDep();
             var temp = {};

@@ -9,7 +9,7 @@
           <th v-for="title in tableTitle" align="left">{{title}}</th>
         </tr>
       </thead>
-      <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">
+      <tbody v-for="doc in docData" :key="doc.taskTime" :class="{back:doc.state==2}">
         <tr>
           <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
           <router-link tag="td"  :to="{path:'/doc/docCommonApp/'+doc.docTypeCode,query:{id:doc.id}}" class="linkTitle">
@@ -19,6 +19,7 @@
           </router-link>
           <td>{{doc.taskTime}}</td>
           <td><span>{{doc.currentUser}}</span></td>
+
           <td>
             <el-tooltip content="编辑" placement="top" :enterable="false" effect="light">
               <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docCommonApp/'+doc.docTypeCode,query:{id:doc.id}}"></router-link>
@@ -169,6 +170,29 @@ export default {
 <style lang='scss'>
 $purple: #0460AE;
 #docDraft {
+   .back {
+    background: #FFF0F0 !important;
+    td:nth-child(5) {
+      position: relative;
+      span {
+        z-index: 2;
+        position: relative;
+      }
+      &:before {
+        font-weight: normal;
+        content: "\e6ac";
+        font-family: "iconfont" !important;
+        font-size: 65px;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: absolute;
+        top: -10px;
+        right:100px;
+        color: #F4B8B2;
+      }
+    }
+  }
   .pageBox {
     text-align: right;
     margin-top: 20px;

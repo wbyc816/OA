@@ -14,6 +14,23 @@
       <div class="infoBox remain">剩余<span>{{agreementTicket.ticketNumsLave}}</span></div> -->
     </div>
 
+     <el-form label-position="left" :model="staffBenefitAppFormThird" :rules="rules" ref="staffBenefitAppFormThird" label-width="128px" >
+
+      <el-form-item label="申请票种" prop="ticketTypes" class="flw50">
+        <el-select v-model="staffBenefitAppFormThird.ticketTypes" @change="ticketTypeChange" ref="ticketType">
+          <el-option v-for="ticketType in ticketTypes"  :label="ticketType.dictName" :value="ticketType.dictCode">
+          </el-option>
+        </el-select>
+      </el-form-item>
+
+       <el-form-item label="出票方式" prop="ticketWays" class="flw50">
+        <el-select v-model="staffBenefitAppFormThird.ticketWays"  ref="ticketWays">
+          <el-option v-for="ticketWay in ticketWays"  :label="ticketWay.dictName" :value="ticketWay.dictCode">
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
+
     <el-form label-position="left" :model="staffBenefitAppFormFirst" :rules="rules" ref="staffBenefitAppFormFirst" label-width="128px" >
 
       <el-form-item label="联系电话" prop="contactPhone" class="contactPhone" >
@@ -96,14 +113,18 @@
           </div>
         </el-form-item>
         <el-form-item label="承运人" prop="carrier" class="flw50">
-        
             <el-input placeholder="请输入内容"  v-model="staffBenefitAppFormSecond.carrier" readonly>
-              <el-select   v-model="staffBenefitAppFormSecond.isBook"   slot="append" placeholder="状态" class="w80" ref="isBook">
-                <el-option label="订座" value="1"></el-option>
-                <el-option label="候补" value="0"></el-option>
-              </el-select>
+             
             </el-input>
             
+        </el-form-item>
+
+       
+        <el-form-item label="座位状态" class="flw50" prop="isBook">
+          <el-select v-model="staffBenefitAppFormSecond.isBook"  ref="isBook" placeholder="状态">
+            <el-option label="订座" value="1"></el-option>
+            <el-option label="候补" value="0"></el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="航班号" prop="flightNumber" class="flw50" :maxlength="20">
@@ -111,13 +132,14 @@
                
             </el-input>
         </el-form-item>
+        
         <el-form-item label="舱位等级" class="flw35" prop="classLevelsSelect">
           <el-select v-model="staffBenefitAppFormSecond.classLevelsSelect"  ref="classLevelsSelect">
             <el-option v-for="level in classLevels"  :label="level.dictName" :value="level.dictCode">
             </el-option>
           </el-select>
-          
       </el-form-item>
+
 <el-button @click='addTrip' type="primary" class="addbutton1 flw15" ><i class="el-icon-plus"></i> 添加</el-button>
          
 
@@ -138,22 +160,7 @@
           </el-table-column>
         </el-table>
     </el-form>
-    <el-form label-position="left" :model="staffBenefitAppFormThird" :rules="rules" ref="staffBenefitAppFormThird" label-width="128px" >
-
-      <el-form-item label="申请票种" prop="ticketTypes" class="flw50">
-        <el-select v-model="staffBenefitAppFormThird.ticketTypes" @change="ticketTypeChange" ref="ticketType">
-          <el-option v-for="ticketType in ticketTypes"  :label="ticketType.dictName" :value="ticketType.dictCode">
-          </el-option>
-        </el-select>
-      </el-form-item>
-
-       <el-form-item label="出票方式" prop="ticketWays" class="flw50">
-        <el-select v-model="staffBenefitAppFormThird.ticketWays"  ref="ticketWays">
-          <el-option v-for="ticketWay in ticketWays"  :label="ticketWay.dictName" :value="ticketWay.dictCode">
-          </el-option>
-        </el-select>
-      </el-form-item>
-    </el-form>
+   
   <!--   <person-dialog @updatePerson="updatePerson" dialogType="multi" :visible.sync="signDialogVisible"></person-dialog> -->
   </div>
 </template>
@@ -268,11 +275,12 @@ export default {
         documentTypeSelect:"",
         genger:"M",
         maxLength:18,
+        // ticketWays:"",
       },
        staffBenefitAppFormSecond: {
         carrier:"东海航空",
         flightNumber:"",
-        isBook:"1",
+        isBook:"",
         departureDate:"",
         start:"",
         end:"",
@@ -304,10 +312,6 @@ export default {
         "ticketNumsLave": 0,
       },
       ticketWays:[],
-
-
-   
-      
       rules: {
         contactPhone: [{ required: true, message: '请填写联系电话', trigger: 'blur' },{ validator: this.validatePhone, trigger: 'blur,change' }],
         ticketWays: [{ required: true, message: '请选择出票方式', trigger: 'blur' }],
@@ -316,7 +320,7 @@ export default {
         genger: [{ required: true, message: '请选择性别', trigger: 'blur' }],
         documentTypeSelect: [{ required: true, message: '请选择证件类型', trigger: 'blur' }],
         documentType: [{ required: true,  validator: checkIdCard, trigger: 'blur' }],
-
+        isBook : [{ required: true, message: '请选择座位状态', trigger: 'blur' }],
         carrier: [{ required: true, message: '请输入承运人', trigger: 'blur' }],
         start: [{ required: true, message: '请输入起始站', trigger: 'blur' }],
         end: [{ required: true, message: '请输入目的站', trigger: 'blur' }],
@@ -541,7 +545,7 @@ export default {
     },
     isCashType(val){
       // this.paymentMethodName="";
-      console.log(this.$refs.paymentMethod);
+      // console.log(this.$refs.paymentMethod);
       if(val=="FIN0103"){
         this.collectionInformation=0;
       }else{
@@ -550,7 +554,7 @@ export default {
     },
     getEmpBankAccount(Id){
       var that=this;
-      console.log(Id)
+      // console.log(Id)
       that.$http.post('/doc/getEmpBankAccount', { 
         empId:Id
        })
@@ -567,7 +571,7 @@ export default {
         this.$refs.staffBenefitAppFormFirst.validate((valid) => {
           if (valid) {
             var temp={};
-            if(this.staffBenefitAppFormFirst.genger=="M"){
+            if(this.staffBenefitAppFormFirst.genger=="M"||this.staffBenefitAppFormFirst.genger=="男"){
               temp.genger="男";
             }else{
               temp.genger="女";
@@ -581,7 +585,7 @@ export default {
 
             temp.flightPersonTypeCode=this.staffBenefitAppFormFirst.flightPersonTypeSelect;
             temp.documentTypeCode=this.staffBenefitAppFormFirst.documentTypeSelect;
-            console.log(temp);
+            // console.log(temp);
 
         
             this.flightPersonTable.push(temp);
@@ -621,16 +625,16 @@ export default {
     },
 
     addTrip() {
+      var temp={};
+      temp.isBook=this.$refs.isBook.selectedLabel;
       this.$refs.staffBenefitAppFormSecond.validate((valid) => {
         if(this.$refs.ticketType.value=="EMP0301"||this.$refs.ticketType.value=="EMP0302"&&this.flightPersonTable.length*this.TripTable.length<this.lastFreeTicket.ticketNumsLave+this.freeTicket.ticketNumsLave){
           if (valid) {
-          var temp={};
           temp.start=this.staffBenefitAppFormSecond.start;
           temp.end=this.staffBenefitAppFormSecond.end;
-
-          console.log(this.staffBenefitAppFormSecond.end)
           temp.carrier=this.staffBenefitAppFormSecond.carrier;
-          temp.isBook=this.$refs.isBook.selectedLabel;
+          
+         
           temp.carrier=this.staffBenefitAppFormSecond.carrier;
           temp.flightNumber=this.staffBenefitAppFormSecond.flightNumber;
           temp.classLevelsSelect=this.$refs.classLevelsSelect.selectedLabel;
@@ -638,7 +642,7 @@ export default {
           temp.classLevelsCode=this.staffBenefitAppFormSecond.classLevelsSelect;
           temp.isBookcCode=this.staffBenefitAppFormSecond.isBook;
           temp.departureDate=util.formatTime(this.staffBenefitAppFormSecond.departureDate.getTime(), 'yyyy-MM-dd');
-          console.log(temp)
+          // console.log(temp)
           this.TripTable.push(temp);
           this.$refs.staffBenefitAppFormSecond.resetFields();
           this.showData=0;
@@ -680,12 +684,12 @@ export default {
       this.$emit('saveMiddle',params);
     },
     getDraft(obj){
-      console.log(obj)
+      // console.log(obj)
       this.flightPersonTable=obj.flightPersonTable;
       this.TripTable=obj.TripTable;
       this.flightPersonTable=obj.flightPersonTable;
       for(let i=0;i<this.flightPersonTable.length;i++){
-        if(this.flightPersonTable[i].genger=="M"){
+        if(this.flightPersonTable[i].genger=="M"||this.flightPersonTable[i].genger=="男"){
           this.flightPersonTable[i].genger="男"
         }else{
           this.flightPersonTable[i].genger="女"
@@ -698,10 +702,12 @@ export default {
       // var that = this;
               var that=this;
               if (that.flightPersonTable.length!=0&&that.TripTable.length!=0) {
-                if(that.isEnough){
-                    console.log(that.staffBenefitAppFormThird.ticketTypes);
-                // var dep=this.getBudgetDep();
-                that.params = {
+               
+               if(that.isEnough){
+                
+                 this.$refs.staffBenefitAppFormThird.validate((valid) => {
+                  if (valid) {
+                                    that.params = {
                     "ticketWayCode":that.staffBenefitAppFormThird.ticketWays,
                     "ticketWayName":that.$refs.ticketWays.selectedLabel,
 
@@ -750,14 +756,18 @@ export default {
 
                       }
                     })
-
-             
-          
-            
-
           }
           console.log(this.params);
            this.$emit('submitMiddle', this.params);
+                    
+                  } else {
+                    this.$message.warning('请检查填写字段')
+                    this.$emit('submitMiddle', false);
+                    return false;
+                  }
+                });
+
+
            } else {
           this.$message.warning('请检查票数信息')
           this.$emit('submitMiddle', false);

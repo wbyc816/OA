@@ -22,8 +22,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="工作交接情况" prop="workHandover" class="clearBoth">
-        <el-input type="textarea" :rows="8" resize='none' v-model="vacationForm.workHandover" :maxlength="100"></el-input>
+        <el-input type="textarea" :rows="8" resize='none' v-model="vacationForm.workHandover" :maxlength="500"></el-input>
+        <p  class="remainNum" style="{color:#ff4949}">最大不超过500字</p>
       </el-form-item>
+
     </el-form>
   </div>
 </template>
@@ -32,6 +34,7 @@ import { mapGetters } from 'vuex'
 export default {
   components: {},
   data() {
+    
     var checkDate = (rule, value, callback) => {
       if (value.every(val => val != null)) {
         callback();
@@ -59,6 +62,10 @@ export default {
       }
     };
     return {
+      ruleForm: {
+        workHandover: '',
+        attchment: [],
+      },
       vacationForm: {
         typeId: '',
         workHandover: '',
@@ -79,6 +86,7 @@ export default {
         // }
       },
       types: [],
+      desLenth: 0,
       params: '',
       empVacation: {
         "preQuarterdDays": 0,
@@ -103,6 +111,26 @@ export default {
     // this.$emit('updateSuggest','DOC1001');
   },
   methods: {
+    // checkworkHandover(rule, value, callback) {
+    //   console.log(this.desLenth)
+    //   if (this.desLenth == 0) {
+    //     callback(new Error('请填写工作交接情况'))
+    //   } else if (this.desLenth > 500) {
+    //     callback(new Error('超出最大输入长度'))
+    //   } else {
+    //     callback();
+    //   }
+    // },
+    // workHandoverChange(html) {
+    //   this.ruleForm.workHandover = html;
+    //   this.desLenth=html.length;
+    // },
+    // updateLen(num) {
+    //   console.log(num)
+    //   console.log(66)
+    //   this.desLenth = num;
+    //   this.$refs.ruleForm.validateField('workHandover')
+    // },
     saveForm() {
       this.$emit('saveMiddle',JSON.stringify(this.vacationForm));
     },

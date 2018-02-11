@@ -4,7 +4,7 @@
     <el-form label-position="left" :model="contractForm" :rules="contractRule" ref="contractForm" label-width="128px">
       
       <el-form-item label="合同号" prop="contractNo" class="deptArea">
-        <el-input v-model="contractForm.contractNo" :maxlength="20">
+        <el-input v-model="contractForm.contractNo" :maxlength="200">
         </el-input>
       </el-form-item>
       <el-form-item label="填表时间" prop="createTime" class="arrArea">
@@ -113,7 +113,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="换出数量" prop="changeOutNum" class="offerPrice clearfix clearBoth">
-        <money-input v-model="budgetForm.changeOutNum" type="int" :prepend="false" :append="false" style="width:200px">
+        <money-input v-model="budgetForm.changeOutNum" type="int0" :prepend="false" :append="false" style="width:200px">
         </money-input>
         <el-button type="primary" @click="addBudget"><i class="el-icon-plus"></i> 添加</el-button>
       </el-form-item>
@@ -292,7 +292,7 @@ export default {
           }
         })
       }
-      return num || ''
+      return num.toFixed(2) || ''
     },
     ...mapGetters([
       'submitLoading',

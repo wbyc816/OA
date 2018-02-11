@@ -42,13 +42,20 @@
           <el-menu class="el-menu-vertical-demo" :default-openeds="['个人中心','我要申请','薪资绩效','相关链接']">
             <el-submenu :index="menu.title" v-for="(menu,index) in menuList" :key="menu.title">
               <template slot="title">{{menu.title}}</template>
-              <el-menu-item :index="child.path" v-for="child in menu.child" :key="menu.name">
-                <a :href="child.path" :target="child.target">
+              <!-- <el-menu-item :index="child.path" v-for="child in menu.child" :key="menu.name">
+                <span :href="child.path" :target="child.target">
                    {{child.name}}
-                </a>
-              </el-menu-item>
+                </span>
+              </el-menu-item> -->
+              
+            <el-menu-item :index="child.text" v-for="child in menu.child" @click.native="goToOthers(child)" class="fontColor">
+              {{child.text}}
+            </el-menu-item>
+            
             </el-submenu>
           </el-menu>
+
+
         </el-card>
       </el-col>
     </el-row>
@@ -61,17 +68,17 @@ const nowMonth = nowDate.getMonth() + 1;
 const defaultSalaryHistory = '' + '@' + util.formatTime(nowDate, 'yyyyMM') // 默认获取历史返回数据有待商榷
 const menuList = [{
     title: '个人中心',
-    child: [{ name: '个人信息', path: '#/HR/personalInfo' }, { name: '个人简历', path: '#/HR/resume' }, { name: '简历完善', path: '#/HR/editResume' }]
+    child: [{ text: '个人信息', path: '/HR/personalInfo' }, { text: '个人简历', path: '/HR/resume' }, { text: '简历完善', path: '/HR/editResume' }]
   }, {
     title: '我要申请',
-    child: [{ name: '请假申请', path: '#/doc/docCommonApp/QJS' }, { name: '转正申请', path: '#/doc/docCommonApp/ZZS' }, { name: '离职申请', path: '#/doc/docCommonApp/LZS' }, { name: '工伤事故申请', path: '#/doc/docCommonApp/GSS' }, { name: '培训申请', path: '#/doc/docCommonApp/PXS' }, { name: '员工岗位变动申请', path: '#/doc/docCommonApp/RSB' }]
+    child: [{ text: '请假申请', path: '/doc/docCommonApp/QJS' }, { text: '转正申请', path: '/doc/docCommonApp/ZZS' }, { text: '离职申请', path: '/doc/docCommonApp/LZS' }, { text: '工伤事故申请', path: '/doc/docCommonApp/GSS' }, { text: '培训申请', path: '/doc/docCommonApp/PXS' }, { text: '员工岗位变动申请', path: '/doc/docCommonApp/RSB' }]
   },
   {
     title: '薪资绩效',
-    child: [{ name: '最新工资单', path: '#/HR/salary/1' }, { name: '历史工资单', path: '#/HR/salaryHistory/1' }]
+    child: [{ text: '最新工资单', path: '/HR/salary/1' }, { text: '历史工资单', path: '/HR/salaryHistory/1' }]
   }, {
     title: '相关链接',
-    child: [{ name: '社会保障系统', path: 'http://www.szsi.gov.cn/', target: '_blank' }, { name: '公积金系统', path: 'http://www.szzfgjj.com/', target: '_blank' },{name:'深圳人力局(入户)',path:'https://sz12333.gov.cn/rcyj/',target: '_blank'}]
+    child: [{ text: '社会保障系统', path: 'http://www.szsi.gov.cn/', target: '_blank' }, { text: '公积金系统', path: 'http://www.szzfgjj.com/', target: '_blank' },{text:'深圳人力局(入户)',path:'https://sz12333.gov.cn/rcyj/',target: '_blank'}]
   }
 ]
 export default {
@@ -103,6 +110,14 @@ export default {
     this.getFileLink();
   },
   methods: {
+    goToOthers(link) {
+      
+      if (/^http/.test(link.path)) {
+        window.open(link.path);
+      } else {
+        this.$router.push(link.path);
+      }
+    },
     searchSalary() {
       let startDate = util.formatTime(this.salaryDate[0], 'yyyyMM')
       let endDate = util.formatTime(this.salaryDate[1], 'yyyyMM')
@@ -158,6 +173,9 @@ $main:#0460AE;
 $sub:#1465C0;
 
 #homeHR {
+  .fontColor{
+    color:#0460AE
+  }
   padding-top: 10px;
   .searchSalary {
     background: #0460AE;

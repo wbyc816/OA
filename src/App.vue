@@ -14,7 +14,7 @@
               <span class="greetText">{{greetText}}好，欢迎您！</span>
               <router-link to="/HR/personalInfo"><i class="iconfont icon-user1"></i> {{userInfo.name}}</router-link>
               <a><i class="iconfont icon-1"></i> 简体</a>
-              <a href="#/set"><i class="iconfont icon-shezhi"></i> 设置</a>
+              <router-link to="/set"><i class="iconfont icon-shezhi"></i> 设置</router-link>
               <a @click="loginOut"><i class="iconfont icon-guanbi"></i> 登出</a>
             </div>
           </div>
@@ -157,6 +157,10 @@ export default {
     this.outBreadcrumbs();
   },
   methods: {
+    goToOthers() {
+      console.log(this.$router)
+      this.$router.push("#/set");
+    },
     loginOut() {
       this.delCookie('userId');
       location.href = this.baseUrl + "/login.html"
@@ -268,7 +272,7 @@ $brown: #985D55;
   left: 0;
   width: 100vw;
   z-index: 999;
-  background-color: $main;
+  background-color: #0170cb;
   background-image: url(assets/images/leftCorner.png);
   background-repeat: no-repeat;
   .rightNav {

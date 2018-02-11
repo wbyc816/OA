@@ -12,7 +12,7 @@
         <el-date-picker v-model="contractForm.createTime" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
       <el-form-item label="合同号" prop="contractNo" class="deptArea">
-        <el-input v-model="contractForm.contractNo" :maxlength="20">
+        <el-input v-model="contractForm.contractNo" :maxlength="200">
         </el-input>
       </el-form-item>
       <el-form-item label="优先级" prop="priority" placeholder="" class="arrArea">
@@ -269,7 +269,7 @@ export default {
           }
         })
       }
-      return num || ''
+      return num.toFixed(2) || ''
     },
     totalPrice(){
       var num=0;

@@ -8,9 +8,10 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="填表时间" prop="createTime" class="arrArea">
+      <el-form-item label="填表时间" prop="createTime" class="arrArea" >
         <el-date-picker v-model="contractForm.createTime" type="date" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
       </el-form-item>
+      <div class="clearBoth"></div>
       <el-form-item label="送修合同" prop="repairContract" v-if="isRead" class="clearBoth">
         <el-row :gutter="0">
           <el-col :span='18' class="repairContract">
@@ -24,7 +25,7 @@
         </el-row>
       </el-form-item>
       <el-form-item label="合同号" prop="contractNo" class="deptArea">
-        <el-input v-model="contractForm.contractNo" :maxlength="20" :disabled="isRead">
+        <el-input v-model="contractForm.contractNo" :maxlength="200" :disabled="isRead">
         </el-input>
       </el-form-item>
       <el-form-item label="优先级" prop="priority" placeholder="" class="arrArea">
@@ -42,11 +43,14 @@
           <el-option :label="item.accountBank+'/'+item.accountCode" :value="item.accountCode" v-for="item in supplierInfo"></el-option>
         </el-select>
       </el-form-item>
-      <div v-show="ifChangeSelect">
-      <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;" >
-        <li>开户银行 {{accountBank}}</li>
-        <li>收款账户 {{accountCode}}</li>
-      </ul>
+
+      
+      
+      <div v-if="ifChangeSelect">
+        <ul class="supplierInfo clearfix" v-if="supplierInfo" style="width: 750px;" >
+          <li>开户银行 {{accountBank}}</li>
+          <li>收款账户 {{accountCode}}</li>
+        </ul>
       </div>
       <!-- <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;">
         <li>开户银行 {{supplierInfo.accountBank}}</li>
@@ -318,8 +322,12 @@ export default {
       supplierBank:"",
       supplierBankAccountCode:"",
       supplierId:"",
+      SupplierName:"",
       year: new Date().getFullYear(),
       contractForm: {
+        supplierBank:"",
+        supplierBankAccountName:"",
+        supplierName:"",
         createTime: new Date(),
         contractCode: '',
         contractNo: '',
@@ -349,9 +357,9 @@ export default {
       },
       dialogRule: {
         contractCode: [{ required: true, message: '请选择合同子类型', trigger: 'blur' }],
-        repairContract: [{ required: true, message: '请选择送修合同', trigger: 'blur' }],
+        // repairContract: [{ required: true, message: '请选择送修合同', trigger: 'blur' }],
       },
-      repairContractDoc: '',
+      repairContractDoc: {},
       factoryForm: {
         supplierIds: [],
         currencyId: '',
@@ -451,7 +459,7 @@ export default {
           }
         })
       }
-      return num
+      return num.toFixed(2) || ''
     },
     ...mapGetters([
       'submitLoading',
@@ -487,8 +495,9 @@ export default {
           "supplierBank": this.supplierBank, //供应商开户银行
           "supplierBankAccountName": this.supplierBankAccountName, //供应商开户账号名
           "supplierBankAccountCode": this.accountCode, //供应商开户账号编号
-          supplierId: this.supplierId, //  供应商id
+          supplierId: this.supplierId||this.id, //  供应商id
         },
+        repairContract: this.repairContractDoc.id,
         budgetTable: this.budgetTable,
         factoryTable: this.factoryTable,
         contractForm: this.contractForm,
@@ -498,9 +507,10 @@ export default {
       this.$emit('saveMiddle', params);
     },
     getDraft(obj) {
+      this.repairContractDoc.id=obj.repairContract;
       this.combineObj(this.contractForm, obj.contractForm, ['createTime']);
       this.contractForm.createTime = new Date(obj.contractForm.createTime);
-      if(this.contractForm.contractCode=='DOC2102'){
+      if(this.contractForm.contractCode=='DOC2102'&&this.repairContractDoc.id){
         this.isRead=true;
       }
       this.dialogForm=obj.dialogForm;
@@ -548,11 +558,6 @@ export default {
     submitAll() {
       var contractType = this.contractCodeList.find(d => d.dictCode == this.contractForm.contractCode);
       var currency = this.currencyList.find(c => c.currencyCode === this.contractForm.currencyId);
-
-      
-      console.log(666)
-      console.log(this.supplierBank)
-      console.log(666)
       var airmRor = {
         docTypeCode: contractType.dictCode, // 合同子类型
         docTypeName: contractType.dictName, // 合同子类型
@@ -561,8 +566,7 @@ export default {
         supplierName:this.supplierName,
         "supplierBank": this.supplierBank, //供应商开户银行
         "supplierBankAccountName": this.supplierBankAccountName, //供应商开户账号名
-        // "supplierBankAccountCode": this.accountCode, //供应商开户账号编号
-        supplierId: this.supplierId, //  供应商id
+        supplierId: this.supplierId||this.id, //  供应商id
 
         // supplierId: this.supplierInfo.id, //  供应商id
         // supplierName: this.supplierInfo.supplierName, //  供应商名
@@ -586,7 +590,7 @@ export default {
         exchangeRate: currency.exchangeRate, //    汇率
         repairContract: this.repairContractDoc.id, //   送修合同
       }
-      console.log(airmRor)
+      // console.log(airmRor)
       this.$emit('submitMiddle', { airmRor: airmRor, airmRorItems: this.budgetTable, airmRorRepairs: this.factoryTable })
     },
     typeChange(val) {
@@ -632,17 +636,17 @@ export default {
       }
     },
     supplierChange(val) {
-       if(val.bankinfo){
-        console.log(val)
+       if(val&&val.length>4){
         var len = this.contractForm.supplierIds.length;
+        console.log(this.contractForm.supplierIds)
         var temp = this.supplierList;
-      
         for (var i = 0; i < len; i++) {
           temp = temp.find(s => s.id == this.contractForm.supplierIds[i]);
           if (temp.supplier && temp.supplier.length != 0) {
             temp = temp.supplier;
           }
-        } 
+        }
+        console.log(temp)
         this.id=temp.id;
         this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
         .then(res => {
@@ -660,6 +664,7 @@ export default {
           }
         })
       }else{
+      console.log(this.contractForm.supplierIds)
       var len = this.contractForm.supplierIds.length;
       var temp = this.supplierList;
       for (var i = 0; i < len; i++) {
@@ -670,7 +675,7 @@ export default {
       }
       this.id=temp.id;
       this.supplierName=temp.supplierName;
-      this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
+      this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId||val })
           .then(res => {
             if (res.status == 0) {
               this.supplierInfo =  res.data;
@@ -684,6 +689,7 @@ export default {
                  this.ifSupplierChange=false;
                  this.ifChangeSelect=true;
               }else{
+                // console.log(666666)
                 this.ifSupplierChange=true;
                 this.ifChangeSelect=false;
               }
@@ -866,12 +872,28 @@ export default {
       return this.repairContractDoc.id === row.id ? 'selDoc' : '';
     },
     selectDoc(row) {
+      console.log(row);
+      
+      this.combineObj(this.contractForm, row.airmRor, ['createTime']);
       this.dialogForm.repairContract = row.docTitle;
+      this.accountBank=row.airmRor.supplierBank;
+      this.accountCode=row.airmRor.supplierName;
+      this.supplierInfo=true;
+      // this.ifChangeSelect=true;
+      // this.ifSupplierIds=false;
+      this.SupplierName=row.airmRor.supplierBankAccountName;
       this.repairContractDoc = row;
       this.dialogTableVisible = false;
+      // this.supplierName=row.airmRor.supplierName;
+      // this.supplierBank=row.airmRor.supplierBank; //供应商开户银行
+      // this.supplierBankAccountName=row.airmRor.supplierBankAccountName; //供应商开户账号名
+      // this.supplierId=row.airmRor.supplierId; //  供应商id
+      this.id=row.airmRor.supplierId;
       if (!this.dialogVisible) {
         this.handleRead();
       }
+      console.log(this.contractForm.supplierIds)
+
     },
     setOptions(options) {
       this.searchOptions = options;
@@ -891,6 +913,7 @@ export default {
         }, 200)
         if (res.status == 0 && res.data) {
           this.extraDocs = res.data.pagedList;
+          
           this.totalSize = res.data.totalSize;
         } else {
           this.extraDocs = [];
@@ -905,23 +928,32 @@ export default {
       this.params.pageNumber = 1;
     },
     confirmType() {
+      var that=this;
       this.$refs.dialogForm.validate((valid) => {
         if (valid) {
           this.dialogVisible = false;
           if (this.dialogForm.contractCode == 'DOC2102') {
-            this.isRead = true;
-            this.handleRead();
+            if(this.dialogForm.repairContract){
+              this.isRead = true;
+              this.handleRead();
+              if(that.dialogForm.repairContract){
+                  that.ifChangeSelect=true;
+              }
+            }
           }
           this.contractForm.contractCode = this.dialogForm.contractCode;
         } else {
           return false;
         }
       });
+
+       
     },
     handleRead() {
       this.factoryTable = this.repairContractDoc.airmRorRepairs; //  厂家
       this.budgetTable = this.repairContractDoc.airmRorItems; //预算
       this.year = this.repairContractDoc.airmRorItems[0].budgetYear;
+      console.log(this.repairContractDoc.airmRor)
       this.combineObj(this.contractForm, this.repairContractDoc.airmRor, ['createTime', 'isSupplierProtocol', 'isSupplierCheck', 'newReferencePrice', 'purchaseReferencePrice', 'repairPurchasePriceRate']);
       this.setSupplier(this.repairContractDoc.airmRor.supplierId);
     },
@@ -930,7 +962,7 @@ export default {
       this.supplierList.forEach((item) => {
         item.supplier.forEach(child => {
           if (child.id === id) {
-            console.log(id)
+            // console.log(id)
             temp.push(item.id);
             temp.push(child.id);
             this.contractForm.supplierIds = temp;

@@ -23,13 +23,13 @@
                         <el-dropdown-item v-for="Dept in Depts" :command="[Dept.id,Dept.name]">{{Dept.name}}</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
-                    <el-dropdown menu-align="start" trigger="click" class="choose_dropdown"  @command="handleCommand">
+                    <el-dropdown menu-align="start" trigger="click" class="choose_dropdown"  @command="handleCommand" @visible-change="clickLeftFileType">
                      <el-button type="primary">
                       {{choose_type}}<i class="iconfont icon-xiasanjiao-copy"></i>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown" class="choose_menu">
+                    <el-dropdown-menu slot="dropdown" class="choose_menu" >
                       <el-dropdown-item  :command="['','选择类型']">选择类型</el-dropdown-item>
-                      <el-dropdown-item  v-for="leftFileType in leftFileTypes" :command="[leftFileType.dictCode,leftFileType.dictName]">{{leftFileType.dictName}}</el-dropdown-item>
+                      <el-dropdown-item   v-for="leftFileType in leftFileTypes" :command="[leftFileType.dictCode,leftFileType.dictName]">{{leftFileType.dictName}}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </span>
@@ -187,12 +187,14 @@ export default {
     this.getData();
   },
   methods: {
-    
     click_highSearch() {
       this.ishighSearch = 1;
     },
     close_highSearch() {
       this.ishighSearch = 0;
+    },
+    clickLeftFileType(){
+      this.getleftFileType();
     },
     getData() {
       this.count=++this.count;

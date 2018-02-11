@@ -39,7 +39,7 @@
           </p>
           <el-tabs v-model="activeName" class="myTab" @tab-click="getNew">
             <el-tab-pane :label="list.name" :name="list.code" v-for="(list,index) in newsList" v-if="list.code!='ADM0405'&&list.code!='ADM0407'">
-              <router-link :to="'/newsDetail/'+news.id" class="newBox clearfix" v-for="(news,newIndex) in list.child" v-if="newIndex<6">
+              <router-link :to="'/newsDetail/'+news.id" class="newBox clearfix" v-for="(news,newIndex) in list.child" v-if="newIndex<8">
                 <p><span class="title">{{news.docTitle}}</span> <span class="newsnew" v-if="news.isRead==='0'">NEW</span></p>
                 <p><span><i class="iconfont icon-eye"></i><span>{{news.browse}}</span>{{news.createTime | time('xie')}}</span>
                 </p>
@@ -116,7 +116,10 @@
         <!-- 航班动态 -->
         <el-card class="flightStatus">
           <span slot="header">航班动态</span>
+            
+
           <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate" class="searchDate" :editable="false" :clearable="false" :picker-options="pickerOptions0"></el-date-picker>
+         
           <el-radio-group v-model="flightStatusType" class="myRadio">
             <el-radio-button label="flightNo">航班号<i></i></el-radio-button>
             <el-radio-button label="route">航段<i></i></el-radio-button>
@@ -160,7 +163,7 @@
 
             <!-- 飞行任务书数据异常监控权限 userInfo.isDocsec[3]判断 1 有 0 无 -->
             <el-menu-item index="8" @click.native="goToOthers('/flightException')" v-if="userInfo.isDocsec&&userInfo.isDocsec[3]==1"><i class="iconfont icon-plane1"></i>飞行任务书数据异常监控<i class="el-icon-arrow-right"></i></el-menu-item>
-            <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item>
+            <!-- <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item> -->
 
             <!-- QAR数据展示权限 userInfo.isDocsec[4]判断 1 有 0 无 -->
             <el-menu-item index="10" @click.native="goToOthers('/QARData')" v-if="userInfo.isDocsec&&userInfo.isDocsec[4]==1"><i class="iconfont icon-edit"></i>QAR数据展示<i class="el-icon-arrow-right"></i></el-menu-item>
@@ -219,7 +222,7 @@ const otherLinks = [
   // { "icon": "xiazai1", "text": "各类模板下载", "link": "/templateDownload" },
   { "icon": "changyong", "text": "常用办公软件", "link": "/softDownload" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
-  { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
+  // { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
   { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080" },
   // { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
@@ -339,8 +342,9 @@ export default {
       pickerOptions0: {
         disabledDate(time) {
           var td = new Date();
-          var d = new Date(td.getFullYear() + '-' + (td.getMonth() + 1) + '-' + td.getDate() + ' 00:00:00').getTime();
-          return time.getTime() < (d - 24 * 60 * 60 * 1000) || time.getTime() > (d + 24 * 60 * 60 * 1000);
+          // var d = new Date(td.getFullYear() + '-' + (td.getMonth() + 1) + '-' + td.getDate() + ' 00:00:00').getTime();
+          // console.log(td.getTime())
+          return time.getTime() < (td.getTime() - 48 * 60 * 60 * 1000) || time.getTime() > (td.getTime() + 24 * 60 * 60 * 1000);
         }
       },
       homeVisible: false
@@ -368,10 +372,14 @@ export default {
     // }
     let temp = new Date();
     let month = temp.getMonth() + 1;
+    let day=temp.getDate();
     if (month < 10) {
       month = '0' + month;
     }
-    this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
+    if(day<10){
+      day = '0' + day;
+    }
+    this.searchDate = temp.getFullYear() + '-' + month + '-' + day;
     this.getDoneList();
     this.getNews();
     this.getFlightTrends();
@@ -429,6 +437,7 @@ export default {
           if (/^http/.test(link.link)) {
             window.open(link.link);
           } else {
+            console.log(link)
             this.$router.push(link.link);
           }
         }
@@ -443,7 +452,12 @@ export default {
       if (month < 10) {
         month = '0' + month;
       }
-      this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
+      let day = temp.getDate();
+      if (day < 10) {
+        day = '0' + day;
+      }
+
+      this.searchDate = temp.getFullYear() + '-' + month + '-' + day;
     },
     searchFlight() {
       if (this.flightStatusType == "route") {
@@ -654,8 +668,8 @@ $sub:#1465C0;
       padding: 0;
     }
     .myTab .el-tabs__header .el-tabs__item {
-      line-height: 70px;
-      height: 70px;
+      line-height:82px;
+      height: 82px;
     }
     .el-tab-pane {
       .newBox {

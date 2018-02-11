@@ -2,7 +2,7 @@
   <div class="quitDetail">
     <el-col :span="12" class="rightBorder">
       <h1 class="title">入公司时间</h1>
-      <p class="textContent">{{info.joinDate}}</p>
+      <p class="textContent">{{info.joinDate | time('ch')}}</p>
     </el-col>
     <el-col :span="12">
       <h1 class="title">预计离职日期</h1>

@@ -147,7 +147,11 @@ export default {
       if (month < 10) {
         month = '0' + month;
       }
-      this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
+      let day = temp.getDate();
+      if (day < 10) {
+        day = '0' + day;
+      }
+      this.searchDate = temp.getFullYear() + '-' + month + '-' + day;
       this.getData();
     }
 
@@ -163,7 +167,11 @@ export default {
       if (month < 10) {
         month = '0' + month;
       }
-      this.searchDate = temp.getFullYear() + '-' + month + '-' + temp.getDate();
+      let day = temp.getDate();
+      if (day < 10) {
+        day = '0' + day;
+      }
+      this.searchDate = temp.getFullYear() + '-' + month + '-' + day;
     },
     getData() {
       if (this.flightStatusType == "route") {

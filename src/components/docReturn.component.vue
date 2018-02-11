@@ -1,5 +1,5 @@
 <template>
-  <div class="docReturn" @click="open">
+  <div class="docReturn" @click="open" v-if="false">
     <slot></slot>
   </div>
 </template>
@@ -10,7 +10,7 @@ export default {
     docId: '',
     warnText: {
       type: String,
-      default:'此操作將公文退回到上一节点'
+      default:'此操作公文将删除本节点并退回到上一节点'
     }
   },
   data() {
