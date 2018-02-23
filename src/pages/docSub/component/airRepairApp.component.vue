@@ -538,11 +538,11 @@ export default {
       }
     },
     checkTable() {
-      if (this.factoryTable.length == 0) {
-        this.$message.warning('请填加厂家信息');
-        this.$emit('submitMiddle', false);
-        return false;
-      }
+      // if (this.factoryTable.length == 0) {
+      //   this.$message.warning('请填加厂家信息');
+      //   this.$emit('submitMiddle', false);
+      //   return false;
+      // }
       if (this.budgetTable.length == 0) {
         this.$message.warning('请填加预算项');
         this.$emit('submitMiddle', false);
