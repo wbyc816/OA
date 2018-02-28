@@ -7,11 +7,11 @@
       </div>
       <el-row :gutter="10">
         <el-col :span="6">
-          <el-input placeholder="航班号" v-model.trim="params.flightNo" :maxlength="50"></el-input>
+          <el-input placeholder="航班号(只需要输入4位数字)" v-model.trim="params.flightNo" :maxlength="50"></el-input>
         </el-col>
 
         <el-col :span="6">
-          <el-input placeholder="机号" v-model.trim="params.acReg" :maxlength="50" ></el-input>
+          <el-input placeholder="机号(只需要输入4位数字)" v-model.trim="params.acReg" :maxlength="50" ></el-input>
         </el-col>
 
         <el-col :span="6">
