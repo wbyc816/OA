@@ -27,56 +27,10 @@
             </template>
         </el-table-column>
 
-       
-
-         
-
          <el-table-column prop="diffEngonTime" label="滑出差值时间" width="120">
             <template scope="scope">
                 <span v-if="scope.row.diffEngonTime_sts==1" style="color:red">{{ scope.row.diffEngonTime}}分钟</span>
                 <span v-if="scope.row.diffEngonTime_sts==0">{{ scope.row.diffEngonTime}}分钟</span>
-            </template>
-        </el-table-column>
-
-         <el-table-column prop="acarsAtd" label="A起飞时间" width="100">
-             <template scope="scope">
-                <span>{{ scope.row.acarsAtd | time('hours')}}</span>
-            </template>
-        </el-table-column>
-
-        
-
-         <el-table-column prop="takeoffTime" label="Q起飞时间" width="100">
-             <template scope="scope">
-                <span>{{ scope.row.takeoffTime | time('hours')}}</span>
-            </template>
-        </el-table-column>
-
-        <el-table-column prop="diffTakeoffTime" label="起飞差值时间" width="120">
-            <template scope="scope">
-                <span v-if="scope.row.diffTakeoffTime_sts==1" style="color:red">{{ scope.row.diffTakeoffTime}}分钟</span>
-                <span v-if="scope.row.diffTakeoffTime_sts==0">{{ scope.row.diffTakeoffTime}}分钟</span>
-            </template>
-        </el-table-column>
-
-        <el-table-column prop="acarsAta" label="A降落时间" width="100">
-            <template scope="scope">
-                <span>{{ scope.row.acarsAta | time('hours')}}</span>
-            </template>
-        </el-table-column>
-
-       
-
-        <el-table-column prop="landingTime" label="Q降落时间" width="100">
-            <template scope="scope">
-                <span>{{ scope.row.landingTime | time('hours')}}</span>
-            </template>
-        </el-table-column>
-
-          <el-table-column prop="diffLandingTime" label="降落差值时间" width="120">
-             <template scope="scope">
-                <span v-if="scope.row.diffLandingTime_sts==1" style="color:red">{{ scope.row.diffLandingTime}}分钟</span>
-                <span v-if="scope.row.diffLandingTime_sts==0">{{ scope.row.diffLandingTime}}分钟</span>
             </template>
         </el-table-column>
 
@@ -85,9 +39,6 @@
                 <span>{{ Date.parse(new Date(scope.row.aEngoffTime)) | time("hours") }}</span>
             </template>
         </el-table-column>
-
-    
-        
 
         <el-table-column prop="engoffTime" label="Q关车时间" width="100">
             <template scope="scope">
@@ -108,7 +59,6 @@
          <el-table-column prop="departure3Code" label="出发地三字码" width="120">
         </el-table-column>
 
-
         <el-table-column prop="arrivalAirportName" label="目的地" width="130">
         </el-table-column>
 
@@ -121,6 +71,46 @@
             </template>
         </el-table-column>
 
+        <el-table-column prop="diffFlightTime" label="飞行时间" width="100">
+            <template scope="scope">
+                <span>{{scope.row.diffFlightTime}} 分钟</span>
+            </template>
+        </el-table-column>
+
+        <el-table-column prop="aAIRTime" label="A空中时间" width="120">
+            <template scope="scope">
+               <span>{{scope.row.aAIRTime}} 分钟</span>
+            </template>
+        </el-table-column>
+
+        <el-table-column prop="qAIRTime" label="Q空中时间" width="120">
+            <template scope="scope">
+               <span>{{scope.row.qAIRTime}} 分钟</span>
+            </template>
+        </el-table-column>
+
+        <el-table-column prop="diffAirTime" label="空中时间差值" width="120">
+            <template scope="scope">
+                <span v-if="scope.row.diffAirTime_sts==1" style="color:red">{{ scope.row.diffAirTime}}分钟</span>
+                <span v-if="scope.row.diffAirTime_sts==0">{{ scope.row.diffAirTime}}分钟</span>
+            </template>
+        </el-table-column>
+
+        <el-table-column prop="remark" label="备注" width="115">
+            <template scope="scope">
+               <el-input name="remark"  type="textarea" :rows="1" v-model="scope.row.remark" style="border:0px" :readonly="readonlyOne" ></el-input>
+            </template>
+        </el-table-column>
+
+        <el-table-column  label="操作" width="200">
+          <template scope="scope">
+            <el-button @click.native.prevent="editTableOne(scope)" type="text" size="small">编辑
+            </el-button>
+            <el-button @click.native.prevent="saveTableOne(scope)" type="text" size="small">保存
+            </el-button>
+          </template>
+        </el-table-column>
+
         </el-table>
         <div class="pageBox" >
             <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="10" layout="total, prev, pager, next, jumper" :total="totalSize">
@@ -129,7 +119,6 @@
 
         <div slot="header">
         <div style="background:white;font-size:18px;padding:10px">{{bottomTitle}}</div>
-        
         </div>
 
         <el-table :data="compareData" stripe style="width: 100%" :fit="true" v-loading.body="searchLoading">
@@ -157,54 +146,10 @@
             </template>
         </el-table-column>
 
-         
-
          <el-table-column prop="diffEngonTime" label="滑出差值时间" width="130">
             <template scope="scope">
                 <span v-if="scope.row.diffEngonTime_sts==1" style="color:red">{{ scope.row.diffEngonTime}}分钟</span>
                 <span v-if="scope.row.diffEngonTime_sts==0">{{ scope.row.diffEngonTime}}分钟</span>
-            </template>
-        </el-table-column>
-
-         <el-table-column prop="acarsAtd" label="A起飞时间" width="100">
-             <template scope="scope">
-                <span>{{ scope.row.acarsAtd | time('hours')}}</span>
-            </template>
-        </el-table-column>
-
-        
-
-         <el-table-column prop="takeoffTime" label="Q起飞时间" width="100">
-             <template scope="scope">
-                <span>{{ scope.row.takeoffTime | time('hours')}}</span>
-            </template>
-        </el-table-column>
-
-        <el-table-column prop="diffTakeoffTime" label="起飞差值时间" width="130">
-            <template scope="scope">
-                <span v-if="scope.row.diffTakeoffTime_sts==1" style="color:red">{{ scope.row.diffTakeoffTime}}分钟</span>
-                <span v-if="scope.row.diffTakeoffTime_sts==0">{{ scope.row.diffTakeoffTime}}分钟</span>
-            </template>
-        </el-table-column>
-
-        <el-table-column prop="acarsAta" label="A降落时间" width="100">
-            <template scope="scope">
-                <span>{{ scope.row.acarsAta | time('hours')}}</span>
-            </template>
-        </el-table-column>
-
-       
-
-        <el-table-column prop="landingTime" label="Q降落时间" width="100">
-            <template scope="scope">
-                <span>{{ scope.row.landingTime | time('hours')}}</span>
-            </template>
-        </el-table-column>
-
-          <el-table-column prop="diffLandingTime" label="降落差值时间" width="130">
-             <template scope="scope">
-                <span v-if="scope.row.diffLandingTime_sts==1" style="color:red">{{ scope.row.diffLandingTime}}分钟</span>
-                <span v-if="scope.row.diffLandingTime_sts==0">{{ scope.row.diffLandingTime}}分钟</span>
             </template>
         </el-table-column>
 
@@ -213,9 +158,6 @@
                 <span>{{ Date.parse(new Date(scope.row.aEngoffTime)) | time("hours") }}</span>
             </template>
         </el-table-column>
-
-    
-        
 
         <el-table-column prop="engoffTime" label="Q关车时间" width="100">
             <template scope="scope">
@@ -246,6 +188,45 @@
              <template scope="scope">
                 <span>{{ scope.row.pilot}} {{ scope.row.copilot}}</span>
             </template>
+        </el-table-column>
+
+          <el-table-column prop="diffFlightTime" label="飞行时间" width="100">
+            <template scope="scope">
+                <span>{{scope.row.diffFlightTime}} 分钟</span>
+            </template>
+        </el-table-column>
+
+         <el-table-column prop="aAIRTime" label="A空中时间" width="120">
+            <template scope="scope">
+               <span>{{scope.row.aAIRTime}} 分钟</span>
+            </template>
+        </el-table-column>
+
+        <el-table-column prop="qAIRTime" label="Q空中时间" width="120">
+            <template scope="scope">
+               <span>{{scope.row.qAIRTime}} 分钟</span>
+            </template>
+        </el-table-column>
+
+        <el-table-column prop="diffAirTime" label="空中时间差值" width="120">
+            <template scope="scope">
+                <span >{{ scope.row.diffAirTime}}分钟</span>
+            </template>
+        </el-table-column>
+
+        <el-table-column prop="remark" label="备注" width="115">
+            <template scope="scope">
+               <el-input name="remarkTwo"  type="textarea" :rows="1" v-model="scope.row.remark" style="border:0px" :readonly="readonlyOne" ></el-input>
+            </template>
+        </el-table-column>
+
+        <el-table-column  label="操作" width="200">
+          <template scope="scope">
+            <el-button @click.native.prevent="editTableTwo(scope)" type="text" size="small">编辑
+            </el-button>
+            <el-button @click.native.prevent="saveTableOne(scope)" type="text" size="small">保存
+            </el-button>
+          </template>
         </el-table-column>
 
         </el-table>
@@ -301,6 +282,10 @@ export default {
       totalSize: 0,
       totalSizeTwo: 0,
       searchLoading: false,
+      readonlyOne:true,
+      readonlyTwo:true,
+      input__inner_two:false,
+      remark:"",
       flightTrends: {
         "sumFlight": 0,
         "departure": 0,
@@ -315,6 +300,7 @@ export default {
     }
   },
   mounted() {
+    //   this.editTableOne();
   },
   computed: {
     ...mapGetters([
@@ -332,7 +318,48 @@ export default {
     this.getFlightTrends();
   },
   methods: {
+    editTableOne(scope){
+        if(scope){
+            var index=scope.$index;
+            var rel=document.getElementsByName("remark");
+            for(var i=0;i<rel.length;i++){
+                document.getElementsByName("remark")[i].setAttribute("readonly","true")
+                // document.getElementsByName("remark")[i].style.border="0px solid #ccc";
+            }
+            document.getElementsByName("remark")[index].removeAttribute("readonly");
+            document.getElementsByName("remark")[index].style.border="1px solid #ccc";
 
+        }else{
+            var rel=document.getElementsByName("remark");
+            console.log(rel.length)
+            for(var i=0;i<rel.length;i++){
+                document.getElementsByName("remark")[i].setAttribute("readonly","true")
+                document.getElementsByName("remark")[i].style.border="0px solid #ccc";
+            }
+        }
+    },
+    saveTableOne(scope){
+        this.$http.post('/foc/updateRemark', { id: scope.row.flightId,remark:scope.row.remark })
+        .then(res => {
+          if(res.status==0){
+            this.$message('备注修改成功');
+          }else{
+            this.$message('备注修改失败');
+          }
+          
+        })
+    },
+
+    editTableTwo(scope){
+        var index=scope.$index;
+        var rel=document.getElementsByName("remarkTwo");
+        for(var i=0;i<rel.length;i++){
+            document.getElementsByName("remarkTwo")[i].setAttribute("readonly","true")
+            // document.getElementsByName("remark")[i].style.border="0px solid #ccc";
+        }
+        document.getElementsByName("remarkTwo")[index].removeAttribute("readonly");
+        document.getElementsByName("remarkTwo")[index].style.border="1px solid #ccc";
+    },
     getDate(){
       this.params.endTime=util.formatTime((new Date()).getTime(), 'yyyy-MM-dd');
       this.params.beginTime= util.formatTime((new Date()).getTime() - 3600 * 1000 * 24 *30, 'yyyy-MM-dd');
@@ -342,10 +369,7 @@ export default {
       this.$http.post('/index/getFlightTrends', { flightDate: this.timeFilter(new Date().getTime(), 'date') })
         .then(res => {
           this.flightTrends = res.data;
-        //   console.log(6666)
-        //   console.log( this.flightTrends)
-
-   })
+      })
     },
     getData() {
       this.topTitle="飞行计划任务书数据监控"+" "+this.params.beginTime+"到"+this.params.endTime;
@@ -361,6 +385,8 @@ export default {
         }, 200)
         if (res.status == 0) {
            that.searchLoading = false;
+          
+       
           this.recordData = res.data.records;
           this.totalSize = res.data.total;
         //  this.graphdata.datasets[0].data.push(0.5);
@@ -429,6 +455,11 @@ export default {
       this.beginTime=options.beginTime;
       this.endTime=options.endTime;
       this.params = options;
+      if(options.flightNo)
+      this.params.flightNo="DZ"+options.flightNo;
+      if(options.acReg)
+      this.params.acReg="B"+options.acReg;
+      console.log(this.params)
       this.getData();
       this.clickSearch=true,
       this.searchLoading = true;
@@ -450,6 +481,14 @@ $purple: #0460AE;
     margin-bottom: 20px;
   }
   margin-bottom:30px;
+  .el-input__inner {
+    //   border:0px;
+      background: transparent;
+  }
+//   .el-input__inner_two {
+//       border:1px solid red;
+//       background: transparent;
+//   }
 
 }
 

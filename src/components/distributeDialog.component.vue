@@ -16,9 +16,10 @@
           </div>
           <el-button class="addButton" @click="personVisible = true"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
+        
         <el-form-item label="分发意见" prop="res">
           <!-- <el-input type="textarea" :rows="6" resize='none' v-model="distributeForm.res" :maxlength="100"></el-input> -->
-          <task-content v-model="distributeForm.res"></task-content>
+          <task-content v-model="res"></task-content>
 
         </el-form-item>
         <el-form-item>
@@ -43,8 +44,8 @@ export default {
       dialogVisible: false,
       personVisible: false,
       submitLoading: false,
+      res: '',
       distributeForm: {
-        res: '',
         all: '',
         personList: [],
         depList: []
@@ -93,7 +94,7 @@ export default {
         "distDeptName": this.userInfo.deptVo.dept,
         "distUserId": this.userInfo.empId,
         "distUserName": this.userInfo.name,
-        "content": this.distributeForm.res,
+        "content": this.res,
         "docId": this.docId,
         "operateType": '1',
         "empIds": [],
@@ -127,6 +128,7 @@ export default {
         })
     },
     updatePerson(payLoad) {
+      console.log(payLoad)
       this.personVisible = false;
       this.distributeForm = payLoad;
     },

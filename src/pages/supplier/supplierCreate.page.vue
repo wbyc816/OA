@@ -330,7 +330,7 @@ export default {
         // accountName: '',
         // accountCode: '',
         
-
+        isDetail:false,
         contactName: '',
         contactTitleCode: '',
         contactJobtitle: '',
@@ -683,6 +683,7 @@ export default {
       this.$http.post('/Supplier/getSupplierInfo', { id: this.$route.params.id })
         .then(res => {
           if (res.status == 0) {
+            this.isDetail=true;
             this.suplierId=res.data.supplier.supplierId;
             this.supplierBankId=res.data.supplier.supplierBankId;
             this.isPersonal = res.data.supplier.supplierTypeCode == 'ADM0111';
@@ -697,6 +698,7 @@ export default {
               res.data.supplierBanks[i].timeline=util.formatTime(res.data.supplierBanks[i].accountFrom, 'yyyy-MM-dd')+"/"+util.formatTime(res.data.supplierBanks[i].accountTo, 'yyyy-MM-dd');
            }
             this.accountTable = res.data.supplierBanks?res.data.supplierBanks:[];
+            console.log(this.accountTable)
             if (res.data.supplierBanks.accountFrom) {
               this.appForm.timeline.push(new Date(res.data.supplier.accountFrom));
               this.appForm.timeline.push(new Date(res.data.supplier.accountTo));
@@ -768,9 +770,9 @@ export default {
     },
     typeChange(val) {
       if(this.isPersonal = val == 'ADM0111'){
+        if(this.isDetail==false)
         this.accountTable=[];
       }
-      
     },
     licenseSuccess(response, file, fileList) {
       this.appForm.supplierLicense = response.data
