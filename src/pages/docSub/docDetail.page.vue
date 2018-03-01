@@ -135,7 +135,7 @@
           <el-button class="addButton" @click="selectArchivePerson"><i class="el-icon-plus"></i></el-button>
         </el-form-item>
         <el-form-item label="分发意见" prop="res">
-          <task-content v-model="archiveForm.res"></task-content>
+          <task-content v-model="res"></task-content>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="dialogSubmitButton" @click="dialogSubmit">分发</el-button>
@@ -257,8 +257,8 @@ export default {
       DialogSubmitVisible: false,
       dialogArchivePersonVisible: false,
       currentView: '',
+      res: '',
       archiveForm: {
-        res: '',
         all: '',
         personList: [],
         depList: []
@@ -599,7 +599,7 @@ export default {
         "distDeptName": this.userInfo.deptVo.dept,
         "distUserId": this.userInfo.empId,
         "distUserName": this.userInfo.name,
-        "content": this.archiveForm.res,
+        "content": this.res,
         "docId": this.$route.params.id,
         "operateType": '1',
         "empIds": [],
