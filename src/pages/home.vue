@@ -19,7 +19,7 @@
             <el-carousel-item v-for="(list,index) in doneList" :key="index">
               <el-row :gutter="20">
                 <el-col :span="doneLength>3?12:24" v-for="(item,itemIndex) in list" :class="{higher:itemIndex>1&&doneLength>3}">
-                  <router-link :to="{path:'/doc/docDetail/'+item.id,query:{code:item.docTypeCode}}">
+                  <router-link target= "_blank" :to="{path:'/doc/docDetail/'+item.id,query:{code:item.docTypeCode}}">
                     <span class="index">{{item.index}}</span>
                     <p class="title">{{item.docTitle}}</p>
                     <div class="timeline">
@@ -35,11 +35,11 @@
         <!-- 新闻 -->
         <el-card class="news">
           <p slot="header"><span>新闻</span>
-            <router-link to="FilesHome">更多</router-link>
+            <router-link target= "_blank" to="FilesHome">更多</router-link>
           </p>
           <el-tabs v-model="activeName" class="myTab" @tab-click="getNew">
             <el-tab-pane :label="list.name" :name="list.code" v-for="(list,index) in newsList" v-if="list.code!='ADM0405'&&list.code!='ADM0407'">
-              <router-link :to="'/newsDetail/'+news.id" class="newBox clearfix" v-for="(news,newIndex) in list.child" v-if="newIndex<8">
+              <router-link target= "_blank" :to="'/newsDetail/'+news.id" class="newBox clearfix" v-for="(news,newIndex) in list.child" v-if="newIndex<8">
                 <p><span class="title">{{news.docTitle}}</span> <span class="newsnew" v-if="news.isRead==='0'">NEW</span></p>
                 <p><span><i class="iconfont icon-eye"></i><span>{{news.browse}}</span>{{news.createTime | time('xie')}}</span>
                 </p>
@@ -52,7 +52,7 @@
           <el-row>
             <el-col :span="12" class="shareWith">
               <p> <i class="iconfont icon-renmian"></i> 人事任免
-                <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0301' }}">更多</router-link>
+                <router-link target= "_blank" :to="{ name: 'newsListHr', params: { classify: 'FIL0301' }}">更多</router-link>
               </p>
               <ul>
                 <li v-for="(hr,index) in hr1" v-if="index<3" @click="goTo(hr)">
@@ -63,7 +63,7 @@
             </el-col>
             <el-col :span="12" class="shareWith myShare">
               <p> <i class="iconfont icon-guizhang"></i> 规章制度
-                <router-link :to="{ name: 'newsListHr', params: { classify: 'FIL0303' }}">更多</router-link>
+                <router-link target= "_blank" :to="{ name: 'newsListHr', params: { classify: 'FIL0303' }}">更多</router-link>
               </p>
               <ul>
                 <li v-for="(hr,index) in hr2" v-if="index<3" @click="goTo(hr)">
@@ -428,7 +428,7 @@ export default {
         if (/^http/.test(link)) {
           window.open(link);
         } else {
-          this.$router.push(link);
+          window.open(location.href.slice(0,location.href.indexOf("#")+1)+link)
         }
       } else {
         if (link.params) {
@@ -437,8 +437,9 @@ export default {
           if (/^http/.test(link.link)) {
             window.open(link.link);
           } else {
-            console.log(link)
-            this.$router.push(link.link);
+            console.log(link.link)
+            // this.$router.push(link.link);
+            window.open(location.href.slice(0,location.href.indexOf("#")+1)+link.link)
           }
         }
       }
@@ -558,7 +559,8 @@ export default {
         })
     },
     goTo(data) {
-      this.$router.push('/HR/newsDetailHr/' + data.fileId);
+      // this.$router.push('/HR/newsDetailHr/' + data.fileId);
+      window.open(location.href.slice(0,location.href.indexOf("#")+1)+'/HR/newsDetailHr/' + data.fileId)
     }
   }
 }

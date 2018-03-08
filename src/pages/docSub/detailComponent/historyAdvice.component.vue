@@ -89,7 +89,14 @@ export default {
       'submitLoading'
     ])
   },
+  created() {
+    this.show(this.$route);
+  },
   methods: {
+    show(route){
+      if(route.query.code=="CLB"||route.query.code=="YFK"|| route.query.code == 'FKS'|| route.query.code == 'JKS'|| route.query.code == 'BXS'|| route.query.code == 'YSS')
+      this.moreFlag=true;
+    }
   }
 }
 

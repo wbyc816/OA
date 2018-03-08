@@ -131,10 +131,11 @@ export default {
     search(val) {
       if(val){
         this.paginate.currentPage=1;
+
       }
       api.getDutyMessage({
-        startDate: this.startDate,
-        endDate: this.endDate,
+        startDate: this.startDate|| util.formatTime(new Date(), 'yyyyMMdd'),
+        endDate: this.endDate|| util.formatTime(new Date(), 'yyyyMMdd'),
         deptName: this.deptName,
         empName: this.empName,
         pageNumber: this.paginate.currentPage,

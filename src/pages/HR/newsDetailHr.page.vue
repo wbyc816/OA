@@ -10,7 +10,7 @@
               <span class="time">{{detail.createTime | time('all')}}</span><span class="person">类别：{{detail.name}}</span><span class="person">级别：{{detail.majorName}}</span></p>
           </el-col>
           <el-col :span='5' class="downBox">
-            <p>下载 <span @click="$router.go(-1)">返回</span></p>
+            <p>下载 </p>
             <a :href="detail.fileUrlOld" class="link" target="_blank">{{detail.fileNameOld}}</a>
           </el-col>
         </el-row>

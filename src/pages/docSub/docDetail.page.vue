@@ -407,9 +407,10 @@ export default {
               this.getSendType();
             }
             this.handleSuggest();
-            if (route.query.code != 'CPD' && route.query.code != 'HTS') {
+            if (route.query.code != 'CPD' && route.query.code != 'HTS'&& route.query.code != 'FKS'&& route.query.code != 'YFK'&& route.query.code != 'CLB'&& route.query.code != 'JKS'&& route.query.code != 'BXS'&& route.query.code != 'YSS') {
               this.activeContent = [];
             }
+
           }
         }, res => {
 

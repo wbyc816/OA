@@ -183,7 +183,8 @@ export default {
       this.searchParams.status = '';
     },
     goDetail(row) {
-      this.$router.push('/meeting/bookingDetail/' + row.id)
+      // this.$router.push('/meeting/bookingDetail/' + row.id)
+      window.open(location.href.slice(0,location.href.indexOf("#")+1)+'/meeting/bookingDetail/' + row.id)
     }
   }
 }

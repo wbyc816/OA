@@ -12,18 +12,20 @@
       <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">
         <tr>
           <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
-          <router-link tag="td" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}" class="linkTitle">
-            <span class="overTime" v-if="doc.isOvertime"><i class="el-icon-information"></i> 超时</span>
-            <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
-            <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
-            <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
-          </router-link>
+          <td>
+            <router-link target="_blank" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}" class="linkTitle">
+              <span class="overTime" v-if="doc.isOvertime"><i class="el-icon-information"></i> 超时</span>
+              <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
+              <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
+              <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
+            </router-link>
+          </td>
           <td>{{doc.taskUser}}</td>
           <td>{{doc.taskTime}}</td>
           <td><span>{{doc.currentUser}}</span></td>
           <td>
             <el-tooltip content="查看" placement="top" :enterable="false" effect="light">
-              <router-link tag="i" class="link iconfont icon-eye" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
+              <router-link target="_blank" class="link iconfont icon-eye" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
             </el-tooltip>
           </td>
         </tr>
@@ -151,7 +153,9 @@ $purple: #0460AE;
     margin-top: 20px;
   }
   margin-bottom:30px;
-
+  .title{
+    color:black
+  }
 }
 
 </style>

@@ -338,8 +338,8 @@ export default {
       this.getData()
     },
     goTo(data) {
-      console.log(data);
-      this.$router.push('/newsDetail/' + data.id);
+      // this.$router.push('/newsDetail/' + data.id);
+      window.open(location.href.slice(0,location.href.indexOf("#"))+'#/newsDetail/' + data.id)
       this.$http.post("/doc/updateBrowse", {
         empId: this.userInfo.empId,
         fileId: data.fileId

@@ -1,5 +1,5 @@
 <template>
-  <router-link class='message' :to="data.link">
+  <router-link class='message' :to="data.link" target= "_blank">
     <span class='logo' :style='{backgroundColor:data.color}'>
         <i class='iconfont' :class="'icon-'+data.icon"></i>
       </span>
@@ -94,7 +94,14 @@ export default {
     }
   },
   computed: {},
-  methods: {}
+  created(){
+    this.reloadMessage();
+  },
+  methods: {
+     reloadMessage(){
+      setInterval("window.location.reload()",300000)
+    },
+  }
 }
 
 </script>

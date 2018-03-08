@@ -31,7 +31,7 @@ export default {
     var validateMobile = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入手机号码'));
-      } else if (!(/^1[34578]\d{9}$/.test(value))) {
+      } else if (!(/^1[345678]\d{9}$/.test(value))) {
         callback(new Error('手机号码格式不正确'))
       } else {
         callback();

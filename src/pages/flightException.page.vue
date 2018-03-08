@@ -98,7 +98,7 @@
 
         <el-table-column prop="remark" label="备注" width="115">
             <template scope="scope">
-               <el-input name="remark"  type="textarea" :rows="1" v-model="scope.row.remark" style="border:0px" :readonly="readonlyOne" ></el-input>
+               <el-input name="remark"  type="textarea" :rows="1" v-model="scope.row.remark" style="border:0px;width:90px; height:40px;background:transparent" :readonly="readonlyOne" ></el-input>
             </template>
         </el-table-column>
 
@@ -210,13 +210,14 @@
 
         <el-table-column prop="diffAirTime" label="空中时间差值" width="120">
             <template scope="scope">
-                <span >{{ scope.row.diffAirTime}}分钟</span>
+                <span v-if="scope.row.diffAirTime_sts==1" style="color:red">{{ scope.row.diffAirTime}}分钟</span>
+                <span v-if="scope.row.diffAirTime_sts==0">{{ scope.row.diffAirTime}}分钟</span>
             </template>
         </el-table-column>
 
         <el-table-column prop="remark" label="备注" width="115">
             <template scope="scope">
-               <el-input name="remarkTwo"  type="textarea" :rows="1" v-model="scope.row.remark" style="border:0px" :readonly="readonlyOne" ></el-input>
+               <el-input name="remarkTwo"  type="textarea"  v-model="scope.row.remark" style="border:0px;width:90px; height:40px;background:transparent" :readonly="readonlyOne" ></el-input>
             </template>
         </el-table-column>
 
@@ -331,7 +332,6 @@ export default {
 
         }else{
             var rel=document.getElementsByName("remark");
-            console.log(rel.length)
             for(var i=0;i<rel.length;i++){
                 document.getElementsByName("remark")[i].setAttribute("readonly","true")
                 document.getElementsByName("remark")[i].style.border="0px solid #ccc";
@@ -339,10 +339,19 @@ export default {
         }
     },
     saveTableOne(scope){
+        var rel=document.getElementsByName("remark");
+        var rel1=document.getElementsByName("remarkTwo");
+        for(var i=0;i<rel.length;i++){
+            document.getElementsByName("remark")[i].setAttribute("readonly","true")
+        }
+        for(var i=0;i<rel1.length;i++){
+            document.getElementsByName("remarkTwo")[i].setAttribute("readonly","true")
+        }
         this.$http.post('/foc/updateRemark', { id: scope.row.flightId,remark:scope.row.remark })
         .then(res => {
           if(res.status==0){
             this.$message('备注修改成功');
+            // document.getElementsByName("remark")[scope.row.index].setAttribute("readonly","true")
           }else{
             this.$message('备注修改失败');
           }

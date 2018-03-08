@@ -2,7 +2,7 @@
   <div id="docPending">
     <search-options title="公文签批" @search="setOptions" hasOverTime isCollapse hasSub :defaultExpand="searchOptionExpand"></search-options>
     <!-- 一键审批权限 由常量leaderEmpid控制 -->
-    <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId==leaderEmpid" v-loading.body="searchLoading">
+    <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId==leaderEmpid||userInfo.empId==leaderEmpid1" v-loading.body="searchLoading">
       <el-table-column type="selection" width="35" class-name="selectionColumn" label-class-name="selectionColumnLabel">
       </el-table-column>
       <el-table-column label=" " width="50" class-name="docType">
@@ -12,7 +12,7 @@
       </el-table-column>
       <el-table-column prop="docTitle" label="公文名称">
         <template scope="scope">
-          <router-link :to="{path:'/doc/docInfo/'+scope.row.id,query:{code:scope.row.docTypeCode}}" class="linkTitle">
+          <router-link target="_blank" :to="{path:'/doc/docInfo/'+scope.row.id,query:{code:scope.row.docTypeCode}}" class="linkTitle">
             <span class="overTime" v-if="scope.row.isOvertime"><i class="el-icon-information"></i> 超时</span>
             <span class="title" :style="{maxWidth:calWidthAll(scope.row)}">{{scope.row.docTitle}}</span>
             <span class="improtType" v-if="scope.row.docImprotType!='普通'&&scope.row.docImprotType!=''" :style="{background:scope.row.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{scope.row.docImprotType}}</span>
@@ -32,7 +32,7 @@
       <el-table-column label="操作" width="100" class-name="operateColumn">
         <template scope="scope">
           <el-tooltip content="签批" placement="top" :enterable="false" effect="light">
-            <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+scope.row.id,query:{code:scope.row.docTypeCode}}"></router-link>
+            <router-link  target="_blank"  class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+scope.row.id,query:{code:scope.row.docTypeCode}}"></router-link>
           </el-tooltip>
           <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
             <i class="link iconfont icon-liucheng" @click="getProcess(scope.row.id)"></i>
@@ -54,18 +54,21 @@
       <tbody v-for="doc in docData" :key="doc.taskTime" :class="{disAgree:doc.isAgree===0}">
         <tr>
           <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
-          <router-link tag="td" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}" class="linkTitle">
-            <span class="overTime" v-if="doc.isOvertime"><i class="el-icon-information"></i> 超时</span>
-            <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
-            <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
-            <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
-          </router-link>
+          <td>
+            <router-link  :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}" target= "_blank" class="linkTitle">
+              <span class="overTime" v-if="doc.isOvertime"><i class="el-icon-information"></i> 超时</span>
+              <span class="title" :style="{maxWidth:calWidth(doc)}" style="color:black">{{doc.docTitle}}</span>
+              <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
+              <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
+            </router-link>
+          </td>
+        
           <td>{{doc.taskUser}}</td>
           <td>{{doc.taskTime}}</td>
           <td><span>{{doc.currentUser}}</span></td>
           <td>
             <el-tooltip content="签批" placement="top" :enterable="false" effect="light">
-              <router-link tag="i" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
+              <router-link target= "_blank" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
             </el-tooltip>
             <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
               <i class="link iconfont icon-liucheng" @click="getProcess(doc.id)"></i>
@@ -86,7 +89,7 @@
       <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="15" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
-    <el-card class="taskCard" v-if="userInfo.empId==leaderEmpid&&docData.length>0">
+    <el-card class="taskCard" v-if="(userInfo.empId==leaderEmpid||userInfo.empId==leaderEmpid1)&&docData.length>0">
       <h4 class="title">我的审批意见 <span>已选择<i> {{selDocs.length}} </i>条公文</span></h4>
       <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
         <el-form-item label="审批意见" class="textarea" prop="state">
@@ -118,11 +121,14 @@ import { docConfig } from '../../common/docConfig'
 import { mapGetters } from 'vuex'
 
 const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '操作']
-const leaderEmpid = 'C35215E25CE0CA7858829540EFF44FA8'
+// const leaderEmpid = 'C35215E25CE0CA7858829540EFF44FA8'
+const leaderEmpid = '7C51D7C9A6E30305D62CF4282FCEA07A'
+const leaderEmpid1 = 'CA17F676E10DB5A44F2DC3FC69C8CB48'
 export default {
   data() {
     return {
       leaderEmpid,
+      leaderEmpid1,
       tableTitle,
       contractView: false,
       params: {

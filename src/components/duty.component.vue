@@ -2,7 +2,7 @@
   <div class="duty" v-loading="organLoading">
     <el-card>
       <div slot="header">值班列表
-        <router-link to="/duty/">更多</router-link>
+        <router-link to="/duty/"  target= "_blank">更多</router-link>
       </div>
       <div class="dutyWrap">
         <div class="dutyBox clearfix" v-for="(item,index) in dutys" v-if="index<2">

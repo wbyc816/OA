@@ -10,7 +10,7 @@
                 <p class="others"><i class="iconfont icon-eye"></i> <span>{{detail.browse}}</span><span class="time">{{detail.createTime | time('date')}}</span><span class="person">签发人 {{detail.createUser}}</span><span class="person">校对人 {{detail.verifyName}}</span></p>
               </el-col>
               <el-col :span='8' class="downBox">
-                <p>下载 <span @click="$router.go(-1)">返回</span></p>
+                <p>下载 </p>
                 <a :href="item.fileUrlNew" target="_blank" class="link" v-for="item in detail.basicFileList">{{item.fileNameNew}}</a>
               </el-col>
             </el-row>
@@ -33,16 +33,18 @@
         <duty></duty>
       </el-col>
     </el-row>
+     <back-button></back-button>
   </div>
 </template>
 <script>
 import SidePersonSearch from '../../components/sidePersonSearch.component'
 import Duty from '../../components/duty.component'
+import BackButton from '../../components/backButton.component.vue'
 import { mapGetters } from 'vuex'
 // import pdf from 'vue-pdf'
 import pdf from '../../components/pdf.component'
 export default {
-  components: { SidePersonSearch, Duty, pdf },
+  components: { SidePersonSearch, Duty, pdf, BackButton, },
   data() {
     return {
       condition:"",
