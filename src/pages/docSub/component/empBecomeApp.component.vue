@@ -16,6 +16,7 @@
         <li><span class="itemTitle">试用期开始日期</span><span class="text">{{emp.probationTime | time('ch')}}</span></li>
         <li><span class="itemTitle">试用期结束日期</span><span class="text">{{emp.probationEndTime | time('ch')}}</span></li>
       </ul>
+      <div class="ZZSPJ">请员工直接上级领导对其试用期内表现做出评价</div>
     </div>
     <el-form label-position="left" :model="becomeForm" :rules="rules" ref="becomeForm" label-width="128px">
       <el-form-item label="试用期自我评价" prop="evaluation">
@@ -86,6 +87,13 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 .empBecomeApp {
+   .ZZSPJ{
+    font:16px '宋体';
+    text-align:center;
+    margin-left: 105px;
+    margin-top:10px;
+    color:#0460AE;
+  }
   .el-input {
     width: 100%;
   }

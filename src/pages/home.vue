@@ -1,5 +1,6 @@
 <template>
   <div id="home">
+      <!-- <new-carousel></new-carousel> -->
     <el-row :gutter="20" class="wrapRow">
       <el-col :span="16">
         <!-- 消息中心 -->
@@ -192,11 +193,16 @@
         </el-carousel-item>
       </el-carousel>
     </el-dialog> -->
+    
+   
   </div>
+
+  
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import SearchDate from '../components/searchDate'
+import NewCarousel from '../components/newCarousel'
 import MessageCenter from '../components/message'
 import SidePersonSearch from '../components/sidePersonSearch.component'
 import Duty from '../components/duty.component'
@@ -223,12 +229,14 @@ const otherLinks = [
   { "icon": "changyong", "text": "常用办公软件", "link": "/softDownload" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   // { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
-  { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080" },
-  // { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
+  // { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080" },
+  { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
   { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },
   { "icon": "money", "text": "财务预算系统", "link": "http://efin.donghaiair.cn/" },
+  { "icon": "jingcha", "text": "飞行资质管理系统", "link": "/index/fleetLogin", "params": ['workNo'] },
+
 ]
 
 const pieoption = {
@@ -244,7 +252,7 @@ const options = [{
 }, ];
 const pieBg = ['#97BBCD', '#F7464A', '#DCDCDC', '#7ED0CF']
 export default {
-  components: { SearchDate, MessageCenter, SidePersonSearch, Duty },
+  components: { SearchDate, MessageCenter, SidePersonSearch, Duty,NewCarousel },
 
   data() {
     return {

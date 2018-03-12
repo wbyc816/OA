@@ -47,10 +47,14 @@
                   <h1 class="title">附加公文</h1>
                   <p class="attch textContent">
                     <router-link :to="{path:'/doc/docInfo/'+file.quoteDocId,query:{code:file.docType}}" v-for="file in docDetialInfo.taskQuote">{{file.quoteDocTitle}}</router-link>
+                    
                   </p>
                 </el-col>
+                
               </el-row>
+                  
             </el-collapse-item>
+            <div class="ZZSPJ" v-if="this.$route.query.code=='ZZS'">请员工直接上级领导对其试用期内表现做出评价</div>
           </el-collapse>
         </el-row>
       </div>
@@ -258,6 +262,7 @@ export default {
       dialogArchivePersonVisible: false,
       currentView: '',
       res: '',
+      isZZS:"",
       archiveForm: {
         all: '',
         personList: [],
@@ -714,6 +719,12 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docDetail {
+  .ZZSPJ{
+    font:16px '宋体';
+    text-align:center;
+    margin-top:10px;
+    color:#0460AE;
+  }
   position: relative;
   .docheader {
     line-height: 24px;

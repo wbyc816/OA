@@ -207,7 +207,7 @@
                 <div class="width50">
                   <div>
                     <span>执行比例</span>
-                    <p>{{props.row.executeRate}}%</p>
+                    <p>{{props.row.executeRate}}</p>
                   </div>
                   <div>
                     <span>单位</span>

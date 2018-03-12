@@ -49,6 +49,7 @@
               </el-col>
             </el-collapse-item>
           </el-collapse>
+           <div class="ZZSPJ" v-if="this.$route.query.code=='ZZS'">请员工直接上级领导对其试用期内表现做出评价</div>
         </el-row>
       </div>
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
@@ -289,6 +290,12 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docInfo {
+  .ZZSPJ{
+    font:16px '宋体';
+    text-align:center;
+    margin-top:10px;
+    color:#0460AE;
+  }
   .backButton {
     padding-left: 20px;
     padding-bottom: 20px;
