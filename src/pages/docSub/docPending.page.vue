@@ -22,14 +22,14 @@
       </el-table-column>
       <el-table-column prop="taskUser" label="呈报人" width="100">
       </el-table-column>
-      <el-table-column prop="taskTime" label="呈报时间" width="110">
+      <el-table-column prop="taskTime" label="呈报时间" width="100">
       </el-table-column>
       <el-table-column prop="currentUser" label="当前节点" width="100">
         <template scope='scope'>
           <span>{{scope.row.currentUser}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="100" class-name="operateColumn">
+      <el-table-column label="操作" width="145" class-name="operateColumn">
         <template scope="scope">
           <el-tooltip content="签批" placement="top" :enterable="false" effect="light">
             <router-link  target="_blank"  class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+scope.row.id,query:{code:scope.row.docTypeCode}}"></router-link>
@@ -43,6 +43,7 @@
         </template>
       </el-table-column>
     </el-table>
+    
     <table bgcolor="#fff" class="myDocList" width="100%" cellspacing="0" v-loading.body="searchLoading" v-else>
       <caption>
       </caption>
@@ -66,7 +67,7 @@
           <td>{{doc.taskUser}}</td>
           <td>{{doc.taskTime}}</td>
           <td><span>{{doc.currentUser}}</span></td>
-          <td>
+          <td style='width:145px'>
             <el-tooltip content="签批" placement="top" :enterable="false" effect="light">
               <router-link target= "_blank" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
             </el-tooltip>
@@ -96,7 +97,7 @@
           <el-col :span='18'>
             <el-radio-group class="myRadio" v-model="ruleForm.state" @change="adviceChange">
               <el-radio-button label="1">同意<i></i></el-radio-button>
-              <el-radio-button label="2">不同意<i></i></el-radio-button>
+              <!-- <el-radio-button label="2">不同意<i></i></el-radio-button> -->
             </el-radio-group>
           </el-col>
         </el-form-item>
@@ -123,7 +124,8 @@ import { mapGetters } from 'vuex'
 const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '操作']
 // const leaderEmpid = 'C35215E25CE0CA7858829540EFF44FA8'
 const leaderEmpid = '7C51D7C9A6E30305D62CF4282FCEA07A'
-const leaderEmpid1 = 'CA17F676E10DB5A44F2DC3FC69C8CB48'
+// const leaderEmpid1 = 'CA17F676E10DB5A44F2DC3FC69C8CB48'
+const leaderEmpid1 = '3BCF6EECB2611212E088D0D91F2ADE9C'
 export default {
   data() {
     return {
