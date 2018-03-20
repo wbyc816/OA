@@ -111,7 +111,7 @@
         <el-form-item label="归档状态" class="textarea" prop="state">
           <!-- 归档状态是否可选由后台返回数据docDetialInfo.doc.isFied控制 -->
           <el-radio-group class="myRadio" v-model="archiveState">
-            <el-radio-button label="1" >通过<i></i></el-radio-button><!-- :disabled="docDetialInfo.doc.isFied == 2" -->
+            <el-radio-button label="1" :disabled="docDetialInfo.doc.isFied == 2">通过<i></i></el-radio-button><!-- :disabled="docDetialInfo.doc.isFied == 2" -->
             <el-radio-button label="2" >不通过<i></i></el-radio-button><!-- :disabled="docDetialInfo.doc.isFied == 3" -->
           </el-radio-group>
         </el-form-item>
@@ -539,6 +539,7 @@ export default {
                   this.submitLoading = false;
                   this.$message.success('归档成功');
                   this.$router.push('/doc/docPending');
+                  window.close();
                 } else {
                   this.docDistribution();
                 }
@@ -629,12 +630,14 @@ export default {
           if (this.docDetialInfo.task[0].state == 3) {
             if (res.status == 0) {
               this.$message.success('分发成功！');
+              window.close();
             } else {
               this.$message.error(res.message)
             }
           } else {
             if (res.status == 0) {
               this.$message.success('归档并分发成功！');
+              window.close();
             } else {
               this.$message('归档成功，分发失败！')
             }

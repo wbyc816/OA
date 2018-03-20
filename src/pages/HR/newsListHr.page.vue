@@ -10,7 +10,7 @@
       <el-row>
         <template>
           <el-col :span="12" v-for="(news,index) in newList">
-            <router-link :to="'/HR/newsDetailHr/'+news.fileId">
+            <router-link target= "_blank" :to="'/HR/newsDetailHr/'+news.fileId">
               <p>{{news.fileNameOld}} </p>
               <p class="clearfix">{{news.majorName}}<span>{{news.createTime | time('date')}}</span></p>
             </router-link>

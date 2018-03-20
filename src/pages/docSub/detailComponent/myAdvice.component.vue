@@ -21,7 +21,11 @@
             <el-radio-button label="6" class="isChen" v-if="docDetail.isTaskUser==1&&hasSecretary()">承办部门办理<i></i></el-radio-button>
           </el-radio-group>
         </el-col>
+     
       </el-form-item>
+      <p class="tipText" id="tipText" v-if="docDetail.signDoc||docDetail.defaultSuggestVo">
+        <!-- 该公文接收人为固定人员，不可修改。 -->
+      </p>
       <!-- 审批类型能否选择 当有部门会签权限、人员会签权限或不在会签中 可选 -->
       <!-- 离职公文特殊 当在部门会签中时不可选审批类型 -->
       <el-form-item label="审批类型" class="textarea" v-if="showSignType">
@@ -60,7 +64,9 @@
           </div>
           <el-button class="addButton" @click="selSignPerson" v-show="signType==1||signType==2"><i class="el-icon-plus"></i></el-button>
         </el-col>
+        
       </el-form-item>
+
       <el-form-item label="建议路径" class="textarea">
         <el-col :span='18'>
           <p class="textContent suggestHtml" v-html="suggestHtml"></p>
@@ -292,6 +298,31 @@ export default {
     } else {
       this.getDefaultReciver();
     }
+
+
+    // this.$http.post('/doc/isDeptLeader', { empId: this.userInfo.empId,deptId:this.userInfo.deptId})
+    //   .then(res => {
+    //      if (res.status == 0) {
+    //        console.log(this.docDetail.defaultSuggestVo.reciUserId)
+    //       if((res.data==1 &&this.docDetail.signDoc==1)&& (this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
+    //           document.getElementById("tipText").innerHTML="该公文为部门会签公文，如不需转给下属，请直接点击结束会签。"
+    //           console.log(666)
+    //       }  
+    //       else if((res.data==1 &&this.docDetail.signDoc==2) && (this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD' ||this.$route.query.code == 'HTS')){
+    //         document.getElementById("tipText").innerHTML="该公文为人员会签公文，直接点击提交即可。"
+    //            console.log(777)
+    //       }else if(this.docDetail.defaultSuggestVo.reciUserId){
+    //           document.getElementById("tipText").innerHTML="该公文接收人为固定人员，不可修改。"
+    //              console.log(88)
+    //       }  else if(res.data==1&&(this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
+    //           document.getElementById("tipText").innerHTML="如果需要给其他部门请选择部门会签，如果要给公司领导审批请选择机要秘书或者综合管理部"
+    //              console.log(88)
+    //       } 
+           
+    //   } else {
+
+    //   }
+    // })
   },
   methods: {
     initAttchment(list) {
@@ -635,6 +666,7 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.docTask();
+          window.close();
         } else {
           return false;
         }
@@ -683,6 +715,7 @@ export default {
           if (res.status == '0') {
             this.$message.success('审批成功');
             this.$router.push('/doc/docPending');
+            window.close();
           } else {
             this.$message.error('审批失败，请重试');
           }
@@ -709,6 +742,15 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 .myAdvice {
+  .tipText {
+
+    // padding-top:7px;
+    font-size: 13px;
+    color: #0460AE;
+    line-height: 15px;
+    margin-bottom: 10px;
+    margin-left: 133px
+  }
   .exportButton,
   .retrunButton {
     float: right;

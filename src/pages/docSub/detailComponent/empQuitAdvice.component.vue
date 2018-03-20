@@ -221,6 +221,7 @@ export default {
           if (res.status == '0') {
             this.$message.success('归档成功');
             this.$router.push('/doc/docSearch');
+            window.close()
           } else {
             this.$message.error('归档失败，请重试');
           }
@@ -237,6 +238,7 @@ export default {
           if (res.status == 0) {
             this.$message.success('提交成功！');
             this.$router.push('/doc/docPending');
+            window.close();
           } else {
             this.$message.error('提交失败！' + res.message);
           }

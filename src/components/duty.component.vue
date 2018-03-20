@@ -13,11 +13,11 @@
               <br/>{{item.oudutyDate | time('week')}}</p>
           </div>
           <div class="infoBox">
-            <!-- <p v-for="(child,index) in item.onduty">
+            <p v-for="(child,index) in item.onduty">
               <template v-if="index==0&&child.isLeader==1">
                 <span>01</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
               </template>
-            </p> -->
+            </p>
             <p v-for="(child,index) in item.onduty">
               <template v-if="child.isLeader==0">
                 <span>AOC</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>

@@ -122,6 +122,15 @@ export default {
             this.distributeForm.res = '';
             this.distributeForm.personList = [];
             this.distributeForm.depList = [];
+            var patt = new RegExp("doc/docPending");
+            var patt1 = new RegExp("doc/docTracking");
+
+            if(!patt.test(location.href)){
+              if(!patt1.test(location.href)){
+                  window.close();
+                }
+            }
+            
           } else {
             this.$message.error(res.message)
           }

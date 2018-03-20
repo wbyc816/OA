@@ -1,8 +1,8 @@
 <template>
   <div id="docPending">
-    <search-options title="公文签批" @search="setOptions" hasOverTime isCollapse hasSub :defaultExpand="searchOptionExpand"></search-options>
+    <search-options id="test" title="公文签批"  @search="setOptions" hasOverTime isCollapse hasSub :defaultExpand="searchOptionExpand"></search-options>
     <!-- 一键审批权限 由常量leaderEmpid控制 -->
-    <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId==leaderEmpid||userInfo.empId==leaderEmpid1" v-loading.body="searchLoading">
+    <el-table ref="multipleTable" :data="docData" style="width: 100%" @selection-change="handleSelectionChange" class="taskAllTable" stripe v-if="userInfo.empId==leaderEmpid" v-loading.body="searchLoading">
       <el-table-column type="selection" width="35" class-name="selectionColumn" label-class-name="selectionColumnLabel">
       </el-table-column>
       <el-table-column label=" " width="50" class-name="docType">
@@ -12,12 +12,15 @@
       </el-table-column>
       <el-table-column prop="docTitle" label="公文名称">
         <template scope="scope">
-          <router-link target="_blank" :to="{path:'/doc/docInfo/'+scope.row.id,query:{code:scope.row.docTypeCode}}" class="linkTitle">
+          <a  target="_blank"  class="linkTitle"  @click="goToOthers('/doc/docDetail/'+scope.row.id+'?code='+scope.row.docTypeCode)">
+
+          <!-- <router-link target="_blank" :to="{path:'/doc/docDetail/'+scope.row.id,query:{code:scope.row.docTypeCode}}" class="linkTitle"> -->
             <span class="overTime" v-if="scope.row.isOvertime"><i class="el-icon-information"></i> 超时</span>
             <span class="title" :style="{maxWidth:calWidthAll(scope.row)}">{{scope.row.docTitle}}</span>
             <span class="improtType" v-if="scope.row.docImprotType!='普通'&&scope.row.docImprotType!=''" :style="{background:scope.row.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{scope.row.docImprotType}}</span>
             <span class="improtType" v-if="scope.row.docDenseType!='平件'&&scope.row.docDenseType!=''" :style="{background:scope.row.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{scope.row.docDenseType}}</span>
-          </router-link>
+          <!-- </router-link> -->
+          </a>
         </template>
       </el-table-column>
       <el-table-column prop="taskUser" label="呈报人" width="100">
@@ -32,7 +35,8 @@
       <el-table-column label="操作" width="145" class-name="operateColumn">
         <template scope="scope">
           <el-tooltip content="签批" placement="top" :enterable="false" effect="light">
-            <router-link  target="_blank"  class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+scope.row.id,query:{code:scope.row.docTypeCode}}"></router-link>
+            <!-- <router-link  target="_blank"  class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+scope.row.id,query:{code:scope.row.docTypeCode}}"></router-link> -->
+            <a  target="_blank"  class="link iconfont icon-icon-approve-bold"  @click="goToOthers('/doc/docDetail/'+scope.row.id+'?code='+scope.row.docTypeCode)"></a>
           </el-tooltip>
           <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
             <i class="link iconfont icon-liucheng" @click="getProcess(scope.row.id)"></i>
@@ -56,12 +60,14 @@
         <tr>
           <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
           <td>
-            <router-link  :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}" target= "_blank" class="linkTitle">
+            <!-- <router-link  :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}" target= "_blank" class="linkTitle"> -->
+            <a  target="_blank"   class="linkTitle"  @click="goToOthers('/doc/docDetail/'+doc.id+'?code='+doc.docTypeCode)">
+
               <span class="overTime" v-if="doc.isOvertime"><i class="el-icon-information"></i> 超时</span>
               <span class="title" :style="{maxWidth:calWidth(doc)}" style="color:black">{{doc.docTitle}}</span>
               <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
               <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>
-            </router-link>
+            </a>
           </td>
         
           <td>{{doc.taskUser}}</td>
@@ -69,7 +75,9 @@
           <td><span>{{doc.currentUser}}</span></td>
           <td style='width:145px'>
             <el-tooltip content="签批" placement="top" :enterable="false" effect="light">
-              <router-link target= "_blank" class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
+              <!-- <router-link target= "_blank"  class="link iconfont icon-icon-approve-bold" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link> -->
+              <a  target="_blank"  class="link iconfont icon-icon-approve-bold"  @click="goToOthers('/doc/docDetail/'+doc.id+'?code='+doc.docTypeCode)"></a>
+
             </el-tooltip>
             <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
               <i class="link iconfont icon-liucheng" @click="getProcess(doc.id)"></i>
@@ -90,7 +98,7 @@
       <el-pagination @current-change="handleCurrentChange" :current-page="params.pageNumber" :page-size="15" layout="total, prev, pager, next, jumper" :total="totalSize">
       </el-pagination>
     </div>
-    <el-card class="taskCard" v-if="(userInfo.empId==leaderEmpid||userInfo.empId==leaderEmpid1)&&docData.length>0">
+    <el-card class="taskCard" v-if="(userInfo.empId==leaderEmpid)&&docData.length>0">
       <h4 class="title">我的审批意见 <span>已选择<i> {{selDocs.length}} </i>条公文</span></h4>
       <el-form label-position="left" label-width="128px" :model="ruleForm" :rules="rules" ref="ruleForm">
         <el-form-item label="审批意见" class="textarea" prop="state">
@@ -113,6 +121,7 @@
     </el-card>
     <distribute-dialog :visible.sync="showDistribute" :docId="docId"></distribute-dialog>
   </div>
+  
 </template>
 <script>
 import SearchOptions from '../../components/searchOptions.component'
@@ -123,14 +132,12 @@ import { mapGetters } from 'vuex'
 
 const tableTitle = ['', '公文名称', '呈报人', '呈报时间', '当前节点', '操作']
 // const leaderEmpid = 'C35215E25CE0CA7858829540EFF44FA8'
-const leaderEmpid = '7C51D7C9A6E30305D62CF4282FCEA07A'
-// const leaderEmpid1 = 'CA17F676E10DB5A44F2DC3FC69C8CB48'
-const leaderEmpid1 = '3BCF6EECB2611212E088D0D91F2ADE9C'
+const leaderEmpid = '3BCF6EECB2611212E088D0D91F2ADE9C'
+
 export default {
   data() {
     return {
       leaderEmpid,
-      leaderEmpid1,
       tableTitle,
       contractView: false,
       params: {
@@ -166,7 +173,7 @@ export default {
   components: {
     SearchOptions,
     DistributeDialog,
-    DocReturn
+    DocReturn,
   },
   created() {
     if (this.$route.params.isOverTime) {
@@ -179,6 +186,37 @@ export default {
     this.getData();
   },
   methods: {
+   goToOthers(link) {
+     console.log(link)
+      var win=""
+      var that=this;
+      if (typeof link === 'string') {
+        if (/^http/.test(link)) {
+           var win=window.open(link);
+        } else {
+           var win=window.open(location.href.slice(0,location.href.indexOf("#")+1)+link)
+          
+        }
+      } else {
+        if (link.params) {
+          this.openOtherLink(link);
+        } else {
+          if (/^http/.test(link.link)) {
+             var win=window.open(link.link);
+          } else {
+            // this.$router.push(link.link);
+             var win=window.open(location.href.slice(0,location.href.indexOf("#")+1)+link.link)
+          }
+        }
+      }
+      var loop = setInterval(function() { 
+      if(win.closed) {    
+          clearInterval(loop);
+          that.setOptions(that.searchOptions);
+        }    
+      }, 0);
+
+    },
     getData() {
       var that = this;
       this.searchLoading = true;
@@ -272,6 +310,7 @@ export default {
     },
     setOptions(options) {
       this.searchOptions = options;
+      console.log(this.searchOptions)
       this.params.pageNumber = 1;
       this.getData();
     },

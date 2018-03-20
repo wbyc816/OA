@@ -54,7 +54,7 @@ function delCookie(c_name) {
 
 function validatePhone(rule, value, callback) {
   if (value && value.length != 0) {
-    if (!(/^1[345678]\d{9}$/.test(value))) {
+    if (false) {
       callback(new Error("手机号码格式有误"));
     } else {
       callback();

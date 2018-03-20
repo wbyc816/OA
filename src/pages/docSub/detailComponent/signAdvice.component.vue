@@ -17,8 +17,8 @@
             <el-radio-button label="1">同意<i></i></el-radio-button>
             <el-radio-button label="2">不同意<i></i></el-radio-button>
           </el-radio-group>
-          <p class="tipText" v-if="docDetail.signDoc==1">
-            若需征询部门人员意见，请选择接收人并点击“提交”；若直接处理该文会签或意见征询完毕，请填写会签意见并点击“结束会签”。
+          <p class="tipText" id="tipText" v-if="docDetail.signDoc||docDetail.defaultSuggestVo">
+            <!-- 若需征询部门人员意见，请选择接收人并点击“提交”；若直接处理该文会签或意见征询完毕，请填写会签意见并点击“结束会签”。 -->
           </p>
         </el-col>
       </el-form-item>
@@ -102,6 +102,22 @@ export default {
     ])
   },
   created() {
+    // this.$http.post('/doc/isDeptLeader', { empId: this.userInfo.empId,deptId:this.userInfo.deptId})
+    //   .then(res => {
+    //      if (res.status == 0) {
+    //       if(res.data==1 &&this.docDetail.signDoc==1){
+    //           document.getElementById("tipText").innerHTML="该公文为部门会签公文，如不需转给下属，请直接点击结束会签。"
+    //       }  
+    //       else if((res.data==1 &&this.docDetail.signDoc==2)){
+    //         document.getElementById("tipText").innerHTML="该公文为人员会签公文，直接点击提交即可。"
+    //       }else if(this.docDetail.defaultSuggestVo.reciUserId){
+    //           document.getElementById("tipText").innerHTML="该公文接收人为固定人员，不可修改。"
+    //       }  
+           
+    //   } else {
+
+    //   }
+    // })
     if (this.docDetail.pageCode === 'SWD') {
       this.ruleForm.state = '1'
       this.ruleForm.taskContent = '已阅。';
@@ -330,7 +346,7 @@ $main:#0460AE;
   .tipText {
     padding-top:7px;
     font-size: 13px;
-    color: #9a9a9a;
+    color: #0460AE;
     line-height: 15px;
         margin-bottom: -10px;
   }

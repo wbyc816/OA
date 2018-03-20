@@ -2,7 +2,7 @@
   <div class="travelApp">
     <el-form label-position="left" :model="travelForm" :rules="rules" ref="travelForm" label-width="128px">
       <el-form-item label="出差时间" prop="timeRange">
-        <el-date-picker v-model="travelForm.timeRange" type="daterange" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
+        <el-date-picker v-model="travelForm.timeRange" type="datetimerange" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
       </el-form-item>
       <el-form-item label="出发地" prop="deptArea" class="deptArea">
         <el-input v-model="travelForm.deptArea" :maxlength="20">
@@ -54,6 +54,7 @@ export default {
   data() {
     var checkDate = (rule, value, callback) => {
       if (value.every(val => val != null)) {
+        console.log(value)
         callback();
       } else {
         callback(new Error('请选择出差时间'))

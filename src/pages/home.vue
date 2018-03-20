@@ -172,7 +172,7 @@
         </el-card>
         <el-card class="mailbox">
           <el-menu>
-            <el-menu-item :index="link.text" v-for="link in otherLinks" @click.native="goToOthers(link)"><i class="iconfont" :class="'icon-'+link.icon"></i>{{link.text}}<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item :index="link.text" v-for="link in otherLinks" @click.native="goToOthers(link)"><i class="iconfont" :class="'icon-'+link.icon" style="width:23px;font-size:23px"></i>{{link.text}}<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
       </el-col>
@@ -235,7 +235,7 @@ const otherLinks = [
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
   { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },
   { "icon": "money", "text": "财务预算系统", "link": "http://efin.donghaiair.cn/" },
-  { "icon": "jingcha", "text": "飞行资质管理系统", "link": "/index/fleetLogin", "params": ['workNo'] },
+  { "icon": "renyuanshezhi", "text": "飞行资质管理系统", "link": "/index/fleetLogin", "params": ['workNo'] },
 
 ]
 
