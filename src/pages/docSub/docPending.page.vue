@@ -214,7 +214,7 @@ export default {
           clearInterval(loop);
           that.setOptions(that.searchOptions);
         }    
-      }, 0);
+      }, 1000);
 
     },
     getData() {

@@ -666,7 +666,6 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.docTask();
-          window.close();
         } else {
           return false;
         }
@@ -714,7 +713,7 @@ export default {
         .then(res => {
           if (res.status == '0') {
             this.$message.success('审批成功');
-            this.$router.push('/doc/docPending');
+            // this.$router.push('/doc/docPending');
             window.close();
           } else {
             this.$message.error('审批失败，请重试');
