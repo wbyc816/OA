@@ -16,7 +16,7 @@
             </el-row>
           </div>
 
-          <el-table @row-click="clickRow" :data="tableData" :stripe="true" highlight-current-row style="width:100%" empty-text="暂无数据" class="airMaterialTable">
+          <el-table id="tab" @row-click="clickRow" :data="tableData" :stripe="true" highlight-current-row style="width:100%" empty-text="暂无数据" class="airMaterialTable">
           <el-table-column type="expand">
             <template scope="props">
               <div class='tableExpandBox'>
@@ -26,8 +26,10 @@
                     <p>{{props.row.remark1}}</p>
                   </div>
                 </div>
-                <div class="width100" v-if="props.row.documentUrl!==''">
+                <div class="width100" v-if="false">
+
                   <div>
+                    v-if="props.row.documentUrl!==''"
                     <span>版本发行文档</span>
                     <p><a :href="props.row.documentUrl">{{props.row.documentUrl}}</a></p>
                   </div>
@@ -38,8 +40,11 @@
           <el-table-column property="versionTime" label="版本发行日期" width="150"></el-table-column>
           <el-table-column property="version" label="VERSION" width="150"></el-table-column>
           <el-table-column property="remark" label="版本更新说明" ></el-table-column>
-         
-         
+          <el-table-column label="操作"  width="100">
+            <template slot-scope="scope">
+               <el-button   type="text" size="small">展开</el-button>
+            </template>
+          </el-table-column>
         </el-table>
     
 
@@ -67,7 +72,7 @@ import dataTransform from '../common/dataTransform'
 import api from '../fetch/api'
 
 const fmts = [['remark'],['remark1'],  ['versionTime'], ['version'], ['documentUrl'],['id']]
-
+const data=[]
 export default {
   data() {
     return {
@@ -90,6 +95,16 @@ export default {
   methods: {
     clickRow(row, event, column){
       document.getElementsByClassName("el-table__expand-icon ")[row.id-1].click();
+      if(row.id==1){
+           let interval = setTimeout(() => {
+        //  var data=document.getElementsByTagName("tbody")[0].children[row.id].children[0].children[0].children[0].children[0].children[1].innerText
+        //      if(data.replace("\\n",'<br/>'))
+        //      document.getElementsByTagName("tbody")[0].children[row.id].children[0].children[0].children[0].children[0].children[1].innerHTML=data.substring(0,data.indexOf("\\n")) +'<br/>'+  data.substring(data.indexOf("\\n")+2)
+           document.getElementsByTagName("tbody")[0].children[row.id].children[0].children[0].children[0].children[0].children[1].innerHTML="1、短信功能：各部门秘书有新建（发送）短信的功能；"+'<br/>'+" 2、客户维护--新建客户--财务模块：新增填写SWIFT Code字段；"+'<br/>'+" 付款申请增加显示所选客户的SWIFT Code；"+'<br/>'+" 导出的PDF增加SWIFT Code项；"+'<br/>'+" 3、首页增加发版日志模块；"+'<br/>'+" 4、优化PC端及移动端查询公文的速度；"+'<br/>'+" 5、公文管理员增加“无意见转发”按钮，点击此按钮，历史签批意见将不显示公文管理员签批节点；"+'<br/>'+" 6、修改超时公文规则："+'<br/>'+"a 工作日内提交公文，若第二天为工作日，则超过24小时未签批算作超时；"+'<br/>'+" b工作日内提交公文，若第二天为节假日，则系统自动忽略节假日；"+'<br/>'+" c 节假日提交公文，则节假日后第一个工作日未签批算作超时；"+'<br/>'+" 7、呈报公文时上传PDF的文件名放开“#”号限制；"+'<br/>'+" 8、部分审批增加提示语。"
+
+    }, 10)
+      }
+     
     },
     search() {
       var that=this;
@@ -98,10 +113,16 @@ export default {
         pageSize: 10
       }).then((data) => {
         this.link=data.manualUrl;
-        this.paginate.total = data.data.totalSize
+        this.paginate.total = data.data.totalSize;
         this.tableData = dataTransform(data.data.records, fmts)
+        for(var i=0;i<data.data.records.length;i++){
+             if(data.data.records[i].remark.indexOf("\\n")>-1)
+             document.getElementsByTagName("tbody")[0].children[i].children[3].innerHTML=data.data.records[i].remark.substring(0,data.data.records[i].remark.indexOf("\\n")) +'<br/>'+  data.data.records[i].remark.substring(data.data.records[i].remark.indexOf("\\n")+2)
+        }
+          
+      
+        
         // that.tableData = data.data.records;
-        console.log(data)
       })
     },
     handleCurrentChange() {

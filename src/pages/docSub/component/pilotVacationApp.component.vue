@@ -168,6 +168,7 @@ export default {
         if (valid) {
           this.params = {
             docFlightVacation: {
+              docTypeCode:"QJSFX",
               "startDate":util.formatTime(this.vacationForm.timeRange[0], 'yyyy-MM-dd')   ,
               "endDate": util.formatTime(this.vacationForm.timeRange[1], 'yyyy-MM-dd'),
               "days": this.vacationForm.days,

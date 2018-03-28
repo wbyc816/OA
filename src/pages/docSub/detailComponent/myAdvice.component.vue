@@ -304,14 +304,14 @@ export default {
     this.$http.post('/doc/isDeptLeader', { empId: this.userInfo.empId,deptId:this.userInfo.deptId})
       .then(res => {
          if (res.status == 0) {
-          if((res.data==1 &&this.docDetail.signDoc==1)&& (this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
+          if((res.data==1 &&this.docDetail.signDoc==1)&& (this.$route.query.code == 'SWD'||this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
               document.getElementById("tipText").innerHTML="该公文为部门会签公文，如不需转给下属，请直接点击结束会签。"
           }  
-          else if((res.data==1 &&this.docDetail.signDoc==2) && (this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD' ||this.$route.query.code == 'HTS')){
+          else if((res.data==1 &&this.docDetail.signDoc==2) && (this.$route.query.code == 'SWD'||this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD' ||this.$route.query.code == 'HTS')){
             document.getElementById("tipText").innerHTML="该公文为人员会签公文，直接点击提交即可。"
           }else if(this.docDetail.defaultSuggestVo.reciUserId){
               document.getElementById("tipText").innerHTML="该公文接收人为固定人员，不可修改。"
-          }  else if(res.data==1&&(this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
+          }  else if(res.data==1&&(this.$route.query.code == 'SWD'||this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
               document.getElementById("tipText").innerHTML="如果需要给其他部门请选择部门会签，如果要给公司领导审批请选择机要秘书或者综合管理部"
           } 
            
@@ -464,8 +464,9 @@ export default {
         signUserName: vo.reciUserName
       });
       this.workState = vo.workState;
-      delete vo.workState;
+      // delete vo.workState;
       this.reciver = {
+        workState:vo.workState,
         "nextUserId": vo.reciUserId,
         "nextUserName": vo.reciUserName,
         "nextDeptId": vo.reciDeptId, //           部门
