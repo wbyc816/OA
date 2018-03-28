@@ -62,9 +62,13 @@
         <h1 class="title">开户行</h1>
         <p v-if="info" class="textContent">{{info[0].finPayment.supplierBank}}</p>
       </el-col>
-      <el-col :span="24" class="rightBorder" v-if="info[0].finPayment.supplierBankAccountCode">
+      <el-col :span="12" class="rightBorder" v-if="info[0].finPayment.supplierBankAccountCode">
         <h1 class="title">收款账号</h1>
         <p v-if="info" class="textContent">{{info[0].finPayment.supplierBankAccountCode}}</p>
+      </el-col>
+       <el-col :span="12" class="rightBorder" v-if="info[0].finPayment.supplierBankSwiftCode">
+        <h1 class="title lineHeight">SWIFT Code <br>(银行国际代码)</h1>
+        <p v-if="info" class="textContent">{{info[0].finPayment.supplierBankSwiftCode}}</p>
       </el-col>
       <el-col :span="24">
         <h1 class="title">发票</h1>
@@ -118,6 +122,9 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 .reimburseDetail {
+  .lineHeight{
+    line-height:23px
+  }
   padding: 20px 0 0;
   clear: both; // border-bottom: 1px solid #D5DADF;
   .invoiceNum {

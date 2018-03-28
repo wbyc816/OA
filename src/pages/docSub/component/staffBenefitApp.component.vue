@@ -313,7 +313,8 @@ export default {
       },
       ticketWays:[],
       rules: {
-        contactPhone: [{ required: true, message: '请填写联系电话', trigger: 'blur' },{ validator: this.validatePhone, trigger: 'blur,change' }],
+        contactPhone: [{ required: true, message: '请填写联系电话', trigger: 'blur' }],
+        // ,{ validator: this.validatePhone, trigger: 'blur,change' 
         ticketWays: [{ required: true, message: '请选择出票方式', trigger: 'blur' }],
         flightPersonSelect: [{ required: true, message: '请选择乘机人', trigger: 'blur' }],
         flightPersonTypeSelect: [{ required: true, message: '请选择乘机人类型', trigger: 'blur' }],

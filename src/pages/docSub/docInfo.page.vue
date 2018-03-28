@@ -53,8 +53,9 @@
         </el-row>
       </div>
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
+
       <dist-advice ref="distAdvice"></dist-advice>
-      <!-- <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'"></quit-advice> -->
+      <quit-advice :info="docDetialInfo" v-if="$route.query.code=='LZS'&&docDetialInfo.singInfoVo!==''"></quit-advice>
       <div class="backButton clearfix">
         <el-button type="primary" @click="showDistribute=true" v-if="!hasBack">公文分发</el-button>
         <a :href="baseURL+'/pdf/exportPdf?docId='+$route.params.id" target="_blank" v-if="showDowload($route.query.code)">
@@ -70,6 +71,7 @@
 import BackButton from '../../components/backButton.component.vue'
 import historyAdvice from './detailComponent/historyAdvice.component'
 import DistributeDialog from '../../components/distributeDialog.component'
+import QuitAdvice from './detailComponent/empQuitAdvice.component'
 import DistAdvice from './detailComponent/distAdvice.component'
 import FWGD from './detailComponent/FWGDetail.component'
 import SWDD from './detailComponent/SWDDetail.component'
@@ -84,6 +86,7 @@ import QJS from './component/vacationDetail.component' //休假详情
 import RSB from './component/empChangeDetail.component' //人事变动详情
 import ZZS from './component/empBecomeDetail.component' //转正详情
 import JJS from './component/empUpgradeDetail.component' //晋升详情
+import QJSFX from './component/pilotVacationDetail.component.vue'//飞行员请假申请
 import PXS from './component/empTrainingDetail.component' //培训详情
 import RYY from './component/empIntroduceDetail.component' //引进详情
 import SWD from './component/docCheckInDetail.component' //引进详情
@@ -115,6 +118,7 @@ export default {
     historyAdvice,
     BackButton,
     DistributeDialog,
+    QuitAdvice,
     DistAdvice,
     FWGD,
     SWDD,
@@ -128,6 +132,7 @@ export default {
     CLV,
     GSS,
     QJS,
+    QJSFX,
     RSB,
     ZZS,
     JJS,
@@ -429,7 +434,8 @@ $sub:#1465C0;
     .el-col {
       border-bottom: 1px solid #D5DADF;
       padding: 5px 18px 5px 24px;
-      min-height: 57px;
+      height:57px;
+      min-height:57px;
       overflow: hidden;
       display: table;
       font-size: 15px;

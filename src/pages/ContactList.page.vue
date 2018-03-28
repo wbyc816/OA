@@ -118,7 +118,7 @@ export default {
         allParams:''
       },
       rules: {
-        mobileNumber: [{ validator: validatePhone, trigger: 'blur,change' }]
+        // mobileNumber: [{ validator: validatePhone, trigger: 'blur,change' }]
 
       },
       dialogVisible: false,

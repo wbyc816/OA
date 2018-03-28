@@ -164,10 +164,11 @@
 
             <!-- 飞行任务书数据异常监控权限 userInfo.isDocsec[3]判断 1 有 0 无 -->
             <el-menu-item index="8" @click.native="goToOthers('/flightException')" v-if="userInfo.isDocsec&&userInfo.isDocsec[3]==1"><i class="iconfont icon-plane1"></i>飞行任务书数据异常监控<i class="el-icon-arrow-right"></i></el-menu-item>
-            <!-- <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item> -->
+            <el-menu-item index="9" @click.native="goToOthers('/SMS/mySMS')"><i class="iconfont icon-Group18"></i>短信<i class="el-icon-arrow-right"></i></el-menu-item>
 
             <!-- QAR数据展示权限 userInfo.isDocsec[4]判断 1 有 0 无 -->
             <el-menu-item index="10" @click.native="goToOthers('/QARData')" v-if="userInfo.isDocsec&&userInfo.isDocsec[4]==1"><i class="iconfont icon-edit"></i>QAR数据展示<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="11" @click.native="goToOthers('/updateRecord')"><i class="iconfont icon-edit"></i>E网更新记录<i class="el-icon-arrow-right"></i></el-menu-item>
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -227,6 +228,7 @@ var msgs = [
 const otherLinks = [
   // { "icon": "xiazai1", "text": "各类模板下载", "link": "/templateDownload" },
   { "icon": "changyong", "text": "常用办公软件", "link": "/softDownload" },
+  // { "icon": "changyong", "text": "test", "link": "/test" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   // { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
   // { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080" },
@@ -401,6 +403,8 @@ export default {
   },
   created() {
     this.$store.dispatch('getAirPortList');
+    
+    this.reloadMessage()
   },
   watch: {
     docTips(newVal) {
@@ -410,10 +414,34 @@ export default {
       msgs[0].value = newVal.pendingNum; //待批
       msgs[4].value = newVal.birthdayNum; //生日
       msgs[5].value = newVal.conferenceNum; //会议
-    }
+    },
+    
   },
   methods: {
+    reloadMessage(){
+      
+      var that=this;
+      var loop = setInterval(function() { 
+        that.$http.post('doc/docTips', { empId: that.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            msgs[2].value = res.data.trackingNum; //追踪
+            msgs[1].value = res.data.toReadNum; //待阅
+            msgs[3].value = res.data.overTimeNum; //超时
+            msgs[0].value = res.data.pendingNum; //待批
+            msgs[4].value = res.data.birthdayNum; //生日
+            msgs[5].value = res.data.conferenceNum; //会议
+          } else {
+
+          }
+        }, res => {
+        })
+      },300000);
+      
+    },
     getFlightTrends() {
+      this.reloadMessage();
+    
       this.$http.post('/index/getFlightTrends', { flightDate: this.timeFilter(new Date().getTime(), 'date') })
         .then(res => {
           this.flightTrends = res.data;
@@ -484,46 +512,107 @@ export default {
       }
     },
     getDoneList() {
-      this.$http.post('/doc/backlogList', { userId: this.userInfo.empId })
+     var that=this; 
+     var loop = setInterval(function() { 
+        that.$http.post('/api/getDict', { dictCode: 'ADM04' })
+          .then(res => {
+            if (res.status == 0) {
+              that.newsList=[];
+              res.data.forEach(r =>
+                that.newsList.push({ name: r.dictName, code: r.dictCode, child: [] })
+              );
+              that.activeName = that.newsList[0].code;
+              that.getNew();
+            } else {
+
+            }
+          }, res => {
+
+          })
+     that.$http.post('/doc/backlogList', { userId: that.userInfo.empId })
         .then(res => {
           if (res.status == 0) {
             if (Array.isArray(res.data)) {
-              this.doneLength = res.data.length;
-              switch (this.doneLength) {
+              that.doneLength = res.data.length;
+              switch (that.doneLength) {
                 case 1:
-                  this.doneHeight = 50;
+                  that.doneHeight = 50;
                   break;
                 case 2:
                 case 4:
-                  this.doneHeight = 90;
+                  that.doneHeight = 90;
                   break;
                 case 3:
-                  this.doneHeight = 145;
+                  that.doneHeight = 145;
                   break;
                 case 5: case 6:
-                  this.doneHeight = 120;
+                  that.doneHeight = 120;
                   break;
                 case 7: case 8:
-                  this.doneHeight = 175;
+                  that.doneHeight = 175;
                   break;
                 default:
-                  this.doneHeight = 210;
+                  that.doneHeight = 210;
               }
               res.data=res.data.slice(0,100);
               res.data.forEach((r, index) => r.index = index + 1);
-              this.doneList=[];
+              that.doneList=[];
               for (var i = 0; i < res.data.length; i += 10) {
                 if (res.data.slice(i, i + 10)) {
-                  this.doneList.push(res.data.slice(i, i + 10))
+                  that.doneList.push(res.data.slice(i, i + 10))
                 }
               }
             } else {
-              this.doneLength = 0;
+              that.doneLength = 0;
             }
           }
         }, res => {
 
         })
+      }, 300000);
+      that.$http.post('/doc/backlogList', { userId: that.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            if (Array.isArray(res.data)) {
+              that.doneLength = res.data.length;
+              switch (that.doneLength) {
+                case 1:
+                  that.doneHeight = 50;
+                  break;
+                case 2:
+                case 4:
+                  that.doneHeight = 90;
+                  break;
+                case 3:
+                  that.doneHeight = 145;
+                  break;
+                case 5: case 6:
+                  that.doneHeight = 120;
+                  break;
+                case 7: case 8:
+                  that.doneHeight = 175;
+                  break;
+                default:
+                  that.doneHeight = 210;
+              }
+              res.data=res.data.slice(0,100);
+              res.data.forEach((r, index) => r.index = index + 1);
+              that.doneList=[];
+              for (var i = 0; i < res.data.length; i += 10) {
+                if (res.data.slice(i, i + 10)) {
+                  that.doneList.push(res.data.slice(i, i + 10))
+                }
+              }
+            } else {
+              that.doneLength = 0;
+            }
+          }
+        }, res => {
+
+        })
+
+
+      
     },
     getNews() {
       if (this.newsList.length === 0) {

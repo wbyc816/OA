@@ -255,7 +255,8 @@ export default {
    
       
       rules: {
-        contactPhone: [{ required: true, message: '请输入联系电话', trigger: 'blur' },{ validator: this.validatePhone, trigger: 'blur,change' }],
+        contactPhone: [{ required: true, message: '请输入联系电话', trigger: 'blur' }],
+        //{ validator: this.validatePhone, trigger: 'blur,change' }
         ticketWays: [{ required: true, message: '请选择出票方式', trigger: 'blur' }],
         flightPerson: [{ required: true, message: '请输入乘机人', trigger: 'blur' }],
         flightPersonTypeSelect: [{ required: true, message: '请选择乘机人类型', trigger: 'blur' }],

@@ -122,8 +122,8 @@ export default {
         name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
         gender: [{ required: true, message: '请选择性别', trigger: 'blur' }],
         birthday: [{ type: 'date', required: true, message: '请选择出生日期', trigger: 'blur' }],
-        mobileNumber: [{ required: true, message: '请输入手机号码', trigger: 'blur' },
-          { validator: this.validatePhone, trigger: 'blur,change' }
+        mobileNumber: [{ required: true, message: '请输入手机号码', trigger: 'blur' }
+          // ,{ validator: this.validatePhone, trigger: 'blur,change' }
         ],
         graduationSchool: [{ required: true, message: '请输入毕业学校', trigger: 'blur' }],
         education: [{ required: true, message: '请选择学历', trigger: 'blur' }],

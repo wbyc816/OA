@@ -99,7 +99,12 @@
         </el-select>
       </el-form-item>
       <div v-show="ifChangeSelect">
-      <ul class="supplierInfo clearfix" v-show="supplierInfo" style="width: 750px;" >
+      <ul v-if="swiftCode!==''" class="supplierInfo clearfix" v-show="supplierInfo"  style="width: 750px;" >
+        <li style=" text-align:left;padding-left:20px;">开户银行 <span class="mar">{{accountBank}}</span></li>
+        <li style=" text-align:left;padding-left:20px;">收款账户 {{accountCode}}</li>
+        <li style=" text-align:left;padding-left:20px;">SWIFT Code {{swiftCode}}</li>
+      </ul>
+      <ul v-if="swiftCode==''" class="supplierInfo clearfix" v-show="supplierInfo"  style="width: 750px;" >
         <li>开户银行 {{accountBank}}</li>
         <li>收款账户 {{accountCode}}</li>
       </ul>
@@ -174,7 +179,7 @@ export default {
       },
       // year: new Date().getFullYear(),
       budgetDeptList: [],
-     
+      swiftCode:"",
       budgetInfo: '',
       payTypes: [],
       currencyList: [],
@@ -290,6 +295,7 @@ export default {
       console.log(this.ifSupplierChange)
       var params = JSON.stringify({
         bankinfo:{
+          swiftCode:this.swiftCode,
           ifSupplierChange:this.ifSupplierChange,
           ifChangeSelect:this.ifChangeSelect,
           supplierName:this.supplierName,
@@ -297,6 +303,7 @@ export default {
           "supplierBankAccountName": this.supplierBankAccountName, //供应商开户账号名
           "supplierBankAccountCode": this.accountCode, //供应商开户账号编号
           supplierId: this.supplierId, //  供应商id
+
         },
         budgetTable: this.budgetTable,
         paymentForm: this.paymentForm,
@@ -315,6 +322,7 @@ export default {
       if (this.paymentForm.supplierIds.length != 0) {
         this.draftFirst = true;
       }
+      
 
       this.getFileCatalogue(obj);
       this.getPrePayTemp();
@@ -363,7 +371,8 @@ export default {
         "isAdvancePayment": this.paymentForm.isAdvancePayment, //是否是预付款, 1为是, 0为否
         "isProduction": feeType.pro, //是否是生产类, 1为是,0为否
         "costTypeCode": feeType.dictCode, //费用类型code , FIN04和FIN05 中
-        "costTypeName": feeType.dictName //费用类型名
+        "costTypeName": feeType.dictName, //费用类型名
+        supplierBankSwiftCode:this.swiftCode
       };
      
      
@@ -378,7 +387,8 @@ export default {
       var finFileIds = this.paymentForm.contractAttach.map(c => c.response.data).concat(this.paymentForm.invoiceAttach.map(c => c.response.data));
 
       this.$http.post('/Supplier/getSupplierBankInfo', { 
-          id: this.id
+          // id: this.id
+           accountBank:this.accountBank,accountCode:this.accountCode
         })
         .then(res => {
           if (res.status == '0') {
@@ -688,6 +698,7 @@ export default {
             })
             this.supplierList = res.data;
             that.supplierChange(obj);
+
             // if (this.draftFirst) {
             //   that.supplierChange(obj);
             //   this.draftFirst = false;
@@ -764,6 +775,7 @@ export default {
     },
     supplierChange(val) {
        if(val&&val.bankinfo){
+       
         var len = this.paymentForm.supplierIds.length;
         var temp = this.supplierList;
         for (var i = 0; i < len; i++) {
@@ -776,6 +788,9 @@ export default {
         this.$http.post('/Supplier/getSupplierBanks', { supplierBankId: temp.supplierBankId })
         .then(res => {
           if (res.status == 0) {
+            
+
+            this.swiftCode=val.bankinfo.swiftCode;
             this.supplierInfo =  res.data;
             this.accountBank=val.bankinfo.supplierBank;
             this.supplierBank=val.bankinfo.supplierBank;
@@ -807,6 +822,7 @@ export default {
               this.accountCode="";
               if(res.data.length==1){
                  this.supplierBank=res.data[0].accountBank;
+                 this.swiftCode=res.data[0].swiftCode;
                  this.supplierBankAccountName=res.data[0].accountName;
                  this.accountBank=res.data[0].accountBank;
                  this.accountCode=res.data[0].accountCode;
@@ -833,11 +849,12 @@ export default {
       }
       this.accountCode=this.$refs.supplierInfos.value;
       var that=this;
-      this.$http.post('/Supplier/getSupplierBankInfo', { id:this.id })
+      this.$http.post('/Supplier/getSupplierBankInfo', { accountBank:this.accountBank,accountCode:this.accountCode})
       .then(res => {
         if (res.status == 0) {
           that.supplierBankAccountName=res.data.accountName;
           that.supplierName=res.data.supplierName;
+          that.swiftCode=res.data.swiftCode;
           that.ifChangeSelect=true;
         } else {
         }
@@ -886,10 +903,16 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
+
+
 .paymentApp {
   // .el-input {
   //   width: 100%;
   // }
+  
+  .mar{
+    margin-left: 26px
+  }
   .tipInfo {
     display: inline-block;
     font-size: 14px;

@@ -170,16 +170,20 @@
           <el-form-item label="银行账户" prop="accountCode" class="deptArea" ref="accountCode" :rules="[ { required: isPersonal, message: '请输入银行账户' }]">
             <el-input v-model="appFormAccount.accountCode"></el-input>
           </el-form-item>
-            <el-button @click='addBudget' type="primary" style="width:100px" class="arrArea"><i class="el-icon-plus"></i> 添加</el-button>          
+          <el-form-item label="SWIFT Code (银行国际代码)" prop="swiftCodeswiftCode" class="arrArea"  >
+            <el-input v-model="appFormAccount.swiftCode" :maxlength="20" @change="inputSWIFTCode" style="width" ref="swiftCode"></el-input>
+          </el-form-item>
+            <el-button @click='addBudget' type="primary" style="width:100px;float:right" class="arrArea"><i class="el-icon-plus"></i> 添加</el-button>          
           </el-form>
             <div style="width:750px;margin-bottom:20px;" v-show="!appForm.type||appForm.type.dictCode!=='DOC2602'">
           <el-table :data="accountTable" :stripe="true" highlight-current-row class="appTable" >
           
-            <el-table-column property="accountLimit" label="信用额度"></el-table-column>
-            <el-table-column property="timeline" label="信用期间" width="200"></el-table-column>
-            <el-table-column property="accountBank" label="开户行" width="100"></el-table-column>
-            <el-table-column property="accountName" label="账户名称" width="150"></el-table-column>
-             <el-table-column property="accountCode" label="银行账户" ></el-table-column>
+          <el-table-column property="accountLimit" label="信用额度"></el-table-column>
+          <el-table-column property="timeline" label="信用期间" width="190"></el-table-column>
+          <el-table-column property="accountBank" label="开户行" width="100"></el-table-column>
+          <el-table-column property="accountName" label="账户名称" width="100"></el-table-column>
+          <el-table-column property="accountCode" label="银行账户" ></el-table-column>
+          <el-table-column property="swiftCode" label="SWIFT Code" width="130"></el-table-column>
             <el-table-column label="操作" width="55">
               <template scope="scope">
                 <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
@@ -294,7 +298,7 @@ export default {
         accountBank:"",
         accountName:"",
         accountCode:"",
-          
+        swiftCode:""
       },
       appForm: {
         fileSend: {
@@ -438,6 +442,16 @@ export default {
     }
   },
   methods: {
+    inputSWIFTCode(val){
+      val = val.toString().match(/^[A-Z]{0,}/);
+      if (val) {
+        this.$refs.swiftCode.setCurrentValue(val[0]);
+        this.appFormAccount.swiftCode = val[0];
+      } else {
+        this.appFormAccount.swiftCode = ''
+        this.$refs.swiftCode.setCurrentValue('')
+      }
+    },
     closeAll() {
       this.appForm.fileSend.all = '';
     },
@@ -488,6 +502,7 @@ export default {
             temp.accountBank = this.appFormAccount.accountBank;
             temp.accountName = this.appFormAccount.accountName;
             temp.accountCode = this.appFormAccount.accountCode;
+            temp.swiftCode = this.appFormAccount.swiftCode; 
             this.accountTable.push(temp);
             this.appFormAccount.accountLimit="";
             this.appFormAccount.accountBank="";
@@ -540,7 +555,8 @@ export default {
                 "createUser": tabel.PersonDialogcreateUser,   //创建人
                 "accountLimit": tabel.accountLimit,  //信用额度
                 "accountFrom": tabel.timeline?tabel.timeline.split("/")[0]:"",  //信用开始时间
-                "accountTo": tabel.timeline?tabel.timeline.split("/")[1]:""  //信用结束时间
+                "accountTo": tabel.timeline?tabel.timeline.split("/")[1]:"" , //信用结束时间
+                swiftCode:tabel.swiftCode
               }
           }),
           params.supplierBankId = this.supplierBankId;
@@ -756,7 +772,7 @@ export default {
                 }
               }
             }
-            console.log(res.data.supplierSendInfoBeans)
+            // console.log(res.data.supplierSendInfoBeans)
             this.appForm.fileSend.personList=perlist;
             this.appForm.fileSend.depList=deplist;
 

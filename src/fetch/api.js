@@ -143,6 +143,9 @@ export default {
   getSoftList(params) {
     return fetch('/index/selectSoftwareInfo', params)
   },
+  getUpdateRecord(params) {
+    return fetch('/index/selectVersionInfo', params)
+  },
   getTemplateDownload(params) {
     return fetch('/index/selectTemplateInfo', params)
   },

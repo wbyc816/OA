@@ -39,6 +39,13 @@ export const docConfig = [{
     url: '/doc/empVacation'
   },
   {
+    docName: '飞行员请假申请',
+    color: '#5CB8EB',
+    shortName: '飞行员假',
+    code: 'QJSFX',
+    url: '/doc/docFlyVacation'
+  },
+  {
     docName: '工伤申请',
     color: '#D67CAB',
     shortName: '工伤申请',

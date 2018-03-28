@@ -37,6 +37,7 @@ import QJS from './component/vacationApp.component.vue'
 import GSS from './component/injuryApp.component.vue'
 import RSB from './component/empChangeApp.component.vue'
 import JJS from './component/empUpgradeApp.component.vue'
+import QJSFX from './component/pilotVacationApp.component.vue'
 import ZZS from './component/empBecomeApp.component.vue'
 import PXS from './component/empTrainingApp.component.vue'
 import RYY from './component/empIntroduceApp.component.vue'
@@ -101,6 +102,7 @@ export default {
     Description,
     CLV,
     QJS,
+    QJSFX,
     GSS,
     RSB,
     JJS,

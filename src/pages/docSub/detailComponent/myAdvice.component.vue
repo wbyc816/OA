@@ -94,7 +94,8 @@
       </el-form-item>
       <el-form-item>
         <el-col :span='18'>
-          <el-button type="primary" size="large" class="submitButton" @click="submit">提交</el-button>
+          <el-button type="primary" size="large" class="submitButton" @click="submit()">提交</el-button>
+          <el-button v-if="docDetail.isSecretary==1&&docDetail.isSign!=1" type="primary" size="large" class="submitButton" @click="submit(true)">无意见转发</el-button>
           <slot name="docArchive"></slot>
         </el-col>
       </el-form-item>
@@ -300,29 +301,24 @@ export default {
     }
 
 
-    // this.$http.post('/doc/isDeptLeader', { empId: this.userInfo.empId,deptId:this.userInfo.deptId})
-    //   .then(res => {
-    //      if (res.status == 0) {
-    //        console.log(this.docDetail.defaultSuggestVo.reciUserId)
-    //       if((res.data==1 &&this.docDetail.signDoc==1)&& (this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
-    //           document.getElementById("tipText").innerHTML="该公文为部门会签公文，如不需转给下属，请直接点击结束会签。"
-    //           console.log(666)
-    //       }  
-    //       else if((res.data==1 &&this.docDetail.signDoc==2) && (this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD' ||this.$route.query.code == 'HTS')){
-    //         document.getElementById("tipText").innerHTML="该公文为人员会签公文，直接点击提交即可。"
-    //            console.log(777)
-    //       }else if(this.docDetail.defaultSuggestVo.reciUserId){
-    //           document.getElementById("tipText").innerHTML="该公文接收人为固定人员，不可修改。"
-    //              console.log(88)
-    //       }  else if(res.data==1&&(this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
-    //           document.getElementById("tipText").innerHTML="如果需要给其他部门请选择部门会签，如果要给公司领导审批请选择机要秘书或者综合管理部"
-    //              console.log(88)
-    //       } 
+    this.$http.post('/doc/isDeptLeader', { empId: this.userInfo.empId,deptId:this.userInfo.deptId})
+      .then(res => {
+         if (res.status == 0) {
+          if((res.data==1 &&this.docDetail.signDoc==1)&& (this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
+              document.getElementById("tipText").innerHTML="该公文为部门会签公文，如不需转给下属，请直接点击结束会签。"
+          }  
+          else if((res.data==1 &&this.docDetail.signDoc==2) && (this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD' ||this.$route.query.code == 'HTS')){
+            document.getElementById("tipText").innerHTML="该公文为人员会签公文，直接点击提交即可。"
+          }else if(this.docDetail.defaultSuggestVo.reciUserId){
+              document.getElementById("tipText").innerHTML="该公文接收人为固定人员，不可修改。"
+          }  else if(res.data==1&&(this.$route.query.code == 'FWG'|| this.$route.query.code == 'CPD'|| this.$route.query.code == 'HTS')){
+              document.getElementById("tipText").innerHTML="如果需要给其他部门请选择部门会签，如果要给公司领导审批请选择机要秘书或者综合管理部"
+          } 
            
-    //   } else {
+      } else {
 
-    //   }
-    // })
+      }
+    })
   },
   methods: {
     initAttchment(list) {
@@ -662,16 +658,16 @@ export default {
         this.signPersonVisible = true;
       }
     },
-    submit() {
+    submit(ifTransmit) {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          this.docTask();
+          this.docTask(ifTransmit);
         } else {
           return false;
         }
       });
     },
-    docTask() {
+    docTask(ifTransmit) {
       var subType = this.signType;
       if (this.currentView == 'LZS') { //
         if (this.docDetail.isDept == 1) {
@@ -687,7 +683,7 @@ export default {
         "taskUserName": this.userInfo.name,
         "taskUserId": this.userInfo.empId,
         taskContent: this.ruleForm.taskContent,
-        state: this.ruleForm.state,
+        state: ifTransmit?"3":this.ruleForm.state,
         submitType: subType,
         operateType: '1',
         workState: this.workState,
@@ -744,8 +740,8 @@ $sub:#1465C0;
   .tipText {
 
     // padding-top:7px;
-    font-size: 13px;
-    color: #0460AE;
+    font-size: 14px;
+    color: #000;
     line-height: 15px;
     margin-bottom: 10px;
     margin-left: 133px

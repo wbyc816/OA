@@ -95,12 +95,12 @@ export default {
   },
   computed: {},
   created(){
-    this.reloadMessage();
+    // this.reloadMessage();
   },
   methods: {
-     reloadMessage(){
-      setInterval("window.location.reload()",300000)
-    },
+    //  reloadMessage(){
+    //   setInterval("window.location.reload()",300000)
+    // },
   }
 }
 

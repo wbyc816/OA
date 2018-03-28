@@ -117,6 +117,9 @@ const PresidentMailbox = () =>
   import ('pages/PresidentMailbox.page')
 const softDownload = () =>
   import ('../pages/softDownload.page')
+//测试
+  const test = () =>
+  import ('../pages/test.page')
 //模板下载
 const templateDownload = () =>
   import ('../pages/templateDownload.page')
@@ -131,6 +134,9 @@ const flightException = () =>
   
 const QARData = () =>
   import ('pages/QARData.page')
+
+  const updateRecord = () =>
+  import ('pages/updateRecord.page')
 
 
 Vue.use(Router)
@@ -191,6 +197,14 @@ const router = new Router({
       component: QARData,
       meta: {
         breadcrumb: "QAR数据展示",
+      }
+    },
+    {
+      path: '/updateRecord',
+      name: 'updateRecord',
+      component: updateRecord,
+      meta: {
+        breadcrumb: "E网更新记录",
       }
     }, {
       path: '/diningMenu',
@@ -512,6 +526,13 @@ const router = new Router({
       component: softDownload,
       meta: {
         breadcrumb: '软件下载'
+      }
+    },
+    {
+      path: '/test',
+      component: test,
+      meta: {
+        breadcrumb: '版本提醒'
       }
     },
     {

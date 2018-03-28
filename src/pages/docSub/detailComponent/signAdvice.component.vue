@@ -102,22 +102,22 @@ export default {
     ])
   },
   created() {
-    // this.$http.post('/doc/isDeptLeader', { empId: this.userInfo.empId,deptId:this.userInfo.deptId})
-    //   .then(res => {
-    //      if (res.status == 0) {
-    //       if(res.data==1 &&this.docDetail.signDoc==1){
-    //           document.getElementById("tipText").innerHTML="该公文为部门会签公文，如不需转给下属，请直接点击结束会签。"
-    //       }  
-    //       else if((res.data==1 &&this.docDetail.signDoc==2)){
-    //         document.getElementById("tipText").innerHTML="该公文为人员会签公文，直接点击提交即可。"
-    //       }else if(this.docDetail.defaultSuggestVo.reciUserId){
-    //           document.getElementById("tipText").innerHTML="该公文接收人为固定人员，不可修改。"
-    //       }  
+    this.$http.post('/doc/isDeptLeader', { empId: this.userInfo.empId,deptId:this.userInfo.deptId})
+      .then(res => {
+         if (res.status == 0) {
+          if(res.data==1 &&this.docDetail.signDoc==1){
+              document.getElementById("tipText").innerHTML="该公文为部门会签公文，如不需转给下属，请直接点击结束会签。"
+          }  
+          else if((res.data==1 &&this.docDetail.signDoc==2)){
+            document.getElementById("tipText").innerHTML="该公文为人员会签公文，直接点击提交即可。"
+          }else if(this.docDetail.defaultSuggestVo.reciUserId){
+              document.getElementById("tipText").innerHTML="该公文接收人为固定人员，不可修改。"
+          }  
            
-    //   } else {
+      } else {
 
-    //   }
-    // })
+      }
+    })
     if (this.docDetail.pageCode === 'SWD') {
       this.ruleForm.state = '1'
       this.ruleForm.taskContent = '已阅。';
@@ -345,8 +345,8 @@ $main:#0460AE;
   }
   .tipText {
     padding-top:7px;
-    font-size: 13px;
-    color: #0460AE;
+    font-size: 14px;
+    color: #000;
     line-height: 15px;
         margin-bottom: -10px;
   }

@@ -409,7 +409,7 @@ export default {
 
         })
 
-        this.$http.post("/foc/getUnusual?pageNumber="+this.pageNumberTwo+"&pageSize=20", params, { body: true }).then(res => {
+        this.$http.post("/foc/getUnusual?pageNumber="+this.pageNumberTwo+"&pageSize=10", params, { body: true }).then(res => {
         setTimeout(function() {
         that.searchLoading = false;
 
