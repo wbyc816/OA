@@ -419,6 +419,12 @@ export default {
               this.activeContent = [];
             }
 
+            if(this.$route.query.code=="SWD"){
+              var reg=/jpg/g;
+              this.docDetialInfo.otherInfo[0].url=this.docDetialInfo.otherInfo[0].url.replace(reg,"pdf");
+              console.log(this.docDetialInfo.otherInfo[0].url)
+            }
+
           }
         }, res => {
 

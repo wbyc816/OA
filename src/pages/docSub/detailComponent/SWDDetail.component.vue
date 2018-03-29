@@ -88,6 +88,7 @@ export default {
   },
   mounted() {},
   methods: {
+    
     getOtherAdvice(route) {
       this.$http.post("/doc/getDetailByType", { id: route.params.id, empId: this.userInfo.empId,empPostId:this.docDetialInfo.doc.postId||this.userInfo.empPost[0].id })
         .then(res => {

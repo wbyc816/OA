@@ -130,8 +130,8 @@ export default {
     DocList
   }
 }
-
 </script>
+
 <style lang='scss'>
 .docIndexPage {
   .el-card {
