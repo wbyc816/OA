@@ -15,9 +15,9 @@
             <el-menu-item index='2' :route="{path:'/SMS/mySMS'}">
               我的短信
             </el-menu-item>
-            <el-menu-item index='3' :route="{path:'/SMS/SMSSearch'}" v-if="userInfo.smsManger>0">
+            <!-- <el-menu-item index='3' :route="{path:'/SMS/SMSSearch'}" v-if="userInfo.smsManger>0">
               短信管理
-            </el-menu-item>
+            </el-menu-item> -->
           </el-menu-item-group>
         </el-menu>
       </el-col>
