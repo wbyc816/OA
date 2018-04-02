@@ -232,11 +232,12 @@
           <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
           <el-table-column property="sequenceNo" label="序号" width="90"></el-table-column>
           <el-table-column property="timePrice" label="工时费" width="120" v-if="!isRead"></el-table-column>
-          <el-table-column property="materialPrice" label="材料费" width="120" v-if="isRead">
+          <el-table-column property="materialPrice" label="材料费" width="120"></el-table-column>
+          <!-- <el-table-column property="materialPrice" label="材料费" width="120" v-if="isRead">
             <template scope="scope">
               <money-input v-model="scope.row.materialPrice" :prepend="false" :append="false" min="0"></money-input>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column property="totalItemMoney" label="合计金额" width="120" v-if="isRead">
             <template scope="scope">
               <money-input v-model="scope.row.totalItemMoney" :prepend="false" :append="false" min="0"></money-input>

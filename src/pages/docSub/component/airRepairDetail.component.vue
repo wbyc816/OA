@@ -17,7 +17,7 @@
             <div class="width50">
               <div>
                 <span>执行比例</span>
-                <p>{{props.row.executeRate}}%</p>
+                <p>{{props.row.executeRate}}</p>
               </div>
               <div>
                 <span>单位</span>
@@ -25,10 +25,10 @@
               </div>
             </div>
             <div class="width50">
-              <div>
+              <!-- <div>
                 <span>材料费</span>
                 <p>{{props.row.materialPrice}}</p>
-              </div>
+              </div> -->
               <div>
                 <span>合计金额</span>
                 <p>{{props.row.totalItemMoney}}</p>
@@ -42,6 +42,7 @@
       <el-table-column property="pieceNum" label="合同数量" width="90"></el-table-column>
       <el-table-column property="sequenceNo" label="序号" width="120"></el-table-column>
       <el-table-column property="timePrice" label="工时费" width="120"></el-table-column>
+      <el-table-column property="materialPrice" label="材料费" width="120"></el-table-column>
     </el-table>
     <p class="totalMoney">金额总计 人民币 <span>{{info[0].airmRor.rmb | toThousands}}元 {{info[0].airmRor.rmb | moneyCh}}</span></p>
     <el-table :data="info[0].airmRorRepairs" :stripe="true" highlight-current-row style="width: 100%" class="appTable budgetTable ">

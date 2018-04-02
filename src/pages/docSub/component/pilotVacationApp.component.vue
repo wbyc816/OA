@@ -168,7 +168,7 @@ export default {
         if (valid) {
           this.params = {
             docFlightVacation: {
-              docTypeCode:"QJSFX",
+              
               "startDate":util.formatTime(this.vacationForm.timeRange[0], 'yyyy-MM-dd')   ,
               "endDate": util.formatTime(this.vacationForm.timeRange[1], 'yyyy-MM-dd'),
               "days": this.vacationForm.days,
@@ -238,7 +238,7 @@ export default {
         }, res => {})
     },
     getEmpVacation() {
-      this.$http.post('/emp/empVacationDays', { empId: this.userInfo.empId })
+      this.$http.post('/emp/empVacationDays', { empId: this.userInfo.empId,docTypeCode:"QJSFX", })
         .then(res => {
           if (res.status == 0) {
             this.empVacation = res.data;

@@ -51,16 +51,17 @@
                 <el-option label="归档不通过" value="4"></el-option>
               </el-select>
             </el-col>
-            <el-col :span="6">
-              <el-button class="searchButton" @click="submitParam">搜索</el-button>
-            </el-col>
-            <el-collapse-transition>
-              <el-col :span="8" v-if="hasSub" v-show="selCode">
+            <el-col :span="Array.isArray(subCodeList[selCode])?6:0" v-if="hasSub" v-show="selCode">
                 <el-select v-model="subCode" placeholder="公文子类型" clearable v-if="Array.isArray(subCodeList[selCode])">
                   <el-option v-for="item in subCodeList[selCode]" :label="item.dictName" :value="item.dictCode"></el-option>
                 </el-select>
               </el-col>
-            </el-collapse-transition>
+            <el-col :span="6">
+              <el-button class="searchButton"  @click="submitParam">搜索</el-button>
+            </el-col>
+            <!-- <el-collapse-transition>
+              
+            </el-collapse-transition> -->
           </el-row>
         </div>
       </el-collapse-transition>
@@ -133,19 +134,20 @@ export default {
       showDetail: false,
       subCodeList: {},
       subCode: '',
-      selCode:''
+      selCode:'',
+      isPayStatus:false,
     }
   },
   computed: {
-    isPayStatus: function() {
-      if (this.docTypes.length != 0) {
-        var docCode = this.docTypes[this.docTypes.length - 1];
-        // return payDoc.find(p=>p==docCode)!=undefined&&this.payStatus
-        return false
-      } else {
-        return false
-      }
-    },
+    // isPayStatus: function() {
+    //   if (this.docTypes.length != 0) {
+    //     var docCode = this.docTypes[this.docTypes.length - 1];
+    //     // return payDoc.find(p=>p==docCode)!=undefined&&this.payStatus
+    //     return false
+    //   } else {
+    //     return false
+    //   }
+    // },
     docCode: function() {
       var code = '';
       if (this.docTypes.length != 0) {
@@ -250,6 +252,12 @@ export default {
     docTypeChange() {
       if (this.hasSub) {
         this.subCode = '';
+        var docCode = this.docTypes[this.docTypes.length - 1];
+        if(docCode=="CLB"||docCode=="FKS"||docCode=="BXS"||docCode=="YFK"){
+          this.isPayStatus=true;
+        }else{
+          this.isPayStatus=false;
+        }
         this.getSubCode();
       }
     }
