@@ -92,6 +92,19 @@
             <el-button size="small" type="primary" :disabled="fileForm.taskFileId!=''||disabledUpload" v-show="!isIE()||(fileForm.taskFileId==''&&!disabledUpload)">上传发布正文<i class="el-icon-upload el-icon--right"></i></el-button>
           </el-upload>
         </el-form-item>
+
+        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange(checkAll)">全选</el-checkbox>
+        <div style="margin: 15px 0;"></div>
+        <el-checkbox-group v-model="checkedFiles" @change="handleCheckedFliesChange">
+          <div class="overFive" v-if="docFiles.length>5">
+            <el-checkbox v-for="file in docFiles"  :label="file.id" style="display:block;margin-left:20px">{{file.fileName}}</el-checkbox>
+          </div>
+          <div v-if="docFiles.length<6">
+            <el-checkbox v-for="file in docFiles"  :label="file.id" style="display:block;margin-left:20px">{{file.fileName}}</el-checkbox>
+          </div>
+        </el-checkbox-group>
+ 
+     <div style="margin: 15px 0;"></div>
         <el-form-item label="发布范围" class='reciverWrap' prop="fileSend" v-if="isRedFile&&archiveState==1">
           <div class="reciverList">
             <el-tag key="all" :closable="true" v-show="fileForm.fileSend.all.max" v-if="fileForm.fileSend.all" type="primary" @close="closeAll">
@@ -252,6 +265,7 @@ export default {
     JBC
   },
   data() {
+   
     var checkFileSend = (rule, value, callback) => {
       if (value.all.max || value.personList.length != 0 || value.depList != 0) {
         callback();
@@ -260,6 +274,7 @@ export default {
       }
     };
     return {
+      checkAll: false,
       DialogArchiveVisible: false,
       DialogSubmitVisible: false,
       dialogArchivePersonVisible: false,
@@ -285,6 +300,8 @@ export default {
         },
         fileIds: []
       },
+      docFile:[],
+      docFiles:[],
       activeNames: [],
       topDistData: [],
       distData: [],
@@ -299,11 +316,22 @@ export default {
       sendTypes: [],
       taskFile: [],
       disabledUpload: false,
-      submitLoading: false
+      submitLoading: false,
+      fileName:[],
+      isIndeterminate: true,
+
+      checkAll: false,
+      checkedFiles: [],
+      fileOptions:[],
+      files: [],
+      isIndeterminate: true,
+      
     }
   },
   created() {
     this.getDetail(this.$route);
+    
+
   },
   beforeRouteUpdate(to, from, next) {
     this.getDetail(to);
@@ -347,6 +375,33 @@ export default {
     ])
   },
   methods: {
+    handleCheckAllChange(val) {
+        this.checkedFiles = val ? this.fileOptions : [];
+        this.isIndeterminate = false;
+    },
+    handleCheckedFliesChange(value) {
+        console.log(value)
+        console.log(this.files)
+        let checkedCount = value.length;
+        this.checkAll = checkedCount === this.files.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.files.length;
+    },
+    getDocFile() {
+      var that=this;
+      this.$http.post('/doc/getDocFile', { docId: this.$route.params.id})
+        .then(res => {
+          if (res.status == '0') {
+            // that.docFiles = res.data;
+            that.docFiles=res.data ;
+            for(var i=0;i<that.docFiles.length;i++){
+              that.files.push(that.docFiles[i].id)
+            }
+            that.fileOptions= that.files
+          } else {
+            console.log('获取附件失败')
+          }
+        })
+    },
     updateFileSend(params) {
       this.fileForm.fileSend = params;
     },
@@ -412,6 +467,7 @@ export default {
             // }
             if (route.query.code == 'FWG') {
               this.isRedFile = true;
+              this.getDocFile();
               this.getSendType();
             }
             this.handleSuggest();
@@ -495,6 +551,7 @@ export default {
       this.fileForm.fileSend.depList.splice(index, 1);
     },
     docArchive(isEnd) { //归档
+    console.log(this.checkedFiles)
       this.$refs.fileForm.validate((valid) => {
         if (valid) {
           var that = this;
@@ -508,8 +565,11 @@ export default {
             "taskUserId": this.userInfo.empId,
             "state": this.archiveState,
             "taskFileId": '',
-            "taskContent": this.$refs.myAdvice.ruleForm.taskContent
+            "taskContent": this.$refs.myAdvice.ruleForm.taskContent,
+             docFileIds:this.checkedFiles,
+             operateType :1
           }
+          
           if (this.archiveState == 1) {
             if (this.isRedFile) {
               params.taskFileId = this.fileForm.taskFileId;
@@ -539,7 +599,7 @@ export default {
           if (this.$refs.myAdvice.ruleForm.attchment.length != 0) {
             params.fileIds = this.$refs.myAdvice.ruleForm.attchment.map(f => f.response.data);
           }
-          // console.log(params)
+          
           this.submitLoading = true;
           this.$http.post('/doc/docArchive', params, { body: true })
             .then(res => {
@@ -620,7 +680,9 @@ export default {
         "operateType": '1',
         "empIds": [],
         "deptIds": this.archiveForm.depList.map(d => d.id),
-        "disType": this.archiveForm.all ? 'all' : ''
+        "disType": this.archiveForm.all ? 'all' : '',
+        docFileIds:[],
+        operateType :1
       }
       this.archiveForm.personList.forEach(person => {
         var temp = {
@@ -632,7 +694,7 @@ export default {
         }
         params.empIds.push(temp);
       })
-      // console.log(params);
+
       this.$http.post('/doc/docDistribution', params, { body: true })
         .then(res => {
           this.submitLoading = false;
@@ -731,6 +793,10 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docDetail {
+  .overFive{
+    height:105px;
+    overflow:auto;
+  }
   .ZZSPJ{
     font:16px '宋体';
     text-align:center;
