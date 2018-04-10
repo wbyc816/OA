@@ -18,8 +18,8 @@
                 <span>01</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
               </template>
             </p>
-            <p v-for="(child,index) in item.onduty">
-              <template v-if="child.isLeader==0">
+            <p v-for="(child,index) in item.onduty" v-if="child.isLeader==0">
+              <template >
                 <span>AOC</span><span>{{child.empName}}</span><span>{{child.mobileNumber | phone}}</span>
               </template>
             </p>

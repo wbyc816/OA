@@ -42,7 +42,7 @@
         </span>
         <!-- <span class="download"><i class="iconfont icon-icon202"></i>导出报表</span> -->
       </div>
-      <el-table :data="searchData" class="myTable" @row-click="goDetail" :row-class-name="tableRowClassName">
+      <el-table :data="searchData" class="myTable" @cell-click="goDetail" :row-class-name="tableRowClassName">
         <el-table-column prop="docTypeName" label="公文类型" width="100"></el-table-column>
         <el-table-column prop="taskUser" label="呈报人" width="100"></el-table-column>
         <el-table-column prop="docTitle" label="公文标题"></el-table-column>
@@ -61,6 +61,13 @@
         <el-table-column prop="overTimeProportion" label="超时节点" width="100">
           <template scope="scope">
             {{scope.row.isOvertime==1?scope.row.currentUser:''}}
+          </template>
+        </el-table-column>
+         <el-table-column prop="overTimeProportion" label="操作" width="50">
+          <template scope="scope">
+            <el-tooltip content="查看流转" placement="top" :enterable="false" effect="light">
+              <i class="link iconfont icon-liucheng" @click="getProcess(scope.row.id)"></i>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -133,6 +140,9 @@ export default {
     }
   },
   methods: {
+    getProcess(id) {
+      this.$store.dispatch('getTaskDetail', id);
+    },
     getData() {
       this.searchLoading = true;
       this.searchParams.docType = this.docTypes[this.docTypes.length - 1];
@@ -162,9 +172,12 @@ export default {
       this.searchParams.pageNumber = page;
       this.getData()
     },
-    goDetail(row) {
-      // console.log(row);
-      this.$router.push({ path: '/doc/docInfo/' + row.id, query: { code: row.docTypeCode } })
+    goDetail(row, column, cell, event) {
+      if(cell.firstChild.firstChild.nodeValue){
+         this.$router.push({ path: '/doc/docInfo/' + row.id, query: { code: row.docTypeCode } })
+      }else{
+        
+      }
     },
     tableRowClassName(row, index) {
       if (row.state == 4) {
