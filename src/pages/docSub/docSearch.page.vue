@@ -26,6 +26,10 @@
             <el-tooltip content="查看" placement="top" :enterable="false" effect="light">
               <router-link tag="i" class="link iconfont icon-eye" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
             </el-tooltip>
+            <!-- <el-tooltip content="付款" placement="top" :enterable="false" effect="light">
+              <i v-if="doc.isPay==1&&doc.isView==1" @click="changePay(doc.id)" class="link iconfont icon-fukuan"></i>
+            </el-tooltip> -->
+
           </td>
         </tr>
       </tbody>
@@ -74,6 +78,28 @@ export default {
     this.getData();
   },
   methods: {
+   
+    changePay(id) {
+      
+      var that=this;
+      this.$confirm('确定已付款?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/doc/updateFinPayState', { docId: id })
+          .then(res => {
+            if (res.status == 0) {
+              this.$message.success('操作成功!');
+              this.setOptions(this.searchOptions);
+            } else {
+              this.$message.error('操作失败!' + res.message);
+            }
+          })
+      }).catch(() => {
+
+      })
+    },
     getData() {
       var that = this;
       this.searchLoading = true;
