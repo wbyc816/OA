@@ -775,7 +775,6 @@ export default {
     },
     supplierChange(val) {
        if(val&&val.bankinfo){
-       
         var len = this.paymentForm.supplierIds.length;
         var temp = this.supplierList;
         for (var i = 0; i < len; i++) {

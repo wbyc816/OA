@@ -609,7 +609,7 @@ export default {
       }
     },
     supplierChange(val) {
-      if(val.bankinfo){
+      if(val&&val.bankinfo){
         console.log(val)
         var len = this.contractForm.supplierIds.length;
         var temp = this.supplierList;

@@ -15,24 +15,45 @@
         </el-card>
         <!-- 待办事项 -->
         <el-card class="bedoneList" :class="{'noLine':doneLength<4}" v-if="doneLength!=0">
-          <p slot="header">待办事项 <span>{{doneLength}}</span></p>
-          <el-carousel :height="doneHeight+'px'" :autoplay="false" :indicator-position="doneLength>10?'outside':'none'" arrow="never">
+          <p slot="header"><span class="blackColor"  @click="showOut(true)"  >待办事项</span> <span>{{doneLength}}</span>  <span  class="blackColor leftBorder"  v-if="doneLengthOut" @click="showOut(false)"> 外部待办事项</span> <span v-if="doneLengthOut">{{doneLengthOut}}</span></p>  
+          <el-carousel v-if="isShowOut"  :height="doneHeight+'px'" :autoplay="false" :indicator-position="doneLengthOut>10?'outside':'none'" arrow="never">
             <el-carousel-item v-for="(list,index) in doneList" :key="index">
               <el-row :gutter="20">
                 <el-col :span="doneLength>3?12:24" v-for="(item,itemIndex) in list" :class="{higher:itemIndex>1&&doneLength>3}">
-                  <router-link target= "_blank" :to="{path:'/doc/docDetail/'+item.id,query:{code:item.docTypeCode}}">
+                  <a  target="_blank"    @click="goToOtherReloads('/doc/docDetail/'+item.id+'?code='+item.docTypeCode)">
                     <span class="index">{{item.index}}</span>
                     <p class="title">{{item.docTitle}}</p>
                     <div class="timeline">
                       <p v-if="item.endTime">截止日</p>
                       <p>{{item.endTime.slice(0,10)}}</p>
                     </div>
-                  </router-link>
+                  </a>
                 </el-col>
               </el-row>
             </el-carousel-item>
           </el-carousel>
+
+          
+
+           <el-carousel v-if="!isShowOut"  :height="doneHeightOut+'px'" :autoplay="false" :indicator-position="doneLengthOut>10?'outside':'none'" arrow="never">
+            <el-carousel-item v-for="(list,index) in doneListOut" :key="index">
+              <el-row :gutter="20">
+                <el-col :span="doneLengthOut>3?12:24" v-for="(item,itemIndex) in list" :class="{higher:itemIndex>1&&doneLengthOut>3}">
+                  <a  target="_blank"    @click="goToOtherReloads(item.url)">
+                    <span class="index">{{item.index}}</span>
+                    <p class="title">{{item.title}}</p>
+                    <div class="timeline">
+                      <p v-if="item.createTime">创建日期</p>
+                      <p>{{item.createTime | time('date')}}</p>
+                    </div>
+                  </a>
+                </el-col>
+              </el-row>
+            </el-carousel-item>
+          </el-carousel>
+
         </el-card>
+
         <!-- 新闻 -->
         <el-card class="news">
           <p slot="header"><span>新闻</span>
@@ -231,8 +252,8 @@ const otherLinks = [
   // { "icon": "changyong", "text": "test", "link": "/test" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   // { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
-  // { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080" },
-  { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
+  { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080/login.jsp" },
+  // { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
   { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },
@@ -308,7 +329,7 @@ export default {
       msgs,
       activeName: '',
       pieBg,
-
+      isShowOut:true,
       pieoption,
       otherLinks,
       tripType: 'date',
@@ -336,8 +357,11 @@ export default {
       },
       searchDate: '',
       doneList: [],
+      doneListOut: [],
       doneLength: 0,
+      doneLengthOut: 0,
       doneHeight: 150,
+      doneHeightOut: 150,
       newsList: [],
       flightTrends: {
         "sumFlight": 0,
@@ -418,6 +442,10 @@ export default {
     
   },
   methods: {
+    showOut(isShowOut){
+      // console.log(isShowOut)
+      this.isShowOut=isShowOut;
+    },
     reloadMessage(){
       
       var that=this;
@@ -464,7 +492,7 @@ export default {
         if (/^http/.test(link)) {
           window.open(link);
         } else {
-          window.open(location.href.slice(0,location.href.indexOf("#")+1)+link)
+          var win=window.open(location.href.slice(0,location.href.indexOf("#")+1)+link)
         }
       } else {
         if (link.params) {
@@ -480,7 +508,78 @@ export default {
         }
       }
     },
-    getTips() {
+     goToOtherReloads(link) {
+       var that=this;
+      if (typeof link === 'string') {
+        if (/^http/.test(link)) {
+           var win=window.open(link);
+        } else {
+           var win=window.open(location.href.slice(0,location.href.indexOf("#")+1)+link)
+        }
+      } 
+      var loop = setInterval(function() { 
+      if(win.closed) {    
+          clearInterval(loop);
+
+        that.$http.post('doc/docTips', { empId: that.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            msgs[2].value = res.data.trackingNum; //追踪
+            msgs[1].value = res.data.toReadNum; //待阅
+            msgs[3].value = res.data.overTimeNum; //超时
+            msgs[0].value = res.data.pendingNum; //待批
+            msgs[4].value = res.data.birthdayNum; //生日
+            msgs[5].value = res.data.conferenceNum; //会议
+          } else {
+
+          }
+        }, res => {
+        })
+
+        that.$http.post('/doc/backlogList', { userId: that.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            if (Array.isArray(res.data)) {
+              that.doneLength = res.data.length;
+              switch (that.doneLength) {
+                case 1:
+                  that.doneHeight = 50;
+                  break;
+                case 2:
+                case 4:
+                  that.doneHeight = 90;
+                  break;
+                case 3:
+                  that.doneHeight = 145;
+                  break;
+                case 5: case 6:
+                  that.doneHeight = 120;
+                  break;
+                case 7: case 8:
+                  that.doneHeight = 175;
+                  break;
+                default:
+                  that.doneHeight = 210;
+              }
+              res.data=res.data.slice(0,100);
+              res.data.forEach((r, index) => r.index = index + 1);
+              that.doneList=[];
+              for (var i = 0; i < res.data.length; i += 10) {
+                if (res.data.slice(i, i + 10)) {
+                  that.doneList.push(res.data.slice(i, i + 10))
+                }
+              }
+            } else {
+              that.doneLength = 0;
+            }
+          }
+        }, res => {
+
+        })
+        }    
+      }, 1000);
+    },
+      getTips() {
       this.$store.dispatch('getDocTips');
     },
     changDate() {
@@ -529,6 +628,7 @@ export default {
           }, res => {
 
           })
+
      that.$http.post('/doc/backlogList', { userId: that.userInfo.empId })
         .then(res => {
           if (res.status == 0) {
@@ -569,6 +669,47 @@ export default {
         }, res => {
 
         })
+
+        // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
+        // .then(res => {
+        //   if (res.status == 0) {
+        //     if (Array.isArray(res.data)) {
+        //       that.doneLengthOut = res.data.length;
+        //       switch (that.doneLengthOut) {
+        //         case 1:
+        //           that.doneHeight = 50;
+        //           break;
+        //         case 2:
+        //         case 4:
+        //           that.doneHeight = 90;
+        //           break;
+        //         case 3:
+        //           that.doneHeight = 145;
+        //           break;
+        //         case 5: case 6:
+        //           that.doneHeight = 120;
+        //           break;
+        //         case 7: case 8:
+        //           that.doneHeight = 175;
+        //           break;
+        //         default:
+        //           that.doneHeight = 210;
+        //       }
+        //       res.data=res.data.slice(0,100);
+        //       res.data.forEach((r, index) => r.index = index + 1);
+        //       that.doneListOut=[];
+        //       for (var i = 0; i < res.data.length; i += 10) {
+        //         if (res.data.slice(i, i + 10)) {
+        //           that.doneListOut.push(res.data.slice(i, i + 10))
+        //         }
+        //       }
+        //     } else {
+        //       that.doneLengthOut = 0;
+        //     }
+        //   }
+        // }, res => {
+
+        // })
       }, 300000);
       that.$http.post('/doc/backlogList', { userId: that.userInfo.empId })
         .then(res => {
@@ -598,21 +739,62 @@ export default {
               res.data=res.data.slice(0,100);
               res.data.forEach((r, index) => r.index = index + 1);
               that.doneList=[];
+              // console.log( res.data)
+
               for (var i = 0; i < res.data.length; i += 10) {
                 if (res.data.slice(i, i + 10)) {
+
                   that.doneList.push(res.data.slice(i, i + 10))
+                  console.log( res.data.slice(i, i + 10))
                 }
+                
               }
             } else {
               that.doneLength = 0;
             }
           }
-        }, res => {
-
         })
 
-
-      
+        // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
+        // .then(res => {
+        //   if (res.status == 0) {
+        //     if (Array.isArray(res.data)) {
+        //       that.doneLengthOut = res.data.length;
+        //       switch (that.doneLengthOut) {
+        //         case 1:
+        //           that.doneHeightOut = 50;
+        //           break;
+        //         case 2:
+        //         case 4:
+        //           that.doneHeightOut = 90;
+        //           break;
+        //         case 3:
+        //           that.doneHeightOut = 145;
+        //           break;
+        //         case 5: case 6:
+        //           that.doneHeightOut = 120;
+        //           break;
+        //         case 7: case 8:
+        //           that.doneHeightOut = 175;
+        //           break;
+        //         default:
+        //           that.doneHeightOut = 210;
+        //       }
+        //       res.data=res.data.slice(0,100);
+        //       res.data.forEach((r, index) => r.index = index + 1);
+        //       // console.log(res.data)
+        //       that.doneListOut=[];
+        //       for (var i = 0; i < res.data.length; i += 10) {
+        //         if (res.data.slice(i, i + 10)) {
+        //           that.doneListOut.push(res.data.slice(i, i + 10))
+        //         }
+        //       }
+        //     } else {
+        //       that.doneListOut = 0;
+        //     }
+        //   }
+        // })
+        
     },
     getNews() {
       if (this.newsList.length === 0) {
@@ -668,7 +850,9 @@ $main: #0460AE;
 $brown: #985D55;
 $lan:#0460AE;
 $sub:#1465C0;
-
+.blackColor{
+  color: #000
+}
 #home {
   .homeDialog {
     width: 1080px;
@@ -1107,6 +1291,15 @@ $sub:#1465C0;
       span {
         color: $main;
         margin-left: 10px;
+      }
+      span.blackColor {
+        color: black;
+        cursor: pointer;
+      }
+      span.leftBorder {
+        padding-left:10px;
+        color:black;
+        border-left:1px solid black
       }
     }
     .el-card__body {

@@ -93,7 +93,8 @@
           </el-upload>
         </el-form-item>
 
-        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange(checkAll)">全选</el-checkbox>
+        <el-checkbox :indeterminate="isIndeterminate" v-if="docFiles.length>0"  v-model="checkAll" @change="handleCheckAllChange(checkAll)">全选</el-checkbox>
+
         <div style="margin: 15px 0;"></div>
         <el-checkbox-group v-model="checkedFiles" @change="handleCheckedFliesChange">
           <div class="overFive" v-if="docFiles.length>5">
