@@ -7,8 +7,27 @@
       <div class="infoBox remain">剩余<span>{{empVacation.currentSeasonDays-empVacation.annualDays}}</span></div>
     </div>
     <el-form label-position="left" :model="vacationForm" :rules="rules" ref="vacationForm" label-width="128px">
-      <el-form-item label="休假时间" prop="timeRange">
-        <el-date-picker v-model="vacationForm.timeRange" type="datetimerange" :editable="false" :clearable="false" style="width:100%" :picker-options="pickerOptions0"></el-date-picker>
+
+      <el-form-item label="开始休假日期" prop="timeRangeStart" class="deptArea">
+        <el-date-picker  v-model="vacationForm.timeRangeStart" type="date" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
+      </el-form-item>
+
+       <el-form-item label="时间" prop="timeStart" class="arrArea">
+         <el-time-picker
+          v-model="vacationForm.timeStart"
+          placeholder="任意时间点">
+        </el-time-picker>
+      </el-form-item>
+
+      <el-form-item label="休假截止日期" prop="timeRangEnd" class="deptArea">
+        <el-date-picker  v-model="vacationForm.timeRangEnd" type="date" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
+      </el-form-item>
+      
+      <el-form-item label="时间" prop="timeEnd" class="arrArea">
+         <el-time-picker
+          v-model="vacationForm.timeEnd"
+          placeholder="任意时间点">
+        </el-time-picker>
       </el-form-item>
       <el-form-item label="休假天数" prop="days" class="deptArea">
         <el-input v-model="vacationForm.days" ref="days" @change="fomatDays" :maxlength="6" class="hasUnit" @blur="blurInput">
@@ -31,6 +50,8 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import util from '../../../common/util'
+
 export default {
   components: {},
   data() {
@@ -43,8 +64,8 @@ export default {
       }
     };
     var checkTimeline = (rule, value, callback) => {
-      if (value.length > 0 &&value[0]&& value[0].getTime() == value[1].getTime()) {
-        callback(new Error('开始时间不能等于结束时间'))
+      if (this.vacationForm.timeRangEnd&&this.vacationForm.timeRangeStart&&this.vacationForm.timeRangEnd<this.vacationForm.timeRangeStart) {
+        callback(new Error('开始时间不能超过截止时间'))
       } else {
         callback();
       }
@@ -69,14 +90,22 @@ export default {
       vacationForm: {
         typeId: '',
         workHandover: '',
-        timeRange: [],
+        // timeRange: [],
+        timeRangeStart:new Date(),
+        timeRangEnd:new Date(),
         days: '',
+        timeStart:new Date(2016, 9, 10, 9, 0),
+        timeEnd:new Date(2016, 9, 10, 17, 0),
       },
       rules: {
         days: [{ required: true, message: '请输入休假天数', trigger: 'blur' },
           { validator: checkDay, trigger: 'change,blur' }
         ],
-        timeRange: [{ type: 'array', required: true,  trigger: 'blur' },{validator: checkTimeline,trigger: 'blur,change'}],
+        timeRangeStart: [{ required: true, type: 'date', trigger: 'blur', message: '请选择开始休假日期' },{validator: checkTimeline,trigger: 'blur,change'}],
+        timeRangEnd: [{  required: true,type: 'date',  trigger: 'blur' , message: '请选择休假截止日期'},{validator: checkTimeline,trigger: 'blur,change'}],
+        timeStart: [{ required: true, type: 'date', trigger: 'blur', message: '请选择开始时间'}],
+        timeEnd: [{  required: true,type: 'date',  trigger: 'blur', message: '请选择结束时间' }],
+        // timeRange: [{ type: 'array', required: true,  trigger: 'blur' },{validator: checkTimeline,trigger: 'blur,change'}],
         typeId: [{ required: true, message: '请选择休假类型', trigger: 'blur' }],
         workHandover: [{ required: true, message: '请填写工作交接情况', trigger: 'blur' }],
       },
@@ -111,6 +140,7 @@ export default {
     // this.$emit('updateSuggest','DOC1001');
   },
   methods: {
+    
     // checkworkHandover(rule, value, callback) {
     //   console.log(this.desLenth)
     //   if (this.desLenth == 0) {
@@ -135,18 +165,25 @@ export default {
       this.$emit('saveMiddle',JSON.stringify(this.vacationForm));
     },
     getDraft(obj) {
-      this.combineObj(this.vacationForm,obj,['timeRange']);
-      obj.timeRange.forEach(t=>{
-        this.vacationForm.timeRange.push(new Date(t));
-      })
+      obj.timeEnd=new Date(obj.timeEnd)
+      obj.timeRangEnd=new Date(obj.timeRangEnd)
+      obj.timeRangeStart=new Date(obj.timeRangeStart)
+      obj.timeStart=new Date(obj.timeStart)
+      this.combineObj(this.vacationForm,obj);
+      // obj.timeRange.forEach(t=>{
+      //   this.vacationForm.timeRange.push(new Date(t));
+      // })
     },
     submitForm() {
+      var beginTime=this.vacationForm.timeRangeStart.getFullYear()+"-"+Number(Number(this.vacationForm.timeRangeStart.getMonth())+1)+"-"+this.vacationForm.timeRangeStart.getDate()+"T1"+this.vacationForm.timeStart.getHours()+":"+this.vacationForm.timeStart.getMinutes()+":"+this.vacationForm.timeStart.getSeconds()+".000Z";
+      var endTime=this.vacationForm.timeRangEnd.getFullYear()+"-"+Number(Number(this.vacationForm.timeRangEnd.getMonth())+1)+"-"+this.vacationForm.timeRangEnd.getDate()+"T1"+this.vacationForm.timeEnd.getHours()+":"+this.vacationForm.timeEnd.getMinutes()+":"+this.vacationForm.timeEnd.getSeconds()+".000Z";
       this.$refs.vacationForm.validate((valid) => {
         if (valid) {
           this.params = {
+           
             vacationRecords: [{
-              "beginTime": this.vacationForm.timeRange[0], //开始时间
-              "endTime": this.vacationForm.timeRange[1], //结束时间
+              "beginTime": beginTime, //开始时间
+              "endTime": endTime, //结束时间
               "annual": new Date().getFullYear(), //年度
               "days": this.vacationForm.days, //本次休假天数
               "typeId": this.vacationForm.typeId, //类型

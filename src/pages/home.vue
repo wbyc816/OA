@@ -8,7 +8,7 @@
           <p slot="header">消息中心</p>
           <el-row :gutter="10">
             <el-col :span="8" v-for="msg in msgs">
-              <message-center :data="msg">
+              <message-center :data="msg" @search="closeWin">
               </message-center>
             </el-col>
           </el-row>
@@ -442,12 +442,70 @@ export default {
     
   },
   methods: {
+    closeWin(){
+      var that=this;
+       this.$http.post('doc/docTips', { empId: this.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            msgs[2].value = res.data.trackingNum; //追踪
+            msgs[1].value = res.data.toReadNum; //待阅
+            msgs[3].value = res.data.overTimeNum; //超时
+            msgs[0].value = res.data.pendingNum; //待批
+            msgs[4].value = res.data.birthdayNum; //生日
+            msgs[5].value = res.data.conferenceNum; //会议
+          } else {
+
+          }
+        }, res => {
+        })
+
+        that.$http.post('/doc/backlogList', { userId: that.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            if (Array.isArray(res.data)) {
+              that.doneLength = res.data.length;
+              switch (that.doneLength) {
+                case 1:
+                  that.doneHeight = 50;
+                  break;
+                case 2:
+                case 4:
+                  that.doneHeight = 90;
+                  break;
+                case 3:
+                  that.doneHeight = 145;
+                  break;
+                case 5: case 6:
+                  that.doneHeight = 120;
+                  break;
+                case 7: case 8:
+                  that.doneHeight = 175;
+                  break;
+                default:
+                  that.doneHeight = 210;
+              }
+              res.data=res.data.slice(0,100);
+              res.data.forEach((r, index) => r.index = index + 1);
+              that.doneList=[];
+              for (var i = 0; i < res.data.length; i += 10) {
+                if (res.data.slice(i, i + 10)) {
+                  that.doneList.push(res.data.slice(i, i + 10))
+                }
+              }
+            } else {
+              that.doneLength = 0;
+            }
+          }
+        }, res => {
+
+        })
+
+    },
     showOut(isShowOut){
       // console.log(isShowOut)
       this.isShowOut=isShowOut;
     },
     reloadMessage(){
-      
       var that=this;
       var loop = setInterval(function() { 
         that.$http.post('doc/docTips', { empId: that.userInfo.empId })
@@ -755,45 +813,45 @@ export default {
           }
         })
 
-        // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
-        // .then(res => {
-        //   if (res.status == 0) {
-        //     if (Array.isArray(res.data)) {
-        //       that.doneLengthOut = res.data.length;
-        //       switch (that.doneLengthOut) {
-        //         case 1:
-        //           that.doneHeightOut = 50;
-        //           break;
-        //         case 2:
-        //         case 4:
-        //           that.doneHeightOut = 90;
-        //           break;
-        //         case 3:
-        //           that.doneHeightOut = 145;
-        //           break;
-        //         case 5: case 6:
-        //           that.doneHeightOut = 120;
-        //           break;
-        //         case 7: case 8:
-        //           that.doneHeightOut = 175;
-        //           break;
-        //         default:
-        //           that.doneHeightOut = 210;
-        //       }
-        //       res.data=res.data.slice(0,100);
-        //       res.data.forEach((r, index) => r.index = index + 1);
-        //       // console.log(res.data)
-        //       that.doneListOut=[];
-        //       for (var i = 0; i < res.data.length; i += 10) {
-        //         if (res.data.slice(i, i + 10)) {
-        //           that.doneListOut.push(res.data.slice(i, i + 10))
-        //         }
-        //       }
-        //     } else {
-        //       that.doneListOut = 0;
-        //     }
-        //   }
-        // })
+        that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            if (Array.isArray(res.data)) {
+              that.doneLengthOut = res.data.length;
+              switch (that.doneLengthOut) {
+                case 1:
+                  that.doneHeightOut = 50;
+                  break;
+                case 2:
+                case 4:
+                  that.doneHeightOut = 90;
+                  break;
+                case 3:
+                  that.doneHeightOut = 145;
+                  break;
+                case 5: case 6:
+                  that.doneHeightOut = 120;
+                  break;
+                case 7: case 8:
+                  that.doneHeightOut = 175;
+                  break;
+                default:
+                  that.doneHeightOut = 210;
+              }
+              res.data=res.data.slice(0,100);
+              res.data.forEach((r, index) => r.index = index + 1);
+              // console.log(res.data)
+              that.doneListOut=[];
+              for (var i = 0; i < res.data.length; i += 10) {
+                if (res.data.slice(i, i + 10)) {
+                  that.doneListOut.push(res.data.slice(i, i + 10))
+                }
+              }
+            } else {
+              that.doneListOut = 0;
+            }
+          }
+        })
         
     },
     getNews() {

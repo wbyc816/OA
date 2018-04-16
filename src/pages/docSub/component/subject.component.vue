@@ -252,7 +252,7 @@ export default {
       }
       this.$store.commit('setReciver', temp);
       this.dialogTableVisible = false;
-      this.ruleForm.rec = temp.reciUserName;
+      this.ruleForm.rec = temp.reciUserName+"-"+temp.reciDeptMajorName;
       if (this.isDefault) {
         this.setDefault(temp);
       }

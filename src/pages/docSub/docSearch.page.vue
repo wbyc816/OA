@@ -26,9 +26,9 @@
             <el-tooltip content="查看" placement="top" :enterable="false" effect="light">
               <router-link tag="i" class="link iconfont icon-eye" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}"></router-link>
             </el-tooltip>
-            <!-- <el-tooltip content="付款" placement="top" :enterable="false" effect="light">
+            <el-tooltip content="付款" placement="top" :enterable="false" effect="light">
               <i v-if="doc.isPay==1&&doc.isView==1" @click="changePay(doc.id)" class="link iconfont icon-fukuan"></i>
-            </el-tooltip> -->
+            </el-tooltip>
 
           </td>
         </tr>

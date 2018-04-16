@@ -1,5 +1,7 @@
 <template>
-  <router-link class='message' :to="data.link" target= "_blank">
+  <!-- <router-link class='message' :to="data.link" target= "_blank"> -->
+    <a  target="_blank"  class='message'  @click="goToOtherReloads(data.link)">
+
     <span class='logo' :style='{backgroundColor:data.color}'>
         <i class='iconfont' :class="'icon-'+data.icon"></i>
       </span>
@@ -7,7 +9,10 @@
     <!-- <span class='text text-type' :class='myType' v-text=''>
         {{textChg}}
       </span> -->
-  </router-link>
+  <!-- </router-link> -->
+
+                    
+    </a>
 </template>
 <style scoped lang='scss'>
 .message {
@@ -83,6 +88,7 @@
 
 </style>
 <script>
+
 export default {
   data() {
     return {}
@@ -93,11 +99,33 @@ export default {
       require: true
     }
   },
-  computed: {},
+  computed: {
+  },
   created(){
     // this.reloadMessage();
   },
   methods: {
+    goToOtherReloads(link){
+      var that=this;
+      if (typeof link === 'string') {
+        if (/^http/.test(link)) {
+           var win=window.open(link);
+        } else {
+           var win=window.open(location.href.slice(0,location.href.indexOf("#")+1)+link)
+        }
+      } 
+      var loop = setInterval(function() { 
+      if(win.closed) {    
+          clearInterval(loop);
+          that.$emit('search')
+      }
+      })
+
+     
+     
+    }
+    
+  
     //  reloadMessage(){
     //   setInterval("window.location.reload()",300000)
     // },

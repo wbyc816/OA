@@ -177,7 +177,7 @@ export default {
       rules: {
         classify1: [{ required: true, message: '请选择发文类型', trigger: 'blur' }],
         docFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
-        fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
+        // fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
         mainPeople: [{ type: 'object', required: true, validator: checkFileSend1, trigger: 'blur' }],
         // ccPeople: [{ type: 'object', required: true, validator: checkFileSend2, trigger: 'blur' }],
         catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
