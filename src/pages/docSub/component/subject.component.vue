@@ -12,10 +12,10 @@
         <span class="taskUserInfo" v-if="taskUser">{{taskUser.deptParentName}} / {{ taskUser.jobtitle }}</span>
       </el-form-item>
       <el-form-item class='form-box' :label="reciverTtitle" prop="rec">
-        <el-input class="search selPerson" v-model="ruleForm.rec" :readonly="true">
+        <el-input class="search selPerson" :disabled="isQJSFX" v-model="ruleForm.rec" :readonly="true">
           <template slot="append">
-            <el-button @click='selectPerson(false)'>选择</el-button>
-            <i class="iconfont icon-renyuanshezhi" @click="selectPerson(true)"></i>
+            <el-button @click='selectPerson(false)' :disabled="isQJSFX">选择</el-button>
+            <i class="iconfont icon-renyuanshezhi" v-if="!isQJSFX" @click="selectPerson(true)"></i>
           </template>
         </el-input>
       </el-form-item>
@@ -70,6 +70,7 @@ export default {
       dialogTableVisible: false,
       pathDialogVisible: false,
       disableEditSuggest: false,
+      isQJSFX:false,
       ruleForm: {
         rec: '',
         sub: '',
@@ -319,7 +320,37 @@ export default {
         })
     },
     getDefaultReciver() {
-      this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId, empPostId: this.taskUser.postId })
+      if(this.$route.params.code=="QJSFX"){
+         this.$http.post('/doc/getFixDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId, empPostId: this.taskUser.postId })
+        .then(res => {
+          if (res.status == 0) {
+            if (res.data) {
+              var receiver = {
+                "reciDeptMajorName": res.data.majorDeptName,
+                "reciDeptMajorId": res.data.majorDeptId,
+                "reciDeptName": res.data.deptName,
+                "reciDeptId": res.data.deptId,
+                "reciUserName": res.data.name,
+                "reciUserId": res.data.empId,
+                "reciUserJobTitle": res.data.jobtitle, //接收人职位
+                "reciPostrankId": res.data.postrankId, //职位id
+                "reciEmpPostId": res.data.empPostId,
+                "reciPostrankName": res.data.postrankName, //职级名称
+                "reciSupervisory": res.data.supervisoryLevel //安全级别
+              }
+              this.$store.commit('setReciver', receiver);
+              this.ruleForm.rec = res.data.name;
+              this.isQJSFX=true;
+            } else {
+              this.$store.commit('setReciver', '');
+              this.ruleForm.rec = '';
+            }
+          } else {
+
+          }
+        })
+      }else{
+        this.$http.post('/doc/getDefaultRecipent', { docTypeCode: this.$route.params.code, empId: this.userInfo.empId, empPostId: this.taskUser.postId })
         .then(res => {
           if (res.status == 0) {
             if (res.data) {
@@ -346,6 +377,8 @@ export default {
 
           }
         })
+      }
+      
     },
     getIsAdmin() {
       this.$http.post('doc/isAdmin', { empId: this.userInfo.empId, docTypeCode: this.$route.params.code })

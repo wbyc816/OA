@@ -77,6 +77,12 @@ const flightStatus = () =>
 //公司同仁
 const contactList = () =>
   import ('pages/ContactList.page')
+
+
+//东海社区
+const dhCommunity = () =>
+  import ('pages/dhCommunity.page')
+
 //人力资源
 const HR = () =>
   import ('../pages/HR/homeHR.page')
@@ -162,6 +168,13 @@ const router = new Router({
       component: contactList,
       meta: {
         breadcrumb: "公司同仁",
+      }
+    }, {
+      path: '/dhCommunity',
+      name: 'dhCommunity',
+      component: dhCommunity,
+      meta: {
+        breadcrumb: "东海社区",
       }
     }, {
       path: '/newsDetail/:id',

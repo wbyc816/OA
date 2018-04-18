@@ -25,6 +25,7 @@
               <el-menu-item :route="{path:'/HR'}" index="5">个人中心</el-menu-item>
               <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
               <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
+              <!-- <el-menu-item :route="{path:'/dhCommunity'}" index="6">东海社区</el-menu-item> -->
               <!-- <el-menu-item :route="{path:''}" index="6"></el-menu-item> -->
             </el-menu>
           </div>

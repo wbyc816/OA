@@ -6,7 +6,7 @@
     </el-col>
     <el-col :span="12">
       <h1 class="title">是否过夜</h1>
-      <p v-if="info" class="textContent">{{info[0].isPassNight==='1'?'是':'否'}}</p>
+      <p v-if="info" class="textContent">{{info[0].isPassNight===1?'是':'否'}}</p>
     </el-col>
     <el-col :span="24">
       <h1 class="title">用车时间</h1>

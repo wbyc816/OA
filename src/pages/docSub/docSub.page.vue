@@ -93,7 +93,7 @@ const contrastData = [
   { 'logo': 'icon-laodonggongshang', 'font': '28px', 'color': '#FF754F', 'text': '工伤申请', 'link': '/doc/docCommonApp/GSS' },
   { 'logo': 'icon-lizhiyuanyin', 'font': '24px', 'color': '#FFE066', 'text': '离职申请', 'link': '/doc/docCommonApp/LZS' },
   { 'logo': 'icon-jinshengguanliline', 'color': '#9FD867', 'text': '晋升申请', 'link': '/doc/docCommonApp/JJS' },
-  { 'logo': 'icon-rili', 'color': '#9FD867', 'text': '飞行员请假申请', 'link': '/doc/docCommonApp/QJSFX' },
+  // { 'logo': 'icon-rili', 'color': '#9FD867', 'text': '飞行员请假申请', 'link': '/doc/docCommonApp/QJSFX' },
 ];
 const ticketData = [
   { 'logo': 'icon-qiaquan', 'font': '28px', 'color': '#FF754F', 'text': '宾客优惠机票', 'link': '/doc/docCommonApp/BKY' },

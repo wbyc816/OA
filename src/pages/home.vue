@@ -14,7 +14,7 @@
           </el-row>
         </el-card>
         <!-- 待办事项 -->
-        <el-card class="bedoneList" :class="{'noLine':doneLength<4}" v-if="doneLength!=0">
+        <el-card class="bedoneList" :class="{'noLine':doneLength<4}" v-if="doneLength!=0||doneLengthOut!=0">
           <p slot="header"><span class="blackColor"  @click="showOut(true)"  >待办事项</span> <span>{{doneLength}}</span>  <span  class="blackColor leftBorder"  v-if="doneLengthOut" @click="showOut(false)"> 外部待办事项</span> <span v-if="doneLengthOut">{{doneLengthOut}}</span></p>  
           <el-carousel v-if="isShowOut"  :height="doneHeight+'px'" :autoplay="false" :indicator-position="doneLengthOut>10?'outside':'none'" arrow="never">
             <el-carousel-item v-for="(list,index) in doneList" :key="index">
@@ -813,45 +813,46 @@ export default {
           }
         })
 
-        that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
-        .then(res => {
-          if (res.status == 0) {
-            if (Array.isArray(res.data)) {
-              that.doneLengthOut = res.data.length;
-              switch (that.doneLengthOut) {
-                case 1:
-                  that.doneHeightOut = 50;
-                  break;
-                case 2:
-                case 4:
-                  that.doneHeightOut = 90;
-                  break;
-                case 3:
-                  that.doneHeightOut = 145;
-                  break;
-                case 5: case 6:
-                  that.doneHeightOut = 120;
-                  break;
-                case 7: case 8:
-                  that.doneHeightOut = 175;
-                  break;
-                default:
-                  that.doneHeightOut = 210;
-              }
-              res.data=res.data.slice(0,100);
-              res.data.forEach((r, index) => r.index = index + 1);
-              // console.log(res.data)
-              that.doneListOut=[];
-              for (var i = 0; i < res.data.length; i += 10) {
-                if (res.data.slice(i, i + 10)) {
-                  that.doneListOut.push(res.data.slice(i, i + 10))
-                }
-              }
-            } else {
-              that.doneListOut = 0;
-            }
-          }
-        })
+        // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
+        // .then(res => {
+        //   if (res.status == 0) {
+        //     if (Array.isArray(res.data)) {
+        //       that.doneLengthOut = res.data.length;
+        //       switch (that.doneLengthOut) {
+        //         case 1:
+        //           that.doneHeightOut = 50;
+        //           break;
+        //         case 2:
+        //         case 4:
+        //           that.doneHeightOut = 90;
+        //           break;
+        //         case 3:
+        //           that.doneHeightOut = 145;
+        //           break;
+        //         case 5: case 6:
+        //           that.doneHeightOut = 120;
+        //           break;
+        //         case 7: case 8:
+        //           that.doneHeightOut = 175;
+        //           break;
+        //         default:
+        //           that.doneHeightOut = 210;
+        //       }
+        //       console.log(that.doneHeightOut)
+        //       res.data=res.data.slice(0,100);
+        //       res.data.forEach((r, index) => r.index = index + 1);
+        //       // console.log(res.data)
+        //       that.doneListOut=[];
+        //       for (var i = 0; i < res.data.length; i += 10) {
+        //         if (res.data.slice(i, i + 10)) {
+        //           that.doneListOut.push(res.data.slice(i, i + 10))
+        //         }
+        //       }
+        //     } else {
+        //       that.doneListOut = 0;
+        //     }
+        //   }
+        // })
         
     },
     getNews() {
@@ -1415,6 +1416,7 @@ $sub:#1465C0;
       &:nth-child(odd) {
         .title {
           width: 255px;
+          // border:1px solid red;
         }
         .timeline {
           right: 30px;
@@ -1456,7 +1458,7 @@ $sub:#1465C0;
       .el-col {
         line-height: 50px;
         .title {
-          width: 600px;
+          // width: 600px;
         }
         .timeline {
           right: 30px;
