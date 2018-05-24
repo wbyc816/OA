@@ -168,7 +168,7 @@ export default {
       },
       paymentRule: {
         invoiceAttach: [{ type: 'array', required: true, trigger: 'blur', message: '请选择发票' }],
-        // docs: [{ type: 'array', required: true, trigger: 'blur', message: '请选择预付款公文' }],
+        docs: [{ type: 'array', required: true, trigger: 'blur', message: '请选择预付款公文' }],
       },
       invoiceAttach: [],
       budgetProp: {

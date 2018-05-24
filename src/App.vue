@@ -26,6 +26,7 @@
               <el-menu-item :route="{path:'/contactList'}" index="4">公司同仁</el-menu-item>
               <el-menu-item :route="{path:'/os'}" index="3">业务系统</el-menu-item>
               <!-- <el-menu-item :route="{path:'/dhCommunity'}" index="6">东海社区</el-menu-item> -->
+              <!-- <el-menu-item @click="showSelf" index="7">法定自查工作专栏</el-menu-item> -->
               <!-- <el-menu-item :route="{path:''}" index="6"></el-menu-item> -->
             </el-menu>
           </div>
@@ -47,6 +48,7 @@
       </keep-alive>
       <router-view v-if="!$route.meta.keepAlive"></router-view>
     </div>
+    
     <footer>
       <div class="container">
         <div class="links clearfix">
@@ -158,6 +160,10 @@ export default {
     this.outBreadcrumbs();
   },
   methods: {
+    showSelf(){
+      document.getElementById("selfExamination").focus();
+    }
+    ,
     goToOthers() {
       console.log(this.$router)
       this.$router.push("#/set");
@@ -337,6 +343,7 @@ $brown: #985D55;
       // float: right;
       box-shadow: none;
       position: relative;
+      width:880px;
       z-index: 2;
       &.el-menu--horizontal .el-menu-item {
         height: 70px;

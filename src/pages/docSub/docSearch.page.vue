@@ -147,7 +147,6 @@ export default {
     },
     setOptions(options) {
       this.searchOptions = options;
-      this.params.pageNumber = 1;
       this.getData();
     },
     handDocType(val) {

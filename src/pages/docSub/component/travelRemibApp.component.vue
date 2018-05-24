@@ -257,8 +257,8 @@
         </el-table>
         <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
       </div>
-      <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea" style="width:51%">
-        <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType" @change="payMthodChange">
+      <el-form-item label="付款方式" prop="payMthodCode"  placeholder="" class="deptArea" style="width:51%">
+        <el-select v-model="paymentForm.payMthodCode" style="width:100%" :disabled="true" ref="contractType" @change="payMthodChange">
           <el-option v-for="item in payMthods" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -397,7 +397,7 @@ export default {
       budgetTable: [],
       timeout: null,
       paymentForm: {
-        payMthodCode: '',
+        payMthodCode: 'FIN0101',
         paymentOthers: '',
         invoiceAttach: [],
         payee: '',

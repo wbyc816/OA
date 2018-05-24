@@ -6,6 +6,11 @@ import router from './router'
 import ElementUI from 'element-ui'
 import locale from 'element-ui/lib/locale/lang/en'
 
+// import './static/UE/ueditor.config.js'
+// import './static/UE/ueditor.all.min.js'
+// import './static/UE/lang/zh-cn/zh-cn.js'
+// import './static/UE/ueditor.parse.js'
+
 import './assets/fonts/iconfont.css'
 import './filters/filters.js'
 // import pdfjsLib from 'pdfjs-dist'

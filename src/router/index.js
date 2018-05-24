@@ -19,6 +19,8 @@ const docSearch = () =>
   import ('pages/docSub/docSearch.page')
 const docPending = () =>
   import ('pages/docSub/docPending.page')
+const docOverTime = () =>
+  import ('pages/docSub/docOverTime.page')
 const docToRead = () =>
   import ('pages/docSub/docToRead.page')
 const docDraft = () =>
@@ -64,6 +66,7 @@ const mySMS = () =>
   import ('pages/SMS/mySMS.page')
 const SMSDetail = () =>
   import ('pages/SMS/SMSDetail.page')
+
 const SMSSearch = () =>
   import ('pages/SMS/SMSSearch.page')
 const SMSApp = () =>
@@ -77,6 +80,8 @@ const flightStatus = () =>
 //公司同仁
 const contactList = () =>
   import ('pages/ContactList.page')
+
+
 
 
 //东海社区
@@ -100,10 +105,14 @@ const salaryHistory = () =>
   import ('../pages/HR/salaryHistory.page')
 const newsDetail = () =>
   import ('../pages/HR/newsDetail.page')
+const selfDetail = () =>
+  import ('../pages/HR/selfDetail.page')
 const newsDetailHr = () =>
   import ('../pages/HR/newsDetailHr.page')
 const newsListHr = () =>
   import ('../pages/HR/newsListHr.page')
+
+
 
 //菜谱
 const diningMenu = () =>
@@ -117,6 +126,7 @@ const BirthdayReminder = () =>
 //文件首页
 const FilesHome = () =>
   import ('pages/FilesHome.page')
+
 
 //总裁邮箱
 const PresidentMailbox = () =>
@@ -137,13 +147,41 @@ const flightReport = () =>
 const flightException = () =>
   import ('pages/flightException.page')
 
-  
+
 const QARData = () =>
   import ('pages/QARData.page')
 
-  const updateRecord = () =>
+//版本更新
+const updateRecord = () =>
   import ('pages/updateRecord.page')
 
+//论坛发帖
+const forumHome = () =>
+  import ('pages/forum/forumHome.page')
+const forumSearch = () =>
+  import ('pages/forum/forumSearch.page')
+const forumApp = () =>
+  import ('pages/forum/forumApp.page')
+const myForum = () =>
+  import ('pages/forum/myForum.page')
+const contributeManagement = () =>
+  import ('pages/forum/contributeManagement.page')
+
+const rewardDetail = () =>
+  import ('pages/forum/rewardDetail.page')
+const adoptDetail = () =>
+  import ('pages/forum/adoptDetail.page')
+const praiseDetail = () =>
+  import ('pages/forum/praiseDetail.page')
+const contributeDetail = () =>
+  import ('pages/forum/contributeDetail.page')
+
+
+const forumDetail = () =>
+  import ('../pages/forum/forumDetail.page')
+const forumManagementDetail = () =>
+  import ('../pages/forum/forumManagementDetail.page')
+ 
 
 Vue.use(Router)
 
@@ -176,6 +214,38 @@ const router = new Router({
       meta: {
         breadcrumb: "东海社区",
       }
+    }, 
+    {
+      path: '/rewardDetail/:id/:money',
+      name: 'rewardDetail',
+      component: rewardDetail,
+      meta: {
+        breadcrumb: "个人奖金详情",
+      }
+    }, 
+    {
+      path: '/adoptDetail/:id',
+      name: 'adoptDetail',
+      component: adoptDetail,
+      meta: {
+        breadcrumb: "个人采纳详情",
+      }
+    },
+    {
+      path: '/praiseDetail/:id/:praise',
+      name: 'praiseDetail',
+      component: praiseDetail,
+      meta: {
+        breadcrumb: "个人点赞详情",
+      }
+    }, 
+    {
+      path: '/contributeDetail/:id/:money/:adopt/:praise',
+      name: 'contributeDetail',
+      component: contributeDetail,
+      meta: {
+        breadcrumb: "个人贡献详情",
+      }
     }, {
       path: '/newsDetail/:id',
       name: 'newsDetail',
@@ -183,7 +253,31 @@ const router = new Router({
       meta: {
         breadcrumb: "新闻详情",
       }
-    }, {
+    },{
+      path: '/selfDetail/:id',
+      name: 'selfDetail',
+      component: selfDetail,
+      meta: {
+        breadcrumb: "自查详情",
+      }
+    }, 
+    {
+      path: '/forumDetail/:id',
+      name: 'forumDetail',
+      component: forumDetail,
+      meta: {
+        breadcrumb: "论坛详情",
+      }
+    },
+    {
+      path: '/forumManagementDetail/:id',
+      name: 'forumManagementDetail',
+      component: forumManagementDetail,
+      meta: {
+        breadcrumb: "论坛管理详情",
+      }
+    },
+    {
       path: '/BirthdayReminder',
       name: 'BirthdayReminder',
       component: BirthdayReminder,
@@ -423,6 +517,50 @@ const router = new Router({
         },
       ]
     },
+
+    {
+      path: '/forumHome',
+      name: 'forumHome',
+      component: forumHome,
+      meta: {
+        breadcrumb: "论坛",
+      },
+      children: [{
+          path: '/forum/forumApp',
+          name: 'forumApp',
+          component: forumApp,
+          meta: {
+            breadcrumb: "发帖",
+          }
+        },
+        {
+          path: '/forum/myForum',
+          name: 'myForum',
+          component: myForum,
+          meta: {
+            breadcrumb: "帖子管理",
+          }
+        },
+        {
+          path: '/forum/contributeManagement',
+          name: 'contributeManagement',
+          component: contributeManagement,
+          meta: {
+            breadcrumb: "员工贡献榜管理",
+          }
+        },
+        
+        // {
+        //   path: '/forum/forumSearch',
+        //   name: 'forumSearch',
+        //   component: forumSearch,
+        //   meta: {
+        //     breadcrumb: "帖子管理",
+        //   }
+        // },
+      ]
+    },
+
     {
       path: '/flightStatus',
       name: 'flightStatus',
@@ -465,6 +603,13 @@ const router = new Router({
           component: docPending,
           meta: {
             breadcrumb: "公文签批",
+          }
+        },  {
+          path: '/doc/docOverTime',
+          name: 'docOverTime',
+          component: docOverTime,
+          meta: {
+            breadcrumb: "超时公文",
           }
         }, {
           path: '/doc/docDetail/:id',

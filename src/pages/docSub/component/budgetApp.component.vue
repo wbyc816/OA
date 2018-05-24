@@ -7,25 +7,46 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <template v-if="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'">
+      <template>
         <el-form-item label="预算年份" class="deptArea year">
           {{year}}
         </el-form-item>
-        <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth">
+        <el-form-item label="预算机构/科目" prop="budgetDeptSub" class="clearBoth" :rules="[{ type: 'array', required: subRequire, message: '请输入预算机构/科目', trigger: 'blur' }]" v-show="budgetForm.type.dictCode=='DOC2602'">
+          <div>
+            <el-cascader :clearable="true" :change-on-select="true" :options="budgetDeptListSub" :props="defaultProp" v-model="budgetForm.budgetDeptSub" @change="handleItemChangeSub"  filterable  popper-class="myCascader" class="budgetDept" ref="budgetDeptSub"></el-cascader>
+          </div>
+        </el-form-item>
+
+        <el-form-item label="预算机构/科目" prop="budgetDept" class="clearBoth" :rules="[{ type: 'array', required: budgetDeptRequire, message: '请输入预算机构/科目', trigger: 'blur' }]" v-show="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'">
           <div>
             <el-cascader :clearable="true" :options="budgetDeptList" :props="defaultProp" v-model="budgetForm.budgetDept" @active-item-change="handleItemChange" filterable @change="changeDept" popper-class="myCascader" class="budgetDept" ref="budgetDept"></el-cascader>
           </div>
         </el-form-item>
-        <div class="change_data" v-show="showData==1">
+        <div class="change_data" v-show="showData==1&&(!budgetForm.type||budgetForm.type.dictCode!=='DOC2602')">
           <ul>
             <li>年度预算{{yearBudget}}元</li>
             <li>可用预算{{useBudget}}元</li>
             <li>预算执行比例{{execRateStr}}</li>
           </ul>
         </div>
-        <el-form-item label="申报金额" prop="budgetMoney" class="budgetMoney">
-          <el-col :span="12" class="clearPadding input">
-            <el-input ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput">
+         <el-form-item label="申请机构/科目"  prop="budgetNewName" class="deptArea "  v-if="budgetForm.type.dictCode=='DOC2602'" >
+            <el-input ref="budgetNewName" v-model="budgetForm.budgetNewName"></el-input>
+        </el-form-item>
+
+        <el-form-item label="申报金额"  prop="budgetMoney"  class="arrArea"   v-if="budgetForm.type.dictCode=='DOC2602'">
+          <el-col :span="14" class="clearPadding">
+            <el-input ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput" >
+              <template slot="append">元</template>
+            </el-input>
+          </el-col>
+          <el-col :span="10" class="clearPadding btn">
+            <el-button @click='addBudget' type="primary" class="addbutton1"><i class="el-icon-plus"></i> 添加</el-button>
+          </el-col>
+        </el-form-item>
+
+         <el-form-item label="申报金额"  prop="budgetMoney"  class="arrArea budgetDept"  v-if="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'">
+          <el-col :span="10" class="clearPadding">
+            <el-input ref="budgetMoney" @change="fomatMoney" :maxlength="10" class="hasUnit" @blur="blurInput" >
               <template slot="append">元</template>
             </el-input>
           </el-col>
@@ -33,9 +54,10 @@
             <el-button @click='addBudget' type="primary" class="addbutton1"><i class="el-icon-plus"></i> 添加</el-button>
           </el-col>
         </el-form-item>
+       
       </template>
     </el-form>
-    <div style="width:750px;margin-bottom:20px;" v-show="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'">
+    <div style="width:750px;margin-bottom:20px;">
       <el-table :data="budgetTable" :stripe="true" highlight-current-row class="appTable">
         <el-table-column label=" " width="50" class-name="upDown">
           <template scope="scope">
@@ -44,9 +66,10 @@
           </template>
         </el-table-column>
         <el-table-column property="budgetDept" label="预算机构"></el-table-column>
-        <el-table-column property="useBudget" label="可用额度(元)" width="150"></el-table-column>
-        <el-table-column property="execRateStr" label="执行比例" width="100"></el-table-column>
-        <el-table-column property="budgetMoney" label="申报额度(元)" width="150"></el-table-column>
+        <el-table-column property="useBudget" label="可用额度(元)"  v-if="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'"></el-table-column>
+        <el-table-column property="execRateStr" label="执行比例"  v-if="!budgetForm.type||budgetForm.type.dictCode!=='DOC2602'"></el-table-column>
+        <el-table-column property="budgetNewName" label="申请机构/科目" v-if="budgetForm.type.dictCode=='DOC2602'"></el-table-column>
+        <el-table-column property="budgetMoney" label="申报额度(元)"></el-table-column>
         <el-table-column label="操作" width="55">
           <template scope="scope">
             <el-button @click.native.prevent="deleteRow(scope.$index)" type="text" size="small" icon="delete">
@@ -79,6 +102,8 @@ export default {
       }
     };
     return {
+      subRequire:false,
+      budgetDeptRequire:true,
       val2: "",
       bookTypes: [],
       budgetDate: {},
@@ -86,6 +111,7 @@ export default {
       yearBudget: 0,
       useBudget: 0,
       execRateStr: "0%",
+      
       budgetForm: {
         isBookFlight: '1',
         deptArea: '',
@@ -96,8 +122,11 @@ export default {
         budgetMoney: '',
         person: [],
         budgetDept: [],
+        budgetDeptSub: [],
+        
         budgetDate: {},
-        type: ''
+        type: '',
+        budgetNewName:"",
       },
       rules: {
         // isBookFlight: [{ required: true, trigger: 'blur' }],
@@ -105,9 +134,11 @@ export default {
         // deptArea: [{ required: true, message: '请输入出发地', trigger: 'blur' }],
         // arrArea: [{ required: true, message: '请输入目的地', trigger: 'blur' }],
         budgetMoney: [{ required: true, message: '请输入申报金额', trigger: 'blur' }],
+        budgetNewName: [{ required: true, message: '请输入申请机构/科目', trigger: 'blur' }],
         type: [{ type: 'object', required: true, message: '请选择申请类型', trigger: 'blur' }],
         // year: [{  required: true, validator: checkDate, trigger: 'blur' }],
         budgetDept: [{ type: 'array', required: true, message: '请输入预算机构/科目', trigger: 'blur' }],
+        // budgetDeptSub: [{ type: 'array', required: true, message: '请输入预算机构/科目', trigger: 'blur' }],
       },
       budgetTable: [],
       pickerOptions0: {
@@ -116,6 +147,7 @@ export default {
         }
       },
       budgetDeptList: [],
+      budgetDeptListSub: [],
       params: '',
       defaultProp: {
         label: 'budgetItemName',
@@ -147,6 +179,7 @@ export default {
     this.getTypes();
     this.getBookType();
     this.getBudgetDeptList();
+    this.getBudgetDeptListSub();
   },
   methods: {
     saveForm() {
@@ -156,22 +189,61 @@ export default {
       this.budgetTable = obj;
     },
     typeChange(val) {
+      this.budgetTable=[];
       this.$store.dispatch('getTemplate', { code: this.$route.params.code, subCode: val.dictCode });
+      if(val.dictCode=="DOC2602"){
+        this.subRequire=true;
+        this.budgetDeptRequire=false;
+
+      }else{
+        this.subRequire=false;
+        this.budgetDeptRequire=true;
+      }
+      
     },
     addBudget() {
       this.$refs.budgetForm.validate((valid) => {
         if (valid) {
           if (this.checkBudget()) {
             var temp = {};
-            temp.budgetDept = this.$refs.budgetDept.currentLabels[0] + "/" + this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
+            if(this.$refs.budgetDept&&this.$refs.budgetDept.currentLabels){
+              if(this.$refs.budgetDept.currentLabels[1]){
+                temp.budgetDept = this.$refs.budgetDept.currentLabels[0] + "/" + this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
+              }else{
+                temp.budgetDept = this.$refs.budgetDept.currentLabels[0]
+              }
+            }
+            // console.log(this.$refs.budgetDept.currentLabels)
+            // console.log(this.$refs.budgetDeptSub.currentLabels)
+            if(this.$refs.budgetDeptSub&&this.$refs.budgetDeptSub.currentLabels){
+              if(this.$refs.budgetDeptSub.currentLabels[1]){
+              temp.budgetDept = this.$refs.budgetDeptSub.currentLabels[0] + "/" + this.$refs.budgetDeptSub.currentLabels[this.$refs.budgetDeptSub.currentLabels.length - 1];
+              }else{
+                temp.budgetDept = this.$refs.budgetDeptSub.currentLabels[0]
+              }
+            }
+            
             temp.budgetMoney = this.budgetForm.budgetMoney;
             temp.useBudget = this.useBudget;
             temp.execRateStr = this.execRateStr;
             temp.budgetDeptId = this.budgetForm.budgetDept[0];
-            temp.budgetDeptName = this.$refs.budgetDept.currentLabels[0];
+            if(this.$refs.budgetDept.currentLabels[1]){
+              temp.budgetDeptName = this.$refs.budgetDept.currentLabels[0];
+            }else{
+              temp.budgetDeptName = this.$refs.budgetDeptSub.currentLabels[0];
+            }
+            // temp.budgetDeptName = this.$refs.budgetDeptSub.currentLabels[0];
+
             temp.budgetItemId = this.budgetForm.budgetDept[this.budgetForm.budgetDept.length - 1];
-            temp.budgetItemName = this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
+             if(this.$refs.budgetDept.currentLabels[1]){
+             temp.budgetItemName = this.$refs.budgetDept.currentLabels[this.$refs.budgetDept.currentLabels.length - 1];
+            }else{
+              temp.budgetItemName = this.$refs.budgetDeptSub.currentLabels[this.$refs.budgetDeptSub.currentLabels.length - 1];
+            }
+
+            // temp.budgetItemName = this.$refs.budgetDeptSub.currentLabels[this.$refs.budgetDeptSub.currentLabels.length - 1];
             temp.budgetYear = this.year;
+            temp.budgetNewName = this.budgetForm.budgetNewName;
 
             this.budgetTable.push(temp);
 
@@ -180,6 +252,9 @@ export default {
             this.$refs.budgetMoney.currentValue = "";
             this.budgetForm.budgetDept = [];
             this.budgetForm.budgetMoney = "";
+            this.budgetForm.budgetNewName = "";
+            this.budgetForm.budgetDeptSub = [];
+
             // this.$refs.budgetForm.resetFields();
             this.showData = 0;
           }
@@ -214,17 +289,32 @@ export default {
       }
       return temp;
     },
+    getBudgetDepSub() {
+      var len = this.budgetForm.budgetDeptSub.length;
+      var temp = this.budgetDeptListSub;
+      for (var i = 0; i < len; i++) {
+        temp = temp.find(dep => dep.budgetItemCode == this.budgetForm.budgetDeptSub[i]);
+        if (temp.items && temp.items.length != 0) {
+          temp = temp.items;
+        }
+      }
+      return temp;
+    },
     checkBudget() {
-      var dep = this.getBudgetDep();
-      var temp = this.budgetTable.find(b => b.budgetItemId == dep.budgetItemCode)
-      if (!this.useBudget) {
-        this.$message.warning('该科目无预算信息');
-        return false
-      } else if (temp == undefined) {
+      if(this.budgetForm.type.dictCode!=='DOC2602'){
+         var dep = this.getBudgetDep();
+        var temp = this.budgetTable.find(b => b.budgetItemId == dep.budgetItemCode)
+        if (!this.useBudget) {
+          this.$message.warning('该科目无预算信息');
+          return false
+        } else if (temp == undefined) {
+          return true;
+        } else {
+          this.$message.warning('不能添加相同的预算科目')
+          return false
+        }
+      }else{
         return true;
-      } else {
-        this.$message.warning('不能添加相同的预算科目')
-        return false
       }
     },
     saveForm() {
@@ -243,12 +333,13 @@ export default {
           this.params = {
             typeCode: this.budgetForm.type.dictCode,
           }
-          if (this.budgetForm.type.dictCode === 'DOC2601') {
+          // if (this.budgetForm.type.dictCode === 'DOC2601') {
             if (this.budgetTable.length != 0) {
               this.params.finBudget = {
                 "totalMoney": this.totalMoney,
                 "finBudgetItems": this.budgetTable.map(function(tabel) {
                   return {
+                    budgetNewName:tabel.budgetNewName,
                     "budgetDeptId": tabel.budgetDeptId, //预算部门id
                     "budgetDeptName": tabel.budgetDeptName, //预算部门名字
                     "budgetItemName": tabel.budgetItemName, //-预算科目名字
@@ -258,15 +349,16 @@ export default {
                   }
                 })
               }
+              console.log(this)
               this.$emit('submitMiddle', this.params);
             } else {
               this.$message.warning('请检查填写字段')
               this.$emit('submitMiddle', false);
               return false;
             }
-          } else {
-            this.$emit('submitMiddle', this.params);
-          }
+          // } else {
+          //   this.$emit('submitMiddle', this.params);
+          // }
         } else {
           this.$message.warning('请检查填写字段')
           this.$emit('submitMiddle', false);
@@ -327,26 +419,66 @@ export default {
           }, res => {})
       }
     },
-    handleItemChange(val) {
-      var len = val.length;
-      var temp = this.budgetDeptList;
-      var i = 0;
-      while (len > i) {
-        temp = temp.find(dep => dep.budgetItemCode == val[i]).items;
-        i++
-      }
-      // console.log(temp);
-      if (temp.length == 0) {
-        this.$http.post('/doc/getBudItemTreeList', { parentId: val[val.length - 1] })
+    getBudgetDeptListSub() {
+      if (this.year) {
+        this.showData = "0";
+        this.$http.post('/doc/getBudItemTreeList', {
+            // year: this.year,
+          })
           .then(res => {
             if (res.status == 0) {
-              res.data.forEach(i => {
-                i.isParent == 1 ? i.items = [] : i.items = null
-                temp.push(i)
-              })
-            }
-          })
+              res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
+              this.budgetDeptListSub = res.data
+            } else {}
+          }, res => {})
       }
+    },
+    handleItemChange(val) {
+      if(val.length){
+        var len = val.length;
+        var temp = this.budgetDeptList;
+        var i = 0;
+        while (len > i) {
+          temp = temp.find(dep => dep.budgetItemCode == val[i]).items;
+          i++
+        }
+     
+        if (temp&&temp.length == 0) {
+          this.$http.post('/doc/getBudItemTreeList', { parentId: val[val.length - 1] })
+            .then(res => {
+              if (res.status == 0) {
+                res.data.forEach(i => {
+                  i.isParent == 1 ? i.items = [] : i.items = null
+                  temp.push(i)
+                })
+              }
+            })
+        }
+      }
+      
+    },
+    handleItemChangeSub(val) {
+        console.log(val)
+        var len = val.length;
+        var temp = this.budgetDeptListSub;
+        console.log(val+"111")
+        var i = 0;
+        while (len > i) {
+          temp = temp.find(dep => dep.budgetItemCode == val[i]).items;
+          i++
+        }
+     
+        if (temp&&temp.length == 0) {
+          this.$http.post('/doc/getBudItemTreeList', { parentId: val[val.length - 1] })
+            .then(res => {
+              if (res.status == 0) {
+                res.data.forEach(i => {
+                  i.isParent == 1 ? i.items = [] : i.items = null
+                  temp.push(i)
+                })
+              }
+            })
+        }
     },
     getBookType() {
       this.$http.post('/api/getDict', { dictCode: 'ADM05' })
@@ -440,9 +572,9 @@ $main:#0460AE;
   //   }
   // }
   .budgetMoney {
-    .input {
-      width: 252px
-    }
+    // .input {
+    //   width: 252px
+    // }
     .btn {
       margin-left: 5px;
     }

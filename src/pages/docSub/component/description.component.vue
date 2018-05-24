@@ -23,10 +23,15 @@
             </el-input>
           </transition-group>
         </el-col>
-        <el-col :span='3'>
+        <el-col :span='3' v-if="!isCLS">
           <el-button class="addButton" @click="addDoc" :disabled="docs.length>4"><i class="el-icon-plus"></i></el-button>
         </el-col>
-        <p class="extraDoc">最多添加5个附加公文</p>
+        <p class="extraDoc"  v-if="!isCLS">最多添加5个附加公文</p>
+
+        <el-col :span='3' v-if="isCLS">
+          <el-button class="addButton" @click="addDoc" :disabled="docs.length>29"><i class="el-icon-plus"></i></el-button>
+        </el-col>
+        <p class="extraDoc" v-if="isCLS">最多添加30个附加公文</p>
       </el-form-item>
     </el-form>
     <el-dialog :visible.sync="dialogTableVisible" size="large" class="docDialog">
@@ -65,6 +70,7 @@ export default {
   },
   data() {
     return {
+      isCLS:false,
       ruleForm: {
         des: '',
         attchment: [],
@@ -106,8 +112,12 @@ export default {
     ])
   },
   created() {
+
     if (this.$route.params.code == 'LZS') {
       this.rules.attchment.push({ type: 'array', required: true, message: '请提交本人签字的辞职报告', trigger: 'blur,change' })
+    }
+    if (this.$route.params.code == 'CLS') {
+      this.isCLS=true;
     }
   },
   watch: {

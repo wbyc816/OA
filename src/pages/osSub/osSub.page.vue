@@ -41,14 +41,16 @@
       </el-row>
     </el-card>
   </div>
+  
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import DocList from '../../components/doc'
 const production = [
-  { 'logo': 'icon-Group12', 'font': '12px', 'color': '#FF754F', 'text': 'FOC系统', 'link': 'http://foc.donghaiair.cn/' },
+  { 'logo': 'icon-Group12', 'font': '12px', 'color': '#FF754F', 'text': 'FOC系统', 'link': 'http://flight.donghaiair.cn/' },
   { 'logo': 'icon-Group', 'font': '12px', 'color': '#9FD867', 'text': 'SMS管理系统', 'link': 'http://sms.donghaiair.cn:8080/login.jsp' },
   { 'logo': 'icon-Group1', 'font': '12px', 'color': '#A5A3FF', 'text': '飞行准备网', 'link': 'http://foc.donghaiair.cn/' },
-  { 'logo': 'icon-Path1', 'font': '26px', 'color': '#FF5F88', 'text': '乘务准备网', 'link': 'http://foc.donghaiair.cn:8011/SignIn.aspx' },
+  { 'logo': 'icon-Path1', 'font': '26px', 'color': '#FF5F88', 'text': '乘务准备网', 'link': 'http://prep.donghaiair.cn:82/' },
   { 'logo': 'icon-Group10', 'font': '24px', 'color': '#FF5F88', 'text': 'ME机务维修信息管理系统', 'link': 'http://192.168.8.154/mis2/' },
   // { 'logo': 'icon-Group22', 'color': '#5BB5FC', 'text': '排班系统', 'link': '#' },
   // { 'logo': 'icon-Path2', 'color': '#FF754F', 'text': '飞行排班系统', 'link': '#' },
@@ -91,8 +93,33 @@ export default {
       fontSize: '30px'
     };
   },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+    ])
+  },
   components: {
     DocList
+  },
+  mounted() {
+   this.pushProduction();
+  },
+  methods:{
+    pushProduction(){
+      if(this.userInfo.workNo&&this.production.length<8){
+        this.$http.post('/index/fuelLogin', { workNo:this.userInfo.workNo})
+        .then(res => {
+          if (res.status == 0) {
+            console.log(res.data)
+            this.production.push(  { 'logo': 'icon-jiayouzhan', 'font': '24px', 'color': '#9FD867', 'text': '节油系统', 'link': res.data})
+          } else {
+
+          }
+        })
+      }
+      
+      
+    }
   }
 }
 

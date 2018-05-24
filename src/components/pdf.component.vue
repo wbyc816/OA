@@ -56,7 +56,9 @@ export default {
       });
     },
     renderPage(num) {
+      
       this.pdfDoc.getPage(num).then((page) => {
+        console.log(num)
         var viewport = page.getViewport(this.boxWidth / page.getViewport(1).width);
         var canvas = this.$refs['page' + num][0];
         canvas.height = viewport.height;
@@ -83,6 +85,7 @@ $purple: #7C5598;
 .pdf{
   canvas{
     float:left;
+    // border:1px solid red;
   }
 }
 

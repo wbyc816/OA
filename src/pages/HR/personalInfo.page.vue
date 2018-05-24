@@ -120,7 +120,10 @@
               <img v-if="baseForm.picUrl" :src="baseForm.picUrl"  @error="baseForm.picUrl=blankHead" class="avatar">
               <img v-else src="../../assets/images/blankHead1.png" alt="">
             </el-upload>
+                        
+
           </el-form-item>
+          <span style="color:red">如若修改手机号,请到屏幕右上角“设置”中进行修改。<br>其他信息有误请联系人事部进行修改。</span>
           <div class="borderBox"></div>
           <el-form-item>
             <el-button type="primary" size="large" class="submitButton" @click.native="onSubmit" :disabled="submitLoading">提交</el-button>
@@ -224,20 +227,26 @@ export default {
       this.$message.error('图片上传失败，请重试');
     },
     handleChange(file, fileList) {
-      const isJPG = file.raw.type === 'image/jpeg' || file.raw.type === 'image/png';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      var res=/[\s{}#]/g;
+      if(res.test(file.name)){
+          this.$message.error('上传图片名字中不能包含空格，{，}，#!');
+      }else{
+        const isJPG = file.raw.type === 'image/jpeg' || file.raw.type === 'image/png';
+        const isLt2M = file.size / 1024 / 1024 < 2;
 
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
-      }
-      if (isJPG && isLt2M) {
-        this.picChangeStatus = true;
-        this.baseForm.picUrl = file.url
-      }
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        if (isJPG && isLt2M) {
+          this.picChangeStatus = true;
+          this.baseForm.picUrl = file.url
+        }
 
+        } 
+     
     },
     // beforeAvatarUpload(file) {
     //   return true

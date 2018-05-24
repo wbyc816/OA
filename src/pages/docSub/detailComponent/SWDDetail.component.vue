@@ -60,6 +60,7 @@ export default {
   },
   data() {
     return {
+      detail:{},
       otherAdvice: '',
       pageNum: 1,
       totalNum: 0,
@@ -86,18 +87,31 @@ export default {
     //   }
     // }
   },
-  mounted() {},
+  mounted() {
+    
+  },
   methods: {
     
     getOtherAdvice(route) {
-      this.$http.post("/doc/getDetailByType", { id: route.params.id, empId: this.userInfo.empId,empPostId:this.docDetialInfo.doc.postId||this.userInfo.empPost[0].id })
+      this.$http.post("/emp/getEmpInfoById", {id: this.userInfo.empId})
         .then(res => {
           if (res.status == 0) {
-            this.otherAdvice = res.data
+            this.detail = res.data
+
+             this.$http.post("/doc/getDetailByType", { id: route.params.id, empId: this.userInfo.empId,empPostId:this.docDetialInfo.doc.postId||this.detail.empPost[0].id })
+              .then(res => {
+                if (res.status == 0) {
+                  this.otherAdvice = res.data
+                } else {
+
+                }
+              })
           } else {
 
           }
         })
+       
+     
     },
     changePage(newPage) {
       this.$refs.pdfScroll.scrollTop = this.pdfHeight * (newPage - 1);

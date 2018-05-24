@@ -177,19 +177,25 @@ export default {
       this.$message.error('图片上传失败，请重试');
     },
     handleChange(file, fileList) {
-      const isJPG = file.raw.type === 'image/jpeg' || file.raw.type === 'image/png';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      var res=/[\s{}#]/g;
+      if(res.test(file.name)){
+          this.$message.error('上传图片名字中不能包含空格，{，}，#!');
+      }else{
+        const isJPG = file.raw.type === 'image/jpeg' || file.raw.type === 'image/png';
+        const isLt2M = file.size / 1024 / 1024 < 2;
 
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        if (isJPG && isLt2M) {
+          this.picChangeStatus = true;
+          this.personForm.url = file.url
+        }
       }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
-      }
-      if (isJPG && isLt2M) {
-        this.picChangeStatus = true;
-        this.personForm.url = file.url
-      }
+      
     },
     updateInfo() {
       var params = Object.assign({ createUser: this.userInfo.name, oldId: this.resumeInfo.id, empId: this.userInfo.empId }, this.personForm)

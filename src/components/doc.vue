@@ -1,5 +1,5 @@
 <template>
-  <a :href="data.link" class='doc-block' :target="target" @click="goTo($event)">
+  <a  class='doc-block' :target="target" @click="goTo($event)">
     <span class='doc-title'>
       <span class='logo' :style="{'background-color':data.color, 'padding': data.padding}">
         <i class='iconfont' :style="{'font-size': data.font ? data.font : fontSize }" :class='data.logo'></i>
@@ -57,6 +57,7 @@
 
 </style>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -81,11 +82,16 @@ export default {
       default: '未开放，敬请期待'
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+    ])
+  },
   created() {
     if (/^http/.test(this.data.link)) {
       this.target = '_blank'
     } else {
-
+      
     }
   },
   methods: {
@@ -96,7 +102,47 @@ export default {
       } else {
         if (!/^http/.test(this.data.link)) {
           event.preventDefault();
-          this.$router.push(this.data.link);
+        //  if(event.text="节油系统"){
+        //     this.$http.post('/api/checkNetworkNoPar')
+        //     .then(res => {
+        //       if (res.status == 0) {
+        //         if(res.data.innerMesh=="Y"){
+                 
+              //   }else{
+              //     this.$alert('此系统不能用外网登陆，请用内网登陆。', '提示', {
+              //       confirmButtonText: '确定',
+                   
+              //     });
+              //   }
+                
+              // } else {
+
+              // }
+            // })
+           
+            
+          // }else{
+            this.$router.push(this.data.link);
+          // }
+          
+        }else{
+          if(this.data.text=="节油系统"){
+             this.$http.post('/api/checkNetworkNoPar')
+            .then(res => {
+              if (res.status == 0) {
+                if(res.data.innerMesh=="Y"){
+                 window.open(this.data.link)
+                }else{
+                  this.$alert('此系统不能用外网登陆，请用内网登陆。', '提示', {
+                    confirmButtonText: '确定',
+                  });
+                }
+              }
+            })
+          }else{
+            window.open(this.data.link)
+          }
+          
         }
       }
     }

@@ -8,15 +8,22 @@
     </div>
     <el-form label-position="left" :model="vacationForm" :rules="rules" ref="vacationForm" label-width="128px">
 
-      <el-form-item label="休假日期" prop="aa" >
-        <el-date-picker  v-model="vacationForm.aa" type="datetimerange" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
+      <el-form-item label="休假日期" prop="timeRangeStart" class="deptArea">
+        <el-date-picker  v-model="vacationForm.timeRangeStart" type="date" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
       </el-form-item>
 
-       <!-- <el-form-item label="时间" prop="timeStart" class="arrArea">
-         <el-time-picker
+       <el-form-item label="时间" prop="timeStart" class="arrArea">
+         <el-time-select
           v-model="vacationForm.timeStart"
-          placeholder="任意时间点">
-        </el-time-picker>
+          placeholder="任意时间点"
+           :picker-options="{
+            start: '09:00',
+            step: '00:01',
+            end: '17:00'
+          }"
+          >
+        </el-time-select>
+        
       </el-form-item>
 
       <el-form-item label="休假截止日期" prop="timeRangEnd" class="deptArea">
@@ -24,11 +31,11 @@
       </el-form-item>
       
       <el-form-item label="时间" prop="timeEnd" class="arrArea">
-         <el-time-picker
+         <el-time-select
           v-model="vacationForm.timeEnd"
           placeholder="任意时间点">
-        </el-time-picker>
-      </el-form-item> -->
+        </el-time-select>
+      </el-form-item>
       <el-form-item label="休假天数" prop="days" class="deptArea">
         <el-input v-model="vacationForm.days" ref="days" @change="fomatDays" :maxlength="6" class="hasUnit" @blur="blurInput">
           <template slot="append">天</template>
@@ -90,22 +97,22 @@ export default {
       vacationForm: {
         typeId: '',
         workHandover: '',
-        aa: [],
-        timeRangeStart:"",
-        timeRangEnd:"",
+        timeRange: [],
+        timeRangeStart:new Date(),
+        timeRangEnd:new Date(),
         days: '',
-        timeStart:new Date(2016, 9, 10, 9, 0),
-        timeEnd:new Date(2016, 9, 10, 17, 0),
+        timeStart: "09:00",
+        timeEnd: "17:00",
       },
       rules: {
         days: [{ required: true, message: '请输入休假天数', trigger: 'blur' },
           { validator: checkDay, trigger: 'change,blur' }
         ],
-        timeRangeStart: [{ required: true, type: 'date', trigger: 'blur', message: '请选择开始休假日期' },{validator: checkTimeline,trigger: 'blur,change'}],
-        timeRangEnd: [{  required: true,type: 'date',  trigger: 'blur' , message: '请选择休假截止日期'},{validator: checkTimeline,trigger: 'blur,change'}],
-        timeStart: [{ required: true, type: 'date', trigger: 'blur', message: '请选择开始时间'}],
-        timeEnd: [{  required: true,type: 'date',  trigger: 'blur', message: '请选择结束时间' }],
-        aa: [{ type: 'array', required: true,  trigger: 'blur' }],
+        timeRangeStart: [{ required: true,type:"date", trigger: 'blur', message: '请选择开始休假日期' },{validator: checkTimeline,trigger: 'blur,change'}],
+        timeRangEnd: [{  required: true, type:"date", trigger: 'blur' , message: '请选择休假截止日期'},{validator: checkTimeline,trigger: 'blur,change'}],
+        timeStart: [{ required: true,  type:"string",trigger: 'blur', message: '请选择开始时间'}],
+        timeEnd: [{  required: true, type:"string", trigger: 'blur', message: '请选择结束时间' }],
+        // timeRange: [{ type: 'array', required: true,  trigger: 'blur' }],
         typeId: [{ required: true, message: '请选择休假类型', trigger: 'blur' }],
         workHandover: [{ required: true, message: '请填写工作交接情况', trigger: 'blur' }],
       },
@@ -165,36 +172,56 @@ export default {
       this.$emit('saveMiddle',JSON.stringify(this.vacationForm));
     },
     getDraft(obj) {
-      obj.timeEnd=new Date(obj.timeEnd)
-      obj.timeRangEnd=new Date(obj.timeRangEnd)
-      obj.timeRangeStart=new Date(obj.timeRangeStart)
-      obj.timeStart=new Date(obj.timeStart)
+
+      
+     
+      if(obj.timeRange.length>0){
+        obj.timeRange.forEach(t=>{
+          this.vacationForm.timeRange.push(new Date(t));
+        })
+        obj.timeRange=obj.timeRange.slice(0,2)
+        obj.timeRangeStart=new Date(new Date(obj.timeRange[0]).getFullYear()+"-"+new Date(obj.timeRange[0]).getMonth()+"-"+new Date(obj.timeRange[0]).getDate());
+        obj.timeRangEnd=new Date(new Date(obj.timeRange[1]).getFullYear()+"-"+new Date(obj.timeRange[1]).getMonth()+"-"+new Date(obj.timeRange[1]).getDate());
+        var timeStartHour=new Date(obj.timeRange[0]).getHours()>9?new Date(obj.timeRange[0]).getHours():("0"+new Date(obj.timeRange[0]).getHours());
+        var timeEndHour=new Date(obj.timeRange[1]).getHours()>9?new Date(obj.timeRange[1]).getHours():("0"+new Date(obj.timeRange[1]).getHours());
+        var timeStartMin=new Date(obj.timeRange[0]).getMinutes()>9?new Date(obj.timeRange[0]).getMinutes():("0"+new Date(obj.timeRange[0]).getMinutes());
+        var timeEndMin=new Date(obj.timeRange[1]).getMinutes()>9?new Date(obj.timeRange[1]).getMinutes():("0"+new Date(obj.timeRange[1]).getMinutes());
+        obj.timeStart=timeStartHour+":"+timeStartMin;
+        obj.timeEnd=timeEndHour+":"+timeEndMin;
+      }else{
+        obj.timeRangEnd=new Date(obj.timeRangEnd)
+        obj.timeRangeStart=new Date(obj.timeRangeStart)
+        var timeStartHour=new Date(obj.timeStart).getHours()>9?new Date(obj.timeStart).getHours():("0"+new Date(obj.timeStart).getHours());
+        var timeEndHour=new Date(obj.timeEnd).getHours()>9?new Date(obj.timeEnd).getHours():("0"+new Date(obj.timeEnd).getHours());
+        var timeStartMin=new Date(obj.timeStart).getMinutes()>9?new Date(obj.timeStart).getMinutes():("0"+new Date(obj.timeStart).getMinutes());
+        var timeEndMin=new Date(obj.timeEnd).getMinutes()>9?new Date(obj.timeEnd).getMinutes():("0"+new Date(obj.timeEnd).getMinutes());
+      }
+      // obj.timeStart=timeStartHour+":"+timeStartMin;
+      // obj.timeEnd=timeEndHour+":"+timeEndMin;
+       console.log(obj)
       this.combineObj(this.vacationForm,obj);
-      obj.timeRange.forEach(t=>{
-        this.vacationForm.timeRange.push(new Date(t));
-      })
     },
     submitForm() {
       // var beginHour=this.vacationForm.timeStart.getHours()>9?this.vacationForm.timeStart.getHours():("0"+this.vacationForm.timeStart.getHours());
       // var beginMinutes=this.vacationForm.timeStart.getMinutes()>9?this.vacationForm.timeStart.getMinutes():("0"+this.vacationForm.timeStart.getMinutes());
       // var beginSeconds=this.vacationForm.timeStart.getSeconds()>9?this.vacationForm.timeStart.getSeconds():("0"+this.vacationForm.timeStart.getSeconds());
-      // console.log(this.vacationForm.timeEnd)
       // var endHour=this.vacationForm.timeEnd.getHours()>9?this.vacationForm.timeEnd.getHours():("0"+this.vacationForm.timeEnd.getHours());
       // var endMinutes=this.vacationForm.timeEnd.getMinutes()>9?this.vacationForm.timeEnd.getMinutes():("0"+this.vacationForm.timeEnd.getMinutes());
       // var endSeconds=this.vacationForm.timeEnd.getSeconds()>9?this.vacationForm.timeEnd.getSeconds():("0"+this.vacationForm.timeEnd.getSeconds());
-      
-      // var beginTime=this.vacationForm.timeRangeStart.getFullYear()+"-"+Number(Number(this.vacationForm.timeRangeStart.getMonth())+1)+"-"+this.vacationForm.timeRangeStart.getDate()+"T"+beginHour+":"+beginMinutes+":"+beginSeconds+".000Z";
-      // var endTime=this.vacationForm.timeRangEnd.getFullYear()+"-"+Number(Number(this.vacationForm.timeRangEnd.getMonth())+1)+"-"+this.vacationForm.timeRangEnd.getDate()+"T"+endHour+":"+endMinutes+":"+endSeconds+".000Z";
+      // console.log(new Date(this.vacationForm.timeRangeStart).getFullYear())
+      var beginTime=new Date(this.vacationForm.timeRangeStart).getFullYear()+"-"+Number(Number(new Date(this.vacationForm.timeRangeStart).getMonth())+1)+"-"+new Date(this.vacationForm.timeRangeStart).getDate()+"T"+this.vacationForm.timeStart+":00.000Z";
+      var endTime=new Date(this.vacationForm.timeRangEnd).getFullYear()+"-"+Number(Number(new Date(this.vacationForm.timeRangEnd).getMonth())+1)+"-"+new Date(this.vacationForm.timeRangEnd).getDate()+"T"+this.vacationForm.timeEnd+":00.000Z";
       // var beginTime=this.vacationForm.timeRangeStart.getFullYear()+"-"+Number(Number(this.vacationForm.timeRangeStart.getMonth())+1)+"-"+this.vacationForm.timeRangeStart.getDate()+" "+beginHour+":"+beginMinutes+":"+beginSeconds;
       // var endTime=this.vacationForm.timeRangEnd.getFullYear()+"-"+Number(Number(this.vacationForm.timeRangEnd.getMonth())+1)+"-"+this.vacationForm.timeRangEnd.getDate()+" "+endHour+":"+endMinutes+":"+endSeconds;
-      
+      console.log(beginTime)
+      console.log(endTime)
       this.$refs.vacationForm.validate((valid) => {
         if (valid) {
           this.params = {
            
             vacationRecords: [{
-              "beginTime": this.vacationForm.aa[0], //开始时间
-              "endTime":  this.vacationForm.aa[1], //结束时间
+              "beginTime": beginTime, //开始时间
+              "endTime":endTime, //结束时间
               "annual": new Date().getFullYear(), //年度
               "days": this.vacationForm.days, //本次休假天数
               "typeId": this.vacationForm.typeId, //类型

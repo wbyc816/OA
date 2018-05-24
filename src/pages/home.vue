@@ -16,7 +16,7 @@
         <!-- 待办事项 -->
         <el-card class="bedoneList" :class="{'noLine':doneLength<4}" v-if="doneLength!=0||doneLengthOut!=0">
           <p slot="header"><span class="blackColor"  @click="showOut(true)"  >待办事项</span> <span>{{doneLength}}</span>  <span  class="blackColor leftBorder"  v-if="doneLengthOut" @click="showOut(false)"> 外部待办事项</span> <span v-if="doneLengthOut">{{doneLengthOut}}</span></p>  
-          <el-carousel v-if="isShowOut"  :height="doneHeight+'px'" :autoplay="false" :indicator-position="doneLengthOut>10?'outside':'none'" arrow="never">
+          <el-carousel v-if="isShowOut"  :height="doneHeight+'px'" :autoplay="false" :indicator-position="doneLength>10?'outside':'none'" arrow="never">
             <el-carousel-item v-for="(list,index) in doneList" :key="index">
               <el-row :gutter="20">
                 <el-col :span="doneLength>3?12:24" v-for="(item,itemIndex) in list" :class="{higher:itemIndex>1&&doneLength>3}">
@@ -54,6 +54,8 @@
 
         </el-card>
 
+
+
         <!-- 新闻 -->
         <el-card class="news">
           <p slot="header"><span>新闻</span>
@@ -69,6 +71,24 @@
             </el-tab-pane>
           </el-tabs>
         </el-card>
+
+        <!-- 法定自查工作专栏 -->
+        <el-card class="news">
+          <p slot="header"><span>法定自查工作专栏</span>
+            <router-link target= "_blank" :to="{ name: 'newsListHr', params: { classify: selfClassify }}">更多</router-link>
+          </p>
+          
+          <el-tabs v-model="selfExamination" class="myTab" @tab-click="getSelfNew">
+            <el-tab-pane :label="list.name" :name="list.code" v-for="(list,index) in selfExaminationTitle" v-if="list.code!='ADM0405'&&list.code!='ADM0407'">
+              <router-link target= "_blank" :to="'/HR/newsDetailHr/'+news.fileId" class="newBox clearfix" v-for="(news,newIndex) in list.child" v-if="newIndex<8">
+                <p><span class="title">{{news.fileNameOld}}</span> <span class="newsnew" v-if="news.isRead==='0'">NEW</span></p>
+                <p><span>{{news.createTime | time('xie')}}</span>
+                </p>
+              </router-link>
+            </el-tab-pane>
+          </el-tabs>
+        </el-card>
+
         <!-- 人事任免 -->
         <el-card class="shareBox">
           <el-row>
@@ -190,6 +210,10 @@
             <!-- QAR数据展示权限 userInfo.isDocsec[4]判断 1 有 0 无 -->
             <el-menu-item index="10" @click.native="goToOthers('/QARData')" v-if="userInfo.isDocsec&&userInfo.isDocsec[4]==1"><i class="iconfont icon-edit"></i>QAR数据展示<i class="el-icon-arrow-right"></i></el-menu-item>
             <el-menu-item index="11" @click.native="goToOthers('/updateRecord')"><i class="iconfont icon-edit"></i>E网更新记录<i class="el-icon-arrow-right"></i></el-menu-item>
+            <!-- <el-menu-item v-if="userInfo.isDocsec&&userInfo.isDocsec[5]==1" index="12" @click.native="goToOthers('/forum/myforum')"><i class="iconfont icon-write"></i>论坛管理<i class="el-icon-arrow-right"></i></el-menu-item> -->
+            <!-- <el-menu-item index="12" @click.native="goToOthers('/forum/forumApp')"><i class="iconfont icon-write"></i>论坛管理<i class="el-icon-arrow-right"></i></el-menu-item> -->
+            <el-menu-item index="13" @click.native="goToOthers('/BirthdayReminder')"><i class="iconfont icon-rili"></i>生日提醒<i class="el-icon-arrow-right"></i></el-menu-item>
+
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -241,9 +265,11 @@ var msgs = [
   { "icon": "gou", "color": "#07A9E9", "text": "待批公文:", "value": "0", "link": "/doc/docPending" },
   { "icon": "gongwen", "color": "#BE3B7F", "text": "待阅公文:", "value": "0", "link": "/doc/docToRead" },
   { "icon": "sousuo", "color": "#7562DE", "text": "公文追踪:", "value": "0", "link": "/doc/docTracking" },
-  { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": { name: 'docPending', params: { isOverTime: '1' } } },
-  { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
+  { "icon": "shizhong1", "color": "#FF9300", "text": "超时公文:", "value": "0", "link": "/doc/docOverTime" },
+  // { "icon": "icon04", "color": "#1465C0", "text": "生日提醒:", "value": "0", "link": "/BirthdayReminder" },
+  { "icon": "icon04", "color": "#1465C0", "text": "未读邮件:", "value": "0", "link": "" },
   { "icon": "dianshi", "color": "#BE3B3B", "text": "会议通知:", "value": "0", "link": "/meeting/meetingSearch/1" },
+
 ];
 
 const otherLinks = [
@@ -259,6 +285,7 @@ const otherLinks = [
   { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },
   { "icon": "money", "text": "财务预算系统", "link": "http://efin.donghaiair.cn/" },
   { "icon": "renyuanshezhi", "text": "飞行资质管理系统", "link": "/index/fleetLogin", "params": ['workNo'] },
+  // { "icon": "jiayouzhan", "text": "燃油优化分析决策系统", "link": "/index/fuelLogin", "params": ['workNo'] },
 
 ]
 
@@ -279,6 +306,7 @@ export default {
 
   data() {
     return {
+      selfClassify:"FIL0307",
       chart: {
         // plotBorderWidth: 500,        //绘图区边框宽度
       },
@@ -326,8 +354,10 @@ export default {
         }]
 
       },
+     
       msgs,
       activeName: '',
+      selfExamination: 'FIL0307',
       pieBg,
       isShowOut:true,
       pieoption,
@@ -363,6 +393,11 @@ export default {
       doneHeight: 150,
       doneHeightOut: 150,
       newsList: [],
+      selfExaminationTitle: [
+        {code:"FIL0307",name:"局方政策", child: []},
+        {code:"FIL0308",name:"公司政策", child: []},
+        {code:"FIL0309",name:"公司推进情况", child: []},
+      ],
       flightTrends: {
         "sumFlight": 0,
         "departure": 0,
@@ -377,7 +412,6 @@ export default {
         disabledDate(time) {
           var td = new Date();
           // var d = new Date(td.getFullYear() + '-' + (td.getMonth() + 1) + '-' + td.getDate() + ' 00:00:00').getTime();
-          // console.log(td.getTime())
           return time.getTime() < (td.getTime() - 48 * 60 * 60 * 1000) || time.getTime() > (td.getTime() + 24 * 60 * 60 * 1000);
         }
       },
@@ -416,9 +450,11 @@ export default {
     this.searchDate = temp.getFullYear() + '-' + month + '-' + day;
     this.getDoneList();
     this.getNews();
+    this.getSelfNews();
     this.getFlightTrends();
     this.getOtherNews('FIL0301');
     this.getOtherNews('FIL0303');
+    this.getSelfExaminationTitle();
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -429,6 +465,7 @@ export default {
     this.$store.dispatch('getAirPortList');
     
     this.reloadMessage()
+    this.getEmail();
   },
   watch: {
     docTips(newVal) {
@@ -436,12 +473,35 @@ export default {
       msgs[1].value = newVal.toReadNum; //待阅
       msgs[3].value = newVal.overTimeNum; //超时
       msgs[0].value = newVal.pendingNum; //待批
-      msgs[4].value = newVal.birthdayNum; //生日
+      msgs[4].value = newVal.mailUnreadNum; //生日
       msgs[5].value = newVal.conferenceNum; //会议
-    },
-    
+    }
   },
   methods: {
+    getEmail(){
+        this.$http.post('/index/mailLogin', { empId: this.userInfo.empId })
+        .then(res => {
+          msgs[4].link=res.data;
+        }, res => {
+        })
+        var that=this;
+        var loop = setInterval(function() { 
+        that.$http.post('doc/docTips', { empId: that.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            msgs[2].value = res.data.trackingNum; //追踪
+            msgs[1].value = res.data.toReadNum; //待阅
+            msgs[3].value = res.data.overTimeNum; //超时
+            msgs[0].value = res.data.pendingNum; //待批
+            msgs[4].value = res.data.mailUnreadNum; //生日
+            msgs[5].value = res.data.conferenceNum; //会议
+          } else {
+
+          }
+        }, res => {
+        })
+      },300000);
+    },
     closeWin(){
       var that=this;
        this.$http.post('doc/docTips', { empId: this.userInfo.empId })
@@ -451,7 +511,7 @@ export default {
             msgs[1].value = res.data.toReadNum; //待阅
             msgs[3].value = res.data.overTimeNum; //超时
             msgs[0].value = res.data.pendingNum; //待批
-            msgs[4].value = res.data.birthdayNum; //生日
+            msgs[4].value = res.data.mailUnreadNum; //生日
             msgs[5].value = res.data.conferenceNum; //会议
           } else {
 
@@ -502,7 +562,6 @@ export default {
 
     },
     showOut(isShowOut){
-      // console.log(isShowOut)
       this.isShowOut=isShowOut;
     },
     reloadMessage(){
@@ -515,7 +574,7 @@ export default {
             msgs[1].value = res.data.toReadNum; //待阅
             msgs[3].value = res.data.overTimeNum; //超时
             msgs[0].value = res.data.pendingNum; //待批
-            msgs[4].value = res.data.birthdayNum; //生日
+            msgs[4].value = res.data.mailUnreadNum; //生日
             msgs[5].value = res.data.conferenceNum; //会议
           } else {
 
@@ -559,7 +618,6 @@ export default {
           if (/^http/.test(link.link)) {
             window.open(link.link);
           } else {
-            console.log(link.link)
             // this.$router.push(link.link);
             window.open(location.href.slice(0,location.href.indexOf("#")+1)+link.link)
           }
@@ -586,7 +644,7 @@ export default {
             msgs[1].value = res.data.toReadNum; //待阅
             msgs[3].value = res.data.overTimeNum; //超时
             msgs[0].value = res.data.pendingNum; //待批
-            msgs[4].value = res.data.birthdayNum; //生日
+            msgs[4].value = res.data.mailUnreadNum; //生日
             msgs[5].value = res.data.conferenceNum; //会议
           } else {
 
@@ -727,8 +785,7 @@ export default {
         }, res => {
 
         })
-
-        // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
+               // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
         // .then(res => {
         //   if (res.status == 0) {
         //     if (Array.isArray(res.data)) {
@@ -797,13 +854,11 @@ export default {
               res.data=res.data.slice(0,100);
               res.data.forEach((r, index) => r.index = index + 1);
               that.doneList=[];
-              // console.log( res.data)
-
               for (var i = 0; i < res.data.length; i += 10) {
                 if (res.data.slice(i, i + 10)) {
 
                   that.doneList.push(res.data.slice(i, i + 10))
-                  console.log( res.data.slice(i, i + 10))
+                  // console.log( res.data.slice(i, i + 10))
                 }
                 
               }
@@ -812,8 +867,7 @@ export default {
             }
           }
         })
-
-        // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
+                // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
         // .then(res => {
         //   if (res.status == 0) {
         //     if (Array.isArray(res.data)) {
@@ -875,12 +929,176 @@ export default {
         this.getNew();
       }
     },
+
+    getSelfExaminationDoneList() {
+     var that=this; 
+     var loop = setInterval(function() { 
+        // that.$http.post('/api/getDict', { dictCode: 'ADM17' })
+        //   .then(res => {
+        //     if (res.status == 0) {
+        //       that.selfExaminationTitle=[];
+        //       res.data.forEach(r =>
+        //         that.selfExaminationTitle.push({ name: r.dictName, code: r.dictCode, child: [] })
+        //       );
+        //       that.selfExamination = that.selfExaminationTitle[0].code;
+        //       that.getSelfNew();
+        //     } else {
+
+        //     }
+        //   }, res => {
+
+        //   })
+
+     that.$http.post('/doc/backlogList', { userId: that.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            if (Array.isArray(res.data)) {
+              that.doneLength = res.data.length;
+              switch (that.doneLength) {
+                case 1:
+                  that.doneHeight = 50;
+                  break;
+                case 2:
+                case 4:
+                  that.doneHeight = 90;
+                  break;
+                case 3:
+                  that.doneHeight = 145;
+                  break;
+                case 5: case 6:
+                  that.doneHeight = 120;
+                  break;
+                case 7: case 8:
+                  that.doneHeight = 175;
+                  break;
+                default:
+                  that.doneHeight = 210;
+              }
+              res.data=res.data.slice(0,100);
+              res.data.forEach((r, index) => r.index = index + 1);
+              that.doneList=[];
+              for (var i = 0; i < res.data.length; i += 10) {
+                if (res.data.slice(i, i + 10)) {
+                  that.doneList.push(res.data.slice(i, i + 10))
+                }
+              }
+            } else {
+              that.doneLength = 0;
+            }
+          }
+        }, res => {
+
+        })
+      }, 300000);
+      that.$http.post('/doc/backlogList', { userId: that.userInfo.empId })
+        .then(res => {
+          if (res.status == 0) {
+            if (Array.isArray(res.data)) {
+              that.doneLength = res.data.length;
+              switch (that.doneLength) {
+                case 1:
+                  that.doneHeight = 50;
+                  break;
+                case 2:
+                case 4:
+                  that.doneHeight = 90;
+                  break;
+                case 3:
+                  that.doneHeight = 145;
+                  break;
+                case 5: case 6:
+                  that.doneHeight = 120;
+                  break;
+                case 7: case 8:
+                  that.doneHeight = 175;
+                  break;
+                default:
+                  that.doneHeight = 210;
+              }
+              res.data=res.data.slice(0,100);
+              res.data.forEach((r, index) => r.index = index + 1);
+              that.doneList=[];
+              for (var i = 0; i < res.data.length; i += 10) {
+                if (res.data.slice(i, i + 10)) {
+
+                  that.doneList.push(res.data.slice(i, i + 10))
+                  // console.log( res.data.slice(i, i + 10))
+                }
+                
+              }
+            } else {
+              that.doneLength = 0;
+            }
+          }
+        })
+    },
+    getSelfNews() {
+      if (this.selfExaminationTitle.length === 0) {
+        // this.$http.post('/api/getDict', { dictCode: 'ADM17' })
+        //   .then(res => {
+        //     if (res.status == 0) {
+        //       res.data.forEach(r =>
+        //         this.selfExaminationTitle.push({ name: r.dictName, code: r.dictCode, child: [] })
+        //       );
+              
+        //       this.selfExamination = this.selfExaminationTitle[0].code;
+        //       // console.log(this.selfExamination)
+        //       this.getSelfNew();
+        //     } else {
+
+        //     }
+        //   }, res => {
+
+        //   })
+      } else {
+        this.getSelfNew();
+      }
+    },
+
+    getSelfExaminationTitle() {
+      if (this.selfExaminationTitle.length === 0) {
+        // this.$http.post('/api/getDict', { dictCode: 'ADM17' })
+        //   .then(res => {
+        //     if (res.status == 0) {
+        //       console.log(res.data)
+        //       console.log(this.selfExaminationTitle)
+              
+        //       res.data.forEach(r =>
+        //         this.selfExaminationTitle.push({ name: r.dictName, code: r.dictCode, child: [] })
+        //       );
+        //       this.selfExaminationTitle=this.selfExaminationTitle.slice(3)
+        //       this.selfExamination = this.selfExaminationTitle[0].code;
+             
+        //       this.getSelfNew();
+        //     } else {
+
+        //     }
+        //   }, res => {
+
+        //   })
+      } else {
+        this.getSelfNew();
+      }
+    },
     getNew(tab) {
       this.$http.post('/doc/selectFileList', { empId: this.userInfo.empId, classify1: this.activeName, sort: 0 })
         .then(res => {
           if (res.status == 0) {
             var temp = this.newsList.find(t => t.code == this.activeName);
             temp.child = res.data.selectDocInfoVolist;
+          }
+        })
+    },
+
+    getSelfNew(tab) {
+      if(tab){
+        this.selfClassify=tab.name;
+      }
+      this.$http.post('/index/selectFileList', { empId: this.userInfo.empId, classify2: this.selfExamination, sort: 0 })
+        .then(res => {
+          if (res.status == 0) {
+            var tempSelf = this.selfExaminationTitle.find(t => t.code == this.selfExamination);
+            tempSelf.child = res.data;
           }
         })
     },

@@ -339,7 +339,7 @@ export default {
                 "reciSupervisory": res.data.supervisoryLevel //安全级别
               }
               this.$store.commit('setReciver', receiver);
-              this.ruleForm.rec = res.data.name;
+              this.ruleForm.rec = res.data.name+"-"+res.data.majorDeptName;
               this.isQJSFX=true;
             } else {
               this.$store.commit('setReciver', '');
@@ -368,7 +368,7 @@ export default {
                 "reciSupervisory": res.data.reciSupervisoryLevel //安全级别
               }
               this.$store.commit('setReciver', receiver);
-              this.ruleForm.rec = res.data.reciUserName;
+              this.ruleForm.rec = res.data.reciUserName+"-"+res.data.reciDeptMajorName;
             } else {
               this.$store.commit('setReciver', '');
               this.ruleForm.rec = '';

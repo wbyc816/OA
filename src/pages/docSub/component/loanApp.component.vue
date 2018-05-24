@@ -270,7 +270,10 @@ export default {
        })
       .then(res => {
         if (res.status == 0) {
-         this.payTypes=res.data;
+         this.payTypes.push(res.data[0]);
+         this.payTypes.push(res.data[3]);
+        // res.data.splice(2,1);
+        // this.payTypes=res.data;
         }
       })
     },

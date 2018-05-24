@@ -271,11 +271,25 @@ export default {
           .then(res => {
             this.searchLoading = false;
             if (res.status == 0) {
-              this.$message.success('审批成功!');
+              // this.$message.success('审批成功!');
+              console.log(res)
+              if(res.data.length>0){
+                var str="";
+                for(var i=0;i<res.data.length;i++){
+                  str=str+"公文"+"\""+res.data[i]+"\""+"，"
+                }
+                str=str+"无默认接收人，不能一键审批。";
+                console.log(str)
+                 this.$alert(str, '提示', {
+                      confirmButtonText: '确定',
+                    });
+                  
+              }
               this.ruleForm.taskContent = '同意。';
               this.ruleForm.state = '1'
               this.getData();
               this.$store.dispatch('getDocTips');
+
             } else {
               this.$message.error(res.message);
             }

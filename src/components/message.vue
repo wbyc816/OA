@@ -14,6 +14,7 @@
                     
     </a>
 </template>
+
 <style scoped lang='scss'>
 .message {
   display: inline-block;
@@ -88,10 +89,11 @@
 
 </style>
 <script>
-
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {}
+    
   },
   props: {
     data: {
@@ -100,26 +102,47 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'userInfo',
+    ])
   },
   created(){
     // this.reloadMessage();
   },
   methods: {
     goToOtherReloads(link){
-      var that=this;
-      if (typeof link === 'string') {
-        if (/^http/.test(link)) {
+      if(link.indexOf('163')>-1){
+        var that=this;
+        this.$http.post('/index/mailLogin', { empId: this.userInfo.empId })
+        .then(res => {
+           link=res.data;
            var win=window.open(link);
-        } else {
-           var win=window.open(location.href.slice(0,location.href.indexOf("#")+1)+link)
+           var loop = setInterval(function() { 
+              if(win.closed) {    
+                  clearInterval(loop);
+                  that.$emit('search')
+              }
+            })
+        }, res => {
+        })
+      }else{
+      var that=this;
+        if (typeof link === 'string') {
+          if (/^http/.test(link)) {
+            win=window.open(link);
+          } else {
+            win=window.open(location.href.slice(0,location.href.indexOf("#")+1)+link)
+          }
         }
-      } 
-      var loop = setInterval(function() { 
-      if(win.closed) {    
-          clearInterval(loop);
-          that.$emit('search')
-      }
+        var loop = setInterval(function() { 
+        if(win.closed) {    
+            clearInterval(loop);
+            that.$emit('search')
+        }
       })
+      }
+      
+      
 
      
      

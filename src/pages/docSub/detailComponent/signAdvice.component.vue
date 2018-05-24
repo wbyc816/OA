@@ -201,7 +201,7 @@ export default {
     },
     updatePerson(payLoad) { //单个审批接收人
       this.dialogTableVisible = false;
-      this.ruleForm.signUserName = payLoad.name;
+      this.ruleForm.signUserName = payLoad.name+"-"+payLoad.deptParentName;
       this.reciver = {
         "nextUserId": payLoad.empId,
         "nextUserName": payLoad.name,
@@ -236,6 +236,7 @@ export default {
                 if (res.status == '0') {
                   this.$message.success('会签成功');
                   this.$router.push('/doc/docPending');
+                  window.close();
                 } else {
                   this.$message.error('会签失败，请重试');
                 }
@@ -270,6 +271,7 @@ export default {
           if (res.status == '0') {
             this.$message.success('会签成功');
             this.$router.push('/doc/docPending');
+            window.close();
           } else {
             this.$message.error('会签失败' + res.message);
           }
@@ -300,6 +302,7 @@ export default {
                   if (res.status == '0') {
                     this.$message.success('结束会签成功');
                     this.$router.push('/doc/docPending');
+                    window.close();
                   } else {
                     this.$message.error('结束会签失败。' + res.message);
                   }

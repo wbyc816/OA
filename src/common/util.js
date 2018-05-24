@@ -18,7 +18,7 @@ Vue.prototype.numFixed2 = numFixed2
 
 
 function showDowload(docName) {
-  const docArr = ['CPD', 'BXS', 'JKS', 'RSB', 'PXS', 'CLB', 'CLV', 'FKS', 'YFK', 'FWG', 'HTS', 'JHH', 'SXS', 'ZJJ', 'JBC', 'HCG'] //显示导出PDF的公文列表
+  const docArr = ['CPD', "CLS",'BXS', 'JKS', 'RSB', 'PXS', 'CLB', 'CLV', 'FKS', 'YFK', 'FWG', 'HTS', 'JHH', 'SXS', 'ZJJ', 'JBC', 'HCG'] //显示导出PDF的公文列表
   return docArr.find(d => d == docName) != undefined
 }
 

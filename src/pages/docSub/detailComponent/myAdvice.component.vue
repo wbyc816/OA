@@ -95,7 +95,7 @@
       <el-form-item>
         <el-col :span='18'>
           <el-button type="primary" size="large" class="submitButton" @click="submit()">提交</el-button>
-          <el-button v-if="docDetail.isSecretary==1&&docDetail.isSign!=1" type="primary" size="large" class="submitButton" @click="submit(true)">无意见转发</el-button>
+          <el-button v-if="docDetail.isRelay==1&&docDetail.isSign!=1&&isMySign" type="primary" size="large" class="submitButton" @click="submit(true)">无意见转发</el-button>
           <slot name="docArchive"></slot>
         </el-col>
       </el-form-item>
@@ -202,6 +202,7 @@ export default {
         attchment: [],
         planDate: ''
       },
+      isMySign:true,
       rules: {
         sign: [{ type: 'array', validator: checkSign, required: true }],
         state: [{ required: true, message: '请选择审批意见' }],
@@ -400,7 +401,7 @@ export default {
       if (this.adminReci) {
         if (this.userInfo.empId != this.adminReci.secUserId && this.adminReci.secUserId) {
           var person = {
-            "signUserName": this.adminReci.secUserName,
+            "signUserName": this.adminReci.secUserName+"-"+this.adminReci.deptName,
           }
           this.ruleForm.sign = [];
           this.ruleForm.sign.push(person);
@@ -413,7 +414,7 @@ export default {
               this.adminReci = res.data;
               if (this.userInfo.empId != this.adminReci.secUserId && this.adminReci.secUserId) {
                 var person = {
-                  "signUserName": this.adminReci.secUserName,
+                  "signUserName": this.adminReci.secUserName+"-"+this.adminReci.deptName,
                 }
                 this.ruleForm.sign = [];
                 this.ruleForm.sign.push(person);
@@ -445,7 +446,7 @@ export default {
             }
             this.ruleForm.sign = [];
             this.ruleForm.sign.push({
-              signUserName: res.data.reciUserName
+              signUserName: res.data.reciUserName+"-"+res.data.reciDeptMajorName
             });
           } else {
             this.ruleForm.sign = [];
@@ -522,6 +523,11 @@ export default {
       }
     },
     signTypeChange(val) {
+      if(val==1||val==2){
+        this.isMySign=false;
+      }else{
+         this.isMySign=true;
+      }
       this.ruleForm.sign = [];
       this.signDeps = [];
       this.chooseDisable = false;
@@ -598,7 +604,7 @@ export default {
     updatePerson(payLoad) { //单个审批接收人
       this.dialogTableVisible = false;
       var person = {
-        "signUserName": payLoad.name,
+        "signUserName": payLoad.name+"-"+payLoad.deptParentName,
       }
       if (this.ruleForm.sign.length != 0) {
         this.ruleForm.sign.splice(0, 1, person)

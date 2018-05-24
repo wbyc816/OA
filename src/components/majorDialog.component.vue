@@ -5,6 +5,7 @@
         <el-col :span='6' class="leftOption">
           <el-menu class="menuBox" :default-openeds="['2']">
             <el-menu-item index="1" @click.native="selAll" v-if="hasAll">所有人</el-menu-item>
+            <!-- <el-menu-item index="5" @click.native="selEmpty" v-if="params.isEmpty" >不公开</el-menu-item> -->
             <el-submenu index="2">
               <template slot="title">共享类型</template>
               <el-menu-item index="2-1" @click.native="selPerson">人员</el-menu-item>
@@ -65,12 +66,17 @@
           <div class="selInfoBox">
             <p>已选择条件</p>
             <div class="clearfix selInfo">
-              <el-tag key="all" :closable="true" type="primary" v-show="hasLevel?all.max:all" @close="closeAll">
-                <template v-if="hasLevel">
+              <el-tag key="all" :closable="true" type="primary" v-show="(hasLevel?all.max:all)" @close="closeAll">
+                <template v-if="!hasLevel">
                   {{'所有人('+all.min+'-'+all.max+')'}}
                 </template>
                 <template v-else>
                   所有人
+                </template>
+              </el-tag>              
+              <el-tag key="empty" :closable="true" type="primary" v-show="empty" @close="closeEmpty">
+                <template>
+                  不公开
                 </template>
               </el-tag>              
               <el-tag :key="dep.id" :closable="true" type="primary" @close="closeDep(index)" v-for="(dep,index) in depList">
@@ -280,6 +286,7 @@ export default {
   },
   data() {
     return {
+      empty:false,
       defaultExpand,
       levels,
       name: '',
@@ -312,7 +319,8 @@ export default {
       default: false
     },
     params: {    //其他参数
-      type: Object
+      type: Object,
+    
     },
     hasLevel: {
       type: Boolean,
@@ -360,6 +368,9 @@ export default {
     }
   },
   methods: {
+    closeEmpty() {
+      this.empty = '';
+    },
     checkParams() {
       if (this.params.all) {
         this.all = this.params.all;
@@ -372,10 +383,9 @@ export default {
       }
     },
     selAll() {
-      this.isAll = true;
       var tip='';
       if(this.hasLevel){
-        tip='是否选择安全级别为' + this.min + '-' + this.max + '的所有人?'
+        tip='是否选择安全级别为所有人?'
       }else{
         tip='是否选择所有人?'
       }
@@ -397,6 +407,38 @@ export default {
           this.depList = [];
           this.personList = [];
           this.all=true;          
+        }          
+      }).catch(() => {
+
+      });
+    },
+    selEmpty() {
+      this.empty = true;
+      var tip='';
+      if(this.hasLevel){
+        tip='是否选择安全级别为不公开?'
+      }else{
+        tip='是否选择不公开?'
+      }
+      this.$confirm(tip, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if(this.hasLevel){
+          this.all = {
+            min: "",
+            max: ""
+          }
+          if (this.max == 100 && this.min == 0) {
+            this.depList = [];
+            this.personList = [];
+          }
+
+        }else{
+          this.depList = [];
+          this.personList = [];
+          this.all="";          
         }          
       }).catch(() => {
 
@@ -496,7 +538,7 @@ export default {
       return row.empId+row.postId
     },
     submitPerson() {
-      this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList,outList:this.outList })
+      this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList,outList:this.outList ,empty:this.empty})
       this.$emit('update:visible', false)
     },
     handleSelectionChange(val) {

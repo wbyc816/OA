@@ -42,7 +42,7 @@
           <el-table-column property="remark" label="版本更新说明" ></el-table-column>
           <el-table-column label="操作"  width="100">
             <template slot-scope="scope">
-               <el-button   type="text" size="small">展开</el-button>
+               <el-button   type="text" size="small" class="showAll">详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -102,6 +102,8 @@ export default {
           document.getElementsByTagName("tbody")[0].children[row.id].children[0].children[0].children[0].children[0].children[1].innerHTML=da
         }
 
+        
+
     }, 10)
     },
     search() {
@@ -144,7 +146,7 @@ export default {
 <style lang="scss">
 #test {
   .el-table_1_column_4{
-    text-align: center
+    // text-align: center
   }
   .el-card.softcard {
     padding: 0 20px;

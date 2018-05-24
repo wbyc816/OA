@@ -83,6 +83,7 @@ const financeData = [
   { 'logo': 'icon-yusuankongzhi', 'font': '28px', 'color': '#FF5F88', 'text': '借款申请', 'link': '/doc/docCommonApp/JKS' },
   { 'logo': 'icon-imgtag', 'font': '28px', 'color': '#5BB5FC', 'text': '差旅报销申请', 'link': '/doc/docCommonApp/CLB' },
   { 'logo': 'icon-manage', 'font': '26px', 'color': '#9FD867', 'text': '预付款核销申请', 'link': '/doc/docCommonApp/YFK' },
+  // { 'logo': 'icon-manage', 'font': '26px', 'color': '#9FD867', 'text': '资产类申请', 'link': '/doc/docCommonApp/YFK' },
 ];
 const contrastData = [
   { 'logo': 'icon-rili', 'color': '#A5A3FF', 'text': '请假申请', 'link': '/doc/docCommonApp/QJS' },

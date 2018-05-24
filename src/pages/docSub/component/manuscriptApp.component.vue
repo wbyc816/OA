@@ -16,6 +16,9 @@
       </el-form-item>
       <el-form-item label="发布范围" prop="fileSend" class="reciverWrap">
         <div class="reciverList">
+          <el-tag key="empty" :closable="true" v-show="manuscriptForm.fileSend.empty" type="primary" @close="closeEmpty">
+            不公开
+          </el-tag>
           <el-tag key="all" :closable="true" v-show="manuscriptForm.fileSend.all.max" type="primary" @close="closeAll">
             {{'所有人('+manuscriptForm.fileSend.all.min+'-'+manuscriptForm.fileSend.all.max+')'}}
           </el-tag>
@@ -86,7 +89,7 @@
       </el-form-item>
     </el-form>
     <person-dialog @updatePerson="updateSign" :visible.sync="signDialogVisible" admin="1" selText="签发人"></person-dialog>
-    <major-dialog :params="manuscriptForm.fileSend" @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
+    <major-dialog :params="manuscriptForm.fileSend"  @updatePerson="updateFileSend" :visible.sync="fileSendVisible"></major-dialog>
     <major-dialog :params="manuscriptForm.mainPeople" @updatePerson="updateMainPeople" :visible.sync="mainPeopleVisible" :hasLevel="false" hasOutSend></major-dialog>
     <major-dialog :params="manuscriptForm.ccPeople" @updatePerson="updateCcPeople" :visible.sync="ccPeopleVisible" :hasLevel="false"></major-dialog>
   </div>
@@ -101,13 +104,16 @@ const catalogAbleList = [
   { code: 'ADM0403', comList: ['业务通告'], depList: ['all'] },
   { code: 'ADM0402', comList: ['会议纪要'], depList: ['all'] },
   { code: 'ADM0404', comList: [], depList: ['all'] },
-  { code: 'ADM0406', comList: ['all'], depList: ['all'] }
+  { code: 'ADM0406', comList: ['all'], depList: ['all'] },
+  { code: 'ADM1701', comList: ['all'], depList: ['all'] },
+  { code: 'ADM1702', comList: ['all'], depList: ['all'] },
+  { code: 'ADM1703', comList: ['all'], depList: ['all'] },
 ]
 export default {
   components: { PersonDialog, MajorDialog, MoneyInput },
   data() {
     var checkFileSend = (rule, value, callback) => {
-      if (value.all.max || value.personList.length != 0 || value.depList != 0) {
+      if (value.all.max || value.personList.length != 0 || value.depList != 0||this.manuscriptForm.fileSend.empty) {
         callback();
       } else {
         callback(new Error('请选择发布范围'))
@@ -157,7 +163,8 @@ export default {
         fileSend: {
           personList: [],
           all: '',
-          depList: []
+          depList: [],
+          isEmpty:true,
         },
         mainPeople: {
           personList: [],
@@ -278,7 +285,9 @@ export default {
       this.signDialogVisible = false;
     },
     updateFileSend(params) {
+      console.log(params)
       this.manuscriptForm.fileSend = params;
+      this.manuscriptForm.fileSend.isEmpty=params.empty;
     },
     updateMainPeople(params) {
       this.manuscriptForm.mainPeople = params;
@@ -430,6 +439,10 @@ export default {
     },
     closeAll() {
       this.manuscriptForm.fileSend.all = '';
+    },
+    closeEmpty() {
+      this.manuscriptForm.fileSend.isEmpty=true;
+      this.manuscriptForm.fileSend.empty = '';
     },
     closeMainAll() {
       this.manuscriptForm.mainPeople.all = '';

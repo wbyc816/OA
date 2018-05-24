@@ -110,7 +110,7 @@
       </ul>
       </div>
       <el-form-item label="付款方式" prop="payMthodCode" placeholder="" class="deptArea">
-        <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType">
+        <el-select v-model="paymentForm.payMthodCode" style="width:100%" ref="contractType" >
           <el-option v-for="item in payMthods" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -193,7 +193,7 @@ export default {
       budgetTable: [],
       paymentForm: {
         supplierIds: [],
-        payMthodCode: '',
+        payMthodCode: 'FIN0101',
         paymentOthers: '',
         contractAttach: [],
         payTypeCode: '',
@@ -630,6 +630,7 @@ export default {
       this.$http.post('/api/getDict', { dictCode: 'FIN01' })
         .then(res => {
           if (res.status == '0') {
+            res.data.splice(2,1)
             this.payMthods = res.data;
           } else {
             console.log('获取付款方式失败')

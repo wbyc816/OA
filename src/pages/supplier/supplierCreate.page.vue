@@ -443,7 +443,7 @@ export default {
   },
   methods: {
     inputSWIFTCode(val){
-      val = val.toString().match(/^[A-Z]{0,}/);
+      val = val.toString().match(/^[A-Z0-9]{0,}/);
       if (val) {
         this.$refs.swiftCode.setCurrentValue(val[0]);
         this.appFormAccount.swiftCode = val[0];
