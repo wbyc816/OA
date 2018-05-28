@@ -263,8 +263,12 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="其他" prop="paymentOthers" class="arrArea" v-if="paymentForm.payMthodCode=='FIN0104'" label-width="100px" style="width:49%">
+      <!-- <el-form-item label="其他" prop="paymentOthers" class="arrArea" v-if="paymentForm.payMthodCode=='FIN0104'" label-width="100px" style="width:49%">
         <el-input v-model="paymentForm.paymentOthers">
+        </el-input>
+      </el-form-item> -->
+      <el-form-item label="开户行" prop="bank" class="arrArea"  label-width="100px" style="width:49%">
+        <el-input v-model="paymentForm.bank" :disabled="true">
         </el-input>
       </el-form-item>
       <template v-if="paymentForm.payMthodCode=='FIN0101'">
@@ -272,7 +276,7 @@
           <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
         </el-form-item>
         <el-form-item label="收款账户" prop="bankAccount" class="arrArea" label-width="100px" style="width:49%">
-          <money-input v-model="paymentForm.bankAccount" :maxlength="50" :prepend="false" :append="false" type="bankCode"></money-input>
+          <money-input v-model="paymentForm.bankAccount" :disabled="true" :maxlength="50" :prepend="false" :append="false" type="bankCode"></money-input>
         </el-form-item>
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
@@ -281,7 +285,7 @@
         </el-upload>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :selfDisable="false" :visible.sync="personDialogVisible" hasLeaderDep></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :deptId="changeDept" :selfDisable="false" :visible.sync="personDialogVisible" hasLeaderDep></person-dialog>
   </div>
 </template>
 <script>
@@ -292,6 +296,12 @@ import _ from 'lodash'
 
 export default {
   components: { MoneyInput, PersonDialog },
+   props: {
+    changeDept: {
+      type: String,
+      default: ''
+    },
+  },
   data() {
     var checkNum = (rule, value, callback) => {
       if (this.activeInvoice != 'FIN0201') {
@@ -403,7 +413,8 @@ export default {
         payee: '',
         bankAccount: '',
         empId: '',
-        appUserName: ''
+        appUserName: '',
+        bank:"",
       },
       paymentRule: {
         payMthodCode: [{ required: true, message: '请选择付款方式', trigger: 'blur' }],
@@ -517,7 +528,7 @@ export default {
       empId: this.userInfo.empId
     }
     this.paymentForm.appUserName = this.userInfo.name;
-
+    this.handleSelect(this.appPerson);
   },
   mounted() {
     // this.$emit('updateSuggest', 'DOC0601');
@@ -784,6 +795,7 @@ export default {
         delete b.invoiceCode;
         return b;
       });
+     
       var travelpay = {
         "budgetYear": this.year,
         "paymentMethodCode": payMthod.dictCode, //付款方式code 
@@ -793,7 +805,8 @@ export default {
         "payeeUser": this.paymentForm.payee,
         "payeeAccount": this.paymentForm.bankAccount,
         "travelpayUser": this.appPerson.name,
-        "travelpayUserId": this.appPerson.empId
+        "travelpayUserId": this.appPerson.empId,
+        payeeBankName:this.paymentForm.bank,
       }
       var paramsList = {
         travlepayStayList: [],
@@ -897,6 +910,7 @@ export default {
             if (res.status == 0) {
               this.paymentForm.bankAccount = res.data.data.bankAccount;
               this.paymentForm.payee = res.data.data.empName;
+              this.paymentForm.bank = res.data.data.bank;
             }
           })
       }

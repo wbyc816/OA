@@ -92,11 +92,15 @@
         </el-input>
       </el-form-item>
       <template v-if="paymentForm.payMthodCode=='FIN0101'">
+        <el-form-item label="开户行" prop="bank" class="arrArea"  label-width="100px" style="width:49%">
+          <el-input v-model="paymentForm.bank" :disabled="true">
+          </el-input>
+        </el-form-item>
         <el-form-item label="收款人" prop="payee" class="deptArea" style="width:51%">
           <el-autocomplete v-model="paymentForm.payee" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect" :props="testprops" ref="payee"></el-autocomplete>
         </el-form-item>
         <el-form-item label="收款账户" prop="bankAccount" class="arrArea" style="width:49%" label-width="100px">
-          <money-input v-model="paymentForm.bankAccount" :maxlength="50" :prepend="false" :append="false" type="bankCode"></money-input>
+          <money-input v-model="paymentForm.bankAccount" :disabled="true" :maxlength="50" :prepend="false" :append="false" type="bankCode"></money-input>
         </el-form-item>
       </template>
       <el-form-item label="上传发票" prop="invoiceAttach" class="clearBoth">
@@ -156,6 +160,7 @@ export default {
         payee: '',
         bankAccount: '',
         empId: '',
+        bank:"",
       },
       paymentRule: {
         payMthodCode: [{ required: true, message: '请选择付款方式', trigger: 'blur' }],
@@ -277,7 +282,8 @@ export default {
         "payeeEmpId": this.paymentForm.empId,
         "payeeName": this.paymentForm.payee,
         "payeeAccount": this.paymentForm.bankAccount,
-        "tDocFinReimbursementItems": tDocFinReimbursementItems
+        "tDocFinReimbursementItems": tDocFinReimbursementItems,
+        payeeBankName:this.paymentForm.bank,
       }
       // console.log(this.clone(this.budgetTable));
       var finFileIds = this.paymentForm.invoiceAttach.map(c => c.response.data);
@@ -346,6 +352,7 @@ export default {
             if (res.status == 0) {
               this.paymentForm.bankAccount = res.data.data.bankAccount;
               this.paymentForm.payee = res.data.data.empName;
+              this.paymentForm.bank = res.data.data.bank;
             }
           })
       }

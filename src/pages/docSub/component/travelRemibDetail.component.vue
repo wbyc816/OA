@@ -106,9 +106,13 @@
         <p v-if="info[0].travelpay.paymentMethodCode!='FIN0104'" class="textContent">{{info[0].travelpay.paymentMethodName}}</p>
         <p class="textContent" v-else>{{info[0].travelpay.paymentMethodOthers}}</p>
       </el-col>
-      <el-col :span="24">
+      <el-col :span="12" class="rightBorder">
         <h1 class="title">收款账户</h1>
         <p v-if="info" class="textContent">{{info[0].travelpay.payeeAccount}}</p>
+      </el-col>
+      <el-col :span="12" >
+        <h1 class="title">开户行</h1>
+        <p v-if="info" class="textContent">{{info[0].travelpay.payeeBankName}}</p>
       </el-col>
       <el-col :span="24">
         <h1 class="title">发票</h1>

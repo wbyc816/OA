@@ -58,6 +58,10 @@
         <h1 class="title">收款账户</h1>
         <p v-if="info" class="textContent">{{info[0].tDocFinReimbursement.payeeAccount}}</p>
       </el-col>
+      <el-col :span="24" >
+        <h1 class="title">开户行</h1>
+        <p v-if="info" class="textContent">{{info[0].tDocFinReimbursement.payeeBankName}}</p>
+      </el-col>
       <el-col :span="24">
         <h1 class="title">发票</h1>
         <p v-if="info" class="textContent">
