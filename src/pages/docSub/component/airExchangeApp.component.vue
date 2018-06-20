@@ -396,7 +396,7 @@ export default {
         requestDate: +this.contractForm.requestDate,
         earlyInquiryCompare: this.contractForm.earlyInquiryCompare,
       }
-      this.$emit('submitMiddle', { airmExchange: airmExchange, airmExchangeItems: this.budgetTable })
+      this.$emit('submitMiddle', { airmExchange: airmExchange, airmExchangeItems: this.budgetTable ,docSubtypeCode:this.contractForm.contractCode})
     },
     getPriorityList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC16' })

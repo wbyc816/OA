@@ -170,6 +170,7 @@ export default {
         bankAccount: [{ required: true, trigger: 'blur', message: '请输入收款账户' }],
         payee: [{ required: true, trigger: 'blur', message: '请选择收款人' }],
         payTypeCode: [{ required: true, message: '请选择报销类型', trigger: 'blur' }],
+        bank: [{ required: true, message: '请输入开户行', trigger: 'change' }],
       },
       invoiceAttach: [],
       payMthods: [],
@@ -237,7 +238,7 @@ export default {
         budgetTable: this.budgetTable,
         paymentForm: this.paymentForm,
       });
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.paymentForm.payTypeCode);
     },
     getDraft(obj) {
       if (obj.paymentForm.payTypeCode) {
@@ -272,7 +273,8 @@ export default {
         delete b.invoiceCode;
         return b;
       });
-      var tDocFinReimbursement = {
+      if(payMthod.dictCode=="FIN0101"){
+         var tDocFinReimbursement = {
         "budgetYear": this.year,
         "docTypeCode": payType.dictCode, //付款申请类型code, DOC04中
         "docTypeName": payType.dictName, //付款申请类型名
@@ -285,10 +287,27 @@ export default {
         "tDocFinReimbursementItems": tDocFinReimbursementItems,
         payeeBankName:this.paymentForm.bank,
       }
+      }else{
+        var tDocFinReimbursement = {
+        "budgetYear": this.year,
+        "docTypeCode": payType.dictCode, //付款申请类型code, DOC04中
+        "docTypeName": payType.dictName, //付款申请类型名
+        "paymentMethodCode": payMthod.dictCode, //付款方式code 
+        "paymentMethodName": payMthod.dictName, //付款方式名
+        "paymentOthers": "", //其他付款方式名
+        "payeeEmpId": "",
+        "payeeName": "",
+        "payeeAccount": "",
+        "tDocFinReimbursementItems": tDocFinReimbursementItems,
+        payeeBankName:"",
+      }
+
+      }
+     
       // console.log(this.clone(this.budgetTable));
       var finFileIds = this.paymentForm.invoiceAttach.map(c => c.response.data);
-      console.log(tDocFinReimbursement, finFileIds);
-      this.$emit('submitMiddle', { tDocFinReimbursement: tDocFinReimbursement, finFileIds: finFileIds })
+      // console.log(tDocFinReimbursement, finFileIds);
+      this.$emit('submitMiddle', { tDocFinReimbursement: tDocFinReimbursement, finFileIds: finFileIds,docSubtypeCode: this.paymentForm.payTypeCode})
     },
     checkBudgetTable() {
       if (this.budgetTable.length != 0) {
@@ -515,6 +534,7 @@ export default {
             this.payMthods.push(res.data[0])
             this.payMthods.push(res.data[3])
             this.payMthods.push(res.data[4])
+            this.payMthods.push(res.data[5])
           } else {
             console.log('获取付款方式失败')
           }
@@ -555,7 +575,7 @@ export default {
             res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
             this.budgetDeptList = res.data
           } else {
-            console.log(res)
+            // console.log(res)
           }
         }, res => {})
     },

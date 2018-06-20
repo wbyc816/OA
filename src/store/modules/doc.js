@@ -277,19 +277,30 @@ const actions = {
   },
   //获取请示模板
   getTemplate({ commit, state }, params) {
-    api.getTemplate(params.code,params.subCode)
+    return  api.getTemplate(params.code,params.subCode)
       .then(res => {
         if(res.status==0){
           if(res.data){
             commit(types.GET_TEMPLATE, res.data.template);
+            return res;
           }          
         }
       }, res => {
-        // Notification({
-        //   message: '获取公文类别失败！',
-        //   type: 'error'
-        // });
+        Notification({
+          message: '获取公文类别失败！',
+          type: 'error'
+        });
       })
+
+    // return api.getTemplate(params.code, params.subCode)
+    //   .then(res => {
+    //     if (res && res.status == 0 && res.data) {
+    //       commit (types.GET_TEMPLATE, res.data.template);
+    //       return res;
+    //     }
+    //   }, (err) => {
+    //     // ...
+    //   });
   }
 }
 

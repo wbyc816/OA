@@ -58,7 +58,7 @@ export default {
           this.$emit('moreNum', true);     
         }else{
           this.$emit('moreNum', false);
-          this.$emit('numPages', 200);     
+          this.$emit('numPages', this.total);     
         }
       }).catch((reason)=> {
         this.$emit('error', reason)

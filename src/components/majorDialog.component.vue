@@ -5,7 +5,7 @@
         <el-col :span='6' class="leftOption">
           <el-menu class="menuBox" :default-openeds="['2']">
             <el-menu-item index="1" @click.native="selAll" v-if="hasAll">所有人</el-menu-item>
-            <!-- <el-menu-item index="5" @click.native="selEmpty" v-if="params.isEmpty" >不公开</el-menu-item> -->
+            <el-menu-item index="5" @click.native="selEmpty" v-if="params.isEmpty" >不公开</el-menu-item>
             <el-submenu index="2">
               <template slot="title">共享类型</template>
               <el-menu-item index="2-1" @click.native="selPerson">人员</el-menu-item>
@@ -39,7 +39,7 @@
               <el-button slot="append" @click="search">搜索</el-button>
             </el-input>
           </div>
-          <div class="rightContent">
+          <div class="rightContent" >
             <div v-show="type=='dep'">
               <el-tree :data="depts" :props="defaultProps" node-key="id" :expand-on-click-node="true" :default-expanded-keys="defaultExpand" :render-content="renderContent">
               </el-tree>
@@ -50,7 +50,7 @@
               </el-col>
               <el-col :span="16">
                 <el-table :data="searchRes.empVoList" class="myTable searchRes" v-loading.body="searchLoading" @row-click="selectPerson" @selection-change="handleSelectionChange" :row-key="rowKey" :height="430" ref='multipleTable'>
-                  <el-table-column type="selection" width="55" :reserve-selection="true">
+                  <el-table-column type="selection" width="55" :selectable="isChoose" :reserve-selection="isRecord">
                   </el-table-column>
                   <el-table-column prop="name" label="姓名" width="110"></el-table-column>
                   <el-table-column prop="depts" label="部门" width="170"></el-table-column>
@@ -74,8 +74,8 @@
                   所有人
                 </template>
               </el-tag>              
-              <el-tag key="empty" :closable="true" type="primary" v-show="empty" @close="closeEmpty">
-                <template>
+              <el-tag key="empty" :closable="true" type="primary" v-show="chooseEmpty" @close="closeEmpty">
+                <template  v-if="chooseEmpty">
                   不公开
                 </template>
               </el-tag>              
@@ -286,7 +286,8 @@ export default {
   },
   data() {
     return {
-      empty:false,
+      isRecord:true,
+      chooseEmpty:false,
       defaultExpand,
       levels,
       name: '',
@@ -320,7 +321,7 @@ export default {
     },
     params: {    //其他参数
       type: Object,
-    
+      
     },
     hasLevel: {
       type: Boolean,
@@ -338,11 +339,15 @@ export default {
   watch: {
     'visible': function(newVal) {
       this.dialogVisible = newVal;
+      
       if (newVal) {
         this.$store.dispatch('getDeptList');
         this.$store.dispatch('setQueryPage', 1);
         this.$store.dispatch('queryEmpList', {});
         this.checkParams();
+      }
+      if(!this.params.chooseEmpty){
+        this.closeEmpty();
       }
     },
     searchRes(newVal) {
@@ -366,10 +371,19 @@ export default {
     if(this.hasOutSend){
       this.getOutSendList();      
     }
+    
   },
   methods: {
+    isChoose(row, index) {
+      if(this.chooseEmpty){
+        return false;
+      }else{
+        return true;
+      }
+      
+    },
     closeEmpty() {
-      this.empty = '';
+      this.chooseEmpty = '';
     },
     checkParams() {
       if (this.params.all) {
@@ -402,7 +416,9 @@ export default {
           if (this.max == 100 && this.min == 0) {
             this.depList = [];
             this.personList = [];
+            
           }
+          this.closeEmpty();
         }else{
           this.depList = [];
           this.personList = [];
@@ -413,7 +429,7 @@ export default {
       });
     },
     selEmpty() {
-      this.empty = true;
+      // this.empty = true;
       var tip='';
       if(this.hasLevel){
         tip='是否选择安全级别为不公开?'
@@ -425,7 +441,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        if(this.hasLevel){
+        this.chooseEmpty=true;
+        if(this.chooseEmpty){
           this.all = {
             min: "",
             max: ""
@@ -434,7 +451,8 @@ export default {
             this.depList = [];
             this.personList = [];
           }
-
+        this.isRecord=false;
+        this.submitPerson();
         }else{
           this.depList = [];
           this.personList = [];
@@ -446,6 +464,7 @@ export default {
     },
     addOutSend(){
       if(this.outList.find(o=>o===this.outSendText)===undefined){
+        console.log(this.outSendText)
         this.outList.push(this.outSendText);
         this.outSendText='';
       }else{
@@ -492,7 +511,7 @@ export default {
       }      
     },
     querySearchAsync(queryString, cb) {
-      this.outSendText=queryString=queryString.substr(0,10);
+      this.outSendText=queryString=queryString.substr(0,40);
       var outSendList = this.outSendList;
       var results = queryString ? outSendList.filter(this.createStateFilter(queryString)) : outSendList;
       cb(results);
@@ -531,14 +550,15 @@ export default {
       this.$store.dispatch('queryEmpList', { name: this.name })
     },
     selectPerson(row) {
-      this.$refs.multipleTable.toggleRowSelection(row);
-
+      if(!this.chooseEmpty){
+         this.$refs.multipleTable.toggleRowSelection(row);
+      }
     },
     rowKey(row) {
       return row.empId+row.postId
     },
     submitPerson() {
-      this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList,outList:this.outList ,empty:this.empty})
+      this.$emit('updatePerson', { depList: this.depList, all: this.all, personList: this.personList,outList:this.outList ,chooseEmpty:this.chooseEmpty})
       this.$emit('update:visible', false)
     },
     handleSelectionChange(val) {

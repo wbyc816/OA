@@ -161,22 +161,23 @@
             <el-date-picker v-model="appFormAccount.timeline" type="daterange" style="width:100%">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="开户行" prop="accountBank" class="deptArea" ref="accountBank" :rules="[ { required: isPersonal, message: '请输入开户行' }]">
+          <el-form-item label="开户行" prop="accountBank" class="deptArea" ref="accountBank">
             <el-input v-model="appFormAccount.accountBank"></el-input>
           </el-form-item>
-          <el-form-item label="账户名称" prop="accountName" class="arrArea" ref="accountName" :rules="[ { required: isPersonal, message: '请输入账户名称' }]">
+          <el-form-item label="账户名称" prop="accountName" class="arrArea" ref="accountName" >
             <el-input v-model="appFormAccount.accountName"></el-input>
           </el-form-item>
-          <el-form-item label="银行账户" prop="accountCode" class="deptArea" ref="accountCode" :rules="[ { required: isPersonal, message: '请输入银行账户' }]">
-            <el-input v-model="appFormAccount.accountCode"></el-input>
+          <el-form-item label="银行账户" prop="accountCode" class="deptArea" ref="accountCode" >
+            <!-- <el-input v-model="appFormAccount.accountCode"></el-input> -->
+             <money-input v-model="appFormAccount.accountCode" type="bankCode" :prepend="false" :append="false"   :maxlength="50"></money-input>
           </el-form-item>
           <el-form-item label="SWIFT Code (银行国际代码)" prop="swiftCodeswiftCode" class="arrArea"  >
             <el-input v-model="appFormAccount.swiftCode" :maxlength="20" @change="inputSWIFTCode" style="width" ref="swiftCode"></el-input>
           </el-form-item>
-            <el-button @click='addBudget' type="primary" style="width:100px;float:right" class="arrArea"><i class="el-icon-plus"></i> 添加</el-button>          
+            <!-- <el-button @click='addBudget' type="primary" style="width:100px;float:right" class="arrArea"><i class="el-icon-plus"></i> 添加</el-button>           -->
           </el-form>
             <div style="width:750px;margin-bottom:20px;" v-show="!appForm.type||appForm.type.dictCode!=='DOC2602'">
-          <el-table :data="accountTable" :stripe="true" highlight-current-row class="appTable" >
+          <!-- <el-table :data="accountTable" :stripe="true" highlight-current-row class="appTable" >
           
           <el-table-column property="accountLimit" label="信用额度"></el-table-column>
           <el-table-column property="timeline" label="信用期间" width="190"></el-table-column>
@@ -190,7 +191,7 @@
                 </el-button>
               </template>
             </el-table-column>
-          </el-table>
+          </el-table> -->
         </div>
            <template v-if="!isPersonal">
             <h4 class='doc-form_title clearBoth'>联系人</h4>
@@ -249,9 +250,10 @@ import PersonDialog from '../../components/personDialog.component'
 import { mapGetters, mapMutations } from 'vuex'
 import MajorDialog from '../../components/majorDialog.component'
 import util from '../../common/util'
+import MoneyInput from '../../components/moneyInput.component'
 
 export default {
-  components: { PersonDialog , MajorDialog},
+  components: { PersonDialog , MajorDialog,MoneyInput},
   data() {
     // var checkFileSend = (rule, value, callback) => {
     //   if (value.all.max || value.personList.length != 0 || value.depList != 0) {
@@ -368,9 +370,9 @@ export default {
         contactTitleCode: [{ required: true, message: '请选择称谓' }, ],
         contactName: [{ required: true, message: '请输入姓名' }, ],
         contactJobtitle: [{ required: true, message: '请输入岗位' }, ],
-        accountBank: [{ message: '请输入开户行' }, ],
-        accountName: [{ message: '请输入账户名称' }, ],
-        accountCode: [{ message: '请输入银行账户' }, ],
+        accountBank: [{ required: true,message: '请输入开户行' }, ],
+        accountName: [{ required: true,message: '请输入账户名称' }, ],
+        accountCode: [{ required: true,message: '请输入银行账户' }, ],
         classifyMediumCode: [{ validator: checkMedium }],
         classifySuperiorCode: [{ validator: checkSuperior }],
         contactMobilePhone: [{ validator: this.validatePhone }],
@@ -491,34 +493,34 @@ export default {
       closePerson(index) {
       this.appForm.fileSend.personList.splice(index, 1);
     },
-    addBudget() {
-          if((this.appFormAccount.accountLimit!=""||this.appFormAccount.timeline!=""||this.appFormAccount.accountBank!=""||this.appFormAccount.accountName!=""||this.appFormAccount.accountCode!="")){
-          if(this.isPersonal==false||(this.isPersonal==true&&this.appFormAccount.accountBank!=""&&this.appFormAccount.accountName!=""&&this.appFormAccount.accountCode!="")){
-            var temp = {};
-            temp.accountLimit = this.appFormAccount.accountLimit;
-            if(this.appFormAccount.timeline[0])
-            temp.timeline = util.formatTime(this.appFormAccount.timeline[0].getTime(), 'yyyy-MM-dd')+"/"+util.formatTime(this.appFormAccount.timeline[1].getTime(), 'yyyy-MM-dd');
-            temp.sort= this.accountTable.length+1;
-            temp.accountBank = this.appFormAccount.accountBank;
-            temp.accountName = this.appFormAccount.accountName;
-            temp.accountCode = this.appFormAccount.accountCode;
-            temp.swiftCode = this.appFormAccount.swiftCode; 
-            this.accountTable.push(temp);
-            this.appFormAccount.accountLimit="";
-            this.appFormAccount.accountBank="";
-            this.appFormAccount.accountName="";
-            this.appFormAccount.accountCode="";
-            this.appFormAccount.timeline=[];
-            this.showData = 0;
-          }else{
-          this.$message.warning('请检查账务未填写字段！')
-        }
+    // addBudget() {
+    //       if((this.appFormAccount.accountLimit!=""||this.appFormAccount.timeline!=""||this.appFormAccount.accountBank!=""||this.appFormAccount.accountName!=""||this.appFormAccount.accountCode!="")){
+    //       if(this.isPersonal==false||(this.isPersonal==true&&this.appFormAccount.accountBank!=""&&this.appFormAccount.accountName!=""&&this.appFormAccount.accountCode!="")){
+    //         var temp = {};
+    //         temp.accountLimit = this.appFormAccount.accountLimit;
+    //         if(this.appFormAccount.timeline[0])
+    //         temp.timeline = util.formatTime(this.appFormAccount.timeline[0].getTime(), 'yyyy-MM-dd')+"/"+util.formatTime(this.appFormAccount.timeline[1].getTime(), 'yyyy-MM-dd');
+    //         temp.sort= this.accountTable.length+1;
+    //         temp.accountBank = this.appFormAccount.accountBank;
+    //         temp.accountName = this.appFormAccount.accountName;
+    //         temp.accountCode = this.appFormAccount.accountCode;
+    //         temp.swiftCode = this.appFormAccount.swiftCode; 
+    //         this.accountTable.push(temp);
+    //         this.appFormAccount.accountLimit="";
+    //         this.appFormAccount.accountBank="";
+    //         this.appFormAccount.accountName="";
+    //         this.appFormAccount.accountCode="";
+    //         this.appFormAccount.timeline=[];
+    //         this.showData = 0;
+    //       }else{
+    //       this.$message.warning('请检查账务未填写字段！')
+    //     }
           
-        }else{
-          this.$message.warning('请检查账务未填写字段！')
-        }
+    //     }else{
+    //       this.$message.warning('请检查账务未填写字段！')
+    //     }
     
-    },
+    // },
     deleteRow(index) {
       this.accountTable.splice(index, 1)
     },
@@ -545,20 +547,17 @@ export default {
           params.supplierSendBean=that.param.supplierSendBean;
           params.supplierSendBean.sendTypeEmp.ids.unshift(this.userInfo.empId);
           console.log( params.supplierSendBean.sendTypeEmp)
-          
-          params.supplierBanks= this.accountTable.map(function(tabel) {
-              return {
-                sort: tabel.sort,
-                "accountBank": tabel.accountBank,  //开户银行
-                "accountName": tabel.accountName,  //账号名称
-                "accountCode": tabel.accountCode,  //银行账户
-                "createUser": tabel.PersonDialogcreateUser,   //创建人
-                "accountLimit": tabel.accountLimit,  //信用额度
-                "accountFrom": tabel.timeline?tabel.timeline.split("/")[0]:"",  //信用开始时间
-                "accountTo": tabel.timeline?tabel.timeline.split("/")[1]:"" , //信用结束时间
-                swiftCode:tabel.swiftCode
-              }
-          }),
+          params.supplierBanks= [{
+              sort: 0,
+              "accountBank": that.appFormAccount.accountBank,  //开户银行
+              "accountName": that.appFormAccount.accountName,  //账号名称
+              "accountCode": that.appFormAccount.accountCode,  //银行账户
+              "createUser": that.appFormAccount.PersonDialogcreateUser,   //创建人
+              "accountLimit": that.appFormAccount.accountLimit,  //信用额度
+              "accountFrom": that.appFormAccount.timeline?util.formatTime(that.appFormAccount.timeline[0].getTime(), 'yyyy-MM-dd'):"",  //信用开始时间
+              "accountTo": that.appFormAccount.timeline?util.formatTime(that.appFormAccount.timeline[1].getTime(), 'yyyy-MM-dd'):"" , //信用结束时间
+              swiftCode:that.appFormAccount.swiftCode
+          }],
           params.supplierBankId = this.supplierBankId;
           params.supplierName = this.appForm.supplierName;
           params.supplierBankAccountName = this.appForm.supplierBankAccountName;
@@ -713,8 +712,21 @@ export default {
               if(res.data.supplierBanks[i].accountFrom!=="")
               res.data.supplierBanks[i].timeline=util.formatTime(res.data.supplierBanks[i].accountFrom, 'yyyy-MM-dd')+"/"+util.formatTime(res.data.supplierBanks[i].accountTo, 'yyyy-MM-dd');
            }
-            this.accountTable = res.data.supplierBanks?res.data.supplierBanks:[];
-            console.log(this.accountTable)
+            // this.accountTable = res.data.supplierBanks?res.data.supplierBanks:[];
+               this.appFormAccount.accountBank=res.data.supplierBanks[0].accountBank;
+               this.appFormAccount.accountName=res.data.supplierBanks[0].accountName;
+               this.appFormAccount.accountCode=res.data.supplierBanks[0].accountCode;
+               this.appFormAccount.PersonDialogcreateUser=res.data.supplierBanks[0].createUser;
+               this.appFormAccount.accountLimit=res.data.supplierBanks[0].accountLimit;
+               this.appFormAccount.swiftCode=res.data.supplierBanks[0].swiftCode;
+
+              // "accountFrom": that.appFormAccount.timeline?util.formatTime(that.appFormAccount.timeline[0].getTime(), 'yyyy-MM-dd'):"",  //信用开始时间
+              // "accountTo": that.appFormAccount.timeline?util.formatTime(that.appFormAccount.timeline[1].getTime(), 'yyyy-MM-dd'):"" , //信用结束时间
+              if(res.data.supplierBanks[0].accountFrom){
+                console.log(new Date(res.data.supplierBanks[0].accountFrom))
+               this.appFormAccount.timeline=[new Date(res.data.supplierBanks[0].accountFrom), new Date(res.data.supplierBanks[0].accountTo)]
+              }
+            // console.log(this.accountTable)
             if (res.data.supplierBanks.accountFrom) {
               this.appForm.timeline.push(new Date(res.data.supplier.accountFrom));
               this.appForm.timeline.push(new Date(res.data.supplier.accountTo));

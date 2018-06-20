@@ -169,7 +169,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
-        <money-input v-model="budgetForm.pieceNum" type="int" :disabled="isRead" :prepend="false" :append="false" :maxlength="6">
+        <money-input v-model="budgetForm.pieceNum" :disabled="isRead" :prepend="false" :append="false" :maxlength="6">
         </money-input>
       </el-form-item>
       <el-form-item label="单位" prop="unit" class="arrArea">
@@ -505,7 +505,7 @@ export default {
         dialogForm:this.dialogForm
       });
 
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.contractForm.contractCode);
     },
     getDraft(obj) {
       this.repairContractDoc.id=obj.repairContract;
@@ -592,7 +592,7 @@ export default {
         repairContract: this.repairContractDoc.id, //   送修合同
       }
       // console.log(airmRor)
-      this.$emit('submitMiddle', { airmRor: airmRor, airmRorItems: this.budgetTable, airmRorRepairs: this.factoryTable })
+      this.$emit('submitMiddle', { airmRor: airmRor, airmRorItems: this.budgetTable, airmRorRepairs: this.factoryTable ,docSubtypeCode:this.contractForm.contractCode})
     },
     typeChange(val) {
       this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});      

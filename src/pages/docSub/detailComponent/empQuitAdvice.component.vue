@@ -26,15 +26,15 @@
       <el-row :gutter="60">
         <el-col :span="12" v-for="(sign,index) in submitInfo">
           <div class="adviceBox">
-            <span class="title">{{sign.taskName}}</span>
-            <el-input v-model="sign.signContent" type="textarea" resize="none" :rows="sign.isTaskNameOther==1?6:3" :maxlength="100"></el-input>
+              <span class="title"><span class="mustWrite" >*</span>{{sign.taskName}}</span>
+              <el-input v-model="sign.signContent" type="textarea" resize="none" :rows="sign.isTaskNameOther==1?6:3" :maxlength="100"></el-input>
           </div>
           <div class="adviceBox">
             <span class="title">其他</span>
             <el-input v-model="sign.remark" :readonly="sign.isView==0" :maxlength="100"></el-input>
           </div>
           <div class="adviceBox" v-if="info.doc.isOwnDeptSign==1&&sign.isTaskNameOther!=1">
-            <span class="title">交接人</span>
+            <span class="title"><span class="mustWrite">*</span>交接人</span>
             <query-person :data.sync='submitInfo[index]'></query-person>
           </div>
         </el-col>
@@ -109,7 +109,7 @@ export default {
       activeName: '',
       showLeader: false,
       directAdvice: '',
-      tempTable:[]
+      tempTable:[],
     }
   },
   created() {},
@@ -159,6 +159,7 @@ export default {
   },
   methods: {
     isOwnerDept(item) {
+      console.log(item)
       if (item.isOwnerDept == 1) {
         return this.tableTitle.concat(['直属领导意见']);
       } else {
@@ -188,8 +189,11 @@ export default {
         }
       } else if (this.info.doc.isOwnDeptSign == 1) { //本部门
         if (this.submitInfo.every(s => s.signContent != '') && this.submitInfo.filter(s => s.isTaskNameOther != 1).every(s => s.takeOverId != '')) {
+          
           this.doTask(this.submitInfo);
         } else {
+          console.log(this.submitInfo.every(s => s.signContent != ''))
+          console.log(this.submitInfo)
           this.$message.warning('请填写信息！');
         }
       } else { //普通员工
@@ -251,6 +255,9 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 .quitAdvice {
+  .mustWrite{
+    color: red;position:relative;top:3px;
+  }
   padding-bottom: 30px;
   >h4 {
     border-bottom: 1px solid #D5DADF;

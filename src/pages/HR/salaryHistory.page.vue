@@ -104,12 +104,14 @@ export default {
       }
     },
     getData() {
+      var token=this.getCookie("token");
       this.$http.post("/salary/getHistorySalary", {
         empId: this.userInfo.empId,
         pageSize: this.paginate.currentSize,
         pageNumber: this.paginate.currentPage,
         startDate: this.startDate,
-        endDate: this.endDate
+        endDate: this.endDate,
+        token:token,
       }).then(res => {
         if (res.status == 0) {
           const records = res.data.records

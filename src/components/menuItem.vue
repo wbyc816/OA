@@ -35,7 +35,6 @@ export default {
   },
   methods: {
     selDep(item) {
-      console.log(this.depts)
       if (this.itemType == 'person') {
         if (item.id == 'JYMS') {
           this.$store.commit('QUERY_EMP_LIST', {
@@ -44,6 +43,7 @@ export default {
             empVoList:this.secretaryInfo.empVoList
           })
         } else {
+          // this.$store.dispatch('queryEmpList', {})
           this.$store.dispatch('setQueryDepId', item.id);
           if (item.levelNum >= 30) {
             this.$store.dispatch('setQueryPage', 1);

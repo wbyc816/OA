@@ -213,7 +213,9 @@
             <!-- <el-menu-item v-if="userInfo.isDocsec&&userInfo.isDocsec[5]==1" index="12" @click.native="goToOthers('/forum/myforum')"><i class="iconfont icon-write"></i>论坛管理<i class="el-icon-arrow-right"></i></el-menu-item> -->
             <!-- <el-menu-item index="12" @click.native="goToOthers('/forum/forumApp')"><i class="iconfont icon-write"></i>论坛管理<i class="el-icon-arrow-right"></i></el-menu-item> -->
             <el-menu-item index="13" @click.native="goToOthers('/BirthdayReminder')"><i class="iconfont icon-rili"></i>生日提醒<i class="el-icon-arrow-right"></i></el-menu-item>
-
+            <el-menu-item index="14" @click.native="goToOthers('/breakDown/myBreakDown')" v-if="userInfo.isDocsec&&userInfo.isDocsec[6]==1"><i class="iconfont icon-Group2"></i>接线记录<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item index="15" @click.native="goToOthers('/faultDeal/myFaultDeal')" v-if="userInfo.isDocsec&&userInfo.isDocsec[6]==1"><i class="iconfont icon-Group10"></i>接障记录 <el-badge class="mark" :value="faultDealCount" /><i class="el-icon-arrow-right"></i></el-menu-item>
+            
           </el-menu>
         </el-card>
         <el-card class="mailbox">
@@ -280,7 +282,7 @@ const otherLinks = [
   // { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
   // { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080/login.jsp" },
   { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
-  { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
+  { "icon": "rizhi", "text": "航后日志系统", "link": "http://hhrz.donghaiair.cn" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
   { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },
   { "icon": "money", "text": "财务预算系统", "link": "http://efin.donghaiair.cn/" },
@@ -354,7 +356,7 @@ export default {
         }]
 
       },
-     
+     faultDealCount:0,
       msgs,
       activeName: '',
       selfExamination: 'FIL0307',
@@ -455,6 +457,7 @@ export default {
     this.getOtherNews('FIL0301');
     this.getOtherNews('FIL0303');
     this.getSelfExaminationTitle();
+    this.getNewFaultNum();
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -478,6 +481,18 @@ export default {
     }
   },
   methods: {
+    getNewFaultNum(){
+       this.$http.post('/fault/getNewFaultNum', { empId: this.userInfo.empId })
+          .then(res => {
+            if (res.status == 0) {
+              this.faultDealCount=res.data
+            } else {
+
+            }
+          }, res => {
+
+          })
+    },
     getEmail(){
         this.$http.post('/index/mailLogin', { empId: this.userInfo.empId })
         .then(res => {
@@ -785,7 +800,7 @@ export default {
         }, res => {
 
         })
-               // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
+        //        that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
         // .then(res => {
         //   if (res.status == 0) {
         //     if (Array.isArray(res.data)) {
@@ -867,7 +882,7 @@ export default {
             }
           }
         })
-                // that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
+        //         that.$http.post('/api/getPushNotice', { empId: that.userInfo.empId })
         // .then(res => {
         //   if (res.status == 0) {
         //     if (Array.isArray(res.data)) {
@@ -1131,6 +1146,13 @@ $sub:#1465C0;
   color: #000
 }
 #home {
+ 
+    .el-badge__content {
+      margin-bottom: 5px;
+      background: #BE3B7F;
+      margin-left: 5px;
+    }
+
   .homeDialog {
     width: 1080px;
     .el-dialog__header {

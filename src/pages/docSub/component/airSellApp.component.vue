@@ -94,7 +94,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
-        <money-input v-model="budgetForm.pieceNum" type="int" :prepend="false" :append="false" :maxlength="4">
+        <money-input v-model="budgetForm.pieceNum" :prepend="false" :append="false" :maxlength="4">
         </money-input>
       </el-form-item>
       <el-form-item label="单价" prop="unitPrice" class="arrArea">
@@ -317,7 +317,7 @@ export default {
         budgetTable: this.budgetTable,
         contractForm: this.contractForm,
       });
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.contractForm.contractCode);
     },
     getDraft(obj) {
       this.combineObj(this.contractForm, obj.contractForm, ['createTime']);
@@ -382,7 +382,7 @@ export default {
         rmbTotalMoney: this.totalRmb, //人民币总金额
       }
       console.log(airmSell)
-      this.$emit('submitMiddle', { airmSell: airmSell, items: this.budgetTable })
+      this.$emit('submitMiddle', { airmSell: airmSell, items: this.budgetTable,docSubtypeCode:this.contractForm.contractCode })
     },
     typeChange(val) {
       this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});      

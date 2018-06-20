@@ -16,7 +16,7 @@
       </el-form-item>
       <el-form-item label="发布范围" prop="fileSend" class="reciverWrap">
         <div class="reciverList">
-          <el-tag key="empty" :closable="true" v-show="manuscriptForm.fileSend.empty" type="primary" @close="closeEmpty">
+          <el-tag key="chooseEmpty" :closable="true" v-show="manuscriptForm.fileSend.chooseEmpty" type="primary" @close="closeEmpty">
             不公开
           </el-tag>
           <el-tag key="all" :closable="true" v-show="manuscriptForm.fileSend.all.max" type="primary" @close="closeAll">
@@ -29,7 +29,7 @@
             {{person.name}}
           </el-tag>
         </div>
-        <el-button class="addButton" @click="fileSendVisible=true"><i class="el-icon-plus"></i></el-button>
+        <el-button class="addButton" @click="aaa"><i class="el-icon-plus"></i></el-button>
       </el-form-item>
       <el-form-item label="主送人" prop="mainPeople" class="reciverWrap">
         <div class="reciverList">
@@ -113,7 +113,7 @@ export default {
   components: { PersonDialog, MajorDialog, MoneyInput },
   data() {
     var checkFileSend = (rule, value, callback) => {
-      if (value.all.max || value.personList.length != 0 || value.depList != 0||this.manuscriptForm.fileSend.empty) {
+      if (value.all.max || value.personList.length != 0 || value.depList != 0||this.manuscriptForm.fileSend.chooseEmpty) {
         callback();
       } else {
         callback(new Error('请选择发布范围'))
@@ -165,6 +165,7 @@ export default {
           all: '',
           depList: [],
           isEmpty:true,
+          chooseEmpty:false,
         },
         mainPeople: {
           personList: [],
@@ -184,7 +185,7 @@ export default {
       rules: {
         classify1: [{ required: true, message: '请选择发文类型', trigger: 'blur' }],
         docFileId: [{ required: true, message: '请选择正文', trigger: 'blur' }],
-        // fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
+        fileSend: [{ type: 'object', required: true, validator: checkFileSend, trigger: 'blur' }],
         mainPeople: [{ type: 'object', required: true, validator: checkFileSend1, trigger: 'blur' }],
         // ccPeople: [{ type: 'object', required: true, validator: checkFileSend2, trigger: 'blur' }],
         catalogueName: [{ type: 'array', required: true, message: '请选择发文目录', trigger: 'blur' }],
@@ -226,12 +227,18 @@ export default {
     this.initFileData();
   },
   methods: {
+    aaa(){
+      this.fileSendVisible=true;
+      this.manuscriptForm.fileSend.isEmpty=true
+      this.manuscriptForm.fileSend.all="";
+      console.log( this.manuscriptForm.fileSend)
+    },
     saveForm() {
       var params = JSON.stringify({
         manuscriptForm: this.manuscriptForm,
         files: this.files
       });
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.manuscriptForm.classify1);
     },
     getDraft(obj) {
       if (obj.manuscriptForm.classify1) {
@@ -287,7 +294,7 @@ export default {
     updateFileSend(params) {
       console.log(params)
       this.manuscriptForm.fileSend = params;
-      this.manuscriptForm.fileSend.isEmpty=params.empty;
+      this.manuscriptForm.fileSend.chooseEmpty=params.chooseEmpty;
     },
     updateMainPeople(params) {
       this.manuscriptForm.mainPeople = params;
@@ -409,6 +416,7 @@ export default {
           id: dep.id,
         }
       });
+      this.params.docSubtypeCode=this.manuscriptForm.classify1;
       this.$emit('submitMiddle', this.params);
     },
     submitForm() {
@@ -441,8 +449,8 @@ export default {
       this.manuscriptForm.fileSend.all = '';
     },
     closeEmpty() {
-      this.manuscriptForm.fileSend.isEmpty=true;
-      this.manuscriptForm.fileSend.empty = '';
+      // this.manuscriptForm.fileSend.isEmpty=true;
+      this.manuscriptForm.fileSend.chooseEmpty = false;
     },
     closeMainAll() {
       this.manuscriptForm.mainPeople.all = '';

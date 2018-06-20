@@ -9,11 +9,11 @@
         <subject class='doc-section' @moreDetp="moreDetp" :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject>
 
         <!-- 公文申请公用底部 -->
-        <description class='doc-section' ref="description" @submitEnd="submitEnd" @saveEnd="saveEnd" :options="options">
+        <description class='doc-section'  ref="description" @submitEnd="submitEnd"  @saveEnd="saveEnd" :options="options">
 
           <!-- 各类型公文独有部分,根据路由params.code字段加载不同组件 -->
           <!-- 作为插槽插入公用底部 -->
-          <component v-bind:is="$route.params.code" :change-dept="changeMoreDept" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'" @updateSuggest="updateSuggest">
+          <component v-bind:is="$route.params.code" :change-dept="changeMoreDept" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'" @updateSuggest="updateSuggest"  @updateTemplate="updateTemplate">
           </component>
           
         </description>
@@ -71,6 +71,7 @@ export default {
       docConfig,
       middleParams: '',
       options: { docType: '', desTitle: '' },
+      // updateTemplate:false,
       doc: '',
       saveStartPara: '',
       saveMiddlePara: '',
@@ -198,7 +199,6 @@ export default {
       }
     },
     submitEnd(params) {
-
       if (params) {
         var temp = {
           "taskDeptMajorName": this.taskUser.deptParentName,
@@ -239,9 +239,9 @@ export default {
         this.$refs.middleCom.saveForm();
       }
     },
-    saveMiddle(params) {
+    saveMiddle(params,docSubtypeCode) {
       this.saveMiddlePara = params;
-      this.$refs.description.saveForm();
+      this.$refs.description.saveForm(docSubtypeCode);
     },
     saveEnd(params) {
       var finalParam;
@@ -256,7 +256,9 @@ export default {
           };
           Object.assign(finalParam, this.submitParam)
         } else { //保存草稿箱
+        
           var temp = {
+            docSubtypeCode:params.docSubtypeCode,
             "docNo": this.docNo,
             "docTitle": this.docTitle,
             "taskDeptMajorName": this.taskUser.deptParentName,
@@ -353,6 +355,9 @@ export default {
     },
     updateSuggest(val) {
       this.$refs.subject.getSuggestTemp(val);
+    },
+    updateTemplate(val){
+      this.$refs.description.isClickTem(val);
     },
   }
 }

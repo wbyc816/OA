@@ -95,7 +95,7 @@
       <el-form-item>
         <el-col :span='18'>
           <el-button type="primary" size="large" class="submitButton" @click="submit()">提交</el-button>
-          <el-button v-if="docDetail.isRelay==1&&docDetail.isSign!=1&&isMySign" type="primary" size="large" class="submitButton" @click="submit(true)">无意见转发</el-button>
+          <el-button v-if="docDetail.isRelay==1&&docDetail.isSign!=1&&isMySign&&showSubmitButton" type="primary" size="large" class="submitButton" @click="submit(true)">无意见转发</el-button>
           <slot name="docArchive"></slot>
         </el-col>
       </el-form-item>
@@ -209,6 +209,7 @@ export default {
         planDate: [{ required: true, type: 'date', message: '请选择离职日期' }],
         taskContent: [{ required: true, message: '请填写审批内容', trigger: 'blur,change' }]
       },
+      showSubmitButton:true,
       successUps: [],
       dialogTableVisible: false,
       defaultVisible: false,
@@ -484,6 +485,7 @@ export default {
     },
     adviceChange(val) {
       if (val == 1) {
+        this.showSubmitButton=true;
         if (this.$route.query.code === 'SWD') {
           this.ruleForm.taskContent = '已阅。';
         } else {
@@ -501,6 +503,7 @@ export default {
           this.signTypeChange('1')
         }
       } else if (val == 2) {
+        this.showSubmitButton=false;
         this.disableApproval = false;
         this.ruleForm.taskContent = "不同意。";
         if (this.signType == 0) {

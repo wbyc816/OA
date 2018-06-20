@@ -319,11 +319,11 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(val)
+      // console.log(val)
     },
     reset1() {
-      this.searchButton = false;
-      this.name = '';
+      // this.searchButton = false;
+      // this.name = '';
     },
     close() {
       this.$emit('update:visible', false)

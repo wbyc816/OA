@@ -123,6 +123,7 @@ export default {
       this.$refs.vehicleForm.validate((valid) => {
         if (valid) {
           var params = {
+            docSubtypeCode:this.vehicleForm.type.dictCode,
             startTime: this.vehicleForm.timeLine[0].getTime(),
             endTime: this.vehicleForm.timeLine[1].getTime(),
             contactUserName: this.vehicleForm.contactUserName,
@@ -144,7 +145,7 @@ export default {
     saveForm() {
       // console.log(this.vehicleForm)
       var params = JSON.stringify(Object.assign(this.vehicleForm, this.selDep));
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.vehicleForm.type.dictCode);
     },
     getDraft(obj) {
       console.log(obj)

@@ -72,6 +72,33 @@ const SMSSearch = () =>
 const SMSApp = () =>
   import ('pages/SMS/SMSApp.page')
 
+//接线
+const breakDownHome = () =>
+  import ('pages/breakDown/breakDownHome.page')
+const myBreakDown = () =>
+import ('pages/breakDown/myBreakDown.page')
+  const breakDownDetail = () =>
+import ('pages/breakDown/breakDownDetail.page')
+
+const breakDownSearch = () =>
+  import ('pages/breakDown/breakDownSearch.page')
+const breakDownApp = () =>
+  import ('pages/breakDown/breakDownApp.page')
+
+//接障
+const faultDealHome = () =>
+  import ('pages/faultDeal/faultDealHome.page')
+const myFaultDeal = () =>
+import ('pages/faultDeal/myFaultDeal.page')
+
+  const faultDealDetail = () =>
+import ('pages/faultDeal/faultDealDetail.page')
+
+const faultDealSearch = () =>
+  import ('pages/faultDeal/faultDealSearch.page')
+const faultDealApp = () =>
+  import ('pages/faultDeal/faultDealApp.page')
+
 //航班动态
 const flightStatus = () =>
   import ('pages/flightStatus.page')
@@ -514,6 +541,98 @@ const router = new Router({
         {
           path: '/SMS',
           redirect: '/SMS/mySMS'
+        },
+      ]
+    },
+    {
+      path: '/breakDown',
+      name: 'breakDownHome',
+      component: breakDownHome,
+      meta: {
+        breadcrumb: "接线",
+      },
+      children: [{
+          path: '/breakDown/breakDownApp',
+          name: 'breakDownApp',
+          component: breakDownApp,
+          meta: {
+            breadcrumb: "新建接线记录",
+          },
+
+        },
+        {
+          path: '/breakDown/myBreakDown',
+          name: 'myBreakDown',
+          component: myBreakDown,
+          meta: {
+            breadcrumb: "我的接线记录",
+          }
+        },
+        {
+          path: '/breakDown/breakDownDetail/:id',
+          name: 'breakDownDetail',
+          component: breakDownDetail,
+          meta: {
+            breadcrumb: "接线详情",
+          }
+        },
+        {
+          path: '/breakDown/breakDownSearch',
+          name: 'breakDownSearch',
+          component: breakDownSearch,
+          meta: {
+            breadcrumb: "接线记录管理",
+          }
+        },
+        {
+          path: '/breakDown',
+          redirect: '/breakDown/myBreakDown'
+        },
+      ]
+    },
+    {
+      path: '/faultDeal',
+      name: 'faultDealHome',
+      component: faultDealHome,
+      meta: {
+        breadcrumb: "接障",
+      },
+      children: [{
+          path: '/faultDeal/faultDealApp',
+          name: 'faultDealApp',
+          component: faultDealApp,
+          meta: {
+            breadcrumb: "新建接障记录",
+          },
+
+        },
+        {
+          path: '/faultDeal/myFaultDeal',
+          name: 'myFaultDeal',
+          component: myFaultDeal,
+          meta: {
+            breadcrumb: "我的接障记录",
+          }
+        },
+        {
+          path: '/faultDeal/faultDealDetail/:id',
+          name: 'faultDealDetail',
+          component: faultDealDetail,
+          meta: {
+            breadcrumb: "接障详情",
+          }
+        },
+        {
+          path: '/faultDeal/faultDealSearch',
+          name: 'faultDealSearch',
+          component: faultDealSearch,
+          meta: {
+            breadcrumb: "接障记录管理",
+          }
+        },
+        {
+          path: '/faultDeal',
+          redirect: '/faultDeal/myfaultDeal'
         },
       ]
     },

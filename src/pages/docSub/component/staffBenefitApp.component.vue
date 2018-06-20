@@ -499,41 +499,25 @@ export default {
     },
 
   ticketTypeChange(){
+        // this.flightPersonTable=[];
+        // this.TripTable=[];
+        if(this.$refs.ticketType.value=="EMP0302")
         if(this.$refs.ticketType.value=="EMP0302"&&this.flightPersonTable.length*this.TripTable.length>this.lastFreeTicket.ticketNumsLave+this.freeTicket.ticketNumsLave){
            this.$message.warning("申请票种剩余数量不足，请重新选择票种");
-           this.isEnough=0;
-       }else{
-          this.isEnough=1;
-       }
-
+           this.isEnough=false;
+           
+        }else{
+          this.isEnough=true;
+        }
+        if(this.$refs.ticketType.value=="EMP0301")
+        if(this.$refs.ticketType.value=="EMP0301"&&this.flightPersonTable.length*this.TripTable.length>this.lastDiscountTicket.ticketNumsLave+this.discountTicket.ticketNumsLave){
+           this.$message.warning("申请票种剩余数量不足，请重新选择票种");
+           this.isEnough=false;
+        }else{
+          this.isEnough=true;
+        }
+        
   },
-
-
-
-
-
-
-
-
-
-  
-      // loadAll() {
-      //  var that = this;
-      //  that.$http.post('/emp/queryEmpDeptList', { 
-      //   name:that.loanAppForm.payee,
-      //  })
-      // .then(res => {
-      //   if (res.status == 0) {
-      //   if(res.empVoList)
-      //     for(var i=0;i<res.empVoList.length;i++){
-      //       that.payees[i]=res.empVoList[i];
-      //     }
-      //   }
-      // })
-      //   that.restaurants=that.payees;
-      //   return true;
-      // },
-    
     changePayType(){
       this.$http.post('/api/getDict', { 
         dictCode:"FIN01"
@@ -545,8 +529,6 @@ export default {
       })
     },
     isCashType(val){
-      // this.paymentMethodName="";
-      // console.log(this.$refs.paymentMethod);
       if(val=="FIN0103"){
         this.collectionInformation=0;
       }else{
@@ -568,42 +550,44 @@ export default {
      
 
     addFlightPerson() {
-        if(this.$refs.ticketType.value=="EMP0301"||this.$refs.ticketType.value=="EMP0302"&&this.flightPersonTable.length*this.TripTable.length<this.lastFreeTicket.ticketNumsLave+this.freeTicket.ticketNumsLave){
-        this.$refs.staffBenefitAppFormFirst.validate((valid) => {
-          if (valid) {
-            var temp={};
-            if(this.staffBenefitAppFormFirst.genger=="M"||this.staffBenefitAppFormFirst.genger=="男"){
-              temp.genger="男";
-            }else{
-              temp.genger="女";
+         this.$refs.staffBenefitAppFormFirst.validate((valid) => {
+        if((this.$refs.ticketType.value=="EMP0301"||this.$refs.ticketType.value=="EMP0302")&&(this.flightPersonTable.length+1)*this.TripTable.length<=this.lastFreeTicket.ticketNumsLave+this.freeTicket.ticketNumsLave){
+       
+         
+            if (valid) {
+              var temp={};
+              if(this.staffBenefitAppFormFirst.genger=="M"||this.staffBenefitAppFormFirst.genger=="男"){
+                temp.genger="男";
+              }else{
+                temp.genger="女";
+              }
+              temp.contactPhone=this.staffBenefitAppFormFirst.contactPhone;
+              temp.flightPerson=this.staffBenefitAppFormFirst.flightPersonSelect;
+              temp.flightPersonTypeSelect=this.$refs.flightPersonTypeSelect.selectedLabel;
+
+              temp.documentTypeSelect=this.$refs.documentTypeSelect.selectedLabel;
+              temp.documentType=this.staffBenefitAppFormFirst.documentType;
+
+              temp.flightPersonTypeCode=this.staffBenefitAppFormFirst.flightPersonTypeSelect;
+              temp.documentTypeCode=this.staffBenefitAppFormFirst.documentTypeSelect;
+              // console.log(temp);
+
+          
+              this.flightPersonTable.push(temp);
+              this.$refs.staffBenefitAppFormFirst.resetFields();
+              this.showData=0;
+              // this.ticketTypeChange();
+            } else {
+              return false;
             }
-            temp.contactPhone=this.staffBenefitAppFormFirst.contactPhone;
-            temp.flightPerson=this.staffBenefitAppFormFirst.flightPersonSelect;
-            temp.flightPersonTypeSelect=this.$refs.flightPersonTypeSelect.selectedLabel;
 
-            temp.documentTypeSelect=this.$refs.documentTypeSelect.selectedLabel;
-            temp.documentType=this.staffBenefitAppFormFirst.documentType;
-
-            temp.flightPersonTypeCode=this.staffBenefitAppFormFirst.flightPersonTypeSelect;
-            temp.documentTypeCode=this.staffBenefitAppFormFirst.documentTypeSelect;
-            // console.log(temp);
-
-        
-            this.flightPersonTable.push(temp);
-            this.$refs.staffBenefitAppFormFirst.resetFields();
-            this.showData=0;
-            this.ticketTypeChange();
-          } else {
-            return false;
-          }
-
-      });
+       
         
       }else{
            this.$message.warning("申请票种剩余数量不足，请重新选择票种");
-           this.isEnough=0;
+           this.isEnough=false;
         }
-      
+       });
     },
     deleteRowfligh(index) {
       this.flightPersonTable.splice(index,1)
@@ -628,37 +612,39 @@ export default {
     addTrip() {
       var temp={};
       temp.isBook=this.$refs.isBook.selectedLabel;
-      this.$refs.staffBenefitAppFormSecond.validate((valid) => {
-        if(this.$refs.ticketType.value=="EMP0301"||this.$refs.ticketType.value=="EMP0302"&&this.flightPersonTable.length*this.TripTable.length<this.lastFreeTicket.ticketNumsLave+this.freeTicket.ticketNumsLave){
-          if (valid) {
-          temp.start=this.staffBenefitAppFormSecond.start;
-          temp.end=this.staffBenefitAppFormSecond.end;
-          temp.carrier=this.staffBenefitAppFormSecond.carrier;
+      
+        if(this.$refs.ticketType.value=="EMP0301"||this.$refs.ticketType.value=="EMP0302"&&this.flightPersonTable.length*(this.TripTable.length+1)<=this.lastFreeTicket.ticketNumsLave+this.freeTicket.ticketNumsLave){
+            this.$refs.staffBenefitAppFormSecond.validate((valid) => {
+            if (valid) {
+            temp.start=this.staffBenefitAppFormSecond.start;
+            temp.end=this.staffBenefitAppFormSecond.end;
+            temp.carrier=this.staffBenefitAppFormSecond.carrier;
+            
           
-         
-          temp.carrier=this.staffBenefitAppFormSecond.carrier;
-          temp.flightNumber=this.staffBenefitAppFormSecond.flightNumber;
-          temp.classLevelsSelect=this.$refs.classLevelsSelect.selectedLabel;
-         
-          temp.classLevelsCode=this.staffBenefitAppFormSecond.classLevelsSelect;
-          temp.isBookcCode=this.staffBenefitAppFormSecond.isBook;
-          temp.departureDate=util.formatTime(this.staffBenefitAppFormSecond.departureDate.getTime(), 'yyyy-MM-dd');
-          // console.log(temp)
-          this.TripTable.push(temp);
-          this.$refs.staffBenefitAppFormSecond.resetFields();
-          this.showData=0;
-          this.classLevel();
-          this.ticketTypeChange();
+            temp.carrier=this.staffBenefitAppFormSecond.carrier;
+            temp.flightNumber=this.staffBenefitAppFormSecond.flightNumber;
+            temp.classLevelsSelect=this.$refs.classLevelsSelect.selectedLabel;
+          
+            temp.classLevelsCode=this.staffBenefitAppFormSecond.classLevelsSelect;
+            temp.isBookcCode=this.staffBenefitAppFormSecond.isBook;
+            temp.departureDate=util.formatTime(this.staffBenefitAppFormSecond.departureDate.getTime(), 'yyyy-MM-dd');
+            // console.log(temp)
+            this.TripTable.push(temp);
+            this.$refs.staffBenefitAppFormSecond.resetFields();
+            this.showData=0;
+            this.classLevel();
+            // this.ticketTypeChange();
 
-        } else {
-          return false;
-        }
+          } else {
+            return false;
+          }
+          });
         }else{
            this.$message.warning("申请票种剩余数量不足，请重新选择票种");
-           this.isEnough=0;
+           this.isEnough=false;
         }
     
-      });
+      
     },
       deleteRow(index) {
       this.TripTable.splice(index,1)
@@ -703,15 +689,12 @@ export default {
       // var that = this;
               var that=this;
               if (that.flightPersonTable.length!=0&&that.TripTable.length!=0) {
-               
                if(that.isEnough){
-                
                  this.$refs.staffBenefitAppFormThird.validate((valid) => {
                   if (valid) {
-                                    that.params = {
+                    that.params = {
                     "ticketWayCode":that.staffBenefitAppFormThird.ticketWays,
                     "ticketWayName":that.$refs.ticketWays.selectedLabel,
-
                     "isSubmit": 1,
                     "typeId":that.staffBenefitAppFormThird.ticketTypes,
                     "annual": util.formatTime(new Date().getTime(), 'yyyy'),
@@ -758,7 +741,7 @@ export default {
                       }
                     })
           }
-          console.log(this.params);
+          // console.log(this.params);
            this.$emit('submitMiddle', this.params);
                     
                   } else {
@@ -808,7 +791,7 @@ export default {
             res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
             this.budgetDeptList = res.data
           } else {
-            console.log(res)
+            // console.log(res)
           }
         }, res => {})
       }

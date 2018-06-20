@@ -36,7 +36,7 @@ export default {
     ])
   },
   created(){
-    console.log(1111)
+    // console.log(1111)
   },
   methods: {
     

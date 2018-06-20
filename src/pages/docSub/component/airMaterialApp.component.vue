@@ -473,7 +473,7 @@ export default {
         factoryTable: this.factoryTable,
         contractForm: this.contractForm,
       });
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.contractForm.contractCode);
     },
     getDraft(obj) {
       this.combineObj(this.contractForm, obj.contractForm, ['createTime']);
@@ -570,7 +570,7 @@ export default {
 
       };
       console.log(airmPos)
-      this.$emit('submitMiddle', { airmPos: airmPos, airmPosItems: airmPosItems.airmPosItems })
+      this.$emit('submitMiddle', { airmPos: airmPos, airmPosItems: airmPosItems.airmPosItems ,docSubtypeCode:this.contractForm.contractCode})
     },
     getContractCodeList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC18' })

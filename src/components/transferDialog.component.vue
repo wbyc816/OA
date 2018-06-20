@@ -40,7 +40,8 @@
         </div>
       </div>
       <div class="sumitBox">
-        <el-button type="primary" @click="submit" :disabled="selList.length===0">提交</el-button>
+        <el-button type="primary" @click="submit" >提交</el-button>
+        <!-- :disabled="selList.length===0" -->
       </div>
     </el-dialog>
   </div>

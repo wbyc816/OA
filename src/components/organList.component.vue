@@ -51,6 +51,7 @@ export default {
     },
     depChange(id){
       this.$emit('depChange',id);
+      // console.log(8888)
     },
    
   }

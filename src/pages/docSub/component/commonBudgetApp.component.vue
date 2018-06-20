@@ -174,7 +174,7 @@ export default {
         paymentForm: this.paymentForm,
       });
 
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.paymentForm.docCommonTypeCode);
     },
     getDraft(obj) {
       this.paymentForm = obj.paymentForm;
@@ -211,7 +211,7 @@ export default {
         "supplierBankAccountCode": this.supplierInfo.accountCode, //供应商开户账号编号
         "totalMoneyRmb": this.totalMoney, //合计金额
       };
-      this.$emit('submitMiddle', { docCommonFin: docCommonFin, docCommonFinItem: this.budgetTable })
+      this.$emit('submitMiddle', { docCommonFin: docCommonFin, docCommonFinItem: this.budgetTable ,docSubtypeCode:this.paymentForm.docCommonTypeCode})
     },
     getChildTypeList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC24' })

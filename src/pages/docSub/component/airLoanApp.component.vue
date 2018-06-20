@@ -96,7 +96,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="合同数量" prop="pieceNum" class="deptArea">
-        <money-input v-model="budgetForm.pieceNum" type="int" :prepend="false" :append="false" :maxlength="6">
+        <money-input v-model="budgetForm.pieceNum"  :prepend="false" :append="false" :maxlength="6">
         </money-input>
       </el-form-item>
       <el-form-item label="单价" prop="unitPrice" class="arrArea">
@@ -432,7 +432,7 @@ export default {
         budgetTable: this.budgetTable,
         contractForm: this.contractForm,
       });
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.contractForm.contractCode);
     },
     getDraft(obj) {
       this.combineObj(this.contractForm, obj.contractForm, ['createTime']);
@@ -501,7 +501,7 @@ export default {
         lendTotalManey: this.totalMoney, //租金合计总价，（所有项次租金总价合计）（借出）
         rmbTotalMoney: this.totalRmb, //人民币总金额
       }
-      this.$emit('submitMiddle', { airmLend: airmLend, items: this.budgetTable })
+      this.$emit('submitMiddle', { airmLend: airmLend, items: this.budgetTable ,docSubtypeCode:this.contractForm.contractCode})
     },
     getContractCodeList() {
       this.$http.post('/api/getDict', { dictCode: 'DOC20' })

@@ -21,7 +21,7 @@
       </div>
       <el-pagination :current-page="pageNum"  :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
       </el-pagination>
-      <div class="tip">
+      <div class="tip" v-if="showTip">
         pdf文件过大，在线浏览200页，请下载观看全部文件。
       </div>
     </el-card>

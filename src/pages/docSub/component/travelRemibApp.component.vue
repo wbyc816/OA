@@ -258,7 +258,7 @@
         <p class="totalMoney">合计金额 人民币 <span>{{totalMoney | toThousands}}元 {{totalMoney | moneyCh}}</span></p>
       </div>
       <el-form-item label="付款方式" prop="payMthodCode"  placeholder="" class="deptArea" style="width:51%">
-        <el-select v-model="paymentForm.payMthodCode" style="width:100%" :disabled="true" ref="contractType" @change="payMthodChange">
+        <el-select v-model="paymentForm.payMthodCode" style="width:100%"  ref="contractType" @change="payMthodChange">
           <el-option v-for="item in payMthods" :key="item.dictCode" :label="item.dictName" :value="item.dictCode">
           </el-option>
         </el-select>
@@ -267,9 +267,9 @@
         <el-input v-model="paymentForm.paymentOthers">
         </el-input>
       </el-form-item> -->
-      <el-form-item label="开户行" prop="bank" class="arrArea"  label-width="100px" style="width:49%">
+      <el-form-item label="开户行" v-if="paymentForm.payMthodCode=='FIN0101'" prop="bank" class="arrArea"  label-width="100px" style="width:49%">
         <el-input v-model="paymentForm.bank" :disabled="true">
-        </el-input>
+      </el-input>
       </el-form-item>
       <template v-if="paymentForm.payMthodCode=='FIN0101'">
         <el-form-item label="收款人" prop="payee" class="deptArea" style="width:51%">
@@ -357,6 +357,7 @@ export default {
         taxMoney: '',
       },
       budgetRule: {
+        
         budgetDept: [{ type: 'array', required: true, message: '请选择预算机构/科目', trigger: 'blur' }],
         invoiceNum: [{ required: true, message: '请输入发票号', validator: checkNum, trigger: 'blur' }],
         taxMoney: [{ required: true, message: '请输入增值税税费总额', trigger: 'blur' },
@@ -392,6 +393,7 @@ export default {
         dayNum: [{ type: 'number', required: true, message: '请选择住宿日期', trigger: 'change' }],
         currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
         isSend: [{ required: true, message: '请选择是否派车', trigger: 'change' }],
+      
       },
       roomType: '1',
       feeTable: [],
@@ -424,7 +426,7 @@ export default {
         bankAccount: [{ required: true, trigger: 'blur', message: '请输入收款账户' }],
         payee: [{ required: true, trigger: 'blur', message: '请选择收款人' }],
         appUserName: [{ required: true, message: '请选择报销申请人', trigger: 'blur' }],
-
+        bank: [{ required: true, message: '请输入开户行', trigger: 'change' }],
       },
       payMthods: [],
       types: [],
@@ -527,12 +529,12 @@ export default {
       name: this.userInfo.name,
       empId: this.userInfo.empId
     }
-    this.paymentForm.appUserName = this.userInfo.name;
+  
     this.handleSelect(this.appPerson);
   },
   mounted() {
     // this.$emit('updateSuggest', 'DOC0601');
-
+    this.paymentForm.appUserName = this.userInfo.name;
   },
   methods: {
     saveForm() {
@@ -795,8 +797,8 @@ export default {
         delete b.invoiceCode;
         return b;
       });
-     
-      var travelpay = {
+      if(payMthod.dictCode=="FIN0101"){
+          var travelpay = {
         "budgetYear": this.year,
         "paymentMethodCode": payMthod.dictCode, //付款方式code 
         "paymentMethodName": payMthod.dictName, //付款方式名
@@ -808,6 +810,22 @@ export default {
         "travelpayUserId": this.appPerson.empId,
         payeeBankName:this.paymentForm.bank,
       }
+      }else{
+        var travelpay = {
+        "budgetYear": this.year,
+        "paymentMethodCode": payMthod.dictCode, //付款方式code 
+        "paymentMethodName": payMthod.dictName, //付款方式名
+        "paymentMethodOthers": "", //其他付款方式名
+        "payeeUserId": "",
+        "payeeUser": "",
+        "payeeAccount": "",
+        "travelpayUser": this.appPerson.name,
+        "travelpayUserId": this.appPerson.empId,
+        payeeBankName:"",
+      }
+
+      }
+    
       var paramsList = {
         travlepayStayList: [],
         travelpayTrafficList: [],
@@ -1061,6 +1079,7 @@ export default {
       return temp;
     },
     getFeeType() {
+      
       this.$http.post('/api/getDict', { dictCode: 'FIN06' })
         .then(res => {
           if (res.status == '0') {
@@ -1072,6 +1091,7 @@ export default {
         }, res => {
 
         })
+
     },
     getArea() {
       this.$http.post('/api/getDict', { dictCode: 'FIN07' })
@@ -1090,7 +1110,9 @@ export default {
       this.$http.post('/api/getDict', { dictCode: 'FIN01' })
         .then(res => {
           if (res.status == '0') {
-            this.payMthods = res.data;
+            // this.payMthods = res.data;
+            this.payMthods.push(res.data[0])
+            this.payMthods.push(res.data[5])
           } else {
             console.log('获取付款方式失败')
           }

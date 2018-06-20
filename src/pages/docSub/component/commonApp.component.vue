@@ -31,6 +31,7 @@ export default {
       'submitLoading',
       'baseURL',
       'userInfo',
+      "docTemplate"
     ])
   },
   created() {
@@ -42,7 +43,7 @@ export default {
         paymentForm: this.paymentForm,
       });
 
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.paymentForm.docCommonTypeCode);
     },
     getDraft(obj) {
       if (obj.paymentForm.docCommonTypeCode) {
@@ -54,6 +55,7 @@ export default {
       this.$refs.paymentForm.validate((valid) => {
         if (valid) {
           var params = {
+            docSubtypeCode:this.paymentForm.docCommonTypeCode,
             docCommon: {
               "docCommonTypeCode": this.paymentForm.docCommonTypeCode, //公文子类型code
               "docCommonTypeName": this.$refs.docCommonTypeCode.selectedLabel, //公文子类型名称
@@ -88,7 +90,17 @@ export default {
       } else { //草稿箱第一次
         this.isDrafFirst = false;
       }
-      this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});  
+      
+
+        
+      this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val});
+      
+      // this.$store.dispatch('getTemplate',{code:this.$route.params.code,subCode:val}).then(res => {
+      //   this.$emit('updateTemplate',res.data.template);
+      // })
+      
+     
+
     }
   }
 }

@@ -293,7 +293,6 @@ export default {
   },
   methods: {
     saveForm() {
-      console.log(this.ifSupplierChange)
       var params = JSON.stringify({
         bankinfo:{
           swiftCode:this.swiftCode,
@@ -309,7 +308,7 @@ export default {
         budgetTable: this.budgetTable,
         paymentForm: this.paymentForm,
       });
-      this.$emit('saveMiddle', params);
+      this.$emit('saveMiddle', params,this.paymentForm.payTypeCode);
     },
     getDraft(obj) {
       if (obj.paymentForm.payTypeCode) {
@@ -396,7 +395,7 @@ export default {
             this.supplierName = res.data.supplierName;
             finPayment.supplierId=res.data.id;
             finPayment.supplierName=res.data.supplierName;
-            this.$emit('submitMiddle', { finPayment: finPayment, paymentItems: paymentItems, finFileIds: finFileIds })
+            this.$emit('submitMiddle', { finPayment: finPayment, paymentItems: paymentItems, finFileIds: finFileIds,docSubtypeCode:this.paymentForm.payTypeCode })
           } 
         }, res => {
 

@@ -66,6 +66,18 @@ export default {
     }
   },
   data() {
+     var checkTitle = (rule, value, callback) => {
+      if (value) {
+        if(value.indexOf("，")>-1||value.indexOf("/")>-1||value.indexOf(".")>-1)
+        {
+          callback(new Error("标题中不能包含/，.三种字符"));
+        }else{
+          callback();
+        }
+      } else {
+        callback(new Error('请输入标题'))
+      }
+    };
     return {
       dialogTableVisible: false,
       pathDialogVisible: false,
@@ -93,7 +105,7 @@ export default {
 
         ],
         sub: [
-          { required: true, message: '请输入标题', trigger: 'blur,change' },
+          { required: true,  trigger: 'blur,change',validator: checkTitle, },
           // { min: 2, max: 5, message: '长度在 1 到 100 个字符之间', trigger: 'change' }
         ],
         path: [{ type: 'array', required: true, message: '请选择建议路径', trigger: 'blur,change' }],
@@ -214,7 +226,7 @@ export default {
     changeTaskUser(val) {
       var user = this.taskUserList.find(t => (t.deptId + t.jobtitle) == val);
       if (user) {
-        this.$emit('moreDetp',user.deptId);
+        this.$emit('moreDetp',user.deptParentId);
         // this.$store.dispatch('getDepById', {hasSecretary:false,deptId:user.deptId});
         this.$store.commit('setTaskUser', user);
         if (!this.draftFirst) {

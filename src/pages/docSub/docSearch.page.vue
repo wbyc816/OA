@@ -13,7 +13,7 @@
         <tr>
           <td><span class="docType" :style="{background:handDocType(doc).color}">{{handDocType(doc).shortName}}</span></td>
           <router-link tag="td" :to="{path:'/doc/docDetail/'+doc.id,query:{code:doc.docTypeCode}}" class="linkTitle">
-            <span class="overTime" v-if="doc.isPay===0" style="background:#BE3B7F;">未付款</span>
+            <span class="overTime" v-if="doc.isPay===1" style="background:#BE3B7F;">未付款</span>
             <span class="title" :style="{maxWidth:calWidth(doc)}">{{doc.docTitle}}</span>
             <span class="improtType" v-if="doc.docImprotType!='普通'&&doc.docImprotType!=''" :style="{background:doc.docImprotType=='紧急'?'#FFD702':'#FF0202'}">{{doc.docImprotType}}</span>
             <span class="improtType" v-if="doc.docDenseType!='平件'&&doc.docDenseType!=''" :style="{background:doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{doc.docDenseType}}</span>

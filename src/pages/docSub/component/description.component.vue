@@ -4,7 +4,7 @@
     <slot></slot>
     <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="128px" class="clearBoth">
       <el-form-item :label="options.desTitle||'请示内容'" prop="des" :rules="[{ required: true,validator:checkDes,trigger: 'blur,change' }]" v-if="$route.params.code!='FWG'">
-        <editor @input="desChange" @updateLen="updateLen" :data="ruleForm.des" ref="editor"></editor>
+        <editor @input="desChange"  @updateLen="updateLen" :data="ruleForm.des" ref="editor"></editor>
       </el-form-item>
       <el-form-item label="附件" prop="attchment" class="attchment">
         <el-upload class="myUpload" :auto-upload="false" :action="baseURL+'/doc/uploadDocFile'" :data="{docTypeCode:$route.params.code}" :multiple="false" :on-success="handleAvatarSuccess" :on-error="handleAvatarError" :on-change="handleChange" :file-list="successUps" :on-remove="handleRemove" ref="myUpload">
@@ -108,7 +108,8 @@ export default {
       'docType',
       'userInfo',
       'isSubmit',
-      'taskUser'
+      'taskUser',
+      'docTemplate'
     ])
   },
   created() {
@@ -130,6 +131,11 @@ export default {
     },
     desChange(html) {
       this.ruleForm.des = html;
+     
+    },
+    isClickTem(val){
+      // console.log(this.docTemplate)
+      this.$refs.editor.setContent(val);
     },
     updateLen(num) {
       this.desLenth = num;
@@ -173,7 +179,7 @@ export default {
         }
       })
     },
-    saveForm() {
+    saveForm(param) {
       this.isSaveForm = true;
       this.checkAttchment(); //检查是否需要上传
       if (this.difLength != 0 && !this.isSubmit) {
@@ -182,7 +188,8 @@ export default {
         var params = {
           taskContent: this.ruleForm.des, //请示内容
           qutoes: this.docs.filter(d => d.quoteDocId),
-          files: JSON.stringify(this.ruleForm.attchment)
+          files: JSON.stringify(this.ruleForm.attchment),
+          docSubtypeCode:param,
         }
         this.$emit('saveEnd', params);
       }
