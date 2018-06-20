@@ -112,10 +112,10 @@ export default {
       totalSize: 0,
      pickerOptions0: {
         disabledDate(time) {
-          var td = new Date();
+          // var td = new Date();
           // var d = new Date(td.getFullYear() + '-' + (td.getMonth() + 1) + '-' + td.getDate() + ' 00:00:00').getTime();
           // console.log(td.getTime())
-          return time.getTime() < (td.getTime() - 48 * 60 * 60 * 1000) || time.getTime() > (td.getTime() + 24 * 60 * 60 * 1000);
+          // return time.getTime() < (td.getTime() - 48 * 60 * 60 * 1000) || time.getTime() > (td.getTime() + 24 * 60 * 60 * 1000);
         }
       },
     }

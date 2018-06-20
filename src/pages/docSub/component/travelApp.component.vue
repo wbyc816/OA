@@ -1,6 +1,6 @@
 <template>
   <div class="travelApp">
-    <el-form label-position="left" :model="travelForm" :rules="rules" ref="travelForm" label-width="128px">
+    <el-form label-position="left"  :model="travelForm" :rules="rules" ref="travelForm" label-width="128px">
       <el-form-item label="出差时间" prop="timeRange">
         <el-date-picker v-model="travelForm.timeRange" type="datetimerange" :editable="false" :clearable="false" style="width:100%"></el-date-picker>
       </el-form-item>
@@ -42,7 +42,7 @@
         <span class="usge" v-show="budgetInfo.execRateStr">預算已使用率 {{budgetInfo.execRateStr}}</span>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :data="travelForm.person" dialogType="multi" :visible.sync="signDialogVisible" hasLeaderDep></person-dialog>
+    <person-dialog @updatePerson="updatePerson" :deptId="changeDept" :data="travelForm.person" dialogType="multi" :visible.sync="signDialogVisible" hasLeaderDep></person-dialog>
   </div>
 </template>
 <script>
@@ -51,6 +51,12 @@ import MoneyInput from '../../../components/moneyInput.component'
 import PersonDialog from '../../../components/personDialog.component'
 export default {
   components: { PersonDialog, MoneyInput },
+  props: {
+    changeDept: {
+      type: String,
+      default: ''
+    },
+  },
   data() {
     var checkDate = (rule, value, callback) => {
       if (value.every(val => val != null)) {
@@ -127,7 +133,6 @@ export default {
       })
     },
     updatePerson(list) {
-      // console.log(list)
       this.travelForm.person = list
       this.signDialogVisible = false;
     },
@@ -184,6 +189,7 @@ export default {
           if (res.status == 0) {
             res.data.forEach(i => i.isParent == 1 ? i.items = [] : i.items = null)
             this.budgetDeptList = res.data;
+ 
             if (this.$route.query.id && this.travelForm.budgetDept.length != 0) {
               this.handleItemChange(this.travelForm.budgetDept.slice(0, this.count));
               this.count++;

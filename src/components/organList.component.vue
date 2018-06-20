@@ -41,7 +41,6 @@ export default {
   watch: {
     depts: function(newValue) {
       if (newValue != '' || newValue != undefined || newValue != null) {
-
         this.organLoading = false;
       }
     }
@@ -52,7 +51,8 @@ export default {
     },
     depChange(id){
       this.$emit('depChange',id);
-    }
+    },
+   
   }
 }
 

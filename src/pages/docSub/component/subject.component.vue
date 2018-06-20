@@ -214,6 +214,8 @@ export default {
     changeTaskUser(val) {
       var user = this.taskUserList.find(t => (t.deptId + t.jobtitle) == val);
       if (user) {
+        this.$emit('moreDetp',user.deptId);
+        // this.$store.dispatch('getDepById', {hasSecretary:false,deptId:user.deptId});
         this.$store.commit('setTaskUser', user);
         if (!this.draftFirst) {
           this.getDefaultReciver();

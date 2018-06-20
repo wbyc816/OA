@@ -35,6 +35,7 @@ export default {
   },
   methods: {
     selDep(item) {
+      console.log(this.depts)
       if (this.itemType == 'person') {
         if (item.id == 'JYMS') {
           this.$store.commit('QUERY_EMP_LIST', {

@@ -278,8 +278,8 @@ const otherLinks = [
   // { "icon": "changyong", "text": "test", "link": "/test" },
   // {"icon":"youhui","text":"优惠机票","link":"#"},
   // { "icon": "icon", "text": "飞行准备网", "link": "http://foc.donghaiair.cn:8011/SignIn.aspx" },
-  { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080/login.jsp" },
-  // { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
+  // { "icon": "sms", "text": "SMS管理系统", "link": "http://sms.donghaiair.cn:8080/login.jsp" },
+  { "icon": "sms", "text": "SMS管理系统", "link": "/index/smsLogin", "params": ['workNo'] },
   { "icon": "rizhi", "text": "航后日志系统", "link": "http://192.168.8.79:8016/Login.aspx" },
   { "icon": "weixiu", "text": "ME维修信息管理系统", "link": "http://192.168.8.154/mis2" },
   { "icon": "houtaiguanli", "text": "E网后台管理系统", "link": "http://eback.donghaiair.cn" },
@@ -410,9 +410,9 @@ export default {
       },
       pickerOptions0: {
         disabledDate(time) {
-          var td = new Date();
+          // var td = new Date();
           // var d = new Date(td.getFullYear() + '-' + (td.getMonth() + 1) + '-' + td.getDate() + ' 00:00:00').getTime();
-          return time.getTime() < (td.getTime() - 48 * 60 * 60 * 1000) || time.getTime() > (td.getTime() + 24 * 60 * 60 * 1000);
+          // return time.getTime() < (td.getTime() - 48 * 60 * 60 * 1000) || time.getTime() > (td.getTime() + 24 * 60 * 60 * 1000);
         }
       },
       homeVisible: false

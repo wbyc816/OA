@@ -16,11 +16,14 @@
         </el-row>
       </div>
       <div class="pdfScrollBox" ref="pdfScroll" v-loading="loading" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}">
-        <pdf :src="detail.fileUrlNew" v-if="detail.fileUrlNew" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
+        <pdf :src="detail.fileUrlNew" v-if="detail.fileUrlNew" @numPages="getNums" @moreNum="isMoreNum" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
         <!-- <pdf :src="detail.fileUrlNew" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf> -->
       </div>
-      <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
+      <el-pagination :current-page="pageNum"  :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
       </el-pagination>
+      <div class="tip">
+        pdf文件过大，在线浏览200页，请下载观看全部文件。
+      </div>
     </el-card>
   </div>
 </template>
@@ -34,6 +37,7 @@ export default {
   components: { SidePersonSearch, Duty, pdf },
   data() {
     return {
+      showTip:false,
       pageNum: 1,
       totalNum: 0,
       loading: true,
@@ -71,6 +75,13 @@ export default {
         this.totalNum = num;
       }
     },
+    isMoreNum(val) {
+      if (val) {
+        this.showTip = true;
+      }else{
+        this.showTip = false;
+      }
+    },
     pageLoad(num) {
       this.loading = false;
       this.pdfHeight = this.$refs.pdfPage.$refs.page1[0].clientHeight;
@@ -88,6 +99,9 @@ export default {
 $main: #0460AE;
 $sub:#1465C0;
 #newsDetailHr {
+  .tip{
+    color:red;
+  }
   .divider {
     position: relative;
     margin-right: 7px;

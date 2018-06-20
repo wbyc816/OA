@@ -81,7 +81,7 @@ $main:#0460AE;
   // padding: 20px 0;
   clear: both; // border-bottom: 1px solid #D5DADF;
   .totalPrice {
-
+    text-align: right;
     line-height: 40px;
     padding-left: 15px;
     border: 1px solid #D5DADF;

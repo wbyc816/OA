@@ -47,18 +47,26 @@ export default {
         this.pdfDoc = pdfDoc_;
         this.total = pdfDoc_.numPages;
         this.$nextTick(()=>{
-          for(var i=1;i<=this.total;i++)
-          this.renderPage(i);
+          console.log(this.total)
+          var max=this.total>200?200:this.total;
+          for(var i=1;i<=max;i++){
+            this.renderPage(i);
+          }
         })
-        this.$emit('numPages', this.total);       
+        if(this.total>200){
+          this.$emit('numPages', 200);     
+          this.$emit('moreNum', true);     
+        }else{
+          this.$emit('moreNum', false);
+          this.$emit('numPages', 200);     
+        }
       }).catch((reason)=> {
         this.$emit('error', reason)
       });
     },
     renderPage(num) {
-      
       this.pdfDoc.getPage(num).then((page) => {
-        console.log(num)
+        // console.log(num)
         var viewport = page.getViewport(this.boxWidth / page.getViewport(1).width);
         var canvas = this.$refs['page' + num][0];
         canvas.height = viewport.height;

@@ -6,14 +6,14 @@
       </div>
       <div>
         <!-- 公文申请公用头部 -->
-        <subject class='doc-section' :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject>
+        <subject class='doc-section' @moreDetp="moreDetp" :reciverName="reciverName" ref="subject" @submitStart="submitStart" @saveStart="saveStart"></subject>
 
         <!-- 公文申请公用底部 -->
         <description class='doc-section' ref="description" @submitEnd="submitEnd" @saveEnd="saveEnd" :options="options">
 
           <!-- 各类型公文独有部分,根据路由params.code字段加载不同组件 -->
           <!-- 作为插槽插入公用底部 -->
-          <component v-bind:is="$route.params.code" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'" @updateSuggest="updateSuggest">
+          <component v-bind:is="$route.params.code" :change-dept="changeMoreDept" ref="middleCom" @submitMiddle="submitMiddle" @saveMiddle="saveMiddle" v-if="$route.params.code!='CPD'" @updateSuggest="updateSuggest">
           </component>
           
         </description>
@@ -67,6 +67,7 @@ export default {
   name: 'docCommonApp',
   data() {
     return {
+      changeMoreDept:"",
       docConfig,
       middleParams: '',
       options: { docType: '', desTitle: '' },
@@ -162,6 +163,9 @@ export default {
     }
   },
   methods: {
+    moreDetp(val){
+      this.changeMoreDept=val;
+    },
     initDoc() {
       this.doc = this.docConfig.find(doc => doc.code == this.$route.params.code);
       this.options.docType = this.doc.code;
