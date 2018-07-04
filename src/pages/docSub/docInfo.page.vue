@@ -12,19 +12,43 @@
           <span class="deptName">{{docDetialInfo.doc.taskUserJobTitle}}</span>
         </div>
       </div>
-      <div class="baseInfoBox commonBox">
+      <div v-bind:class="{ outBorder: $route.query.code=='CPD'||$route.query.code=='FWG'||$route.query.code=='HTS'||$route.query.code=='SWD' }">
+
+      <div class="baseInfoBox ">
         <!-- <h4 class='doc-form_title'>公文信息</h4> -->
         <el-row>
-          <el-col :span="24">
-            <h1 class="title">标题</h1>
-            <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
+          <el-col :span="24" class="titleSpan">
+            <h1 class="title" v-bind:class="{rightRedBorder: $route.query.code=='CPD'||$route.query.code=='FWG'||$route.query.code=='HTS'||$route.query.code=='SWD' }">标题</h1>
+            <p class="textContent blackText pdl25">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
           <component v-bind:is="computeView" :info="docDetialInfo.otherInfo" :docDetialInfo="docDetialInfo" v-if="computeView"></component>
-          <el-col :span="24" style="min-height:90px" v-if="$route.query.code!='FWG'">
-            <h1 class="title">请示内容</h1>
-            <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
+          
+         
+           <div class="ZZSPJ" v-if="this.$route.query.code=='ZZS'">请员工直接上级领导对其试用期内表现做出评价</div>
+        </el-row>
+      </div>
+       </div>
+
+         
+
+       <div class="baseInfoBox ">
+
+          <div class="pdfBox clearBoth" v-if="docDetialInfo.otherInfo[0]&&($route.query.code=='FWG'||$route.query.code=='SWD')">
+            <div class="pdfScrollBox" ref="pdfScroll" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}">
+              <pdf :src="docDetialInfo.otherInfo[0].pdfUrl||docDetialInfo.otherInfo[0].url" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
+              <!-- <pdf :src="info[0].pdfUrl" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf> -->
+            </div>
+            <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
+            </el-pagination>
+          </div>
+
+          <el-col :span="24" style="min-height:90px;" v-show="$route.query.code!='FWG'">
+            <h1 class="title" >请示内容</h1>
+            <p class="textContent pdl25" v-html="docDetialInfo.doc.taskContent"></p>
           </el-col>
-          <el-collapse v-model="activeNames" class="clearfix clearBoth">
+       </div>
+       <div class="baseInfoBox commonBox">
+         <el-collapse v-model="activeNames" class="clearfix clearBoth">
             <el-collapse-item title="附加内容" name="1">
               <component v-bind:is="currentView" :info="docDetialInfo.otherInfo" :docDetialInfo="docDetialInfo">
                 <!-- 组件在 vm.currentview 变化时改变！ -->
@@ -49,9 +73,7 @@
               </el-col>
             </el-collapse-item>
           </el-collapse>
-           <div class="ZZSPJ" v-if="this.$route.query.code=='ZZS'">请员工直接上级领导对其试用期内表现做出评价</div>
-        </el-row>
-      </div>
+       </div>
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
 
       <dist-advice ref="distAdvice"></dist-advice>
@@ -68,6 +90,7 @@
   </div>
 </template>
 <script>
+import pdf from '../../components/pdf.component'
 import BackButton from '../../components/backButton.component.vue'
 import historyAdvice from './detailComponent/historyAdvice.component'
 import DistributeDialog from '../../components/distributeDialog.component'
@@ -115,6 +138,7 @@ const otherAdviceDoc = ["FWG", "SWD", "CPD", "HTS"]
 export default {
   name: 'docInfo',
   components: {
+    pdf,
     historyAdvice,
     BackButton,
     DistributeDialog,
@@ -158,6 +182,9 @@ export default {
   },
   data() {
     return {
+      pageNum: 1,
+      totalNum: 0,
+      pdfHeight: 900,
       currentView: '',
       docDetialInfo: { doc: {}, task: [], taskDetail: [], taskFile: [], taskQuote: [], otherInfo: [] },
       suggestHtml: '',
@@ -201,6 +228,20 @@ export default {
     ])
   },
   methods: {
+    changePage(newPage) {
+      this.$refs.pdfScroll.scrollTop = this.pdfHeight * (newPage - 1);
+    },
+    getNums(num) {
+      if (num) {
+        this.totalNum = num;
+      }
+    },
+    pageLoad(num) {
+      this.pdfHeight = this.$refs.pdfPage.$refs.page1[0].clientHeight;      
+    },
+    pdfError(obj) {
+      this.$message.error('PDF文件加载失败！')
+    },
     getDetail(route) {
       // this.getAdvice();
       // var url = "/doc/getDocDetailById";
@@ -301,6 +342,27 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docInfo {
+  .pdfBox{
+    margin-top:10px;
+  }
+  .el-pagination {
+    // position: absolute;
+    // margin: 0 auto;
+    // left: 0;
+    // right: 0;
+    // bottom: 10px;
+    text-align: center;
+    margin-top:10px;
+  }
+  .noBorder{
+    border: 0;
+  }
+  .pdl25{
+    padding-left: 25px;
+  }
+  .outBorder{
+    border: 2px solid red;
+  }
   .ZZSPJ{
     font:16px '宋体';
     text-align:center;

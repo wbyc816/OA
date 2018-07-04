@@ -1,37 +1,73 @@
 <template>
   <div class="CPDDetail">
     <el-col :span="24">
-      <h1 class="title">公司领导批示</h1>
+      <h1 class="title rightRedBorder">公司领导批示</h1>
       <p class="textContent">
         <template v-for="adviceBox in otherAdvice.empSign">
-          <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+          <div v-for="advice in adviceBox.deptSigns" >
+              <el-col :span="24" class="noBorder">
+                <div >{{advice.signContent}}</div>
+                <div class="chaetosema">{{advice.signUserName}} {{advice.signTime}}</div>
+              </el-col>
+            </div>
         </template>
       </p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">部门会签意见</h1>
+      <h1 class="title rightRedBorder">部门会签意见</h1>
       <p class="textContent">
-        <template v-for="adviceBox in otherAdvice.deptSign">
+        <!-- <template v-for="adviceBox in otherAdvice.deptSign">
           <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+        </template> -->
+        <template v-for="adviceBox in otherAdvice.deptSign" v-if="adviceBox.deptName!='综合管理部'">
+            <div v-for="advice in adviceBox.deptSigns" >
+                <el-col :span="24" class="noBorder">
+                  <div >{{advice.signContent}}</div>
+                  <div class="chaetosema">{{advice.signUserName}} {{advice.signTime}}</div>
+                </el-col>
+            </div>
         </template>
       </p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">承办部门意见</h1>
+      <h1 class="title rightRedBorder">承办部门意见</h1>
       <p class="textContent">
         <template v-for="adviceBox in otherAdvice.taskDeptSign">
           <template v-for="adviceChild in adviceBox.signInfo">
-            <span v-for="advice in adviceChild.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+            <!-- <span v-for="advice in adviceChild.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span> -->
+         
+         
+          <template v-for="advice in adviceChild.deptSigns">
+            <div>
+              <el-col :span="24" class="noBorder">
+                <div >{{advice.signContent}}</div>
+                <div class="chaetosema">{{advice.signUserName}} {{advice.signTime}}</div>
+              </el-col>
+            </div>
+          </template>
+          
+          
           </template>
         </template>
       </p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">拟稿部门意见</h1>
+      <h1 class="title rightRedBorder">拟稿部门意见</h1>
       <p class="textContent">
-        <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.startTime}}</span>
+        <!-- <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.startTime}}</span> -->
+        <template v-for="advice in otherAdvice.deptDetail">
+          <div>
+            <el-col :span="24" class="noBorder">
+              <div  >{{advice.taskContent}}</div>
+              <div class="chaetosema">{{advice.taskUserName}} {{advice.startTime}}</div>
+            </el-col>
+          </div>
+        </template>
       </p>
     </el-col>
+    
+
+    
   </div>
 </template>
 <script>
@@ -66,8 +102,11 @@ export default {
     //   }
     // }
   },
-  mounted() {},
+  mounted() { this.addClass();},
   methods: {
+    addClass(){
+      document.getElementsByClassName("titleSpan")[0].setAttribute("style","border-bottom: 1px solid red;padding:0 0 0 24px");
+    },
     getOtherAdvice(route) {
       this.$http.post("/emp/getEmpInfoById", {id: this.userInfo.empId})
         .then(res => {
@@ -93,6 +132,30 @@ export default {
 </script>
 <style lang='scss'>
 $main:#0460AE;
-.CPDDetail {}
-
+.CPDDetail{
+    .chaetosema{
+      float:right;
+      font-size:14px
+    }
+  }
+  #docDetail  .baseInfoBox .CPDDetail .el-col {
+    border-bottom: 1px solid red;
+    padding: 0px 0px 0px 24px;
+  }
+  #docDetail  .baseInfoBox .CPDDetail .textContent .el-col {
+    border-bottom: 1px solid red;
+  }
+  #docDetail  .baseInfoBox .CPDDetail .textContent div .noBorder{
+     border: 0px;
+  }
+  #docInfo  .baseInfoBox .CPDDetail .el-col {
+    border-bottom: 1px solid red;
+    padding: 0px 0px 0px 24px;
+  }
+  #docInfo  .baseInfoBox .CPDDetail .textContent .el-col {
+    border-bottom: 1px solid red;
+  }
+  #docInfo  .baseInfoBox .CPDDetail .textContent div .noBorder{
+     border: 0px;
+  }
 </style>

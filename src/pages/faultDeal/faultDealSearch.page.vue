@@ -46,7 +46,7 @@
                   :fetch-suggestions="querySearchAsync"
                   placeholder="接线人"
                   @select="handleSelectOperator"
-                  :props="testprops"
+                  :props="faultDeal"
                   ref="operatorId"
                   class="operatorId">
                 </el-autocomplete>
@@ -60,7 +60,7 @@
                   :fetch-suggestions="querySearchAsyncDeal"
                   placeholder="接障人"
                   @select="handleSelectDeal"
-                  :props="testprops"
+                  :props="faultDeal"
                   ref="faultDealEmpName"
                   class="faultDealEmpName">
                 </el-autocomplete>
@@ -170,6 +170,10 @@ export default {
         value:"name",
         label:"name"
       },
+       faultDeal:{
+        value:"empName",
+        label:"empName"
+      },
        Deptprops:{
         value:"budgetDeptName",
         label:"budgetDeptName"
@@ -228,8 +232,7 @@ export default {
   },
   methods: {
       exportExcel(){
-        console.log(this.baseURL)
-        window.open(this.baseURL+"/fault/exportFault?isNightWork="+this.searchParams.isNightWork+"&startTime="+this.searchParams.startTime +"&endTime="+this.searchParams.endTime+"&operatorName="+this.searchParams.operatorName+"&isFeedback1="+this.searchParams.isFeedback1+"&isSolve="+this.searchParams.isSolve+"&isFeedback="+this.searchParams.isFeedback+"&faultType="+this.searchParams.faultType+"&faultSystem="+this.searchParams.faultSystem+"&deptMajorId="+this.searchParams.deptMajorId+"&faultDealEmpName="+this.searchParams.faultDealEmpName)
+        window.open(this.baseURL+"/fault/exportFault?isNightWork="+this.searchParams.isNightWork+"&startTime="+this.searchParams.startTime +"&endTime="+this.searchParams.endTime+"&operatorName="+this.operatorId+"&isFeedback1="+this.searchParams.isFeedback1+"&isSolve="+this.searchParams.isSolve+"&isFeedback="+this.searchParams.isFeedback+"&faultType="+this.searchParams.faultType+"&faultSystem="+this.searchParams.faultSystem+"&deptMajorId="+this.searchParams.deptMajorId+"&faultDealEmpName="+this.faultDealEmpName)
       },
       handleSelectOperator(item) {
         // this.getEmpBankAccount(item.empId);
@@ -238,7 +241,7 @@ export default {
       },
       handleSelectDeal(item) {
         // this.getEmpBankAccount(item.empId);
-        this.searchParams.faultDealEmpName=item.empId;
+        // this.searchParams.faultDealEmpName=item.name;
         
       },
       handleSelectDeptMajorId(item) {
@@ -247,26 +250,26 @@ export default {
         
       },
       querySearchAsync(queryString, cb) {
-         if(this.operatorId=="")
-         this.searchParams.operatorName="";
-         this.$http.post('/emp/queryEmpDeptList', { 
-            name:this.operatorId,
-            pageSize:100,
+        //  if(this.operatorId=="")
+        //  this.searchParams.operatorName="";
+         this.$http.post('/fault/getfaultDealEmpNames', { 
+            // name:this.operatorId,
+            // pageSize:100,
          })
         .then(res => {
           if (res.status == 0) {
-          if(res.empVoList)
-            for(var i=0;i<res.empVoList.length;i++){
-              this.empNames[i]=res.empVoList[i];
+          if(res.data)
+            for(var i=0;i<res.data.length;i++){
+              this.empNames[i]=res.data[i];
             }
           }
         })
-        console.log(this.empNames)
+        // console.log(this.empNames)
         this.restaurants=this.empNames;
         var restaurants = this.restaurants;
         clearTimeout(this.timeout);
         this.timeout = setTimeout(() => {
-          cb( queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants);
+          cb( queryString ? restaurants.filter(this.createStateFilterDeal(queryString)) : restaurants);
         }, 500);
       },
         createStateFilter(queryString) {
@@ -275,27 +278,31 @@ export default {
         };
       },
       querySearchAsyncDeal(queryString, cb) {
-         if(this.faultDealEmpName=="")
-         this.searchParams.faultDealEmpName="";
-         this.$http.post('/emp/queryEmpDeptList', { 
-            name:this.operatorId,
-            pageSize:100,
+        //  if(this.faultDealEmpName=="")
+        //  this.searchParams.faultDealEmpName="";
+         this.$http.post('/fault/getfaultDealEmpNames', { 
+            // name:this.operatorId,
+            // pageSize:100,
          })
         .then(res => {
           if (res.status == 0) {
-          if(res.empVoList)
-            for(var i=0;i<res.empVoList.length;i++){
-              this.empNames[i]=res.empVoList[i];
+          if(res.data)
+            for(var i=0;i<res.data.length;i++){
+              this.empNames[i]=res.data[i];
             }
           }
         })
-        console.log(this.empNames)
         this.restaurantDeal=this.empNames;
         var restaurantDeal = this.restaurantDeal;
         clearTimeout(this.timeout);
         this.timeout = setTimeout(() => {
-          cb( queryString ? restaurantDeal.filter(this.createStateFilter(queryString)) : restaurantDeal);
+          cb( queryString ? restaurantDeal.filter(this.createStateFilterDeal(queryString)) : restaurantDeal);
         }, 500);
+      },
+        createStateFilterDeal(queryString) {
+        return (state) => {
+          return (state.empName.indexOf(queryString.toLowerCase()) >-1 );
+        };
       },
         createStateFilter(queryString) {
         return (state) => {
@@ -370,7 +377,8 @@ export default {
         this.searchParams.startTime = '';
         this.searchParams.endTime = '';
       }
-
+      this.searchParams.operatorName=this.operatorId;
+      this.searchParams.faultDealEmpName=this.faultDealEmpName;
       this.$http.post("/fault/getFaultInfoList", this.searchParams, { body: true }).then(res => {
         setTimeout(() => {
           this.searchLoading = false;

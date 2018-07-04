@@ -7,7 +7,7 @@
         </el-input>
       </el-form-item>
     </el-form>
-    <person-dialog @updatePerson="updatePerson" :selfDisable="false" :visible.sync="dialogVisible"></person-dialog>
+    <person-dialog @updatePerson="updatePerson"   :selfDisable="false" :visible.sync="dialogVisible"></person-dialog>
   </div>
 </template>
 <script>

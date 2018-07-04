@@ -157,7 +157,7 @@
         <duty></duty>
         <!-- 航班动态 -->
         <el-card class="flightStatus">
-          <span slot="header">航班动态</span>
+          <span slot="header">航班动态 </span>
             
 
           <el-date-picker v-model="searchDate" type="date" placeholder="选择航班日期" format="yyyy-MM-dd" @change="changDate" class="searchDate" :editable="false" :clearable="false" :picker-options="pickerOptions0"></el-date-picker>

@@ -1,31 +1,52 @@
 <template>
   <div id="docDetail" v-loading.fullscreen="submitLoading">
-    <el-card class="borderCard">
-      <div slot="header" class="clearfix docheader">
-        <span class="docTypeName">{{docDetialInfo.doc.docTypeName}}</span>
-        <span class="docNo">{{docDetialInfo.doc.docNo}}</span>
-        <span class="improtType" v-if="docDetialInfo.doc.docImportType=='紧急'||docDetialInfo.doc.docImportType=='特急'" :style="{background:docDetialInfo.doc.docImportType=='紧急'?'#FFD702':'#FF0202'}">{{docDetialInfo.doc.docImportType}}</span>
-        <span class="improtType" v-if="docDetialInfo.doc.docDenseType=='保密'||docDetialInfo.doc.docDenseType=='绝密'" :style="{background:docDetialInfo.doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{docDetialInfo.doc.docDenseType}}</span>
-        <div class="rightBox">
-          <span class="taskUserName">呈报人 {{docDetialInfo.doc.taskUserName}}</span>
-          <span class="deptName">{{docDetialInfo.doc.taskDeptMajorName}}</span>
-          <span class="deptName">{{docDetialInfo.doc.taskUserJobTitle}}</span>
+    <el-card class="borderCard" >
+      
+         <div slot="header" class="clearfix docheader" >
+          <span class="docTypeName">{{docDetialInfo.doc.docTypeName}}</span>
+          <span class="docNo">{{docDetialInfo.doc.docNo}}</span>
+          <span class="improtType" v-if="docDetialInfo.doc.docImportType=='紧急'||docDetialInfo.doc.docImportType=='特急'" :style="{background:docDetialInfo.doc.docImportType=='紧急'?'#FFD702':'#FF0202'}">{{docDetialInfo.doc.docImportType}}</span>
+          <span class="improtType" v-if="docDetialInfo.doc.docDenseType=='保密'||docDetialInfo.doc.docDenseType=='绝密'" :style="{background:docDetialInfo.doc.docDenseType=='保密'?'#FFD702':'#FF0202'}">{{docDetialInfo.doc.docDenseType}}</span>
+          <div class="rightBox">
+            <span class="taskUserName">呈报人 {{docDetialInfo.doc.taskUserName}}</span>
+            <span class="deptName">{{docDetialInfo.doc.taskDeptMajorName}}</span>
+            <span class="deptName">{{docDetialInfo.doc.taskUserJobTitle}}</span>
+          </div>
         </div>
-      </div>
-      <div class="baseInfoBox commonBox">
+      <div v-bind:class="{ outBorder: $route.query.code=='CPD'||$route.query.code=='FWG'||$route.query.code=='HTS'||$route.query.code=='SWD' }">
+        <div class="baseInfoBox ">
         <el-row>
-          <el-col :span="24">
-            <h1 class="title">标题</h1>
-            <p class="textContent blackText">{{docDetialInfo.doc.docTitle}}</p>
+          <el-col :span="24"  class="titleSpan">
+            <h1 class="title" v-bind:class="{rightRedBorder: $route.query.code=='CPD'||$route.query.code=='FWG'||$route.query.code=='HTS'||$route.query.code=='SWD' }">标题</h1>
+            <p class="textContent blackText pdl25">{{docDetialInfo.doc.docTitle}}</p>
           </el-col>
           <!-- 四类特殊公文显示特殊审批意见 -->
           <component v-bind:is="computeView" :info="docDetialInfo.otherInfo" :docDetialInfo="docDetialInfo" v-if="computeView"></component>
           <!-- 发文稿纸不显示请示内容 -->
-          <el-col :span="24" style="min-height:90px" v-if="$route.query.code!='FWG'">
+        </el-row>
+      </div>
+      
+      </div>
+      <div class="baseInfoBox">
+
+         <div class="pdfBox clearBoth" v-if="docDetialInfo.otherInfo[0]&&($route.query.code=='FWG'||$route.query.code=='SWD')">
+            <div class="pdfScrollBox" ref="pdfScroll" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}">
+              <pdf :src="docDetialInfo.otherInfo[0].pdfUrl||docDetialInfo.otherInfo[0].url" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
+              <!-- <pdf :src="info[0].pdfUrl" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf> -->
+            </div>
+            <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
+            </el-pagination>
+          </div>
+
+        <el-row>
+        <el-col :span="24" style="min-height:90px;"  v-show="$route.query.code!='FWG'">
             <h1 class="title">请示内容</h1>
-            <p class="textContent" v-html="docDetialInfo.doc.taskContent"></p>
+            <p class="textContent pdl25" v-html="docDetialInfo.doc.taskContent"></p>
           </el-col>
-          <el-collapse v-model="activeContent" class="clearBoth">
+      </el-row>
+      </div>
+      <div class="baseInfoBox commonBox">
+      <el-collapse v-model="activeContent" class="clearBoth">
             <el-collapse-item title="附加内容" name="1">
               <!-- 根据路由加载不同的公文的详情显示页 -->
               <component v-bind:is="currentView" :info="docDetialInfo.otherInfo" :docDetialInfo="docDetialInfo" :state="docDetialInfo.task[0].state" :open="activeContent" class="clearfix">
@@ -56,8 +77,7 @@
             </el-collapse-item>
             <div class="ZZSPJ" v-if="this.$route.query.code=='ZZS'">请员工直接上级领导对其试用期内表现做出评价</div>
           </el-collapse>
-        </el-row>
-      </div>
+       </div>
       <history-advice :taskDetail="docDetialInfo.taskDetail"></history-advice>
       <dist-advice ref="distAdvice"></dist-advice>
       <!-- 公文结束时才显示操作区(公文分发,导出PDF等) -->
@@ -164,6 +184,7 @@
   </div>
 </template>
 <script>
+import pdf from '../../components/pdf.component'
 import BackButton from '../../components/backButton.component.vue'
 import PersonDialog from '../../components/personDialog.component'
 import TaskContent from '../../components/taskContent.component'
@@ -218,6 +239,7 @@ const otherAdviceDoc = ["FWG", "SWD", "CPD", "HTS"]
 export default {
   name: 'docDetail',
   components: {
+    pdf,
     PersonDialog,
     TaskContent,
     BackButton,
@@ -272,6 +294,9 @@ export default {
       }
     };
     return {
+      pageNum: 1,
+      totalNum: 0,
+      pdfHeight: 900,
       DialogArchiveVisible: false,
       DialogSubmitVisible: false,
       dialogArchivePersonVisible: false,
@@ -366,6 +391,20 @@ export default {
     ])
   },
   methods: {
+    changePage(newPage) {
+      this.$refs.pdfScroll.scrollTop = this.pdfHeight * (newPage - 1);
+    },
+    getNums(num) {
+      if (num) {
+        this.totalNum = num;
+      }
+    },
+    pageLoad(num) {
+      this.pdfHeight = this.$refs.pdfPage.$refs.page1[0].clientHeight;      
+    },
+    pdfError(obj) {
+      this.$message.error('PDF文件加载失败！')
+    },
     handleCheckAllChange(val) {
         console.log(this.fileOptions)
         this.checkedFiles = val ? this.fileOptions : [];
@@ -635,6 +674,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        // ,empId:this.userInfo.empId,empName:this.userInfo.name
         this.$http.post('/doc/updateFinPayState', { docId: this.$route.params.id })
           .then(res => {
             if (res.status == 0) {
@@ -784,6 +824,25 @@ export default {
 $main:#0460AE;
 $sub:#1465C0;
 #docDetail {
+  .pdfBox{
+    margin-top:10px;
+  }
+  .el-pagination {
+    // position: absolute;
+    // margin: 0 auto;
+    // left: 0;
+    // right: 0;
+    // bottom: 10px;
+    text-align: center;
+    margin-top:10px;
+  }
+  .pdl25{
+    padding-left: 25px
+  }
+  .outBorder{
+    border: 2px solid red;
+    margin-top:10px 
+  }
   .ZZSPJ{
     font:16px '宋体';
     text-align:center;
@@ -926,6 +985,7 @@ $sub:#1465C0;
       word-wrap: break-word;
     }
     .textContent {
+      
       word-wrap: break-word;
       display: table-cell;
       vertical-align: middle;

@@ -1,49 +1,63 @@
 <template>
   <div class="SWDDetail">
-    <el-col :span="12" class="rightBorder">
-      <h1 class="title">来文文号</h1>
-      <p v-if="info[0]" class="textContent">{{info[0].wordNo}}</p>
+    <el-col :span="12" class="rightBorder redBorder">
+      <h1 class="title rightRedBorder">来文文号</h1>
+      <p v-if="info[0]" class="textContent pdl25">{{info[0].wordNo}}</p>
     </el-col>
-    <el-col :span="12">
-      <h1 class="title">收文日期</h1>
-      <p v-if="info[0]" class="textContent">{{info[0].receiveTime.slice(0,4)}}年{{info[0].receiveTime.slice(5,7)}}月{{info[0].receiveTime.slice(8,10)}}日</p>
-    </el-col>
-    <el-col :span="24">
-      <h1 class="title">来文单位</h1>
-      <p v-if="info[0]" class="textContent">{{info[0].receiveCompany}}</p>
+    <el-col :span="12" class="redBorder">
+      <h1 class="title rightRedBorder">收文日期</h1>
+      <p v-if="info[0]" class="textContent pdl25">{{info[0].receiveTime.slice(0,4)}}年{{info[0].receiveTime.slice(5,7)}}月{{info[0].receiveTime.slice(8,10)}}日</p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">公司领导意见</h1>
+      <h1 class="title rightRedBorder">来文单位</h1>
+      <p v-if="info[0]" class="textContent pdl25">{{info[0].receiveCompany}}</p>
+    </el-col>
+    <el-col :span="24">
+      <h1 class="title rightRedBorder">公司领导意见</h1>
       <p class="textContent">
         <template v-for="adviceBox in otherAdvice.empSign">
-          <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+          <!-- <span v-for="advice in adviceBox.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span> -->
+          <div v-for="advice in adviceBox.deptSigns" >
+            <el-col :span="24" class="noBorder">
+              <div >{{advice.signContent}}</div>
+              <div class="chaetosema">{{advice.signUserName}} {{advice.signTime}}</div>
+            </el-col>
+          </div>
         </template>
       </p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">综合管理部<br/>拟办意见</h1>
+      <h1 class="title rightRedBorder">综合管理部<br/>拟办意见</h1>
       <p class="textContent">
-        <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.startTime}}</span>
+        <!-- <span v-for="advice in otherAdvice.deptDetail" class="adviceSpan">{{advice.taskContent}} {{advice.taskUserName}} {{advice.startTime}}</span> -->
+        <template v-for="advice in otherAdvice.deptDetail">
+          <div>
+          <el-col :span="24" class="noBorder">
+            <div>{{advice.taskContent}}</div>
+            <div class="chaetosema">{{advice.taskUserName}} {{advice.startTime}}</div>
+          </el-col>
+          </div>
+        </template>
       </p>
     </el-col>
     <el-col :span="24">
-      <h1 class="title">承办部门意见</h1>
+      <h1 class="title rightRedBorder">承办部门意见</h1>
       <p class="textContent">
         <template v-for="adviceBox in otherAdvice.taskDeptSign">
           <template v-for="adviceChild in adviceBox.signInfo">
-            <span v-for="advice in adviceChild.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span>
+            <!-- <span v-for="advice in adviceChild.deptSigns" class="adviceSpan">{{advice.signContent}} {{advice.signUserName}} {{advice.signTime}}</span> -->
+            <template v-for="advice in adviceChild.deptSigns">
+              <el-col :span="24" class="noBorder">
+                <div >{{advice.signContent}}</div>
+                <div class="chaetosema">{{advice.signUserName}} {{advice.signTime}}</div>
+              </el-col>
+            </template>
           </template>
+
         </template>
+         
       </p>
     </el-col>
-    <div class="pdfBox clearBoth" v-if="info[0]">
-      <div class="pdfScrollBox" ref="pdfScroll" :style="{height:pdfHeight+'px',overflowY:totalNum>1?'auto':'hidden'}">
-        <pdf :src="info[0].url" @numPages="getNums" @pageLoaded="pageLoad" ref="pdfPage" @error="pdfError"></pdf>
-        <!-- <pdf :src="info[0].url" v-if="totalNum&&num!=1" :page="num" v-for="num in totalNum"></pdf> -->
-      </div>
-      <el-pagination :current-page="pageNum" :page-size="1" layout="total, prev, pager, next, jumper" :total="totalNum" v-on:current-change="changePage">
-      </el-pagination>
-    </div>
   </div>
 </template>
 <script>
@@ -88,10 +102,12 @@ export default {
     // }
   },
   mounted() {
-    
+    this.addClass();
   },
   methods: {
-    
+    addClass(){
+      document.getElementsByClassName("titleSpan")[0].setAttribute("style",";padding:0 0 0 24px");
+    },
     getOtherAdvice(route) {
       this.$http.post("/emp/getEmpInfoById", {id: this.userInfo.empId})
         .then(res => {
@@ -113,20 +129,6 @@ export default {
        
      
     },
-    changePage(newPage) {
-      this.$refs.pdfScroll.scrollTop = this.pdfHeight * (newPage - 1);
-    },
-    getNums(num) {
-      if (num) {
-        this.totalNum = num;
-      }
-    },
-    pageLoad(num) {
-      this.pdfHeight = this.$refs.pdfPage.$refs.page1[0].clientHeight;      
-    },
-    pdfError(obj) {
-      this.$message.error('PDF文件加载失败！')
-    }
   }
 }
 
@@ -134,6 +136,10 @@ export default {
 <style lang='scss'>
 $main:#0460AE;
 .SWDDetail {
+   .chaetosema{
+      float:right;
+      font-size:14px
+    }
   .pdfBox {
     padding: 0;
     position: relative;
@@ -156,6 +162,37 @@ $main:#0460AE;
       bottom: 10px;
     }
   }
+}
+
+#docDetail  .baseInfoBox .SWDDetail .el-col {
+  border-bottom: 1px solid red;
+  padding: 0px 0px 0px 24px;
+}
+#docDetail  .baseInfoBox .SWDDetail .textContent .el-col {
+  border-bottom: 1px solid red;
+}
+#docDetail  .baseInfoBox .SWDDetail .textContent div .noBorder{
+    border: 0px;
+}
+#docInfo  .baseInfoBox .SWDDetail .el-col {
+  border-bottom: 1px solid red;
+  padding: 0px 0px 0px 24px;
+}
+#docInfo  .baseInfoBox .SWDDetail .textContent .el-col {
+  border-bottom: 1px solid red;
+}
+#docInfo  .baseInfoBox .SWDDetail .textContent div .noBorder{
+    border: 0px;
+}
+.SWDDetail .redBorder{
+  border-top:1px solid red;
+  border-bottom:1px solid red;
+}
+#docDetail .baseInfoBox .SWDDetail .rightBorder{
+  border-right:1px solid red;
+}
+#docInfo .baseInfoBox .SWDDetail .rightBorder{
+  border-right:1px solid red;
 }
 
 </style>

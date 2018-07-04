@@ -156,7 +156,8 @@ export default {
       },
       count:0,
       startTime: '',
-      endTime: '',
+      startTimeparams: '',
+      endTimeparams: '',
       paramTitle:"",
       params: {
         empId: '',
@@ -211,11 +212,11 @@ export default {
         if (res.status == 0 && res.data.selectDocInfoVolist) {
           this.fileDatas = res.data.selectDocInfoVolist;
           this.totalSize = res.data.totalSize;
-          this.params.docTitle="";
+          // this.params.docTitle="";
         } else {
           this.fileDatas = [];
           this.totalSize = 0;
-          this.params.docTitle="";
+          // this.params.docTitle="";
         }
       }, res => {
       })
@@ -223,8 +224,8 @@ export default {
     search_type(fileType) {
       this.params.pageNumber = 1;
       this.params.classify1 = fileType[1];
-      this.params.startTime = '';
-      this.params.endTime = '';
+      this.startTimeparams=this.params.startTime;
+      this.endTimeparams=this.params.endTime;
       this.title = fileType[0];
       this.params.collect = "";
       this.params.isRead = "";
@@ -246,9 +247,17 @@ export default {
       if (this.startTime[0] && this.startTime[1]) {
         this.params.startTime = util.formatTime(this.startTime[0], 'yyyy-MM-dd');
         this.params.endTime = util.formatTime(this.startTime[1], 'yyyy-MM-dd');
+        this.startTimeparams=this.params.startTime;
+        this.endTimeparams=this.params.endTime;
+      }else{
+        this.params.startTime="";
+        this.params.endTime="";
+        this.startTimeparams="";
+        this.endTimeparams="";
       }
       this.params.deptId = ''
-      this.params.deptId = ''
+      this.params.pageNumber = 1;
+    
       this.getData();
      
     },
@@ -306,6 +315,9 @@ export default {
 
     handleCommand(command) {
       this.params.pageNumber = 1;
+      this.params.docTitle=this.paramTitle;
+      this.params.startTime =this.startTimeparams;
+      this.params.endTime =this.endTimeparams;
       this.params.classify1 = command[0];
       this.choose_type = command[1];
       this.getData();
@@ -317,7 +329,9 @@ export default {
       }
     },
     handleCommand_dept(command) {
-      console.log(command);
+      this.params.docTitle=this.paramTitle;
+      this.params.startTime =this.startTimeparams;
+      this.params.endTime =this.endTimeparams;
       this.params.pageNumber = 1;
       this.params.deptId = command[0];
       this.choose_dept = command[1];
@@ -325,15 +339,32 @@ export default {
     },
     changeSort() {
       if (this.params.sort == 0) {
+        this.params.docTitle=this.paramTitle;
+        this.params.startTime =this.startTimeparams;
+        this.params.endTime =this.endTimeparams;
         this.params.sort = 1;
         this.params.pageNumber = 1;
       } else {
+        this.params.docTitle=this.paramTitle;
+        this.params.startTime =this.startTimeparams;
+        this.params.endTime =this.endTimeparams;
         this.params.sort = 0;
         this.params.pageNumber = 1;
       }
       this.getData();
     },
     handleCurrentChange(page) {
+      
+      this.params.docTitle=this.paramTitle;
+      // if (this.startTime[0] && this.startTime[1]) {
+      //   this.params.startTime = util.formatTime(this.startTime[0], 'yyyy-MM-dd');
+      //   this.params.endTime = util.formatTime(this.startTime[1], 'yyyy-MM-dd');
+      // }else{
+      //   this.params.startTime="";
+      //   this.params.endTime="";
+      // }
+      this.params.startTime =this.startTimeparams;
+      this.params.endTime =this.endTimeparams;
       this.params.pageNumber = page;
       this.getData()
     },

@@ -87,6 +87,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        // empId:this.userInfo.empId,empName:this.userInfo.name
         this.$http.post('/doc/updateFinPayState', { docId: id })
           .then(res => {
             if (res.status == 0) {

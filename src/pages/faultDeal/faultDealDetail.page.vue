@@ -421,9 +421,11 @@ export default {
       this.customNums.splice(index, 1);
     },
     submit() {
-      this.submitLoading = true;
-      console.log(this.$refs.deptMajorId)
-      var params = {
+      // this.submitLoading = true;
+      // console.log(this.$refs.deptMajorId)
+       this.$refs.breakDownForm.validate((valid) => {
+          if (valid) {
+            var params = {
                id:this.id,
               "operatorId": this.breakDownForm.operatorId,
               "operatorName": this.breakDownForm.operatorName,
@@ -448,17 +450,24 @@ export default {
               "faultTypeCode": this.breakDownForm.faultTypeCode,
               "faultSystemCode": this.breakDownForm.faultSystemCode
            
-      }
-      this.$http.post('/fault/updateFaultInfo', params, { body: true })
-        .then(res => {
-          this.submitLoading = false;
-          if (res.status == 0) {
-            this.$message.success('提交成功！');
-            this.$router.push('/faultDeal/myFaultDeal');
-          } else {
-            this.$message.error(res.message);
+            }
+            this.$http.post('/fault/updateFaultInfo', params, { body: true })
+              .then(res => {
+                this.submitLoading = false;
+                if (res.status == 0) {
+                  this.$message.success('提交成功！');
+                  this.$router.push('/faultDeal/myFaultDeal');
+                } else {
+                  this.$message.error(res.message);
+                }
+              })
+          }else{
+            this.$message.warning('请检查填写字段')
+            this.$emit('submitMiddle', false);
+            return false;
           }
-        })
+          })
+      
     }
   }
 }

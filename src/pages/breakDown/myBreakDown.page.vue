@@ -53,7 +53,7 @@
                   :fetch-suggestions="querySearchAsyncDeal"
                   placeholder="接障人"
                   @select="handleSelectDeal"
-                  :props="testprops"
+                  :props="faultDeal"
                   ref="faultDealEmpName"
                   class="faultDealEmpName">
                 </el-autocomplete>
@@ -168,9 +168,13 @@ export default {
       deptMajorIdValue:"",
       faultDealEmpName:"",
       reserveDate: '',
-       testprops:{
+      testprops:{
         value:"name",
         label:"name"
+      },
+      faultDeal:{
+        value:"empName",
+        label:"empName"
       },
        Deptprops:{
         value:"budgetDeptName",
@@ -223,13 +227,13 @@ export default {
   },
   methods: {
      exportExcel(){
-        console.log(this.baseURL+"/fault/exportFault?isNightWork="+this.searchParams.isNightWork+"&startTime="+this.searchParams.startTime +"&endTime="+this.searchParams.endTime+"&operatorName="+this.userInfo.empId+"&isFeedback1="+this.searchParams.isFeedback1+"&isSolve="+this.searchParams.isSolve+"&isFeedback="+this.searchParams.isFeedback+"&faultType="+this.searchParams.faultType+"&faultSystem="+this.searchParams.faultSystem+"&deptMajorId="+this.searchParams.deptMajorId+"&faultDealEmpName="+this.searchParams.faultDealEmpName)
+        // console.log(this.baseURL+"/fault/exportFault?isNightWork="+this.searchParams.isNightWork+"&startTime="+this.searchParams.startTime +"&endTime="+this.searchParams.endTime+"&operatorName="+this.userInfo.name+"&isFeedback1="+this.searchParams.isFeedback1+"&isSolve="+this.searchParams.isSolve+"&isFeedback="+this.searchParams.isFeedback+"&faultType="+this.searchParams.faultType+"&faultSystem="+this.searchParams.faultSystem+"&deptMajorId="+this.searchParams.deptMajorId+"&faultDealEmpName="+this.searchParams.faultDealEmpName)
         
-        window.open(this.baseURL+"/fault/exportFault?isNightWork="+this.searchParams.isNightWork+"&startTime="+this.searchParams.startTime +"&endTime="+this.searchParams.endTime+"&operatorName="+this.userInfo.empId+"&isFeedback1="+this.searchParams.isFeedback1+"&isSolve="+this.searchParams.isSolve+"&isFeedback="+this.searchParams.isFeedback+"&faultType="+this.searchParams.faultType+"&faultSystem="+this.searchParams.faultSystem+"&deptMajorId="+this.searchParams.deptMajorId+"&faultDealEmpName="+this.searchParams.faultDealEmpName)
+        window.open(this.baseURL+"/fault/exportFault?isNightWork="+this.searchParams.isNightWork+"&startTime="+this.searchParams.startTime +"&endTime="+this.searchParams.endTime+"&operatorName="+this.userInfo.name+"&isFeedback1="+this.searchParams.isFeedback1+"&isSolve="+this.searchParams.isSolve+"&isFeedback="+this.searchParams.isFeedback+"&faultType="+this.searchParams.faultType+"&faultSystem="+this.searchParams.faultSystem+"&deptMajorId="+this.searchParams.deptMajorId+"&faultDealEmpName="+this.searchParams.faultDealEmpName)
       },
       handleSelectDeal(item) {
         // this.getEmpBankAccount(item.empId);
-        this.searchParams.faultDealEmpName=item.empId;
+        // this.searchParams.faultDealEmpName=item.empId;
         
       },
       handleSelectDeptMajorId(item) {
@@ -240,15 +244,15 @@ export default {
     querySearchAsyncDeal(queryString, cb) {
          if(this.faultDealEmpName=="")
          this.searchParams.faultDealEmpName="";
-         this.$http.post('/emp/queryEmpDeptList', { 
-            name:this.operatorId,
-            pageSize:100,
+         this.$http.post('/fault/getfaultDealEmpNames', { 
+            // name:this.operatorId,
+            // pageSize:100,
          })
         .then(res => {
           if (res.status == 0) {
-          if(res.empVoList)
-            for(var i=0;i<res.empVoList.length;i++){
-              this.empNames[i]=res.empVoList[i];
+          if(res.data)
+            for(var i=0;i<res.data.length;i++){
+              this.empNames[i]=res.data[i];
             }
           }
         })
@@ -256,8 +260,13 @@ export default {
         var restaurants = this.restaurants;
         clearTimeout(this.timeout);
         this.timeout = setTimeout(() => {
-          cb( queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants);
+          cb( queryString ? restaurants.filter(this.createStateFilterDeal(queryString)) : restaurants);
         }, 500);
+      },
+       createStateFilterDeal(queryString) {
+        return (state) => {
+          return (state.empName.indexOf(queryString.toLowerCase()) >-1 );
+        };
       },
         createStateFilter(queryString) {
         return (state) => {
@@ -323,21 +332,29 @@ export default {
         this.searchParams.startTime = '';
         this.searchParams.endTime = '';
       }
-      this.searchParams.operatorName=this.userInfo.empId;
-      this.$http.post("/fault/getFaultInfoList", this.searchParams, { body: true }).then(res => {
-        setTimeout(() => {
-          this.searchLoading = false;
-        }, 200)
-        if (res.status == 0) {
-          this.searchData = res.data.records;
-          this.totalSize = res.data.total;
-        } else {
-          this.searchData = [];
-          this.totalSize = 0;
-        }
-      }, res => {
+      this.searchParams.operatorName=this.userInfo.name;
+      this.searchParams.faultDealEmpName=this.faultDealEmpName;
+       this.$http.post("/emp/getEmpInfoById", {id: this.userInfo.empId})
+        .then(res => {
+          if (res.status == 0) {
+            this.searchParams.operatorName=res.data.name;
+            this.$http.post("/fault/getFaultInfoList", this.searchParams, { body: true }).then(res => {
+            setTimeout(() => {
+              this.searchLoading = false;
+            }, 200)
+            if (res.status == 0) {
+              this.searchData = res.data.records;
+              this.totalSize = res.data.total;
+            } else {
+              this.searchData = [];
+              this.totalSize = 0;
+            }
+          }, res => {
 
-      })
+          })
+              }
+          })
+     
     },
     handleCurrentChange(page) {
       this.searchParams.pageNumber = page;

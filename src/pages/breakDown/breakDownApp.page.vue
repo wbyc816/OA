@@ -8,21 +8,33 @@
         <!-- <h4 class='doc-form_title'>信息填写</h4> -->
         <el-form label-position="left" :model="breakDownForm" :rules="rules" ref="breakDownForm" label-width="128px">
         
-          <!-- <el-form-item label="是否30分钟反馈"  prop="faultType" class="arrArea">
+         
+
+          <el-form-item label="接线时间"  prop="datetime"    class="arrArea">
+              <el-date-picker
+                style="width:100%"
+                v-model="breakDownForm.datetime"
+                type="datetime"
+                placeholder="接线时间"
+                >
+              </el-date-picker>
+          </el-form-item>
+         
+           <el-form-item label="是否30分钟反馈"  prop="isFeedback" class="deptArea">
             <el-select v-model="breakDownForm.isFeedback" style="width:100%" placeholder="是否30分钟反馈" clearable>
               <el-option label="是" value="1"></el-option>
               <el-option label="否" value="0"></el-option>
             </el-select>
-          </el-form-item> -->
+          </el-form-item>
 
-          <el-form-item label="反馈状态"  prop="isFeedback1"  class="deptArea">
+          <el-form-item label="反馈状态"  prop="isFeedback1"  class="arrArea">
             <el-select v-model="breakDownForm.isFeedback1" style="width:100%" placeholder="反馈状态" clearable>
               <el-option label="是" value="1"></el-option>
               <el-option label="否" value="0"></el-option>
             </el-select>
           </el-form-item>
 
-          <el-form-item label="解决状态"  prop="isSolve" class="arrArea">
+          <el-form-item label="解决状态"  prop="isSolve" class="deptArea">
             <el-select v-model="breakDownForm.isSolve" style="width:100%" placeholder="解决状态" clearable>
               <el-option label="是" value="1"></el-option>
               <el-option label="否" value="0"></el-option>
@@ -36,13 +48,13 @@
             </el-select>
           </el-form-item> -->
 
-          <el-form-item label="故障系统"  prop="faultSystem" class="deptArea">
+          <el-form-item label="故障系统"  prop="faultSystem" class="arrArea">
             <el-select v-model="breakDownForm.faultSystem" placeholder="故障系统" ref="faultSystem" style="width:100%" clearable>
               <el-option v-for="item in faultSystems" :label="item.dictName" :value="item.dictCode"></el-option>
             </el-select>
          </el-form-item>
          
-          <el-form-item label="故障类别"  prop="faultType" class="arrArea">
+          <el-form-item label="故障类别"  prop="faultType" class="deptArea">
             <el-select v-model="breakDownForm.faultType" placeholder="故障类别" ref="faultType" style="width:100%" clearable>
               <el-option v-for="item in faultTypes" :label="item.dictName" :value="item.dictCode"></el-option>
             </el-select>
@@ -50,7 +62,7 @@
 
          
 
-          <el-form-item label="报障部门"  prop="deptMajorId" class="deptArea">
+          <el-form-item label="报障部门"  prop="deptMajorId" class="arrArea">
             <el-select v-model="breakDownForm.deptMajorId" style="width:100%"  ref="deptMajorId" clearable>
               <el-option v-for="item in budgetDeptList" :label="item.budgetDeptName" placeholder="报障部门" :value="item.budgetDeptCode" ></el-option>
               <el-option  label="其他" value="其他"></el-option>
@@ -70,7 +82,7 @@
             </div>
           </el-form-item> -->
 
-        <el-form-item label="接线人" prop="operatorName" class="arrArea" >
+        <el-form-item label="接线人" prop="operatorName" class="deptArea" >
           <el-autocomplete
             style="width:100%"
             v-model="breakDownForm.operatorName"
@@ -82,7 +94,7 @@
               class="operatorName"></el-autocomplete>
         </el-form-item>
 
-        <el-form-item label="报障人" prop="empName" class="deptArea" >
+        <el-form-item label="报障人" prop="empName" class="arrArea" >
           <el-autocomplete
             style="width:100%"
             v-model="breakDownForm.empName"
@@ -94,17 +106,17 @@
               class="empName"></el-autocomplete>
         </el-form-item>
 
-        <el-form-item label="报障人联系电话" prop="empPhone"  class="arrArea">
+        <el-form-item label="报障人联系电话" prop="empPhone"  class="deptArea">
           <money-input v-model="breakDownForm.empPhone" type="bankCode" :prepend="false" placeholder="请输入报障人联系电话" :append="false" ref="empPhone" :maxlength="11"></money-input>
         </el-form-item>
 
-         <el-form-item label="报障方式"  prop="faultMethod" class="deptArea">
+         <el-form-item label="报障方式"  prop="faultMethod" class="arrArea">
             <el-select v-model="breakDownForm.faultMethod" placeholder="报障方式" ref="faultMethod" style="width:100%" clearable>
               <el-option v-for="item in faultMethods" :label="item.dictName" :value="item.dictCode"></el-option>
             </el-select>
           </el-form-item>
 
-          <el-form-item label="接障人" prop="faultDealEmpName" class="arrArea" >
+          <el-form-item label="接障人" prop="faultDealEmpName" class="deptArea" >
           <el-autocomplete
             style="width:100%"
             v-model="breakDownForm.faultDealEmpName"
@@ -146,6 +158,7 @@
 import TransferDialog from '../../components/transferDialog.component'
 import MoneyInput from '../../components/moneyInput.component'
 import { mapGetters, mapMutations } from 'vuex'
+import util from '../../common/util'
 export default {
   name: 'breakDownApp',
   components: {
@@ -160,6 +173,7 @@ export default {
       }
     };
     return {
+     
       signDialogVisible: false,
       budgetDeptList:[],
       operatorNames:[],
@@ -168,6 +182,7 @@ export default {
       // empNames:[],
       deptMajorId:"",
       breakDownForm:{
+        datetime:new Date(),
         remark1:"",
         remark2:"",
         remark3:"",
@@ -216,6 +231,7 @@ export default {
         // person: [{ type: 'array', required: true, message: '请选择人员' }, ],
         // messageContent: [{ required: true, message: '请输入短信内容', trigger: 'blur,change' }]
         isFeedback1: [{ required: true, message: '请选择反馈状态', trigger: 'blur,change' }],
+        isFeedback: [{ required: true, message: '请选择30分钟反馈状态', trigger: 'blur,change' }],
         isSolve: [{ required: true, message: '请选择反馈状态', trigger: 'blur,change' }],
         operatorName: [{ required: true, message: '请输入接线人', trigger: 'blur,change' }],
         empName: [{ required: true, message: '请输入报障人', trigger: 'blur,change' }],
@@ -225,6 +241,7 @@ export default {
         faultSystem: [{ required: true, message: '请选择故障系统', trigger: 'blur,change' }],
         faultDescribe: [{ required: true, message: '请输入内容', trigger: 'blur,change' }],
         faultDealEmpName: [{ required: true, message: '请输入接障人', trigger: 'blur,change' }],
+        datetime: [{ required: true,type: 'date', message: '请选择接线时间', trigger: 'blur,change' }],
       },
       submitLoading: false,
       customNums: [],
@@ -434,43 +451,58 @@ export default {
       this.customNums.splice(index, 1);
     },
     submit() {
-      this.submitLoading = true;
-      console.log(this.$refs.deptMajorId)
-      var params = {
-              "operatorId": this.breakDownForm.operatorId,
-              "operatorName": this.breakDownForm.operatorName,
-              "empId": this.breakDownForm.empId,
-              "empName": this.breakDownForm.empName,
-              "deptMajorId": this.breakDownForm.deptMajorId,
-              "deptMajorName": this.$refs.deptMajorId.selectedLabel,
-              "empPhone":this.breakDownForm.empPhone,
-              "barrierMethod": this.$refs.faultMethod.selectedLabel,
-              "faultType": this.$refs.faultType.selectedLabel,
-              "faultSystem": this.$refs.faultSystem.selectedLabel,
-              // "faultDealEmpId": this.breakDownForm.faultDealEmpId,
-              "faultDealEmpName":this.breakDownForm.faultDealEmpName,
-              "faultDescribe": this.breakDownForm.faultDescribe,
-              // "isFeedback": this.breakDownForm.operatorId,
-              "isFeedback1":this.breakDownForm.isFeedback1,
-              "isSolve": this.breakDownForm.isSolve,
-              // "remark1": this.breakDownForm.operatorId,
-              // "remark2":this.breakDownForm.operatorId,
-              // "remark3": "",
-              "barrierMethodCode": this.breakDownForm.faultMethod,
-              "faultTypeCode": this.breakDownForm.faultType,
-              "faultSystemCode": this.breakDownForm.faultSystem
-           
-      }
-      this.$http.post('/fault/addFaultInfo', params, { body: true })
-        .then(res => {
-          this.submitLoading = false;
-          if (res.status == 0) {
-            this.$message.success('提交成功！');
-            this.$router.push('/breakDown/myBreakDown');
-          } else {
-            this.$message.error(res.message);
+      // this.submitLoading = true;
+       this.$refs.breakDownForm.validate((valid) => {
+          if (valid) {
+            var startTime=util.formatTime((this.breakDownForm.datetime).getTime(), 'yyyy-MM-dd');
+            var endTime=util.formatTime((this.breakDownForm.datetime).getTime(), 'hh:mm:ss');
+            var params = {
+                    createDate:startTime,
+                    createTime:endTime,
+                    "operatorId": this.breakDownForm.operatorId,
+                    "operatorName": this.breakDownForm.operatorName,
+                    "empId": this.breakDownForm.empId,
+                    "empName": this.breakDownForm.empName,
+                    "deptMajorId": this.breakDownForm.deptMajorId,
+                    "deptMajorName": this.$refs.deptMajorId.selectedLabel,
+                    "empPhone":this.breakDownForm.empPhone,
+                    "barrierMethod": this.$refs.faultMethod.selectedLabel,
+                    "faultType": this.$refs.faultType.selectedLabel,
+                    "faultSystem": this.$refs.faultSystem.selectedLabel,
+                    // "faultDealEmpId": this.breakDownForm.faultDealEmpId,
+                    "faultDealEmpName":this.breakDownForm.faultDealEmpName,
+                    "faultDescribe": this.breakDownForm.faultDescribe,
+                    "isFeedback": this.breakDownForm.isFeedback,
+                    "isFeedback1":this.breakDownForm.isFeedback1,
+                    "isSolve": this.breakDownForm.isSolve,
+                    // "remark1": this.breakDownForm.operatorId,
+                    // "remark2":this.breakDownForm.operatorId,
+                    // "remark3": "",
+                    "barrierMethodCode": this.breakDownForm.faultMethod,
+                    "faultTypeCode": this.breakDownForm.faultType,
+                    "faultSystemCode": this.breakDownForm.faultSystem
+                
+            }
+            this.$http.post('/fault/addFaultInfo', params, { body: true })
+              .then(res => {
+                this.submitLoading = false;
+                if (res.status == 0) {
+                  this.$message.success('提交成功！');
+                  this.$router.push('/breakDown/myBreakDown');
+                } else {
+                  this.$message.error(res.message);
+                }
+              })
+
+
+          }else{
+            this.$message.warning('请检查填写字段')
+            this.$emit('submitMiddle', false);
+            return false;
           }
-        })
+          
+          })
+     
     }
   }
 }
